@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>MUSE-AMCL</name>
+  <name>muse_amcl</name>
   <version>0.0.0</version>
   <description>The MUSE-AMCL package</description>
 
