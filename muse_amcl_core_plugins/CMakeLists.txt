@@ -18,3 +18,11 @@ catkin_package()
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
+
+add_library(${PROJECT_NAME} SHARED
+    src/sensor_models/mock_sensor_model.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}
+    ${catkin_LIBRARIES}
+)

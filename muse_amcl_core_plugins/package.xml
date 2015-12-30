@@ -22,6 +22,6 @@
 
 
   <export>
-    <!-- Other tools can request additional information be placed here -->
+       <muse_amcl plugin="${prefix}/plugins.xml" />
   </export>
 </package>
