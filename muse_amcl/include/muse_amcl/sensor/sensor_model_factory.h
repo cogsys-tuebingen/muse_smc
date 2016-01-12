@@ -11,7 +11,7 @@ class SensorModelFactory
 public:
     SensorModelFactory();
 
-    std::shared_ptr<SensorModel> create(const std::string& name);
+    std::unique_ptr<SensorModel> create(const std::string& name);
 
 private:
     PluginManager<SensorModel> plugin_manager_;

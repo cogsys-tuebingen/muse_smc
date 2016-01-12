@@ -8,7 +8,7 @@ SensorModelFactory::SensorModelFactory()
     plugin_manager_.load();
 }
 
-std::shared_ptr<SensorModel> SensorModelFactory::create(const std::string& name)
+std::unique_ptr<SensorModel> SensorModelFactory::create(const std::string& name)
 {
     auto constructor = plugin_manager_.getConstructor(name);
 

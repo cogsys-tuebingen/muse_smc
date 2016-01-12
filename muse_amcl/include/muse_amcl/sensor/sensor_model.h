@@ -1,6 +1,8 @@
 #ifndef SENSOR_MODEL_H
 #define SENSOR_MODEL_H
 
+#include <memory>
+
 namespace muse_amcl {
 
 class SensorModel {
