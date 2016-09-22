@@ -6,7 +6,7 @@ project(muse_amcl)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
-  kdtree
+  cslibs_kdtree
   sensor_msgs
   tf
 )
@@ -66,6 +66,9 @@ add_executable(muse_amcl_node
     src/sensor/sensor.cpp
 
     src/odometry/odometry.cpp
+
+    src/math/math.hpp
+    src/math/distribution.hpp
 )
 
 target_link_libraries(muse_amcl_node
