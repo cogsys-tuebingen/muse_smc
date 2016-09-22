@@ -5,11 +5,11 @@ project(muse_amcl)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  geometry_msgs
-  cslibs_kdtree
-  sensor_msgs
-  tf
-)
+    geometry_msgs
+    cslibs_kdtree
+    sensor_msgs
+    tf
+    )
 
 ## OPENMP
 find_package(OpenMP REQUIRED)
@@ -27,7 +27,7 @@ if(COMPILER_SUPPORTS_CXX11)
 elseif(COMPILER_SUPPORTS_CXX0X)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 else()
-        message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+    message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
 add_definitions(-W -Wall -Wno-unused-parameter -fno-strict-aliasing -Wno-unused-function -Wno-deprecated-register)
@@ -35,11 +35,11 @@ add_definitions("-Ofast -march=native -ffast-math")
 #add_definitions(-g -rdynamic)
 
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES muse_amcl
-#  CATKIN_DEPENDS geometry_msgs kdtree sensor_msgs tf
-#  DEPENDS system_lib
-)
+    #  INCLUDE_DIRS include
+    #  LIBRARIES muse_amcl
+    #  CATKIN_DEPENDS geometry_msgs kdtree sensor_msgs tf
+    #  DEPENDS system_lib
+    )
 
 ###########
 ## Build ##
@@ -49,19 +49,20 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
-  ${catkin_INCLUDE_DIRS}
-  src/
+    ${catkin_INCLUDE_DIRS}
+    src/
+    )
+
+add_library(muse_amcl_maps
+    src/maps/2D/gridmap.hpp
+    src/maps/2D/gridmap.cpp
 )
+
 
 add_executable(muse_amcl_node
     src/node/muse_amcl_node.cpp
 
     src/tf/tf_provider.cpp
-
-    src/maps/gridmaps/gridmap.cpp
-    src/maps/gridmaps/binary_gridmap.cpp
-    src/maps/gridmaps/probability_gridmap.cpp
-    src/maps/gridmaps/distance_gridmap.cpp
 
     src/sensor/sensor.cpp
 
@@ -69,9 +70,9 @@ add_executable(muse_amcl_node
 
     src/math/math.hpp
     src/math/distribution.hpp
-)
+    )
 
 target_link_libraries(muse_amcl_node
     ${catkin_LIBRARIES}
-)
+    )
 
