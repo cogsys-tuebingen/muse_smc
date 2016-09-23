@@ -1,7 +1,6 @@
 #include "tf_provider.h"
 
-using namespace muse;
-using namespace transforms;
+using namespace muse::transforms;
 
 TFProvider::TFProvider()
 {

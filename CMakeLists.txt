@@ -70,11 +70,18 @@ add_custom_target(muse_acml_utility SOURCES
     src/math/math.hpp
 )
 
+add_library(muse_amcl_tf
+    src/tf/tf_eigen.hpp
+    src/tf/tf_map.hpp
+    src/tf/tf_provider.cpp
+)
+target_link_libraries(muse_amcl_tf
+    ${catkin_LIBRARIES}
+)
+
 
 add_executable(muse_amcl_node
     src/node/muse_amcl_node.cpp
-
-    src/tf/tf_provider.cpp
 
     src/sensor/sensor.cpp
 

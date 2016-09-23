@@ -1,37 +1,12 @@
 #ifndef TFPROVIDER_H
 #define TFPROVIDER_H
 
-#include <tf/tf.h>
+#include "tf_map.hpp"
+
 #include <tf/transform_listener.h>
-#include <memory>
 
 namespace muse {
 namespace transforms {
-/**
- * @brief Multikey object to identify a transformation.
- */
-struct TransformKey {
-
-    TransformKey(const std::string &target,
-                 const std::string &source) :
-        target(target),
-        source(source)
-    {
-    }
-
-    std::string target;
-    std::string source;
-};
-
-struct less {
-    bool operator()(const TransformKey &a,
-                    const TransformKey &b)
-    {
-        return a.target < b.target && a.source < b.source;
-    }
-};
-
-typedef std::map<TransformKey, tf::StampedTransform, less> TransformMap;
 
 /**
  * @brief The TFProvider class keeps track of all tranformations when any sensor
