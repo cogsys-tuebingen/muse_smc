@@ -1,5 +1,4 @@
-#ifndef DISTRIBUTION_H
-#define DISTRIBUTION_H
+#pragma once
 
 #undef NDEBUG
 #include <assert.h>
@@ -9,8 +8,9 @@
 #include <eigen3/Eigen/Eigen>
 #include <iostream>
 
-namespace csapex {
+namespace muse {
 namespace math {
+namespace statistic {
 template<std::size_t Dim, bool limit_covariance = false>
 class Distribution {
 public:
@@ -328,4 +328,5 @@ private:
 };
 }
 }
-#endif // DISTRIBUTION_H
+}
+

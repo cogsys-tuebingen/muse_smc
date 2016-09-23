@@ -4,12 +4,16 @@ project(muse_amcl)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+find_package(Eigen3 REQUIRED)
+
 find_package(catkin REQUIRED COMPONENTS
     geometry_msgs
     cslibs_kdtree
     sensor_msgs
     tf
     )
+
+set(BUILD_EXAMPLES True)
 
 ## OPENMP
 find_package(OpenMP REQUIRED)
@@ -51,11 +55,19 @@ catkin_package(
 include_directories(
     ${catkin_INCLUDE_DIRS}
     src/
-    )
+    ${Eigen_INCLUDE_DIRS}
+)
 
 add_library(muse_amcl_maps
     src/maps/2D/gridmap.hpp
     src/maps/2D/gridmap.cpp
+)
+
+add_custom_target(muse_acml_utility SOURCES
+    src/math/distribution.hpp
+    src/math/angle.hpp
+    src/math/random.hpp
+    src/math/math.hpp
 )
 
 
@@ -68,11 +80,29 @@ add_executable(muse_amcl_node
 
     src/odometry/odometry.cpp
 
-    src/math/math.hpp
-    src/math/distribution.hpp
     )
 
 target_link_libraries(muse_amcl_node
     ${catkin_LIBRARIES}
     )
+
+
+if(${BUILD_EXAMPLES})
+    find_package(OpenCV QUIET)
+    include_directories(
+        ${OpenCV_INCLUDE_DIRS}
+    )
+    if(${OpenCV_FOUND})
+        add_executable(muse_amcl_visualise_distributions
+            src/examples/visualise_distributions.cpp
+        )
+        target_link_libraries(muse_amcl_visualise_distributions
+            ${OpenCV_LIBRARIES}
+        )
+    endif()
+endif()
+
+
+
+
 
