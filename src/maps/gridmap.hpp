@@ -1,7 +1,8 @@
 #pragma once
 
-#include <tf/tf.h>
 #include <memory>
+#include <vector>
+#include <cmath>
 
 namespace muse {
 namespace maps {
@@ -35,30 +36,6 @@ public:
                   cos_phi * _origin_y;
         }
     }
-
-    GridMap(const tf::Pose &_origin,
-            const double _resolution,
-            const std::size_t _height,
-            const std::size_t _width) :
-        origin_x(_origin.getOrigin().x()),
-        origin_y(_origin.getOrigin().y()),
-        origin_phi(tf::getYaw(_origin.getRotation())),
-        cos_phi(cos(origin_phi)),
-        sin_phi(sin(origin_phi)),
-        tx(origin_x),
-        ty(origin_y),
-        resolution(_resolution),
-        height(_height),
-        width(_width)
-    {
-        if(origin_phi != 0.0) {
-            tx =  cos_phi * _origin.getOrigin().x() +
-                  sin_phi * _origin.getOrigin().y();
-            ty = -sin_phi * _origin.getOrigin().x() +
-                  cos_phi * _origin.getOrigin().y();
-        }
-    }
-
 
     inline bool toIndex(const double _x, const double _y,
                         std::size_t &_idx, std::size_t &_idy)

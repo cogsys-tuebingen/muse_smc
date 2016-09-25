@@ -59,9 +59,18 @@ include_directories(
 )
 
 add_library(muse_amcl_maps
-    src/maps/2D/gridmap.hpp
-    src/maps/2D/gridmap.cpp
+    src/maps/gridmap.hpp
+    src/maps/binary_gridmap.cpp
+    src/maps/distance_gridmap.cpp
+    src/maps/probability_gridmap.cpp
 )
+
+target_link_libraries(muse_amcl_maps
+    ${catkin_LIBRARIES}
+)
+
+
+
 
 add_custom_target(muse_acml_utility SOURCES
     src/math/distribution.hpp
@@ -104,6 +113,12 @@ if(${BUILD_EXAMPLES})
             src/examples/visualise_distributions.cpp
         )
         target_link_libraries(muse_amcl_visualise_distributions
+            ${OpenCV_LIBRARIES}
+        )
+        add_executable(muse_amcl_distance_transoform
+            src/examples/distance_transform.cpp
+        )
+        target_link_libraries(muse_amcl_distance_transoform
             ${OpenCV_LIBRARIES}
         )
     endif()
