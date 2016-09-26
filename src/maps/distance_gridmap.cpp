@@ -25,5 +25,5 @@ DistanceGridMap::DistanceGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupa
 
 void DistanceGridMap::convert(const nav_msgs::OccupancyGrid &occupancy_grid, const double threshold)
 {
-
+    /// don't forget to count the resolution in ...
 }

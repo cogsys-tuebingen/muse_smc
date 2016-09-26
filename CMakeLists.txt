@@ -63,6 +63,7 @@ add_library(muse_amcl_maps
     src/maps/binary_gridmap.cpp
     src/maps/distance_gridmap.cpp
     src/maps/probability_gridmap.cpp
+    src/maps/distance_transform.hpp
 )
 
 target_link_libraries(muse_amcl_maps
