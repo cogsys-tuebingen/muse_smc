@@ -4,6 +4,7 @@
 #include <vector>
 #include <assert.h>
 #include <limits>
+#include <queue>
 
 namespace muse {
 namespace maps {
@@ -195,9 +196,71 @@ struct Borgefors {
 
 };
 
+template<typename T>
 struct Dijkstra {
+    struct Edge {
+        std::size_t i;
+        std::size_t j;
+        std::size_t n_i;
+        std::size_t n_j;
+    };
 
 
+    Dijkstra(const std::size_t _rows,
+             const std::size_t _cols,
+             const double _resolution,
+             const T _threshold,
+             const std::size_t ksize) :
+        kernel(ksize, _resolution),
+        rows(_rows),
+        cols(_cols),
+        size(_rows * _cols),
+        threshold(_threshold),
+        max_idx(_cols - 1),
+        max_idy(_rows - 1)
+    {
+    }
+
+    Dijkstra(const std::size_t _rows,
+             const std::size_t _cols,
+             const double _resolution,
+             const double radius,
+             const T _threshold) :
+        kernel(radius / _resolution, _resolution),
+        rows(_rows),
+        cols(_cols),
+        size(_rows * _cols),
+        threshold(_threshold)
+    {
+    }
+
+    void apply(const std::vector<T> &_src,
+               std::vector<double> &_dst)
+    {
+        assert(_src.size() == _dst.size());
+        assert(_src.size() == size);
+        apply(_src.data(), _dst.data());
+    }
+
+    void apply(const T *_src, double *_dst)
+    {
+        auto less = [this, _dst]( const Edge &a, const Edge &b )
+            { return _dst[a.i * cols + a.j] < _dst[b.i * cols + b.j]; };
+        std::priority_queue< Edge , std::vector<Edge>, decltype( less ) > Q( less );
+
+
+
+    }
+
+
+
+    const Kernel      kernel;
+    const std::size_t rows;
+    const std::size_t cols;
+    const std::size_t size;
+    const T threshold;
+    const std::size_t max_idx;
+    const std::size_t max_idy;
 
 };
 }
