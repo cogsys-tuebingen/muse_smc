@@ -35,18 +35,19 @@ int main(int argc, char *argv[])
         cv::imshow("kernel", display);
         cv::waitKey();
     }
+    const std::size_t repetitions = 1;
     {
         cv::Mat test = cv::Mat(200, 200, CV_8UC1, cv::Scalar(1.f));
         cv::rectangle(test, cv::Point(50, 50), cv::Point(150,150), cv::Scalar(0.f));
         cv::Mat display;
         auto start = std::chrono::system_clock::now();
-        for(std::size_t i = 0 ; i < 1000 ; ++i) {
+        for(std::size_t i = 0 ; i < repetitions ; ++i) {
             cv::distanceTransform(test, display, CV_DIST_L2, 5);
         }
         auto end = std::chrono::system_clock::now();
         auto elapsed =
                 std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-        std::cout << elapsed.count() / 1000.0 << "[ms]" << '\n';
+        std::cout << elapsed.count() / (double) repetitions << "[ms]" << '\n';
 
         cv::normalize(display, display, 0, 1, cv::NORM_MINMAX);
         cv::imshow("distance1", display);
@@ -59,18 +60,39 @@ int main(int argc, char *argv[])
 
         auto start = std::chrono::system_clock::now();
         muse::maps::distance_transform::Borgefors<float> borge(test.rows, test.cols, 1.0, 1.f, 3);
-        for(std::size_t i = 0 ; i < 1000 ; ++i) {
+        for(std::size_t i = 0 ; i < repetitions ; ++i) {
             borge.apply(test.ptr<float>(), display.ptr<double>());
         }
         auto end = std::chrono::system_clock::now();
         auto elapsed =
                 std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-        std::cout << elapsed.count() / 1000.0 << "[ms]" << '\n';
+        std::cout << elapsed.count() / (double) repetitions << "[ms]" << '\n';
 
         cv::normalize(display, display, 0, 1, cv::NORM_MINMAX, CV_32F);
         cv::imshow("distance2", display);
         cv::waitKey();
     }
+    {
+        cv::Mat test = cv::Mat(2000, 2000, CV_32FC1, cv::Scalar(0.f));
+        cv::rectangle(test, cv::Point(50, 50), cv::Point(150,150), cv::Scalar(1.f));
+        cv::Mat display = cv::Mat(2000, 2000, CV_64FC1, cv::Scalar());
+
+        auto start = std::chrono::system_clock::now();
+        muse::maps::distance_transform::ModifiedDijkstraDeadReckoning<float> dijkstra(test.rows, test.cols, 1.0, 1.f);
+        for(std::size_t i = 0 ; i < repetitions ; ++i) {
+            dijkstra.apply(test.ptr<float>(), display.ptr<double>());
+        }
+        auto end = std::chrono::system_clock::now();
+        auto elapsed =
+                std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+        std::cout << elapsed.count() / (double) repetitions << "[ms]" << '\n';
+
+        cv::normalize(display, display, 0, 1, cv::NORM_MINMAX, CV_32F);
+        cv::imshow("distance2", display);
+        cv::waitKey();
+    }
+
+
 
     return 0;
 }
