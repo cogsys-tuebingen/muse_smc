@@ -70,8 +70,8 @@ struct Borgefors {
     Borgefors(const std::size_t _rows,
               const std::size_t _cols,
               const double _resolution,
-              const T _threshold,
-              const std::size_t ksize) :
+              const std::size_t ksize,
+              const T _threshold) :
         kernel(ksize, _resolution),
         rows(_rows),
         cols(_cols),
@@ -93,7 +93,9 @@ struct Borgefors {
         cols(_cols),
         size(_rows * _cols),
         threshold(_threshold),
-        max_distance(_resolution * hypot(rows, cols))
+        max_distance(_resolution * hypot(rows, cols)),
+        max_idx(_cols - 1),
+        max_idy(_rows - 1)
     {
     }
 

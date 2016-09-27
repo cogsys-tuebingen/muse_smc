@@ -1,6 +1,8 @@
 #include "distance_gridmap.h"
 #include <tf/tf.h>
 
+#include "distance_transform.hpp"
+
 using namespace muse;
 using namespace maps;
 
@@ -25,5 +27,22 @@ DistanceGridMap::DistanceGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupa
 
 void DistanceGridMap::convert(const nav_msgs::OccupancyGrid &occupancy_grid, const double threshold)
 {
-    /// don't forget to count the resolution in ...
+    std::size_t size = height * width;
+    const int8_t *occupancy_grid_ptr = occupancy_grid.data.data();
+    std::vector<double> buffer(size);
+    double * buffer_ptr = buffer.data();
+    for(std::size_t i = 0 ; i < size ; ++i) {
+        int8_t occupancy = occupancy_grid_ptr[i];
+        assert(occupancy <= 100);
+        assert(occupancy >= -1);
+
+        if(occupancy == -1) {
+            buffer_ptr[i] = 0.5;
+        } else {
+            buffer_ptr[i] = occupancy / 100.0;
+        }
+    }
+
+    distance_transform::Borgefors<double> bf(height, width, resolution, threshold, 5);
+    bf.apply(buffer, data);
 }
