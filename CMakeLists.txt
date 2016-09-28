@@ -34,8 +34,8 @@ else()
     message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
-add_definitions(-W -Wall -Wno-unused-parameter -fno-strict-aliasing -Wno-unused-function -Wno-deprecated-register)
-add_definitions("-Ofast -march=native -ffast-math")
+#add_definitions(-W -Wall -Wno-unused-parameter -fno-strict-aliasing -Wno-unused-function -Wno-deprecated-register)
+#add_definitions("-Ofast -march=native -ffast-math")
 #add_definitions(-g -rdynamic)
 
 catkin_package(
@@ -89,6 +89,14 @@ target_link_libraries(muse_amcl_tf
     ${catkin_LIBRARIES}
 )
 
+add_library(muse_amcl_particle_filter
+    src/particle_filter/sample.hpp
+    src/particle_filter/update.hpp
+    src/particle_filter/resampling.hpp
+    src/particle_filter/propagation.hpp
+    src/particle_filter/particle_filter.cpp
+)
+
 
 add_executable(muse_amcl_node
     src/node/muse_amcl_node.cpp
@@ -123,6 +131,14 @@ if(${BUILD_EXAMPLES})
             ${OpenCV_LIBRARIES}
         )
     endif()
+    add_executable(muse_amcl_samples
+        src/examples/samples.cpp
+    )
+    target_link_libraries(muse_amcl_samples
+        muse_amcl_particle_filter
+        ${catkin_LIBRARIES}
+    )
+
 endif()
 
 

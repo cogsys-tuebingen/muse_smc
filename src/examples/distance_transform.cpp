@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
         cv::Mat display = cv::Mat(200, 200, CV_64FC1, cv::Scalar());
 
         auto start = std::chrono::system_clock::now();
-        muse::maps::distance_transform::Borgefors<float> borge(test.rows, test.cols, 1.0, 1.f, 3);
+        muse::maps::distance_transform::Borgefors<float> borge(test.rows, test.cols, 1.0, std::size_t(3), 1.f);
         for(std::size_t i = 0 ; i < repetitions ; ++i) {
             borge.apply(test.ptr<float>(), display.ptr<double>());
         }
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
         cv::Mat display = cv::Mat(2000, 2000, CV_64FC1, cv::Scalar());
 
         auto start = std::chrono::system_clock::now();
-        muse::maps::distance_transform::ModifiedDijkstraDeadReckoning<float> dijkstra(test.rows, test.cols, 1.0, 1.f);
+        muse::maps::distance_transform::Borgefors<float> dijkstra(test.rows, test.cols, 1.0, std::size_t(3), 1.f);
         for(std::size_t i = 0 ; i < repetitions ; ++i) {
             dijkstra.apply(test.ptr<float>(), display.ptr<double>());
         }
