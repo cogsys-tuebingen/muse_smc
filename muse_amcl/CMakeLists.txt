@@ -70,6 +70,8 @@ add_library(muse_amcl_particle_filter
     src/particle_filter/resampling.hpp
     src/particle_filter/pose_generation.hpp
     src/particle_filter/particle_filter.cpp
+    src/functions/update_function_factory.cpp
+    src/functions/propagation_function_factory.cpp
 )
 
 target_link_libraries(muse_amcl_particle_filter
@@ -95,6 +97,15 @@ if(${BUILD_EXAMPLES})
         target_link_libraries(muse_amcl_distance_transoform
             ${OpenCV_LIBRARIES}
         )
+        add_executable(muse_amcl_test_mock
+            src/examples/test_mock.cpp
+        )
+        target_link_libraries(muse_amcl_test_mock
+            muse_amcl_particle_filter
+            ${catkin_LIBRARIES}
+            ${tinyXML_LIBRARIES}
+        )
+
     endif()
 endif()
 

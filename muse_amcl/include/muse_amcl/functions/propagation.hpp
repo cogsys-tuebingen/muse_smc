@@ -5,12 +5,10 @@
 #include <tf/tf.h>
 
 namespace muse_amcl {
-namespace particle_filter {
 struct Propagation {
     typedef std::shared_ptr<Propagation> Ptr;
 
     virtual void apply(std::vector<tf::Pose> &poses,
                        const std::vector<double> &weights) = 0;
 };
-}
 }

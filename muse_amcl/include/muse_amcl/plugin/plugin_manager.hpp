@@ -1,5 +1,4 @@
-#ifndef PLUGIN_MANAGER_HPP
-#define PLUGIN_MANAGER_HPP
+#pragma once
 
 /// SYSTEM
 #include <pluginlib/class_loader.h>
@@ -232,5 +231,3 @@ template <class M>
 typename PluginManager<M>::Parent* PluginManager<M>::instance(nullptr);
 
 }
-
-#endif // PLUGIN_MANAGER_HPP
