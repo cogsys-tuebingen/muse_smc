@@ -1,4 +1,4 @@
-#include "binary_gridmap.h"
+#include <muse_amcl/maps/binary_gridmap.h>
 #include <tf/tf.h>
 
 using namespace muse;

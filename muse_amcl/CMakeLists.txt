@@ -5,45 +5,28 @@ project(muse_amcl)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(Eigen3 REQUIRED)
-
 find_package(catkin REQUIRED COMPONENTS
     geometry_msgs
-    cslibs_kdtree
+    nav_msgs
     sensor_msgs
     tf
-    )
+    roscpp
+    visualization_msgs
+    pluginlib
+    cslibs_kdtree
+)
 
 set(BUILD_EXAMPLES True)
 
-## OPENMP
-find_package(OpenMP REQUIRED)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-
-## FLAGS ADITIONALE
-## Enforce that we use C++11
-include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
-if(COMPILER_SUPPORTS_CXX11)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-elseif(COMPILER_SUPPORTS_CXX0X)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-else()
-    message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
-endif()
-
-add_definitions(-W -Wall -Wno-unused-parameter -fno-strict-aliasing -Wno-unused-function -Wno-deprecated-register)
-#ad_definitions("-Ofast -march=native -ffast-math")
-#add_definitions(-g -rdynamic)
+## Additional cmake modules and configurations
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+include(cmake/muse_amcl-extras.cmake)
+include(cmake/open_mp.cmake)
 
 catkin_package(
-    #  INCLUDE_DIRS include
-    #  LIBRARIES muse_amcl
-    #  CATKIN_DEPENDS geometry_msgs kdtree sensor_msgs tf
-    #  DEPENDS system_lib
-    )
+    INCLUDE_DIRS include
+    CFG_EXTRAS muse_amcl-extras.cmake
+)
 
 ###########
 ## Build ##
@@ -54,30 +37,22 @@ catkin_package(
 # include_directories(include)
 include_directories(
     ${catkin_INCLUDE_DIRS}
-    src/
     ${Eigen_INCLUDE_DIRS}
+    include/
+    src/
 )
 
+file(GLOB_RECURSE ALL_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS include/*.hpp include/*.h)
+
+
 add_library(muse_amcl_maps
-    src/maps/gridmap.hpp
     src/maps/binary_gridmap.cpp
     src/maps/distance_gridmap.cpp
     src/maps/probability_gridmap.cpp
-    src/maps/distance_transform.hpp
 )
 
 target_link_libraries(muse_amcl_maps
     ${catkin_LIBRARIES}
-)
-
-
-
-
-add_custom_target(muse_acml_utility SOURCES
-    src/math/distribution.hpp
-    src/math/angle.hpp
-    src/math/random.hpp
-    src/math/math.hpp
 )
 
 add_library(muse_amcl_tf
@@ -90,27 +65,17 @@ target_link_libraries(muse_amcl_tf
 )
 
 add_library(muse_amcl_particle_filter
-    src/particle_filter/update.hpp
+    ${ALL_HEADERS}
+
     src/particle_filter/resampling.hpp
-    src/particle_filter/propagation.hpp
     src/particle_filter/pose_generation.hpp
     src/particle_filter/particle_filter.cpp
 )
 
-
-add_executable(muse_amcl_node
-    src/node/muse_amcl_node.cpp
-
-    src/sensor/sensor.cpp
-
-    src/odometry/odometry.cpp
-
-    )
-
-target_link_libraries(muse_amcl_node
+target_link_libraries(muse_amcl_particle_filter
     ${catkin_LIBRARIES}
-    )
-
+    ${tinyXML_LIBRARIES}
+)
 
 if(${BUILD_EXAMPLES})
     find_package(OpenCV QUIET)

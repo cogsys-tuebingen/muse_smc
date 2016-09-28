@@ -3,8 +3,8 @@
 #include <vector>
 #include <tf/tf.h>
 
-#include "propagation.hpp"
-#include "update.hpp"
+#include <muse_amcl/functions/propagation.hpp>
+#include <muse_amcl/functions/update.hpp>
 #include "resampling.hpp"
 #include "pose_generation.hpp"
 

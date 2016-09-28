@@ -1,7 +1,6 @@
-#include "distance_gridmap.h"
+#include <muse_amcl/maps/distance_gridmap.h>
+#include <muse_amcl/maps/distance_transform.hpp>
 #include <tf/tf.h>
-
-#include "distance_transform.hpp"
 
 using namespace muse;
 using namespace maps;

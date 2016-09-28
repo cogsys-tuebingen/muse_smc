@@ -1,0 +1,5 @@
+<library path="libmuse_amcl_core_plugins">
+   <class type="muse_amcl::MockSensorModel" base_class_type="muse_amcl::SensorModel">
+     <description>Mockup</description>
+   </class>
+</library>
