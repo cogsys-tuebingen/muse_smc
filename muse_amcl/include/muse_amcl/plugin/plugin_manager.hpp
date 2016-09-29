@@ -127,7 +127,7 @@ protected:
             std::string icon = readString(class_element, "icon");
             std::string tags = readString(class_element, "tags");
 
-            available_classes.emplace(lookup_name, [&loader, lookup_name]() {
+            available_classes.emplace(lookup_name, [loader, lookup_name]() {
                 return std::unique_ptr<M> { loader->createUnmanagedInstance<M>(lookup_name) };
             });
         }

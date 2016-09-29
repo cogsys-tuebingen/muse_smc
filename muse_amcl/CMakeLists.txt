@@ -1,10 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(muse_amcl)
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 find_package(Eigen3 REQUIRED)
+find_package(TinyXML REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
     geometry_msgs
     nav_msgs
@@ -19,12 +18,12 @@ find_package(catkin REQUIRED COMPONENTS
 set(BUILD_EXAMPLES True)
 
 ## Additional cmake modules and configurations
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(cmake/muse_amcl-extras.cmake)
 include(cmake/open_mp.cmake)
 
 catkin_package(
     INCLUDE_DIRS include
+    LIBRARIES muse_amcl_particle_filter
     CFG_EXTRAS muse_amcl-extras.cmake
 )
 
