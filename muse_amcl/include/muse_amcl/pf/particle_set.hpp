@@ -7,7 +7,7 @@
 
 namespace muse {
 template<typename T, T Particle::*Member>
-class ParticleIterator : public std::iterator<std::random_access_iterator_tag, T>
+class ParticleMemberIterator : public std::iterator<std::random_access_iterator_tag, T>
 {
     Particle *data;
 
@@ -16,7 +16,7 @@ class ParticleIterator : public std::iterator<std::random_access_iterator_tag, T
     using reference = typename parent::reference;
 
 public:
-    explicit ParticleIterator(Particle *_begin) :
+    explicit ParticleMemberIterator(Particle *_begin) :
         data(_begin)
     {
     }
@@ -27,14 +27,14 @@ public:
         return *this;
     }
 
-    bool operator ==(const ParticleIterator<T, Member> &other) const
+    bool operator ==(const ParticleMemberIterator<T, Member> &_other) const
     {
-        return data == other.data;
+        return data == _other.data;
     }
 
-    bool operator !=(const ParticleIterator<T, Member> &other) const
+    bool operator !=(const ParticleMemberIterator<T, Member> &_other) const
     {
-        return !(*this == other);
+        return !(*this == _other);
     }
 
     reference operator *() const
@@ -49,8 +49,67 @@ public:
     typedef std::shared_ptr<ParticleSet> Ptr;
     typedef std::shared_ptr<ParticleSet const> ConstPtr;
 
-private:
+    template<typename T, T Particle::*Member>
+    class ParticleDecorator {
+    public:
+        ParticleDecorator(ParticleSet &_set) :
+            set(_set)
+        {
+        }
 
+        ParticleMemberIterator<T, Member> begin()
+        {
+            return ParticleMemberIterator<T, Member>(&set.samples.front());
+        }
+
+        ParticleMemberIterator<T, Member> end() {
+            return ParticleMemberIterator<T, Member>(&set.samples.back());
+        }
+    private:
+        ParticleSet& set;
+    };
+
+    using PoseIterator = ParticleDecorator<Pose, &Particle::pose>;
+    using WeightIterator = ParticleDecorator<double, &Particle::weight>;
+    using Particles = std::vector<Particle>;
+
+    ParticleSet(const std::size_t _sample_size) :
+        samples(_sample_size)
+    {
+    }
+
+    PoseIterator getPoses()
+    {
+        return PoseIterator(*this);
+    }
+
+    WeightIterator getWeigts()
+    {
+        return WeightIterator(*this);
+    }
+
+    Particles & getParticles()
+    {
+        return samples;
+    }
+
+    void resize(const std::size_t _sample_size)
+    {
+        samples.resize(_sample_size);
+    }
+
+    void reserve(const std::size_t _sample_size)
+    {
+        samples.reserve(_sample_size);
+    }
+
+    void emplace_back(const Particle &_sample)
+    {
+        samples.emplace_back(_sample);
+    }
+
+private:
+    std::vector<Particle> samples;
 
 };
 }
