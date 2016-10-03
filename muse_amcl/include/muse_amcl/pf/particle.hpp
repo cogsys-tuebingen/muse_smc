@@ -4,6 +4,9 @@
 
 namespace muse {
 struct Particle {
+    typedef tf::Pose PoseType;
+    typedef double   WeightType;
+
     Particle() :
        pose(tf::createQuaternionFromRPY(0,0,0),
             tf::Vector3(0,0,0)),
