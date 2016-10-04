@@ -15,8 +15,8 @@ class ParticleFilter
 public:
     ParticleFilter();
 
-    void setPropagationFunction(const Propagation::Ptr &propagation);
-    void addUpdateFunction(const Update::Ptr &update);
+    void setPropagationFunction(Propagation::Ptr &propagation);
+    void addUpdateFunction(Update::Ptr &update);
     void setResamplingFunction(const Resampling::Ptr &resampling);
     void setPoseGenerationFunction(const PoseGeneration::Ptr &pose_generation);
 

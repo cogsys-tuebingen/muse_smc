@@ -8,7 +8,7 @@ UpdateFunctionFactory::UpdateFunctionFactory()
     plugin_manager_.load();
 }
 
-std::unique_ptr<Update> UpdateFunctionFactory::create(const std::string& name)
+Update::Ptr UpdateFunctionFactory::create(const std::string& name)
 {
     auto constructor = plugin_manager_.getConstructor(name);
 

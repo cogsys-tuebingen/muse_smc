@@ -10,7 +10,7 @@ class UpdateFunctionFactory
 public:
     UpdateFunctionFactory();
 
-    std::unique_ptr<Update> create(const std::string& name);
+    Update::Ptr create(const std::string& name);
 
 private:
     PluginManager<Update> plugin_manager_;

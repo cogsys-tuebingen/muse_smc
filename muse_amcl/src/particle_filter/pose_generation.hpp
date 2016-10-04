@@ -7,7 +7,7 @@
 namespace muse_amcl {
 namespace particle_filter {
 struct PoseGeneration {
-    typedef std::shared_ptr<Update> Ptr;
+    typedef std::shared_ptr<PoseGeneration> Ptr;
 
     virtual void apply(std::vector<tf::Pose> &poses,
                        std::vector<double> &weights) = 0;

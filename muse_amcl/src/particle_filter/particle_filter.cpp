@@ -7,12 +7,12 @@ ParticleFilter::ParticleFilter()
 {
 }
 
-void ParticleFilter::setPropagationFunction(const Propagation::Ptr &propagation)
+void ParticleFilter::setPropagationFunction(Propagation::Ptr &propagation)
 {
     propagation_function_ = propagation;
 }
 
-void ParticleFilter::addUpdateFunction(const Update::Ptr &update)
+void ParticleFilter::addUpdateFunction(Update::Ptr &update)
 {
     update_functions_.emplace_back(update);
 }

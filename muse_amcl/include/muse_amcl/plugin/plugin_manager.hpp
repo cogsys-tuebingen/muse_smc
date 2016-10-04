@@ -19,7 +19,7 @@ class PluginManagerImp
     friend class PluginManager;
 
 protected:
-    typedef std::function<std::unique_ptr<M>()> PluginConstructorM;
+    typedef std::function<std::shared_ptr<M>()> PluginConstructorM;
     typedef std::map<std::string, PluginConstructorM> Constructors;
 
 protected:
@@ -98,7 +98,7 @@ protected:
             return "";
         }
 
-        std::unique_ptr<class_loader::ClassLoader> loader(new class_loader::ClassLoader(library_path));
+        std::shared_ptr<class_loader::ClassLoader> loader(new class_loader::ClassLoader(library_path));
 
         TiXmlElement* class_element = library->FirstChildElement("class");
         while (class_element) {
@@ -128,7 +128,7 @@ protected:
             std::string tags = readString(class_element, "tags");
 
             available_classes.emplace(lookup_name, [loader, lookup_name]() {
-                return std::unique_ptr<M> { loader->createUnmanagedInstance<M>(lookup_name) };
+                return std::shared_ptr<M> { loader->createUnmanagedInstance<M>(lookup_name) };
             });
         }
     }
@@ -148,7 +148,7 @@ protected:
     std::string full_name_;
 
     pluginlib::ClassLoader<M> loader_;
-    std::map< std::string, std::unique_ptr<class_loader::ClassLoader>> loaders_;
+    std::map< std::string, std::shared_ptr<class_loader::ClassLoader>> loaders_;
 
     Constructors available_classes;
 };
