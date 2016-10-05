@@ -8,7 +8,7 @@
 namespace muse {
 namespace maps {
 template<typename T>
-class GridMap : Map
+class GridMap : public Map
 {
 public:
     typedef std::shared_ptr<GridMap> Ptr;
@@ -40,8 +40,10 @@ public:
         }
     }
 
-    inline bool toIndex(const double _x, const double _y,
-                        std::size_t &_idx, std::size_t &_idy)
+    inline bool toIndex(const double _x,
+                        const double _y,
+                        std::size_t &_idx,
+                        std::size_t &_idy)
     {
         double x = _x;
         double y = _y;
@@ -59,7 +61,8 @@ public:
         return x < 0.0 || y < 0.0;
     }
 
-    inline void fromIndex(const std::size_t _idx, const std::size_t _idy,
+    inline void fromIndex(const std::size_t _idx,
+                          const std::size_t _idy,
                           double &_x, double &_y)
     {
         _x = _idx * resolution;
