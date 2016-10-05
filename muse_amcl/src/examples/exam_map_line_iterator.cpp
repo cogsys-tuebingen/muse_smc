@@ -1,5 +1,5 @@
 #include <opencv2/opencv.hpp>
-#include <muse_amcl/maps/gridmap_line_iterator.hpp>
+#include <muse_amcl/maps/bresenham.hpp>
 
 int main(int argc, char *argv[])
 {
@@ -26,12 +26,12 @@ int main(int argc, char *argv[])
             cv::circle(display, e, 2, cv::Scalar(255,255),CV_FILLED, CV_AA);
             mask.at<uchar>(e.y, e.x) = 255;
 
-            muse::maps::GridMapLineIterator<uchar> it({s.x, s.y},
+            muse::maps::Bresenham<uchar> it({s.x, s.y},
                                                       {e.x,e.y},
                                                       mask.cols,
                                                       mask.ptr<uchar>() );
 
-            muse::maps::GridMapLineIterator<uchar> const_it({s.x, s.y},
+            muse::maps::Bresenham<uchar> const_it({s.x, s.y},
                                                             {e.x,e.y},
                                                              mask.cols,
                                                              mask.ptr<uchar>() );

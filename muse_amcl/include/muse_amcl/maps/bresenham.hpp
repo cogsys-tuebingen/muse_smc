@@ -7,15 +7,15 @@
 namespace muse {
 namespace maps {
 template<typename T>
-class GridMapLineIterator
+class Bresenham
 {
 public:
     typedef std::array<int, 2> Index;
 
-    inline explicit GridMapLineIterator(const Index      &_start,
-                                        const Index      &_end,
-                                        const std::size_t _step,
-                                        T *               _data) :
+    inline explicit Bresenham(const Index      &_start,
+                              const Index      &_end,
+                              const std::size_t _step,
+                              T *               _data) :
         data(_data),
         step(_step),
         start(_start),
@@ -49,7 +49,7 @@ public:
         return steep ? index[0] : index[1];
     }
 
-    inline GridMapLineIterator& operator++()
+    inline Bresenham& operator++()
     {
         if(done())
             return *this;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "map.hpp"
+#include "bresenham.hpp"
 
 #include <vector>
 #include <cmath>
@@ -12,6 +13,7 @@ class GridMap : public Map
 {
 public:
     typedef std::shared_ptr<GridMap> Ptr;
+    typedef Bresenham<const T>       LineIterator;
 
     GridMap(const double _origin_x,
             const double _origin_y,
@@ -90,6 +92,13 @@ public:
     {
         return data_ptr[width * _idy + _idx];
     }
+
+//    LineIterator getLineIterator() const
+//    {
+
+//      /// {start_x, start_y},{end_x, end_y}, _step, _data ///
+//    }
+
 
     const double      resolution;
     const std::size_t height;
