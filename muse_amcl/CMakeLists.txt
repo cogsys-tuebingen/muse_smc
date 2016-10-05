@@ -111,6 +111,16 @@ if(${BUILD_EXAMPLES})
         target_link_libraries(muse_amcl_exam_particle_set
             muse_amcl_particle_filter
         )
+
+        add_executable(muse_amcl_exam_map_line_iterator
+            src/examples/exam_map_line_iterator.cpp
+        )
+
+        target_link_libraries(muse_amcl_exam_map_line_iterator
+            ${OpenCV_LIBRARIES}
+            ${catkin_LIBRARIES}
+        )
+
     endif()
 endif()
 
