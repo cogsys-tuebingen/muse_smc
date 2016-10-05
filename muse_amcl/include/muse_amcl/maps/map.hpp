@@ -26,7 +26,6 @@ struct Map {
                          std::numeric_limits<double>::max());
     }
 
-
     Map(const std::string &_frame) :
         frame(_frame)
     {
