@@ -30,13 +30,23 @@ int main(int argc, char *argv[])
                                                       {e.x,e.y},
                                                       mask.cols,
                                                       mask.ptr<uchar>() );
+
+            muse::maps::GridMapLineIterator<uchar> const_it({s.x, s.y},
+                                                            {e.x,e.y},
+                                                             mask.cols,
+                                                             mask.ptr<uchar>() );
+
+
             while(!it.done()) {
                 display.at<cv::Vec3b>(it.y(), it.x()) = cv::Vec3b(255,255,255);
                 cv::waitKey(0);
                 cv::imshow("display", display);
                 cv::imshow("mask", mask);
+                std::cout << "before " << (int) *const_it << std::endl;
                 (*it) = 255;
+                std::cout << "after " << (int) *const_it << std::endl;
                 ++it;
+                ++const_it;
             }
 
         }
