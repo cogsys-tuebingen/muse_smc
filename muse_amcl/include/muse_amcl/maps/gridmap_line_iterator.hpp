@@ -49,7 +49,7 @@ public:
         return steep ? index[0] : index[1];
     }
 
-    GridMapLineIterator& operator++()
+    inline GridMapLineIterator& operator++()
     {
         if(done())
             return *this;
@@ -72,26 +72,26 @@ public:
         return index[0] == end[0] && index[1] == end[1];
     }
 
-    T& operator *() const
+    inline T& operator *() const
     {
         return *data;
     }
 
 private:
-    T *data;
-    std::size_t step;
+    T           *data;
+    std::size_t  step;
 
-    Index start;
-    Index end;
-    Index index;
+    Index        start;
+    Index        end;
+    Index        index;
 
-    bool  steep;
-    int   error;
-    int   delta_x;
-    int   delta_y;
-    int   delta_error;
-    int   step_x;
-    int   step_y;
+    bool         steep;
+    int          error;
+    int          delta_x;
+    int          delta_y;
+    int          delta_error;
+    int          step_x;
+    int          step_y;
 
 
 };
