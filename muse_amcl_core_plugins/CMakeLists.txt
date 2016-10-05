@@ -20,7 +20,9 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME} SHARED
-    src/functions/mock_update.cpp
+    src/mock/mock_update.cpp
+
+
 )
 
 target_link_libraries(${PROJECT_NAME}

@@ -11,7 +11,8 @@ BinaryGridMap::BinaryGridMap(const nav_msgs::OccupancyGrid &occupancy_grid,
                     tf::getYaw(occupancy_grid.info.origin.orientation),
                     occupancy_grid.info.resolution,
                     occupancy_grid.info.height,
-                    occupancy_grid.info.width)
+                    occupancy_grid.info.width,
+                    occupancy_grid.header.frame_id)
 {
     convert(occupancy_grid, threshold);
 }

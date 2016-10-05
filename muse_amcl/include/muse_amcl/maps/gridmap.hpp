@@ -1,13 +1,14 @@
 #pragma once
 
-#include <memory>
+#include "map.hpp"
+
 #include <vector>
 #include <cmath>
 
 namespace muse {
 namespace maps {
 template<typename T>
-class GridMap
+class GridMap : Map
 {
 public:
     typedef std::shared_ptr<GridMap> Ptr;
@@ -17,17 +18,19 @@ public:
             const double _origin_phi,
             const double _resolution,
             const std::size_t _height,
-            const std::size_t _width) :
+            const std::size_t _width,
+            const std::string _frame) :
+        Map(_frame),
+        resolution(_resolution),
+        height(_height),
+        width(_width),
         origin_x(_origin_x),
         origin_y(_origin_y),
         origin_phi(_origin_phi),
         cos_phi(cos(_origin_phi)),
         sin_phi(sin(_origin_phi)),
         tx(origin_x),
-        ty(origin_y),
-        resolution(_resolution),
-        height(_height),
-        width(_width)
+        ty(origin_y)
     {
         if(origin_phi != 0.0) {
             tx =  cos_phi * _origin_x +
@@ -85,16 +88,9 @@ public:
         return data_ptr[width * _idy + _idx];
     }
 
-    inline std::size_t getHeight() const
-    {
-        return height;
-    }
-
-    inline std::size_t getWidth() const
-    {
-        return width;
-    }
-
+    const double      resolution;
+    const std::size_t height;
+    const std::size_t width;
 
 protected:
     std::vector<T> data;
@@ -109,9 +105,6 @@ protected:
     double      tx;
     double      ty;
 
-    double      resolution;
-    std::size_t height;
-    std::size_t width;
 
 };
 
