@@ -3,6 +3,7 @@
 #include "map.hpp"
 #include "bresenham.hpp"
 
+#include <array>
 #include <vector>
 #include <cmath>
 
@@ -12,8 +13,10 @@ template<typename T>
 class GridMap : public Map
 {
 public:
-    typedef std::shared_ptr<GridMap> Ptr;
-    typedef Bresenham<const T>       LineIterator;
+    typedef std::shared_ptr<GridMap>    Ptr;
+    typedef Bresenham<const T>          LineIterator;
+    typedef std::array<int, 2>          Index;
+    typedef std::array<double, 2>       Position;
 
     GridMap(const double _origin_x,
             const double _origin_y,
@@ -26,6 +29,7 @@ public:
         resolution(_resolution),
         height(_height),
         width(_width),
+        max_index({(int)(_width)-1,(int)(_height)-1}),
         origin_x(_origin_x),
         origin_y(_origin_y),
         origin_phi(_origin_phi),
@@ -36,44 +40,45 @@ public:
     {
         if(origin_phi != 0.0) {
             tx =  cos_phi * _origin_x +
-                  sin_phi * _origin_y;
+                    sin_phi * _origin_y;
             ty = -sin_phi * _origin_x +
-                  cos_phi * _origin_y;
+                    cos_phi * _origin_y;
         }
     }
 
-    inline bool toIndex(const double _x,
-                        const double _y,
-                        std::size_t &_idx,
-                        std::size_t &_idy)
+    inline bool toIndex(const Position &_p,
+                        Index &_i)
     {
+        double _x = _p[0];
+        double _y = _p[1];
         double x = _x;
         double y = _y;
 
         if(origin_phi != 0.0) {
             x =  cos_phi * _x +
-                 sin_phi * _y;
+                    sin_phi * _y;
             y = -sin_phi * _x +
-                 cos_phi * _y;
+                    cos_phi * _y;
         }
 
-        _idx = (x - tx) / resolution;
-        _idy = (y - ty) / resolution;
+        _i[0] = (x - tx) / resolution;
+        _i[1] = (y - ty) / resolution;
 
         return x < 0.0 || y < 0.0;
     }
 
-    inline void fromIndex(const std::size_t _idx,
-                          const std::size_t _idy,
-                          double &_x, double &_y)
+    inline void fromIndex(const Index &_i,
+                          Position &_p)
     {
-        _x = _idx * resolution;
-        _y = _idy * resolution;
+        double &_x = _p[0];
+        double &_y = _p[1];
+        _x = _i[0] * resolution;
+        _y = _i[1] * resolution;
         if(origin_phi != 0.0)  {
             double x = cos_phi * _x -
-                       sin_phi * _y;
+                    sin_phi * _y;
             double y = sin_phi * _x +
-                       cos_phi * _y;
+                    cos_phi * _y;
             _x = x;
             _y = y;
         }
@@ -93,18 +98,40 @@ public:
         return data_ptr[width * _idy + _idx];
     }
 
-//    LineIterator getLineIterator() const
-//    {
+    LineIterator getLineIterator(const Index &_start,
+                                 const Index &_end) const
+    {
+        return LineIterator(cap(_start), cap(_end), width, data_ptr);
+    }
 
-//      /// {start_x, start_y},{end_x, end_y}, _step, _data ///
-//    }
-
+    LineIterator getLineIterator(const Position &_start,
+                                 const Position &_end) const
+    {
+        Index start;
+        Index end;
+        toIndex(_start, start);
+        toIndex(_end, end);
+        return LineIterator(cap(start), cap(end), width, data_ptr);
+    }
 
     const double      resolution;
     const std::size_t height;
     const std::size_t width;
+    const Index       max_index;
 
 protected:
+    inline Index cap(const Index &_i)
+    {
+        return {(_i[0] < 0 ? 0 : (_i[0] > max_index[0] ? max_index[0] : _i[0])),
+                (_i[1] < 0 ? 0 : (_i[1] > max_index[1] ? max_index[1] : _i[1]))};
+    }
+
+    inline bool invalid(const Index &_i)
+    {
+        return _i[0] < 0 || _i[1] < 0 ||
+               _i[0] > max_index[0] || _i[1] > max_index[1];
+    }
+
     std::vector<T> data;
     T*             data_ptr;
 
@@ -118,7 +145,7 @@ protected:
     double      ty;
 
 
-};
+    };
 
 }
 }
