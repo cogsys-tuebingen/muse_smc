@@ -113,7 +113,6 @@ public:
         toIndex(_end, end);
         return LineIterator(cap(start), cap(end), width, data_ptr);
     }
-
     const double      resolution;
     const std::size_t height;
     const std::size_t width;

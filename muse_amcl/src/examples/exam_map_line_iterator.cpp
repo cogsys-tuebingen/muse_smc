@@ -1,5 +1,7 @@
 #include <opencv2/opencv.hpp>
 #include <muse_amcl/maps/bresenham.hpp>
+#include <muse_amcl/maps/binary_gridmap.h>
+#include <nav_msgs/OccupancyGrid.h>
 
 int main(int argc, char *argv[])
 {
@@ -63,7 +65,8 @@ int main(int argc, char *argv[])
     mask.setTo(cv::Scalar());
     {
         /// build a grid map an iterate it with a rotated origin
-
+        mask.at<uchar>(2,2) = 100;
+        mask.at<uchar>(88,88) = 100;
 
     }
 
