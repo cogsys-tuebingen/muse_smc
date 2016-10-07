@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
             cv::Point(50, 50)
         };
 
+        int wait = 0;
         for(cv::Point s : start) {
             for(cv::Point e : end) {
                 display.setTo(cv::Scalar());
@@ -37,17 +38,22 @@ int main(int argc, char *argv[])
                                                       mask.cols,
                                                       mask.ptr<uchar>() );
 
-
                 while(!it.done()) {
                     display.at<cv::Vec3b>(it.y(), it.x()) = cv::Vec3b(255,255,255);
-                    cv::waitKey(0);
                     cv::imshow("display", display);
                     cv::imshow("mask", mask);
+
                     std::cout << "before " << (int) *const_it << std::endl;
                     (*it) = 255;
                     std::cout << "after " << (int) *const_it << std::endl;
                     ++it;
                     ++const_it;
+
+                    int key = cv::waitKey(wait) & 0xFF;
+                    if(key == 27)
+                        break;
+                    if(key == 171)
+                        wait = 19;
                 }
 
             }
