@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(muse_amcl)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-find_package(Eigen3 REQUIRED)
+find_package(Eigen3  REQUIRED)
 find_package(TinyXML REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
     geometry_msgs

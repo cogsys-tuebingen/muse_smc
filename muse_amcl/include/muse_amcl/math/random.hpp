@@ -147,7 +147,7 @@ public:
         covariance = _covariance;
 
         EigenSolver eigen(covariance);
-        rotation = eigen.eigenvectors().real();         /// rotation into the "world_frame"
+        rotation = eigen.eigenvectors().real();           /// rotation into the "world_frame"
         scale = eigen.eigenvalues().real().cwiseSqrt();   /// scale along the main axis of distribution
     }
 

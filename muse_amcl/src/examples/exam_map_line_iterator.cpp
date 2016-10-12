@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
                 mask.at<uchar>(e.y, e.x) = 255;
 
                 muse::maps::Bresenham<uchar> it({s.x, s.y},
-                {e.x,e.y},
+                                                {e.x,e.y},
                                                 mask.cols,
                                                 mask.ptr<uchar>() );
 
