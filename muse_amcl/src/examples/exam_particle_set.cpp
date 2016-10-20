@@ -3,21 +3,21 @@
 #include <chrono>
 #include <iostream>
 
-void states(muse::ParticleSet& set)
+void states(muse_amcl::ParticleSet& set)
 {
     for(auto &state : set.getPoses()) {
         state.getOrigin().m_floats[0] = 1.f;
     }
 }
 
-void weights(muse::ParticleSet &set)
+void weights(muse_amcl::ParticleSet &set)
 {
-    for(auto &state : set.getWeigts()) {
+    for(auto &state : set.getWeights()) {
        state = 1.0;
     }
 }
 
-void particle(muse::ParticleSet &set)
+void particle(muse_amcl::ParticleSet &set)
 {
     for(auto &p : set.getParticles()) {
         p.weight = 0.0;
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 
     const std::size_t iterations = 50;
 
-    muse::ParticleSet particles(500000);
+    muse_amcl::ParticleSet particles(500000);
 
     {
         auto start = std::chrono::high_resolution_clock::now();

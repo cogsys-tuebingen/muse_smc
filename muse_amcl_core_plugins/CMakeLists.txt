@@ -21,8 +21,14 @@ include_directories(
 
 add_library(${PROJECT_NAME} SHARED
     src/mock/mock_update.cpp
+    src/mock/mock_propagation.cpp
 
+    src/laser2D/beam_model.cpp
+    src/laser2D/likelihood_field_model.cpp
+    src/laser2D/likelihood_field_prob_model.cpp
 
+    src/odometry/differential_drive.cpp
+    src/odometry/omni_drive.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}

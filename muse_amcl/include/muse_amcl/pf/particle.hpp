@@ -2,7 +2,7 @@
 
 #include <tf/tf.h>
 
-namespace muse {
+namespace muse_amcl {
 struct Particle {
     typedef tf::Pose PoseType;
     typedef double   WeightType;

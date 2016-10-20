@@ -5,7 +5,7 @@
 #include <memory>
 #include <vector>
 
-namespace muse {
+namespace muse_amcl {
 template<typename T, T Particle::*Member>
 class ParticleMemberIterator : public std::iterator<std::random_access_iterator_tag, T>
 {
@@ -83,7 +83,7 @@ public:
         return PoseIterator(*this);
     }
 
-    WeightIterator getWeigts()
+    WeightIterator getWeights()
     {
         return WeightIterator(*this);
     }

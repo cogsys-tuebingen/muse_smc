@@ -2,4 +2,7 @@
    <class type="muse_amcl::MockUpdate" base_class_type="muse_amcl::Update">
      <description>Mockup</description>
    </class>
+   <class type="muse_amcl::MockPropagation" base_class_type="muse_amcl::Propagation">
+     <description>Mockup</description>
+   </class>
 </library>

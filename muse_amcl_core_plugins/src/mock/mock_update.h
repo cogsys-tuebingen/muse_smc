@@ -8,8 +8,7 @@ class MockUpdate : public Update
 public:
     MockUpdate();
 
-    virtual void apply(const std::vector<tf::Pose> &poses,
-                       std::vector<double> &weights) override;
+    virtual double apply(ParticleSet::WeightIterator set) override;
 
 };
 }
