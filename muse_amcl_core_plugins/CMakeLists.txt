@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(muse_amcl_core_plugins)
 
+
 find_package(catkin REQUIRED COMPONENTS
   muse_amcl
   nav_msgs
@@ -10,6 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 catkin_package()
+
+set(BUILD_EXAMPLES True)
 
 ###########
 ## Build ##
@@ -34,6 +37,26 @@ add_library(${PROJECT_NAME} SHARED
 target_link_libraries(${PROJECT_NAME}
     ${catkin_LIBRARIES}
 )
+
+if(${BUILD_EXAMPLES})
+    add_executable(muse_amcl_exam_test_mock
+        src/examples/exam_test_mock.cpp
+    )
+    target_link_libraries(muse_amcl_exam_test_mock
+        muse_amcl_particle_filter
+        ${catkin_LIBRARIES}
+        ${tinyXML_LIBRARIES}
+    )
+    add_executable(muse_amcl_exam_test_mock_launch
+        src/examples/exam_test_mock_launch.cpp
+    )
+    target_link_libraries(muse_amcl_exam_test_mock_launch
+        muse_amcl_particle_filter
+        ${catkin_LIBRARIES}
+        ${tinyXML_LIBRARIES}
+    )
+endif()
+
 
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})

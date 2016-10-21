@@ -15,6 +15,7 @@ struct Propagation {
     {
     }
 
+    virtual void setup(const std::string &name) = 0;
     virtual void apply(ParticleSet::PoseIterator set) = 0;
 
     ros::NodeHandle nh;

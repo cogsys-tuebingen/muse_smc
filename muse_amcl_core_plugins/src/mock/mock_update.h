@@ -8,6 +8,7 @@ class MockUpdate : public Update
 public:
     MockUpdate();
 
+    virtual void setup(const std::string &name) override;
     virtual double apply(ParticleSet::WeightIterator set) override;
 
 };

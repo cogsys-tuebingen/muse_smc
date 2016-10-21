@@ -13,6 +13,11 @@ MockUpdate::MockUpdate()
 
 }
 
+void MockUpdate::setup(const std::string &name)
+{
+
+}
+
 double MockUpdate::apply(ParticleSet::WeightIterator set)
 {
     std::cout << "Hello, I am a mock update - Greetings Traveller!" << std::endl;

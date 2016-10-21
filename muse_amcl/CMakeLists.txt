@@ -96,15 +96,6 @@ if(${BUILD_EXAMPLES})
         target_link_libraries(muse_amcl_exam_distance_transoform
             ${OpenCV_LIBRARIES}
         )
-        add_executable(muse_amcl_exam_test_mock
-            src/examples/exam_test_mock.cpp
-        )
-        target_link_libraries(muse_amcl_exam_test_mock
-            muse_amcl_particle_filter
-            ${catkin_LIBRARIES}
-            ${tinyXML_LIBRARIES}
-        )
-
         add_executable(muse_amcl_exam_particle_set
             src/examples/exam_particle_set.cpp
         )

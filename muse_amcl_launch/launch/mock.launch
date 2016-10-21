@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<launch>
+	<node type="muse_amcl_exam_test_mock_launch" name="muse_amcl_exam_test_mock_launch" pkg="muse_amcl_core_plugins" output="screen">
+        <rosparam param="plugins">
+         [update, propagation]
+        </rosparam>
+
+
+        <rosparam param="update" ns="update">
+         type: muse_amcl::MockUpdate
+        </rosparam>
+        <rosparam param="propagation" ns="propagation">
+         type: muse_amcl::MockPropagation
+        </rosparam>
+	</node>
+</launch>

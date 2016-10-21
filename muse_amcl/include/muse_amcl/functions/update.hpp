@@ -15,6 +15,7 @@ struct Update {
     {
     }
 
+    virtual void setup(const std::string &name) = 0;
     virtual double apply(ParticleSet::WeightIterator set) = 0;
 
     ros::NodeHandle nh;
