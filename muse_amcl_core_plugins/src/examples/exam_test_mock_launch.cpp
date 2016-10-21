@@ -8,6 +8,7 @@ int main(int argc, char *argv[])
     ros::init(argc, argv, "muse_amcl_exam_test_mock_launch");
     ros::NodeHandle nh("~");
 
+
     std::vector<std::string> plugins;
     if(!nh.getParam("plugins", plugins)) {
         std::cerr << "Need an active plugin list!" << std::endl;

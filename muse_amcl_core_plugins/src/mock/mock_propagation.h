@@ -8,7 +8,7 @@ class MockPropagation : public Propagation
 public:
     MockPropagation();
 
-    virtual void setup(const std::string &name) override;
+    virtual void setup(const std::string &ns) override;
     virtual void apply(ParticleSet::PoseIterator set) override;
 
 };

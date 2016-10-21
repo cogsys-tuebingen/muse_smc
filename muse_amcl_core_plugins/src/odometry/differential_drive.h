@@ -2,7 +2,6 @@
 
 #include <muse_amcl/functions/propagation.hpp>
 
-
 namespace muse_amcl {
 class DifferentialDrive : public Propagation
 {

@@ -1,16 +1,18 @@
 <?xml version="1.0" ?>
 <launch>
+	<group ns="muse">
+		<group ns="update">
+			<param name="base_class" value="muse_amcl::Update" />
+			<paran name="type" value="muse_amcl::MockUpdate" />
+		</group>
+		<group ns="propagation">
+			<param name="base_class" value="muse_amcl::Propagation" />
+			<paran name="type" value="muse_amcl::MockPropagation" />
+		</group>
+	</group>
+
+
 	<node type="muse_amcl_exam_test_mock_launch" name="muse_amcl_exam_test_mock_launch" pkg="muse_amcl_core_plugins" output="screen">
-        <rosparam param="plugins">
-         [update, propagation]
-        </rosparam>
-
-
-        <rosparam param="update" ns="update">
-         type: muse_amcl::MockUpdate
-        </rosparam>
-        <rosparam param="propagation" ns="propagation">
-         type: muse_amcl::MockPropagation
-        </rosparam>
+		<param name="config" value="muse" />
 	</node>
 </launch>

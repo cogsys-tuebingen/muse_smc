@@ -1,10 +1,9 @@
 #include "mock_propagation.h"
 
-#include <class_loader/class_loader_register_macro.h>
-
-CLASS_LOADER_REGISTER_CLASS(muse_amcl::MockPropagation, muse_amcl::Propagation)
-
 #include <iostream>
+
+#include <class_loader/class_loader_register_macro.h>
+CLASS_LOADER_REGISTER_CLASS(muse_amcl::MockPropagation, muse_amcl::Propagation)
 
 using namespace muse_amcl;
 
@@ -12,7 +11,7 @@ MockPropagation::MockPropagation()
 {
 }
 
-void MockPropagation::setup(const std::string &name)
+void MockPropagation::setup(const std::string &ns)
 {
 
 }
