@@ -10,6 +10,16 @@ namespace muse_amcl {
 struct Propagation {
     typedef std::shared_ptr<Propagation> Ptr;
 
+    Propagation() :
+        nh_private("~")
+    {
+    }
+
     virtual void apply(ParticleSet::PoseIterator set) = 0;
+
+    ros::NodeHandle nh;
+    ros::NodeHandle nh_private;
+
+
 };
 }

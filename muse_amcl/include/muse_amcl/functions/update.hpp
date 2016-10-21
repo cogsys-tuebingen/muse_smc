@@ -10,6 +10,15 @@ namespace muse_amcl {
 struct Update {
     typedef std::shared_ptr<Update> Ptr;
 
+    Update() :
+        nh_private("~")
+    {
+    }
+
     virtual double apply(ParticleSet::WeightIterator set) = 0;
+
+    ros::NodeHandle nh;
+    ros::NodeHandle nh_private;
+
 };
 }
