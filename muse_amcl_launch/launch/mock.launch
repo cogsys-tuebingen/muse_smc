@@ -1,13 +1,13 @@
 <?xml version="1.0" ?>
 <launch>
-	<group ns="muse">
+        <group ns="muse_amcl_exam_test_mock_launch">
 		<group ns="update">
-			<param name="base_class" value="muse_amcl::Update" />
-			<paran name="type" value="muse_amcl::MockUpdate" />
+                    <param name="class" value="muse_amcl::MockUpdate" />
+                    <param name="base_class" value="muse_amcl::Update" />
 		</group>
 		<group ns="propagation">
-			<param name="base_class" value="muse_amcl::Propagation" />
-			<paran name="type" value="muse_amcl::MockPropagation" />
+                    <param name="class" value="muse_amcl::MockPropagation" />
+                    <param name="base_class" value="muse_amcl::Propagation" />
 		</group>
 	</group>
 

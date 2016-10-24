@@ -1,6 +1,6 @@
 #include <opencv2/opencv.hpp>
-#include <muse_amcl/maps/bresenham.hpp>
-#include <muse_amcl/maps/binary_gridmap.h>
+#include <muse_amcl_core_plugins/maps/bresenham.hpp>
+#include <muse_amcl_core_plugins/maps/binary_gridmap.h>
 #include <nav_msgs/OccupancyGrid.h>
 
 int main(int argc, char *argv[])

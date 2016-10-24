@@ -1,6 +1,6 @@
 #pragma once
 
-#include "map.hpp"
+#include <muse_amcl/map/map.hpp>
 
 #include <array>
 

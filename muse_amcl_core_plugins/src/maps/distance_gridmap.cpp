@@ -1,5 +1,5 @@
-#include <muse_amcl/maps/distance_gridmap.h>
-#include <muse_amcl/maps/distance_transform.hpp>
+#include <muse_amcl_core_plugins/maps/distance_gridmap.h>
+#include <muse_amcl_core_plugins/maps/distance_transform.hpp>
 #include <tf/tf.h>
 
 using namespace muse;

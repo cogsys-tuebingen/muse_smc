@@ -1,4 +1,4 @@
-#include <muse_amcl/maps/probability_gridmap.h>
+#include <muse_amcl_core_plugins/maps/probability_gridmap.h>
 #include <tf/tf.h>
 
 using namespace muse;

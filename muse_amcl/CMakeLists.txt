@@ -43,17 +43,6 @@ include_directories(
 
 file(GLOB_RECURSE ALL_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS include/*.hpp include/*.h)
 
-
-add_library(muse_amcl_maps
-    src/maps/binary_gridmap.cpp
-    src/maps/distance_gridmap.cpp
-    src/maps/probability_gridmap.cpp
-)
-
-target_link_libraries(muse_amcl_maps
-    ${catkin_LIBRARIES}
-)
-
 add_library(muse_amcl_tf
     src/tf/tf_eigen.hpp
     src/tf/tf_map.hpp
@@ -90,28 +79,12 @@ if(${BUILD_EXAMPLES})
         target_link_libraries(muse_amcl_exam_visualise_distributions
             ${OpenCV_LIBRARIES}
         )
-        add_executable(muse_amcl_exam_distance_transoform
-            src/examples/exam_distance_transform.cpp
-        )
-        target_link_libraries(muse_amcl_exam_distance_transoform
-            ${OpenCV_LIBRARIES}
-        )
         add_executable(muse_amcl_exam_particle_set
             src/examples/exam_particle_set.cpp
         )
         target_link_libraries(muse_amcl_exam_particle_set
             muse_amcl_particle_filter
         )
-
-        add_executable(muse_amcl_exam_map_line_iterator
-            src/examples/exam_map_line_iterator.cpp
-        )
-
-        target_link_libraries(muse_amcl_exam_map_line_iterator
-            ${OpenCV_LIBRARIES}
-            ${catkin_LIBRARIES}
-        )
-
     endif()
 endif()
 

@@ -18,11 +18,16 @@ set(BUILD_EXAMPLES True)
 ## Build ##
 ###########
 
+file(GLOB_RECURSE ALL_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS include/*.hpp include/*.h)
+
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  include
 )
 
 add_library(${PROJECT_NAME} SHARED
+    ${ALL_HEADERS}
+
     src/mock/mock_update.cpp
     src/mock/mock_propagation.cpp
 
@@ -37,6 +42,17 @@ add_library(${PROJECT_NAME} SHARED
 target_link_libraries(${PROJECT_NAME}
     ${catkin_LIBRARIES}
 )
+
+add_library(muse_amcl_maps
+    src/maps/binary_gridmap.cpp
+    src/maps/distance_gridmap.cpp
+    src/maps/probability_gridmap.cpp
+)
+
+target_link_libraries(muse_amcl_maps
+    ${catkin_LIBRARIES}
+)
+
 
 if(${BUILD_EXAMPLES})
     add_executable(muse_amcl_exam_test_mock
@@ -55,6 +71,29 @@ if(${BUILD_EXAMPLES})
         ${catkin_LIBRARIES}
         ${tinyXML_LIBRARIES}
     )
+
+    find_package(OpenCV QUIET)
+    include_directories(
+        ${OpenCV_INCLUDE_DIRS}
+    )
+    if(${OpenCV_FOUND})
+
+        add_executable(muse_amcl_exam_map_line_iterator
+            src/examples/exam_map_line_iterator.cpp
+        )
+
+        target_link_libraries(muse_amcl_exam_map_line_iterator
+            ${OpenCV_LIBRARIES}
+            ${catkin_LIBRARIES}
+        )
+
+        add_executable(muse_amcl_exam_distance_transoform
+            src/examples/exam_distance_transform.cpp
+        )
+        target_link_libraries(muse_amcl_exam_distance_transoform
+            ${OpenCV_LIBRARIES}
+        )
+    endif()
 endif()
 
 
