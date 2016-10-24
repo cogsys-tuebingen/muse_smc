@@ -1,5 +1,4 @@
 #include <muse_amcl/pf/particle_set.hpp>
-
 #include <chrono>
 #include <iostream>
 

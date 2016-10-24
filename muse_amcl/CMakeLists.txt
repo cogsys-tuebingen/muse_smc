@@ -35,17 +35,16 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+    include
+    src
     ${catkin_INCLUDE_DIRS}
     ${Eigen_INCLUDE_DIRS}
-    include/
-    src/
 )
 
-file(GLOB_RECURSE ALL_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS include/*.hpp include/*.h)
+file(GLOB_RECURSE ALL_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS *.hpp *.h)
+add_custom_target(muse_show_header SOURCES ${ALL_HEADERS})
 
 add_library(muse_amcl_tf
-    src/tf/tf_eigen.hpp
-    src/tf/tf_map.hpp
     src/tf/tf_provider.cpp
 )
 target_link_libraries(muse_amcl_tf
@@ -53,10 +52,6 @@ target_link_libraries(muse_amcl_tf
 )
 
 add_library(muse_amcl_particle_filter
-    ${ALL_HEADERS}
-
-    src/particle_filter/resampling.hpp
-    src/particle_filter/pose_generation.hpp
     src/particle_filter/particle_filter.cpp
     src/functions/update_function_factory.cpp
     src/functions/propagation_function_factory.cpp
@@ -68,6 +63,10 @@ target_link_libraries(muse_amcl_particle_filter
 )
 
 if(${BUILD_EXAMPLES})
+    add_executable(muse_amcl_exam_signals
+        src/examples/example_signals.cpp
+    )
+
     find_package(OpenCV QUIET)
     include_directories(
         ${OpenCV_INCLUDE_DIRS}
