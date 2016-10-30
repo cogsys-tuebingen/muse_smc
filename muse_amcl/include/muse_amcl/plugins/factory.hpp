@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <muse_amcl/plugin/plugin_manager.hpp>
+#include <muse_amcl/plugins/plugin_manager.hpp>
 
 namespace muse_amcl {
 template<typename PluginType>
@@ -25,6 +25,11 @@ public:
                       << "'" << std::endl;
             return nullptr;
         }
+    }
+
+    static const std::string Type()
+    {
+        return PluginType::Type();
     }
 
 

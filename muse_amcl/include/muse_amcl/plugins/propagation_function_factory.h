@@ -1,6 +1,6 @@
 #pragma once
 
-#include <muse_amcl/plugin/plugin_manager.hpp>
+#include <muse_amcl/plugins/plugin_manager.hpp>
 #include <muse_amcl/plugins/propagation.hpp>
 
 #include "factory.hpp"
@@ -12,8 +12,10 @@ class PropagationFunctionFactory : public PluginFactory<Propagation>
 public:
     PropagationFunctionFactory();
 
-    Propagation::Ptr create(const std::string& class_name);
+    Propagation::Ptr create(const std::string& plugin_name,
+                            const std::string& class_name);
 
+private:
+    ros::NodeHandle nh_private_;
 };
-
 }

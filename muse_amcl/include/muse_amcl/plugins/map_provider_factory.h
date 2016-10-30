@@ -1,11 +1,7 @@
-#ifndef MAPFACTORY_H
-#define MAPFACTORY_H
-
+#pragma once
 
 class MapFactory
 {
 public:
     MapFactory();
 };
-
-#endif // MAPFACTORY_H

@@ -6,8 +6,10 @@ int main(int argc, char *argv[])
     muse_amcl::UpdateFunctionFactory uf;
     muse_amcl::PropagationFunctionFactory pf;
 
-    std::shared_ptr<muse_amcl::Update>      u = uf.create("muse_amcl::MockUpdate");
-    std::shared_ptr<muse_amcl::Propagation> p = pf.create("muse_amcl::MockPropagation");
+    std::shared_ptr<muse_amcl::Update>      u = uf.create("mock_update",
+                                                          "muse_amcl::MockUpdate");
+    std::shared_ptr<muse_amcl::Propagation> p = pf.create("mock_propagation",
+                                                          "muse_amcl::MockPropagation");
 
     muse_amcl::ParticleSet set(1);
 

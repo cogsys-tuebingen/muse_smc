@@ -1,6 +1,4 @@
-#ifndef DATAPROVIDERFACTORY_H
-#define DATAPROVIDERFACTORY_H
-
+#pragma once
 
 class DataProviderFactory
 {
@@ -8,4 +6,3 @@ public:
     DataProviderFactory();
 };
 
-#endif // DATAPROVIDERFACTORY_H

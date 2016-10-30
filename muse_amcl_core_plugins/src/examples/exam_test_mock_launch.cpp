@@ -1,5 +1,5 @@
-// #include <muse_amcl/functions/update_function_factory.h>
-// #include <muse_amcl/functions/propagation_function_factory.h>
+#include <muse_amcl/plugins/update_function_factory.h>
+#include <muse_amcl/plugins/propagation_function_factory.h>
 
 #include <ros/ros.h>
 #include <regex>
@@ -55,27 +55,41 @@ int main(int argc, char *argv[])
         }
 
     }
+
+    std::vector<muse_amcl::Update::Ptr> updates;
+    std::vector<muse_amcl::Propagation::Ptr> propagations;
+    muse_amcl::UpdateFunctionFactory uf;
+    muse_amcl::PropagationFunctionFactory pf;
+
+
     for(auto &e : plugins) {
-        std::cerr << e.first << " : " << e.second.base_class_name << " : " << e.second.class_name << std::endl;
+        const std::string &name = e.first;
+        const std::string &base_class_name = e.second.base_class_name;
+        const std::string &class_name = e.second.class_name;
+
+        if(base_class_name == muse_amcl::UpdateFunctionFactory::Type()) {
+            muse_amcl::Update::Ptr u = uf.create(name, class_name);
+            updates.push_back(u);
+        } else if (base_class_name == muse_amcl::PropagationFunctionFactory::Type()) {
+            muse_amcl::Propagation::Ptr p = pf.create(name, class_name);
+            propagations.push_back(p);
+        } else {
+            std::cerr << "Cannot determine this base class '" << base_class_name << "'!" << std::endl;
+        }
+    }
+
+    muse_amcl::ParticleSet set(1);
+    std::cout << "updates first" << std::endl;
+    for(auto &u : updates) {
+        u->apply(set.getWeights());
+    }
+    std::cout << "propagations second" << std::endl;
+    for(auto &p : propagations) {
+        p->apply(set.getPoses());
     }
 
 
-
     ros::shutdown();
-
-
-
-
-//    muse_amcl::UpdateFunctionFactory uf;
-//    muse_amcl::PropagationFunctionFactory pf;
-
-//    std::shared_ptr<muse_amcl::Update>      u = uf.create("muse_amcl::MockUpdate");
-//    std::shared_ptr<muse_amcl::Propagation> p = pf.create("muse_amcl::MockPropagation");
-
-//    muse_amcl::ParticleSet set(1);
-
-//    u->apply(set.getWeights());
-//    p->apply(set.getPoses());
 
     return 0;
 }

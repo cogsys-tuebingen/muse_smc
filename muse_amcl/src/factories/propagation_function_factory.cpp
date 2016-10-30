@@ -2,15 +2,17 @@
 
 using namespace muse_amcl;
 
-PropagationFunctionFactory::PropagationFunctionFactory()
+PropagationFunctionFactory::PropagationFunctionFactory() :
+    nh_private_("~")
 {
 }
 
-Propagation::Ptr PropagationFunctionFactory::create(const std::string& class_name)
+Propagation::Ptr PropagationFunctionFactory::create(const std::string& plugin_name,
+                                                    const std::string& class_name)
 {
-    Propagation::Ptr update = PluginFactory::create(class_name);
-    if(update) {
-        /// setup
+    Propagation::Ptr propagation = PluginFactory::create(class_name);
+    if(propagation) {
+        propagation->setup(plugin_name, nh_private_);
     }
-    return update;
+    return propagation;
 }
