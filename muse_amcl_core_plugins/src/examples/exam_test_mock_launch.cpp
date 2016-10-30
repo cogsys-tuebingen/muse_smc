@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 
     }
     for(auto &e : plugins) {
-        std::cout << e.first << " : " << e.second.base_class_name << " : " << e.second.class_name << std::endl;
+        std::cerr << e.first << " : " << e.second.base_class_name << " : " << e.second.class_name << std::endl;
     }
 
 

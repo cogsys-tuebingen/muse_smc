@@ -7,16 +7,6 @@ ParticleFilter::ParticleFilter()
 {
 }
 
-void ParticleFilter::setPropagationFunction(Propagation::Ptr &propagation)
-{
-    propagation_function_ = propagation;
-}
-
-void ParticleFilter::addUpdateFunction(Update::Ptr &update)
-{
-    update_functions_.emplace_back(update);
-}
-
 void ParticleFilter::setResamplingFunction(const Resampling::Ptr &resampling)
 {
     resampling_function_ = resampling;

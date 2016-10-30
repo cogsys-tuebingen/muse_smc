@@ -10,12 +10,12 @@ OmniDrive::OmniDrive()
 
 }
 
-void OmniDrive::setup(const std::string &name)
+void OmniDrive::apply(ParticleSet::PoseIterator set)
 {
 
 }
 
-void OmniDrive::apply(ParticleSet::PoseIterator set)
+void OmniDrive::loadParameters(ros::NodeHandle &nh)
 {
 
 }

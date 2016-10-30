@@ -23,7 +23,7 @@ include(cmake/open_mp.cmake)
 
 catkin_package(
     INCLUDE_DIRS include
-    LIBRARIES muse_amcl_particle_filter
+    LIBRARIES muse_amcl_particle_filter muse_amcl_plugins
     CFG_EXTRAS muse_amcl-extras.cmake
 )
 
@@ -51,10 +51,21 @@ target_link_libraries(muse_amcl_tf
     ${catkin_LIBRARIES}
 )
 
+add_library(muse_amcl_plugins
+    src/factories/update_function_factory.cpp
+    src/factories/propagation_function_factory.cpp
+    src/factories/map_provider_factory.cpp
+    src/factories/data_provider_factory.cpp
+)
+
+target_link_libraries(muse_amcl_plugins
+    ${catkin_LIBRARIES}
+    ${tinyXML_LIBRARIES}
+)
+
+
 add_library(muse_amcl_particle_filter
     src/particle_filter/particle_filter.cpp
-    src/functions/update_function_factory.cpp
-    src/functions/propagation_function_factory.cpp
 )
 
 target_link_libraries(muse_amcl_particle_filter

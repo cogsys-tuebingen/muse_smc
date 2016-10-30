@@ -10,12 +10,12 @@ LikelihoodFieldProbModel::LikelihoodFieldProbModel()
 
 }
 
-void LikelihoodFieldProbModel::setup(const std::string &name)
-{
-
-}
-
 double LikelihoodFieldProbModel::apply(ParticleSet::WeightIterator set)
 {
     return 0.0;
+}
+
+void LikelihoodFieldProbModel::loadParameters(ros::NodeHandle &nh)
+{
+
 }

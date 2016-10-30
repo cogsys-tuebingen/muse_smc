@@ -1,5 +1,5 @@
-#include <muse_amcl/functions/update_function_factory.h>
-#include <muse_amcl/functions/propagation_function_factory.h>
+#include <muse_amcl/plugins/update_function_factory.h>
+#include <muse_amcl/plugins/propagation_function_factory.h>
 
 int main(int argc, char *argv[])
 {

@@ -9,13 +9,12 @@ DifferentialDrive::DifferentialDrive()
 {
 }
 
-
-void DifferentialDrive::setup(const std::string &name)
+void DifferentialDrive::apply(ParticleSet::PoseIterator set)
 {
 
 }
 
-void DifferentialDrive::apply(ParticleSet::PoseIterator set)
+void DifferentialDrive::loadParameters(ros::NodeHandle &nh)
 {
 
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <muse_amcl/functions/propagation.hpp>
+#include <muse_amcl/plugins/propagation.hpp>
 
 namespace muse_amcl {
 class DifferentialDrive : public Propagation
@@ -8,8 +8,10 @@ class DifferentialDrive : public Propagation
 public:
     DifferentialDrive();
 
-    virtual void setup(const std::string &name) override;
     virtual void apply(ParticleSet::PoseIterator set) override;
+
+protected:
+    virtual void loadParameters(ros::NodeHandle &nh) override;
 
 };
 }

@@ -11,12 +11,12 @@ MockPropagation::MockPropagation()
 {
 }
 
-void MockPropagation::setup(const std::string &ns)
-{
-
-}
-
 void MockPropagation::apply(ParticleSet::PoseIterator set)
 {
     std::cout << "Hello, I am a mock propagation - Greetings Traveller!" << std::endl;
+}
+
+void MockPropagation::loadParameters(ros::NodeHandle &nh)
+{
+
 }

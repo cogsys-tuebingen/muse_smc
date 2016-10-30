@@ -6,12 +6,12 @@ LikelihoodFieldModel::LikelihoodFieldModel()
 {
 }
 
-void LikelihoodFieldModel::setup(const std::string &name)
-{
-
-}
-
 double LikelihoodFieldModel::apply(ParticleSet::WeightIterator set)
 {
     return 0.0;
+}
+
+void LikelihoodFieldModel::loadParameters(ros::NodeHandle &nh)
+{
+
 }
