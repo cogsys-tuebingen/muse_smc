@@ -1,13 +1,33 @@
 <?xml version="1.0" ?>
 <launch>
-        <group ns="muse_amcl_exam_test_mock_launch">
-		<group ns="update">
-                    <param name="class" value="muse_amcl::MockUpdate" />
-                    <param name="base_class" value="muse_amcl::Update" />
+    <group ns="muse_amcl_exam_test_mock_launch">
+		<group ns="update0">
+            <param name="class" value="muse_amcl::MockUpdate" />
+            <param name="base_class" value="muse_amcl::Update" />
+
+            <param name="first" value="0.01" />
+            <param name="second" value="1" />
 		</group>
-		<group ns="propagation">
-                    <param name="class" value="muse_amcl::MockPropagation" />
-                    <param name="base_class" value="muse_amcl::Propagation" />
+		<group ns="propagation0">
+            <param name="class" value="muse_amcl::MockPropagation" />
+            <param name="base_class" value="muse_amcl::Propagation" />
+            
+            <param name="first" value="0.001" />
+            <param name="second" value="100" />
+		</group>
+		<group ns="update1">
+            <param name="class" value="muse_amcl::MockUpdate" />
+            <param name="base_class" value="muse_amcl::Update" />
+		
+            <param name="first" value="0.0001" />
+            <param name="second" value="1000" />
+		</group>
+		<group ns="propagation1">
+			<param name="class" value="muse_amcl::MockPropagation" />
+            <param name="base_class" value="muse_amcl::Propagation" />
+		
+		    <param name="first" value="0.00001" />
+            <param name="second" value="10000" />
 		</group>
 	</group>
 

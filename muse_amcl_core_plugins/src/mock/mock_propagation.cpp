@@ -18,5 +18,6 @@ void MockPropagation::apply(ParticleSet::PoseIterator set)
 
 void MockPropagation::loadParameters(ros::NodeHandle &nh)
 {
-
+    first_parameter  = nh.param(param("first"), 0.5);
+    second_parameter = nh.param(param("second"),1);
 }

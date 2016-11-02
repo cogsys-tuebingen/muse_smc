@@ -54,11 +54,20 @@ target_link_libraries(muse_amcl_maps
 
 
 if(${BUILD_EXAMPLES})
+    add_library(muse_amcl_mock_plugins
+        src/mock/mock_update.cpp
+        src/mock/mock_propagation.cpp
+    )
+
+    target_link_libraries(muse_amcl_mock_plugins
+        ${catkin_LIBRARIES}
+    )
+
+
     add_executable(muse_amcl_exam_test_mock
         src/examples/exam_test_mock.cpp
     )
     target_link_libraries(muse_amcl_exam_test_mock
-        muse_amcl_particle_filter
         ${catkin_LIBRARIES}
         ${tinyXML_LIBRARIES}
     )
@@ -66,9 +75,9 @@ if(${BUILD_EXAMPLES})
         src/examples/exam_test_mock_launch.cpp
     )
     target_link_libraries(muse_amcl_exam_test_mock_launch
-        muse_amcl_particle_filter
         ${catkin_LIBRARIES}
         ${tinyXML_LIBRARIES}
+        muse_amcl_mock_plugins
     )
 
     find_package(OpenCV QUIET)

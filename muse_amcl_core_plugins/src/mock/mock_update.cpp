@@ -21,5 +21,6 @@ double MockUpdate::apply(ParticleSet::WeightIterator set)
 
 void MockUpdate::loadParameters(ros::NodeHandle &nh)
 {
-
+    first_parameter  = nh.param(param("first"), 0.5);
+    second_parameter = nh.param(param("second"),1);
 }

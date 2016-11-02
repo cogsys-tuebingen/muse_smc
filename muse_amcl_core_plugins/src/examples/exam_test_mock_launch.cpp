@@ -1,5 +1,7 @@
 #include <muse_amcl/plugins/update_function_factory.h>
 #include <muse_amcl/plugins/propagation_function_factory.h>
+#include "../mock/mock_update.h"
+#include "../mock/mock_propagation.h"
 
 #include <ros/ros.h>
 #include <regex>
@@ -82,10 +84,22 @@ int main(int argc, char *argv[])
     std::cout << "updates first" << std::endl;
     for(auto &u : updates) {
         u->apply(set.getWeights());
+
+        muse_amcl::MockUpdate::Ptr m = std::dynamic_pointer_cast<muse_amcl::MockUpdate>(u);
+        if(m) {
+            std::cout << m->first_parameter << " " << m->second_parameter << std::endl;
+        }
+
     }
     std::cout << "propagations second" << std::endl;
     for(auto &p : propagations) {
         p->apply(set.getPoses());
+
+        muse_amcl::MockPropagation::Ptr m = std::dynamic_pointer_cast<muse_amcl::MockPropagation>(p);
+        if(m) {
+            std::cout << m->first_parameter << " " << m->second_parameter << std::endl;
+        }
+
     }
 
 

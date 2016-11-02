@@ -34,5 +34,11 @@ protected:
     std::string name_;
 
     virtual void loadParameters(ros::NodeHandle &nh) = 0;
+
+    std::string param(const std::string &name)
+    {
+        return name_ + "/" + name;
+    }
+
 };
 }
