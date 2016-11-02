@@ -1,4 +1,4 @@
-#include <muse_amcl/plugins/map_provider_factory.h>
+#include <muse_amcl/plugin_factories/map_provider_factory.h>
 
 MapFactory::MapFactory()
 {

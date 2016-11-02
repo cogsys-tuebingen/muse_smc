@@ -1,4 +1,4 @@
-#include <muse_amcl/plugins/data_provider_factory.h>
+#include <muse_amcl/plugin_factories/data_provider_factory.h>
 
 DataProviderFactory::DataProviderFactory()
 {

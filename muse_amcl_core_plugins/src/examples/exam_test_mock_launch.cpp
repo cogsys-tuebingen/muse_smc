@@ -1,5 +1,5 @@
-#include <muse_amcl/plugins/update_function_factory.h>
-#include <muse_amcl/plugins/propagation_function_factory.h>
+#include <muse_amcl/plugin_factories/update_function_factory.h>
+#include <muse_amcl/plugin_factories/propagation_function_factory.h>
 #include "../mock/mock_update.h"
 #include "../mock/mock_propagation.h"
 

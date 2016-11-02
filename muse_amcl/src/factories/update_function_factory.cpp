@@ -1,4 +1,4 @@
-#include <muse_amcl/plugins/update_function_factory.h>
+#include <muse_amcl/plugin_factories/update_function_factory.h>
 
 using namespace muse_amcl;
 
