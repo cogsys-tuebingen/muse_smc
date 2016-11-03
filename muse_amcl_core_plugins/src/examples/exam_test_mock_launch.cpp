@@ -15,20 +15,22 @@ int main(int argc, char *argv[])
     /// direct access
     std::string update_class;
     std::string update_class_base;
-    nh.getParam("update/class", update_class);
-    nh.getParam("update/base_class", update_class_base);
+    nh.getParam("update0/class", update_class);
+    nh.getParam("update0/base_class", update_class_base);
 
 
     std::string propagation_class;
     std::string propagation_class_base;
-    nh.getParam("propagation/class", propagation_class);
-    nh.getParam("propagation/base_class", propagation_class_base);
+    nh.getParam("propagation0/class", propagation_class);
+    nh.getParam("propagation0/base_class", propagation_class_base);
 
     std::cout << "update " << std::endl;
     std::cout << update_class_base << " :: " << update_class << std::endl;
 
     std::cout << "propagation " << std::endl;
     std::cout << propagation_class_base << " :: " << propagation_class << std::endl;
+
+
 
     /// iteration
     std::cout << "---------------------" << std::endl;
@@ -58,6 +60,7 @@ int main(int argc, char *argv[])
 
     }
 
+
     std::vector<muse_amcl::Update::Ptr> updates;
     std::vector<muse_amcl::Propagation::Ptr> propagations;
     muse_amcl::UpdateFunctionFactory uf;
@@ -70,9 +73,11 @@ int main(int argc, char *argv[])
         const std::string &class_name = e.second.class_name;
 
         if(base_class_name == muse_amcl::UpdateFunctionFactory::Type()) {
+            std::cout << "Creating " << name << " " << class_name << std::endl;
             muse_amcl::Update::Ptr u = uf.create(name, class_name);
             updates.push_back(u);
         } else if (base_class_name == muse_amcl::PropagationFunctionFactory::Type()) {
+            std::cout << "Creating " << name << " " << class_name << std::endl;
             muse_amcl::Propagation::Ptr p = pf.create(name, class_name);
             propagations.push_back(p);
         } else {
@@ -85,23 +90,11 @@ int main(int argc, char *argv[])
     for(auto &u : updates) {
         u->apply(set.getWeights());
 
-        muse_amcl::MockUpdate::Ptr m = std::dynamic_pointer_cast<muse_amcl::MockUpdate>(u);
-        if(m) {
-            std::cout << m->first_parameter << " " << m->second_parameter << std::endl;
-        }
-
     }
     std::cout << "propagations second" << std::endl;
     for(auto &p : propagations) {
         p->apply(set.getPoses());
-
-        muse_amcl::MockPropagation::Ptr m = std::dynamic_pointer_cast<muse_amcl::MockPropagation>(p);
-        if(m) {
-            std::cout << m->first_parameter << " " << m->second_parameter << std::endl;
-        }
-
     }
-
 
     ros::shutdown();
 

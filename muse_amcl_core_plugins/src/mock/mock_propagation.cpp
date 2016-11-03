@@ -14,6 +14,7 @@ MockPropagation::MockPropagation()
 void MockPropagation::apply(ParticleSet::PoseIterator set)
 {
     std::cout << "Hello, I am a mock propagation - Greetings Traveller!" << std::endl;
+    std::cout <<  first_parameter << " " << second_parameter << std::endl;
 }
 
 void MockPropagation::loadParameters(ros::NodeHandle &nh)

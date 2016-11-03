@@ -8,7 +8,8 @@ template<typename PluginType>
 class PluginFactory {
 public:
     PluginFactory() :
-        plugin_manager(PluginType::Type())
+        plugin_manager(PluginType::Type()),
+        nh_private_("~")
     {
         plugin_manager.load();
     }
@@ -35,6 +36,7 @@ public:
 
 protected:
     PluginManager<PluginType> plugin_manager;
+    ros::NodeHandle           nh_private_;
 
 };
 }

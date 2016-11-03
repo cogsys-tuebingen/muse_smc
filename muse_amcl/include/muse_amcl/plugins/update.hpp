@@ -22,10 +22,10 @@ public:
     }
 
     void setup(const std::string &name,
-               ros::NodeHandle   &nh)
+               ros::NodeHandle   &nh_private)
     {
         name_ = name;
-        loadParameters(nh);
+        loadParameters(nh_private);
     }
 
     virtual double apply(ParticleSet::WeightIterator set) = 0;
@@ -33,7 +33,7 @@ public:
 protected:
     std::string name_;
 
-    virtual void loadParameters(ros::NodeHandle &nh) = 0;
+    virtual void loadParameters(ros::NodeHandle &nh_private) = 0;
 
     std::string param(const std::string &name)
     {

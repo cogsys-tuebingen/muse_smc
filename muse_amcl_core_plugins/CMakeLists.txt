@@ -57,6 +57,7 @@ if(${BUILD_EXAMPLES})
     add_library(muse_amcl_mock_plugins
         src/mock/mock_update.cpp
         src/mock/mock_propagation.cpp
+        src/mock/mock_data_provider.cpp
     )
 
     target_link_libraries(muse_amcl_mock_plugins
@@ -77,7 +78,6 @@ if(${BUILD_EXAMPLES})
     target_link_libraries(muse_amcl_exam_test_mock_launch
         ${catkin_LIBRARIES}
         ${tinyXML_LIBRARIES}
-        muse_amcl_mock_plugins
     )
 
     find_package(OpenCV QUIET)

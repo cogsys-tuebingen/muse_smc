@@ -16,11 +16,12 @@ MockUpdate::MockUpdate()
 double MockUpdate::apply(ParticleSet::WeightIterator set)
 {
     std::cout << "Hello, I am a mock update - Greetings Traveller!" << std::endl;
+    std::cout <<  first_parameter << " " << second_parameter << std::endl;
     return 0.0;
 }
 
-void MockUpdate::loadParameters(ros::NodeHandle &nh)
+void MockUpdate::loadParameters(ros::NodeHandle &nh_private)
 {
-    first_parameter  = nh.param(param("first"), 0.5);
-    second_parameter = nh.param(param("second"),1);
+    first_parameter  = nh_private.param(param("first"), 0.5);
+    second_parameter = nh_private.param(param("second"),1);
 }

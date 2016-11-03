@@ -1,4 +1,4 @@
-#include <muse_amcl/plugin/signals.hpp>
+#include <muse_amcl/signals/signals.hpp>
 
 #include <iostream>
 

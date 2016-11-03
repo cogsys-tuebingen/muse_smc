@@ -1,6 +1,8 @@
 #pragma once
 
+#include <mutex>
 #include <memory>
+#include <atomic>
 #include <functional>
 #include <map>
 
@@ -31,6 +33,20 @@ public:
         Signal &signal;
     };
 
+    Signal() :
+        enabled(false)
+    {
+    }
+
+    void enable()
+    {
+        enabled = true;
+    }
+
+    void disable()
+    {
+        enabled = false;
+    }
 
     template<typename Function>
     typename Connection::Ptr connect(Function &_f)
@@ -42,24 +58,32 @@ public:
 
     void disconnect(typename Connection::Ptr &_c)
     {
+        std::unique_lock<std::mutex> lock(mutex);
         connections.erase(_c.get());
     }
 
     void disconnect(Connection *_c)
     {
+        std::unique_lock<std::mutex> lock(mutex);
         connections.erase(_c);
     }
 
     template<typename... Args>
     void operator ()(Args... args)
     {
+        if(!enabled)
+            return;
+
+        std::unique_lock<std::mutex> lock(mutex);
         for(auto &c : connections) {
             c.second(args...);
         }
     }
 
 private:
+    std::mutex                  mutex;
     std::map<Connection*, Slot> connections;
+    std::atomic_bool            enabled;
 
 };
 

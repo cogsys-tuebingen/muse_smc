@@ -2,11 +2,6 @@
 
 using namespace muse_amcl;
 
-PropagationFunctionFactory::PropagationFunctionFactory() :
-    nh_private_("~")
-{
-}
-
 Propagation::Ptr PropagationFunctionFactory::create(const std::string& plugin_name,
                                                     const std::string& class_name)
 {
