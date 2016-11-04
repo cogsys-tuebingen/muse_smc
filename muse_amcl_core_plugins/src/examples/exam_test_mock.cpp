@@ -4,6 +4,11 @@
 
 #include <ros/ros.h>
 
+void doSth(const muse_amcl::Data::ConstPtr &data)
+{
+
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -17,14 +22,18 @@ int main(int argc, char *argv[])
                                                           "muse_amcl::MockUpdate");
     std::shared_ptr<muse_amcl::Propagation> p = pf.create("mock_propagation",
                                                           "muse_amcl::MockPropagation");
-    std::shared_ptr<muse_amcl::DataProvider> d = df.create("mock_data",
-                                                           "muse_amcl::MockDataProvider");
-
-
     muse_amcl::ParticleSet set(1);
 
     u->apply(set.getWeights());
     p->apply(set.getPoses());
+
+
+
+
+    std::shared_ptr<muse_amcl::DataProvider> d = df.create("mock_data",
+                                                           "muse_amcl::MockDataProvider");
+
+    muse_amcl::DataProvider::DataConnection::Ptr c = d->connect(doSth);
 
     return 0;
 }

@@ -1,4 +1,4 @@
-<library path="libmuse_amcl_core_plugins">
+<library path="libmuse_amcl_mock_plugins">
    <class type="muse_amcl::MockUpdate" base_class_type="muse_amcl::Update">
      <description>Mockup</description>
    </class>

@@ -4,16 +4,16 @@
 #include <functional>
 #include <ros/node_handle.h>
 
-// #include "../signals/signals.hpp"
-// #include "data.hpp"
+#include <muse_amcl/signals/signals.hpp>
+#include "data.hpp"
 
 namespace muse_amcl {
 class DataProvider {
 public:
     typedef std::shared_ptr<DataProvider>       Ptr;
-//    typedef std::function<void(Data::ConstPtr)> Callback;
-//    typedef Signal<Callback>                    DataSignal;
-//    typedef DataSignal::Connection              DataConnection;
+    typedef std::function<void(Data::ConstPtr)> Callback;
+    typedef Signal<Callback>                    DataSignal;
+    typedef DataSignal::Connection              DataConnection;
 
     DataProvider()
     {
@@ -38,30 +38,30 @@ public:
      * @param callback - function to call
      * @return
      */
-//    DataConnection::Ptr connect(const Callback &callback)
-//    {
-//        return signal_.connect(callback);
-//    }
+    DataConnection::Ptr connect(const Callback &callback)
+    {
+        return signal_.connect(callback);
+    }
 
     /**
      * @brief Enable data to be pushed through.
      */
-//    void enable()
-//    {
-//        signal_.enable();
-//    }
+    void enable()
+    {
+        signal_.enable();
+    }
 
     /**
      * @brief Disable data to be pushed through.
      */
-//    void disable()
-//    {
-//        signal_.disable();
-//    }
+    void disable()
+    {
+        signal_.disable();
+    }
 
 protected:
     std::string name_;
-  //  DataSignal  signal_;
+    DataSignal  signal_;
 
     virtual void loadParameters(ros::NodeHandle &nh_private) = 0;
 
