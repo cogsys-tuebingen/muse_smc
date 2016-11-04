@@ -56,14 +56,13 @@ target_link_libraries(muse_amcl_maps
 if(${BUILD_EXAMPLES})
     add_library(muse_amcl_mock_plugins
         src/mock/mock_update.cpp
-        src/mock/mock_propagation.cpp
         src/mock/mock_data_provider.cpp
+        src/mock/mock_propagation.cpp
     )
 
     target_link_libraries(muse_amcl_mock_plugins
         ${catkin_LIBRARIES}
     )
-
 
     add_executable(muse_amcl_exam_test_mock
         src/examples/exam_test_mock.cpp
@@ -72,6 +71,7 @@ if(${BUILD_EXAMPLES})
         ${catkin_LIBRARIES}
         ${tinyXML_LIBRARIES}
     )
+
     add_executable(muse_amcl_exam_test_mock_launch
         src/examples/exam_test_mock_launch.cpp
     )
@@ -79,6 +79,16 @@ if(${BUILD_EXAMPLES})
         ${catkin_LIBRARIES}
         ${tinyXML_LIBRARIES}
     )
+
+
+    add_executable(muse_amcl_exam_test_mock_provider
+        src/examples/exam_test_mock_provider.cpp
+    )
+    target_link_libraries(muse_amcl_exam_test_mock_provider
+        ${catkin_LIBRARIES}
+        ${tinyXML_LIBRARIES}
+    )
+
 
     find_package(OpenCV QUIET)
     include_directories(

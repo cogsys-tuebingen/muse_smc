@@ -5,4 +5,7 @@
    <class type="muse_amcl::MockPropagation" base_class_type="muse_amcl::Propagation">
      <description>Mockup</description>
    </class>
+   <class type="muse_amcl::MockDataProvider" base_class_type="muse_amcl::DataProvider">
+     <description>Mockup</description>
+   </class>
 </library>

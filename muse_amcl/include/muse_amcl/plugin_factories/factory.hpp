@@ -20,9 +20,9 @@ public:
         if(constructor) {
             return constructor();
         } else {
-            std::cerr << "[PluginManager] :"
+            std::cerr << "[Factory] :"
                       << " Cannot create '"  << class_name
-                      << "' derivded from '" << PluginType::Type
+                      << "' derivded from '" << PluginType::Type()
                       << "'" << std::endl;
             return nullptr;
         }
