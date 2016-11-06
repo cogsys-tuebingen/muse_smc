@@ -10,11 +10,18 @@
 int i = 0;
 void doSth(const muse_amcl::Data::ConstPtr &data)
 {
-    std::cout << "came here" << std::endl;
     if(data->isType<muse_amcl::MockData>()) {
         const muse_amcl::MockData *m = data->as<muse_amcl::MockData>();
-        std::cout << i << " : " << m->value << std::endl;
+        std::cout << "sth " << i << " : " << m->value << std::endl;
         ++i;
+    }
+}
+
+void doSthElse(const muse_amcl::Data::ConstPtr &data)
+{
+    if(data->isType<muse_amcl::MockData>()) {
+        const muse_amcl::MockData *m = data->as<muse_amcl::MockData>();
+        std::cout << "sth else " << i << " : " << m->value << std::endl;
     }
 }
 
@@ -40,7 +47,9 @@ int main(int argc, char *argv[])
     std::shared_ptr<muse_amcl::DataProvider> d = df.create("mock_data",
                                                            "muse_amcl::MockDataProvider");
 
-    muse_amcl::DataProvider::DataConnection::Ptr c = d->connect(doSth);
+    muse_amcl::DataProvider::DataConnection::Ptr c1 = d->connect(doSth);
+    muse_amcl::DataProvider::DataConnection::Ptr c2 = d->connect(doSthElse);
+
     d->enable();
 
     ros::Rate r(10);
