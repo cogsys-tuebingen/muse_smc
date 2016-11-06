@@ -2,11 +2,20 @@
 #include <muse_amcl/plugin_factories/propagation_function_factory.h>
 #include <muse_amcl/plugin_factories/data_provider_factory.h>
 
+#include "../mock/mock_data.hpp"
+
 #include <ros/ros.h>
 
+
+int i = 0;
 void doSth(const muse_amcl::Data::ConstPtr &data)
 {
-
+    std::cout << "came here" << std::endl;
+    if(data->isType<muse_amcl::MockData>()) {
+        const muse_amcl::MockData *m = data->as<muse_amcl::MockData>();
+        std::cout << i << " : " << m->value << std::endl;
+        ++i;
+    }
 }
 
 
@@ -28,12 +37,18 @@ int main(int argc, char *argv[])
     p->apply(set.getPoses());
 
 
-
-
     std::shared_ptr<muse_amcl::DataProvider> d = df.create("mock_data",
                                                            "muse_amcl::MockDataProvider");
 
     muse_amcl::DataProvider::DataConnection::Ptr c = d->connect(doSth);
+    d->enable();
+
+    ros::Rate r(10);
+    while(i < 10 && ros::ok()) {
+        ros::spinOnce();
+        r.sleep();
+    }
+
 
     return 0;
 }
