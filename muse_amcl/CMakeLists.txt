@@ -20,6 +20,7 @@ set(BUILD_EXAMPLES True)
 ## Additional cmake modules and configurations
 include(cmake/muse_amcl-extras.cmake)
 include(cmake/open_mp.cmake)
+include(cmake/show_headers.cmake)
 
 catkin_package(
     INCLUDE_DIRS include
@@ -40,9 +41,6 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
     ${Eigen_INCLUDE_DIRS}
 )
-
-file(GLOB_RECURSE ALL_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS *.hpp *.h)
-add_custom_target(muse_show_header SOURCES ${ALL_HEADERS})
 
 add_library(muse_amcl_tf
     src/tf/tf_provider.cpp

@@ -18,8 +18,7 @@ set(BUILD_EXAMPLES True)
 ## Build ##
 ###########
 
-file(GLOB_RECURSE ALL_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS *.hpp *.h)
-add_custom_target(muse_core_show_header SOURCES ${ALL_HEADERS})
+include(cmake/show_headers.cmake)
 
 include_directories(
   include

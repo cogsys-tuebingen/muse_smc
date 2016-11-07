@@ -26,6 +26,11 @@ public:
         return "muse_amcl::Propagation";
     }
 
+    inline std::string name() const
+    {
+        return name_;
+    }
+
     void setup(const std::string &name,
                ros::NodeHandle   &nh)
     {

@@ -28,6 +28,11 @@ public:
         return "muse_amcl::DataProvider";
     }
 
+    inline std::string name() const
+    {
+        return name_;
+    }
+
     void setup(const std::string &name,
                ros::NodeHandle   &nh_private)
     {
@@ -35,7 +40,7 @@ public:
         loadParameters(nh_private);
     }
 
-    /**
+     /**
      * @brief Connect to data provider. Callback will be executed as
      *        long as the connection object is alive.
      * @param callback - function to call
@@ -66,7 +71,7 @@ protected:
     std::string name_;
     DataSignal  signal_;
 
-    virtual void loadParameters(ros::NodeHandle &nh_private) = 0;
+        virtual void loadParameters(ros::NodeHandle &nh_private) = 0;
 
     std::string param(const std::string &name)
     {

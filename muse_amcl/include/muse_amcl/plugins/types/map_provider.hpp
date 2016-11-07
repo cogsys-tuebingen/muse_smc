@@ -1,30 +1,19 @@
 #pragma once
 
 #include <memory>
-#include <vector>
-#include <tf/tf.h>
-#include <ros/node_handle.h>
-
-#include "data.hpp"
-#include <muse_amcl/pf/particle_set.hpp>
-
 
 namespace muse_amcl {
-class Update {
+class MapProvider {
 public:
-    typedef std::shared_ptr<Update> Ptr;
+    typedef std::shared_ptr<MapProvider> Ptr;
 
-    Update()
-    {
-    }
-
-    virtual ~Update()
+    virtual ~MapProvider()
     {
     }
 
     inline const static std::string Type()
     {
-        return "muse_amcl::Update";
+        return "muse_amcl::MapProvider";
     }
 
     inline std::string name() const
@@ -39,9 +28,6 @@ public:
         loadParameters(nh_private);
     }
 
-    virtual double apply(Data::ConstPtr &data,
-                         ParticleSet::WeightIterator set) = 0;
-
 protected:
     std::string name_;
 
@@ -53,4 +39,5 @@ protected:
     }
 
 };
+
 }
