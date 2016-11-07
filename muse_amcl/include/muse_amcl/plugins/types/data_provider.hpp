@@ -5,7 +5,7 @@
 #include <ros/node_handle.h>
 
 #include <muse_amcl/signals/signals.hpp>
-#include "data.hpp"
+#include "../data/data.hpp"
 
 namespace muse_amcl {
 class DataProvider {

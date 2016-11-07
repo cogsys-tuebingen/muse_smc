@@ -3,7 +3,7 @@
 #include <tf/tf.h>
 #include <memory>
 
-namespace muse {
+namespace muse_amcl {
 namespace maps {
 struct Map {
     typedef std::shared_ptr<Map> Ptr;

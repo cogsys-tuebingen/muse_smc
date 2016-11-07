@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace muse {
+namespace muse_amcl {
 namespace math {
 namespace angle {
 const double _2_M_PI = 2.0 * M_PI;

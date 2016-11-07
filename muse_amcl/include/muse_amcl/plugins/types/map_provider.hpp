@@ -2,6 +2,8 @@
 
 #include <memory>
 
+#include "../data/map.hpp"
+
 namespace muse_amcl {
 class MapProvider {
 public:

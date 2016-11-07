@@ -5,7 +5,7 @@
 #include <tf/tf.h>
 #include <ros/node_handle.h>
 
-#include "data.hpp"
+#include "../data/data.hpp"
 #include <muse_amcl/pf/particle_set.hpp>
 
 

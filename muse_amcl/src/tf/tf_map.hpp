@@ -3,7 +3,7 @@
 #include <tf/tf.h>
 #include <memory>
 
-namespace muse {
+namespace muse_amcl {
 namespace transforms {
 /**
  * @brief Multikey object to identify a transformation.

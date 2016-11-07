@@ -1,10 +1,10 @@
 #pragma once
 
-#include <muse_amcl/map/map.hpp>
+#include <muse_amcl/plugins/data/map.hpp>
 
 #include <array>
 
-namespace muse {
+namespace muse_amcl {
 namespace maps {
 template<typename T>
 class Bresenham

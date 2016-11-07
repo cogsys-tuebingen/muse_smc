@@ -3,7 +3,7 @@
 #include "gridmap.hpp"
 #include <nav_msgs/OccupancyGrid.h>
 
-namespace muse {
+namespace muse_amcl {
 namespace maps {
 class BinaryGridMap : public GridMap<int8_t>
 {

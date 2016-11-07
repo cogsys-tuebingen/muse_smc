@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     double width = canvas.cols / (double) histogram_bins;
 
     /// uniform 1D
-    muse::math::random::Uniform<1> u1D(-10.0, 10.0);
+    muse_amcl::math::random::Uniform<1> u1D(-10.0, 10.0);
     std::vector<double>            u1D_histogram(histogram_bins);
     std::size_t max = 0;
     for(std::size_t i = 0 ; i < sample_count ; ++i) {
@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     /// normally distributed
     display.setTo(cv::Scalar());
 
-    muse::math::random::Normal<1> n1D(0.0, 5.0);
+    muse_amcl::math::random::Normal<1> n1D(0.0, 5.0);
     std::vector<double> n1D_histogram(histogram_bins);
     max = 0;
     for(std::size_t i = 0 ; i < sample_count ; ++i) {
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 
    /// uniform distributed multivariate
    display.setTo(cv::Scalar());
-   muse::math::random::Uniform<2> u2D(Eigen::Vector2d(0.0, 0.0),
+   muse_amcl::math::random::Uniform<2> u2D(Eigen::Vector2d(0.0, 0.0),
                                       Eigen::Vector2d(1.0, 1.0));
    cv::Point dx(2,0);
    cv::Point dy(0,2);
@@ -84,8 +84,8 @@ int main(int argc, char *argv[])
    /// normal distributed multivariate
    display.setTo(cv::Scalar());
    Eigen::Matrix2d n2D_rot = Eigen::Matrix2d::Zero();
-   n2D_rot(0,0) = cos(muse::math::angle::toRad(45.0));
-   n2D_rot(0,1) =-sin(muse::math::angle::toRad(45.0));
+   n2D_rot(0,0) = cos(muse_amcl::math::angle::toRad(45.0));
+   n2D_rot(0,1) =-sin(muse_amcl::math::angle::toRad(45.0));
    n2D_rot(1,0) = -n2D_rot(0,1);
    n2D_rot(1,1) = n2D_rot(0,0);
 
@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 
 
    Eigen::Vector2d n2D_mean = Eigen::Vector2d(0.5, 0.5);
-   muse::math::random::Normal<2> n2D(n2D_mean,
+   muse_amcl::math::random::Normal<2> n2D(n2D_mean,
                                      n2D_cov);
 
    for(std::size_t i = 0 ; i < sample_count ; ++i) {

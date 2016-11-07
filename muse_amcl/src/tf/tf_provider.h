@@ -5,7 +5,7 @@
 
 #include <tf/transform_listener.h>
 
-namespace muse {
+namespace muse_amcl {
 namespace transforms {
 
 /**

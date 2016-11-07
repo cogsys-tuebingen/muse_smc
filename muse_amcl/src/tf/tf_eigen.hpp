@@ -3,7 +3,7 @@
 #include <eigen3/Eigen/Core>
 #include <tf/tf.h>
 
-namespace muse {
+namespace muse_amcl {
 namespace transforms {
 typedef Eigen::Matrix<double, 3, 1> Pose2D;
 typedef Eigen::Matrix<double, 6, 1> Pose3D;

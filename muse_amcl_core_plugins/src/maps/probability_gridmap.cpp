@@ -1,7 +1,7 @@
 #include <muse_amcl_core_plugins/maps/probability_gridmap.h>
 #include <tf/tf.h>
 
-using namespace muse;
+using namespace muse_amcl;
 using namespace maps;
 
 ProbabilityGridMap::ProbabilityGridMap(const nav_msgs::OccupancyGrid &occupancy_grid) :
