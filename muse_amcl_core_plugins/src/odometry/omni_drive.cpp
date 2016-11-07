@@ -10,7 +10,8 @@ OmniDrive::OmniDrive()
 
 }
 
-void OmniDrive::apply(ParticleSet::PoseIterator set)
+void OmniDrive::apply(Data::ConstPtr &data,
+                      ParticleSet::PoseIterator set)
 {
 
 }

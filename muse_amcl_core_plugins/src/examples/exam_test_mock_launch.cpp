@@ -1,7 +1,8 @@
-#include <muse_amcl/plugin_factories/update_function_factory.h>
-#include <muse_amcl/plugin_factories/propagation_function_factory.h>
+#include <muse_amcl/plugins/factory_update.h>
+#include <muse_amcl/plugins/factory_propagation.h>
 #include "../mock/mock_update.h"
 #include "../mock/mock_propagation.h"
+#include "../mock/mock_data.hpp"
 
 #include <ros/ros.h>
 #include <regex>
@@ -85,15 +86,16 @@ int main(int argc, char *argv[])
         }
     }
 
+    muse_amcl::Data::ConstPtr data(new muse_amcl::MockData);
     muse_amcl::ParticleSet set(1);
     std::cout << "updates first" << std::endl;
     for(auto &u : updates) {
-        u->apply(set.getWeights());
+        u->apply(data, set.getWeights());
 
     }
     std::cout << "propagations second" << std::endl;
     for(auto &p : propagations) {
-        p->apply(set.getPoses());
+        p->apply(data, set.getPoses());
     }
 
     ros::shutdown();

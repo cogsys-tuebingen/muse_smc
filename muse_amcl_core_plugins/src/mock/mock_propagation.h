@@ -1,6 +1,6 @@
 #pragma once
 
-#include <muse_amcl/plugins/propagation.hpp>
+#include <muse_amcl/plugins/types/propagation.hpp>
 
 namespace muse_amcl {
 class MockPropagation : public Propagation
@@ -10,7 +10,8 @@ public:
 
     MockPropagation();
 
-    virtual void apply(ParticleSet::PoseIterator set) override;
+    virtual void apply(Data::ConstPtr &data,
+                       ParticleSet::PoseIterator set) override;
 
 
     double  first_parameter;

@@ -17,7 +17,10 @@ public:
 
     DataProvider()
     {
+    }
 
+    virtual ~DataProvider()
+    {
     }
 
     inline const static std::string Type()

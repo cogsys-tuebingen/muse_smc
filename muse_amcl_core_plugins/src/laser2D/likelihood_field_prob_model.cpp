@@ -10,7 +10,8 @@ LikelihoodFieldProbModel::LikelihoodFieldProbModel()
 
 }
 
-double LikelihoodFieldProbModel::apply(ParticleSet::WeightIterator set)
+double LikelihoodFieldProbModel::apply(Data::ConstPtr &data,
+                                       ParticleSet::WeightIterator set)
 {
     return 0.0;
 }

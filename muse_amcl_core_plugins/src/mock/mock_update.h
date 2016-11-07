@@ -1,6 +1,6 @@
 #pragma once
 
-#include <muse_amcl/plugins/update.hpp>
+#include <muse_amcl/plugins/types/update.hpp>
 
 namespace muse_amcl {
 class MockUpdate : public Update
@@ -10,7 +10,8 @@ public:
 
     MockUpdate();
 
-    virtual double apply(ParticleSet::WeightIterator set) override;
+    virtual double apply(Data::ConstPtr &data,
+                         ParticleSet::WeightIterator set) override;
 
     double  first_parameter;
     int     second_parameter;

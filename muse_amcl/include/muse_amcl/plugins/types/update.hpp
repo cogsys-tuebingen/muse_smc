@@ -5,7 +5,9 @@
 #include <tf/tf.h>
 #include <ros/node_handle.h>
 
+#include "data.hpp"
 #include <muse_amcl/pf/particle_set.hpp>
+
 
 namespace muse_amcl {
 class Update {
@@ -13,6 +15,10 @@ public:
     typedef std::shared_ptr<Update> Ptr;
 
     Update()
+    {
+    }
+
+    virtual ~Update()
     {
     }
 
@@ -28,7 +34,8 @@ public:
         loadParameters(nh_private);
     }
 
-    virtual double apply(ParticleSet::WeightIterator set) = 0;
+    virtual double apply(Data::ConstPtr &data,
+                         ParticleSet::WeightIterator set) = 0;
 
 protected:
     std::string name_;

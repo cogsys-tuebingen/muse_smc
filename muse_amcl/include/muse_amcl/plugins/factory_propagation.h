@@ -1,8 +1,6 @@
 #pragma once
 
-#include <muse_amcl/plugins/plugin_manager.hpp>
-#include <muse_amcl/plugins/propagation.hpp>
-
+#include "types/propagation.hpp"
 #include "factory.hpp"
 
 namespace muse_amcl {

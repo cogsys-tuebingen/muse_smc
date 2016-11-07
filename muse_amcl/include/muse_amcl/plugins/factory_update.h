@@ -1,7 +1,6 @@
 #pragma once
 
-#include <muse_amcl/plugins/plugin_manager.hpp>
-#include <muse_amcl/plugins/update.hpp>
+#include "types/update.hpp"
 #include "factory.hpp"
 
 namespace muse_amcl {

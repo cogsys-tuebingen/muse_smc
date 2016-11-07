@@ -1,6 +1,6 @@
 #pragma once
 
-#include <muse_amcl/plugins/data_provider.hpp>
+#include <muse_amcl/plugins/types/data_provider.hpp>
 
 #include <ros/ros.h>
 #include <std_msgs/String.h>

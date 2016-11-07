@@ -1,7 +1,7 @@
 #include <ros/ros.h>
 
-#include <muse_amcl/plugin_factories/data_provider_factory.h>
-#include <muse_amcl/plugin_factories/map_provider_factory.h>
+#include <muse_amcl/plugins/factory_data_provider.h>
+#include <muse_amcl/plugins/factory_map_provider.h>
 
 using namespace muse_amcl;
 

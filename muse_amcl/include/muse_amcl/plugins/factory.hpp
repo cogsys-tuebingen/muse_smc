@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <muse_amcl/plugins/plugin_manager.hpp>
+#include "plugin_manager.hpp"
 
 namespace muse_amcl {
 template<typename PluginType>

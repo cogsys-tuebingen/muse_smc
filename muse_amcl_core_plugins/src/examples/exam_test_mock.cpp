@@ -1,6 +1,6 @@
-#include <muse_amcl/plugin_factories/update_function_factory.h>
-#include <muse_amcl/plugin_factories/propagation_function_factory.h>
-#include <muse_amcl/plugin_factories/data_provider_factory.h>
+#include <muse_amcl/plugins/factory_update.h>
+#include <muse_amcl/plugins/factory_propagation.h>
+#include <muse_amcl/plugins/factory_data_provider.h>
 
 #include "../mock/mock_data.hpp"
 
@@ -40,8 +40,10 @@ int main(int argc, char *argv[])
                                                           "muse_amcl::MockPropagation");
     muse_amcl::ParticleSet set(1);
 
-    u->apply(set.getWeights());
-    p->apply(set.getPoses());
+    muse_amcl::Data::ConstPtr data(new muse_amcl::MockData);
+
+    u->apply(data, set.getWeights());
+    p->apply(data, set.getPoses());
 
 
     std::shared_ptr<muse_amcl::DataProvider> d = df.create("mock_data",

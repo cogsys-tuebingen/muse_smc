@@ -1,4 +1,5 @@
-#include <muse_amcl/plugin_factories/propagation_function_factory.h>
+#include <muse_amcl/plugins/factory_propagation.h>
+#include <muse_amcl/plugins/plugin_manager.hpp>
 
 using namespace muse_amcl;
 

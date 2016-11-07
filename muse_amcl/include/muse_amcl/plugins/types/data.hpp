@@ -3,9 +3,12 @@
 #include <memory>
 
 namespace muse_amcl {
-struct Data {
+class Data {
+public:
     typedef std::shared_ptr<Data> Ptr;
     typedef std::shared_ptr<const Data> ConstPtr;
+
+    Data(const Data &other) = delete;
 
     virtual ~Data()
     {
@@ -23,6 +26,9 @@ struct Data {
     {
         return dynamic_cast<const T*>(this);
     }
+
+protected:
+    Data(){}
 
 };
 }

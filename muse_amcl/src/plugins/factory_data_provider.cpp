@@ -1,4 +1,5 @@
-#include <muse_amcl/plugin_factories/data_provider_factory.h>
+#include <muse_amcl/plugins/factory_data_provider.h>
+#include <muse_amcl/plugins/plugin_manager.hpp>
 
 using namespace muse_amcl;
 

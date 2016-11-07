@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <muse_amcl/plugins/data.hpp>
+#include <muse_amcl/plugins/types/data.hpp>
 
 namespace muse_amcl {
 

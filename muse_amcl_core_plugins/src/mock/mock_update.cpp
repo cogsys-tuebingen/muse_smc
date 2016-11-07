@@ -13,7 +13,8 @@ MockUpdate::MockUpdate()
 
 }
 
-double MockUpdate::apply(ParticleSet::WeightIterator set)
+double MockUpdate::apply(Data::ConstPtr &data,
+                         ParticleSet::WeightIterator set)
 {
     std::cout << "Hello, I am a mock update - Greetings Traveller!" << std::endl;
     std::cout <<  first_parameter << " " << second_parameter << std::endl;

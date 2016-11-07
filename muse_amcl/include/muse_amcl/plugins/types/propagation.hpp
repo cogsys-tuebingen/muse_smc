@@ -5,6 +5,7 @@
 #include <tf/tf.h>
 #include <ros/node_handle.h>
 
+#include "data.hpp"
 #include <muse_amcl/pf/particle_set.hpp>
 
 namespace muse_amcl {
@@ -13,6 +14,10 @@ public:
     typedef std::shared_ptr<Propagation> Ptr;
 
     Propagation()
+    {
+    }
+
+    virtual ~Propagation()
     {
     }
 
@@ -28,7 +33,8 @@ public:
         loadParameters(nh);
     }
 
-    virtual void apply(ParticleSet::PoseIterator set) = 0;
+    virtual void apply(Data::ConstPtr &data,
+                       ParticleSet::PoseIterator set) = 0;
 
 protected:
     std::string name_;
