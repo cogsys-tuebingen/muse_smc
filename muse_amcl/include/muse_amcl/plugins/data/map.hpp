@@ -4,9 +4,10 @@
 #include <memory>
 
 namespace muse_amcl {
-namespace maps {
 struct Map {
     typedef std::shared_ptr<Map> Ptr;
+    typedef std::shared_ptr<Map const> ConstPtr;
+
     virtual inline bool valid(const tf::Pose &_p) const
     {
         return true;
@@ -26,12 +27,22 @@ struct Map {
                          std::numeric_limits<double>::max());
     }
 
+    virtual inline bool isLoaded() const
+    {
+        return true;
+    }
+
     Map(const std::string &_frame) :
-        frame(_frame)
+        frame_(_frame)
     {
     }
 
-    const std::string frame;
+    inline std::string frame()
+    {
+        return frame_;
+    }
+
+protected:
+    std::string frame_;
 };
-}
 }

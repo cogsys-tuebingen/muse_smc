@@ -23,12 +23,14 @@ public:
         return name_;
     }
 
-    void setup(const std::string &name,
+    inline void setup(const std::string &name,
                ros::NodeHandle   &nh_private)
     {
-        name_ = name;
-        loadParameters(nh_private);
+            name_ = name;
+            loadParameters(nh_private);
     }
+
+    virtual Map::ConstPtr map() const = 0;
 
 protected:
     std::string name_;
@@ -41,5 +43,4 @@ protected:
     }
 
 };
-
 }
