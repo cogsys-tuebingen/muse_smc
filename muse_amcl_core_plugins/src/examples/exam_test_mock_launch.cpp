@@ -1,8 +1,12 @@
-#include <muse_amcl/plugins/factory_update.h>
-#include <muse_amcl/plugins/factory_propagation.h>
+#include <muse_amcl/plugins/factory.hpp>
+#include <muse_amcl/plugins/types/update.hpp>
+#include <muse_amcl/plugins/types/propagation.hpp>
+
 #include "../mock/mock_update.h"
 #include "../mock/mock_propagation.h"
 #include "../mock/mock_data.hpp"
+
+#include <muse_amcl/plugins/plugin_loader.hpp>
 
 #include <ros/ros.h>
 #include <regex>
@@ -34,68 +38,22 @@ int main(int argc, char *argv[])
 
 
     /// iteration
-    std::cout << "---------------------" << std::endl;
 
-    std::vector<std::string> params;
-    nh.getParamNames(params);
-    std::string ns = nh.getNamespace();
-
-
-    boost::regex plugin_class_regex("(" + ns + "/)(.*)(/class)");
-    boost::regex plugin_base_class_regex("(" + ns + "/)(.*)(/base_class)");
-
-    struct Plugin {
-        std::string class_name;
-        std::string base_class_name;
-    };
-
-    std::map<std::string, Plugin> plugins;
-    boost::cmatch match;
-    for(auto &p : params) {
-        if(boost::regex_match(p.c_str(), match, plugin_class_regex)) {
-            nh.getParam(match[2] + "/class", plugins[match[2]].class_name);
-        }
-        if(boost::regex_match(p.c_str(), match, plugin_base_class_regex)) {
-            nh.getParam(match[2] + "/base_class", plugins[match[2]].base_class_name);
-        }
-
-    }
-
-
-    std::vector<muse_amcl::Update::Ptr> updates;
-    std::vector<muse_amcl::Propagation::Ptr> propagations;
-    muse_amcl::UpdateFunctionFactory uf;
-    muse_amcl::PropagationFunctionFactory pf;
-
-
-    for(auto &e : plugins) {
-        const std::string &name = e.first;
-        const std::string &base_class_name = e.second.base_class_name;
-        const std::string &class_name = e.second.class_name;
-
-        if(base_class_name == muse_amcl::UpdateFunctionFactory::Type()) {
-            std::cout << "Creating " << name << " " << class_name << std::endl;
-            muse_amcl::Update::Ptr u = uf.create(name, class_name);
-            updates.push_back(u);
-        } else if (base_class_name == muse_amcl::PropagationFunctionFactory::Type()) {
-            std::cout << "Creating " << name << " " << class_name << std::endl;
-            muse_amcl::Propagation::Ptr p = pf.create(name, class_name);
-            propagations.push_back(p);
-        } else {
-            std::cerr << "Cannot determine this base class '" << base_class_name << "'!" << std::endl;
-        }
-    }
+    std::map<std::string, muse_amcl::Update::Ptr> updates;
+    std::map<std::string, muse_amcl::Propagation::Ptr> propagations;
+    muse_amcl::PluginLoader<muse_amcl::Update>::load(nh, updates);
+    muse_amcl::PluginLoader<muse_amcl::Propagation>::load(nh, propagations);
 
     muse_amcl::Data::ConstPtr data(new muse_amcl::MockData);
     muse_amcl::ParticleSet set(1);
     std::cout << "updates first" << std::endl;
     for(auto &u : updates) {
-        u->apply(data, set.getWeights());
+        u.second->apply(data, set.getWeights());
 
     }
     std::cout << "propagations second" << std::endl;
     for(auto &p : propagations) {
-        p->apply(data, set.getPoses());
+        p.second->apply(data, set.getPoses());
     }
 
     ros::shutdown();

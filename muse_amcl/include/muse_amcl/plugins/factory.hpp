@@ -15,8 +15,8 @@ public:
         plugin_manager.load();
     }
 
-    virtual typename PluginType::Ptr create(const std::string &class_name,
-                                            const std::string &plugin_name)
+    typename PluginType::Ptr create(const std::string &class_name,
+                                    const std::string &plugin_name)
     {
         auto constructor = plugin_manager.getConstructor(class_name);
         if(constructor) {

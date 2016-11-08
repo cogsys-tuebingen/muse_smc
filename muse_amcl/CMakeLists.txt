@@ -49,18 +49,6 @@ target_link_libraries(muse_amcl_tf
     ${catkin_LIBRARIES}
 )
 
-add_library(muse_amcl_plugins
-    src/plugins/factory_update.cpp
-    src/plugins/factory_propagation.cpp
-    src/plugins/plugin_loader.cpp
-)
-
-target_link_libraries(muse_amcl_plugins
-    ${catkin_LIBRARIES}
-    ${tinyXML_LIBRARIES}
-)
-
-
 add_library(muse_amcl_particle_filter
     src/particle_filter/particle_filter.cpp
 )

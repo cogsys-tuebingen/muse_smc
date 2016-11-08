@@ -1,6 +1,8 @@
-#include <muse_amcl/plugins/factory_update.h>
-#include <muse_amcl/plugins/factory_propagation.h>
 #include <muse_amcl/plugins/types/data_provider.hpp>
+#include <muse_amcl/plugins/factory.hpp>
+#include <muse_amcl/plugins/types/update.hpp>
+#include <muse_amcl/plugins/types/propagation.hpp>
+
 
 #include "../mock/mock_data.hpp"
 
@@ -30,8 +32,8 @@ int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "muse_mock");
 
-    muse_amcl::UpdateFunctionFactory uf;
-    muse_amcl::PropagationFunctionFactory pf;
+    muse_amcl::PluginFactory<muse_amcl::Update> uf;
+    muse_amcl::PluginFactory<muse_amcl::Propagation> pf;
     muse_amcl::PluginFactory<muse_amcl::DataProvider> df;
 
     std::shared_ptr<muse_amcl::Update>      u = uf.create("mock_update",
