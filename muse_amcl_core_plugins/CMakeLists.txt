@@ -54,6 +54,7 @@ if(${BUILD_EXAMPLES})
         src/mock/mock_update.cpp
         src/mock/mock_data_provider.cpp
         src/mock/mock_propagation.cpp
+        src/mock/mock_map_provider.cpp
     )
 
     target_link_libraries(muse_amcl_mock_plugins

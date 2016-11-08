@@ -8,4 +8,7 @@
    <class type="muse_amcl::MockDataProvider" base_class_type="muse_amcl::DataProvider">
      <description>Mockup</description>
    </class>
+   <class type="muse_amcl::MockMapProvider" base_class_type="muse_amcl::MapProvider">
+   	 <description>Mockup</description>
+   </class>
 </library>

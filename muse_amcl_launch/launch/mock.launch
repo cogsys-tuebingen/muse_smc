@@ -29,6 +29,14 @@
 		    <param name="first" value="0.00001" />
             <param name="second" value="10000" />
 		</group>
+		<group ns="map0"> 
+			<param name="class" value="muse_amcl::MockMapProvider" />
+			<param name="base_class" value="muse_amcl::MapProvider" />
+		</group>
+		<group ns="data0">
+			<param name="class" value="MockDataProvider" />
+			<param name="base_class" value="muse_amcl::DataProvider" />
+		</group>
 	</group>
 
 

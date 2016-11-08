@@ -1,6 +1,8 @@
 #include <muse_amcl/plugins/factory.hpp>
 #include <muse_amcl/plugins/types/update.hpp>
 #include <muse_amcl/plugins/types/propagation.hpp>
+#include <muse_amcl/plugins/types/map_provider.hpp>
+#include <muse_amcl/plugins/types/data_provider.hpp>
 
 #include "../mock/mock_update.h"
 #include "../mock/mock_propagation.h"
@@ -41,8 +43,18 @@ int main(int argc, char *argv[])
 
     std::map<std::string, muse_amcl::Update::Ptr> updates;
     std::map<std::string, muse_amcl::Propagation::Ptr> propagations;
+    std::map<std::string, muse_amcl::MapProvider::Ptr> maps;
+    std::map<std::string, muse_amcl::DataProvider::Ptr> datas;
+
     muse_amcl::PluginLoader<muse_amcl::Update>::load(nh, updates);
     muse_amcl::PluginLoader<muse_amcl::Propagation>::load(nh, propagations);
+    muse_amcl::PluginLoader<muse_amcl::MapProvider>::load(nh, maps);
+    muse_amcl::PluginLoader<muse_amcl::DataProvider>::load(nh, datas);
+
+    std::cout << "updates      " << updates.size() << std::endl;
+    std::cout << "propagations " << propagations.size() << std::endl;
+    std::cout << "maps         " << maps.size() << std::endl;
+    std::cout << "datas        " << datas.size() << std::endl;
 
     muse_amcl::Data::ConstPtr data(new muse_amcl::MockData);
     muse_amcl::ParticleSet set(1);
