@@ -52,8 +52,6 @@ target_link_libraries(muse_amcl_tf
 add_library(muse_amcl_plugins
     src/plugins/factory_update.cpp
     src/plugins/factory_propagation.cpp
-    src/plugins/factory_map_provider.cpp
-    src/plugins/factory_data_provider.cpp
     src/plugins/plugin_loader.cpp
 )
 

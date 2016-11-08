@@ -1,6 +1,6 @@
 #include <muse_amcl/plugins/factory_update.h>
 #include <muse_amcl/plugins/factory_propagation.h>
-#include <muse_amcl/plugins/factory_data_provider.h>
+#include <muse_amcl/plugins/types/data_provider.hpp>
 
 #include "../mock/mock_data.hpp"
 
@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 
     muse_amcl::UpdateFunctionFactory uf;
     muse_amcl::PropagationFunctionFactory pf;
-    muse_amcl::DataProviderFactory df;
+    muse_amcl::PluginFactory<muse_amcl::DataProvider> df;
 
     std::shared_ptr<muse_amcl::Update>      u = uf.create("mock_update",
                                                           "muse_amcl::MockUpdate");

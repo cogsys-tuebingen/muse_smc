@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <ros/node_handle.h>
 #include "plugin_manager.hpp"
 
 namespace muse_amcl {
@@ -14,11 +15,14 @@ public:
         plugin_manager.load();
     }
 
-    virtual typename PluginType::Ptr create(const std::string class_name)
+    virtual typename PluginType::Ptr create(const std::string &class_name,
+                                            const std::string &plugin_name)
     {
         auto constructor = plugin_manager.getConstructor(class_name);
         if(constructor) {
-            return constructor();
+            typename PluginType::Ptr plugin = constructor();
+            plugin->setup(plugin_name, nh_private_);
+            return plugin;
         } else {
             std::cerr << "[Factory] :"
                       << " Cannot create '"  << class_name

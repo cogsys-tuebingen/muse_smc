@@ -6,7 +6,7 @@ using namespace muse_amcl;
 Propagation::Ptr PropagationFunctionFactory::create(const std::string& plugin_name,
                                                     const std::string& class_name)
 {
-    Propagation::Ptr propagation = PluginFactory::create(class_name);
+    Propagation::Ptr propagation = PluginFactory::create(plugin_name, class_name);
     if(propagation) {
         propagation->setup(plugin_name, nh_private_);
     }

@@ -6,7 +6,7 @@ using namespace muse_amcl;
 Update::Ptr UpdateFunctionFactory::create(const std::string& plugin_name,
                                           const std::string& class_name)
 {
-    Update::Ptr update = PluginFactory<Update>::create(class_name);
+    Update::Ptr update = PluginFactory<Update>::create(plugin_name, class_name);
     if(update) {
         update->setup(plugin_name, nh_private_);
     }
