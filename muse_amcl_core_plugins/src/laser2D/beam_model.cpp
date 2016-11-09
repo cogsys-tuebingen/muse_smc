@@ -18,6 +18,11 @@ void BeamModel::setMap(Map::ConstPtr &map)
 
 }
 
+bool BeamModel::hasMap() const
+{
+    return true;
+}
+
 void BeamModel::loadParameters(ros::NodeHandle &nh)
 {
 

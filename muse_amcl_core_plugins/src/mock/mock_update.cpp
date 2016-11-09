@@ -26,6 +26,11 @@ void MockUpdate::setMap(Map::ConstPtr &map)
 
 }
 
+bool MockUpdate::hasMap() const
+{
+    return true;
+}
+
 void MockUpdate::loadParameters(ros::NodeHandle &nh_private)
 {
     first_parameter  = nh_private.param(param("first"), 0.5);

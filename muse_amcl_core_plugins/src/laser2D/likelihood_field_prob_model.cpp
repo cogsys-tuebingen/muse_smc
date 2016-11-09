@@ -21,6 +21,11 @@ void LikelihoodFieldProbModel::setMap(Map::ConstPtr &map)
 
 }
 
+bool LikelihoodFieldProbModel::hasMap() const
+{
+    return true;
+}
+
 void LikelihoodFieldProbModel::loadParameters(ros::NodeHandle &nh)
 {
 

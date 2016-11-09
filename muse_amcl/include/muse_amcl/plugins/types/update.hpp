@@ -46,6 +46,7 @@ public:
 
     virtual void setMap(Map::ConstPtr &map) = 0;
 
+    virtual bool hasMap() const = 0;
 
 protected:
     std::string name_;

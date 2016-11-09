@@ -17,6 +17,11 @@ void LikelihoodFieldModel::setMap(Map::ConstPtr &map)
 
 }
 
+bool LikelihoodFieldModel::hasMap() const
+{
+    return true;
+}
+
 void LikelihoodFieldModel::loadParameters(ros::NodeHandle &nh)
 {
 

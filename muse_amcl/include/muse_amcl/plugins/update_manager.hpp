@@ -13,7 +13,9 @@ public:
 
 private:
     muse_amcl::DataProvider::DataConnection::Ptr data_connection;
+    muse_macl::MapProvider::Connection::Ptr      map_connection;
     MapProvider::Ptr                             map_provider;
 
+    /// ptr to prio queue
 };
 }
