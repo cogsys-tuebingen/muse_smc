@@ -9,13 +9,33 @@ class UpdateManager {
 public:
     typedef std::shared_ptr<UpdateManager> Ptr;
 
+    UpdateManager(Update::Ptr &update
+                  /*, prio queue */) :
+        update_(update)
+    {
+    }
 
+    virtual  ~UpdateManager()
+    {
+    }
 
-private:
-    muse_amcl::DataProvider::DataConnection::Ptr data_connection;
-    muse_macl::MapProvider::Connection::Ptr      map_connection;
-    MapProvider::Ptr                             map_provider;
+    void setup(muse_amcl::DataProvider::Ptr &data_provider,
+               muse_amcl::MapProvider::Ptr  &map_provider)
+    {
+        data_connection_ = data_provider.connect(std::bind(UpdateManager::dataCallback, this));
+        map_provider_ = map_provider;
+    }
 
-    /// ptr to prio queue
+protected:
+    muse_amcl::DataProvider::DataConnection::Ptr data_connection_;
+    MapProvider::Ptr                             map_provider_;
+    Update::Ptr                                  update_;
+
+    void dataCallback(const Data::ConstPtr &data)
+    {
+        /// build lambda expression and push to prio queue
+        /// maybe model function can be exchanged ( no pointer )
+    }
+
 };
 }

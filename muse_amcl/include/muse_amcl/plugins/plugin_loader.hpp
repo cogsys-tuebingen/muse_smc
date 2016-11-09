@@ -51,7 +51,6 @@ struct PluginLoader
             const std::string &name = entry.first;
             const std::string &base_class_name = entry.second.base_class_name;
             const std::string &class_name = entry.second.class_name;
-            std::string p = PluginType::Type();
             if(base_class_name == PluginType::Type()) {
                 plugins[name] = factory.create(class_name, name);
             }

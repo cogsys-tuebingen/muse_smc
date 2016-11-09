@@ -10,10 +10,10 @@
 namespace muse_amcl {
 class DataProvider {
 public:
-    typedef std::shared_ptr<DataProvider>       Ptr;
-    typedef std::function<void(Data::ConstPtr)> Callback;
-    typedef Signal<Callback>                    DataSignal;
-    typedef DataSignal::Connection              DataConnection;
+    typedef std::shared_ptr<DataProvider>              Ptr;
+    typedef std::function<void(const Data::ConstPtr&)> Callback;
+    typedef Signal<Callback>                           DataSignal;
+    typedef DataSignal::Connection                     DataConnection;
 
     DataProvider()
     {
