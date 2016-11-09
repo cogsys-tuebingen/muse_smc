@@ -11,10 +11,8 @@ public:
     MockUpdate();
 
     virtual double apply(Data::ConstPtr &data,
+                         Map::ConstPtr &map,
                          ParticleSet::WeightIterator set) override;
-
-    virtual void setMap(Map::ConstPtr &map) override;
-    virtual bool hasMap() const override;
 
     double  first_parameter;
     int     second_parameter;

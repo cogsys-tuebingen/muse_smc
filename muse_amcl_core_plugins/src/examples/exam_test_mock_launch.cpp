@@ -56,11 +56,12 @@ int main(int argc, char *argv[])
     std::cout << "maps         " << maps.size() << std::endl;
     std::cout << "datas        " << datas.size() << std::endl;
 
-    muse_amcl::Data::ConstPtr data(new muse_amcl::MockData);
+    muse_amcl::Data::ConstPtr data;
+    muse_amcl::Map::ConstPtr map;
     muse_amcl::ParticleSet set(1);
     std::cout << "updates first" << std::endl;
     for(auto &u : updates) {
-        u.second->apply(data, set.getWeights());
+        u.second->apply(data, map, set.getWeights());
 
     }
     std::cout << "propagations second" << std::endl;

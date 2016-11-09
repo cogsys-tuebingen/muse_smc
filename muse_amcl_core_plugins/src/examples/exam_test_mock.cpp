@@ -2,7 +2,7 @@
 #include <muse_amcl/plugins/factory.hpp>
 #include <muse_amcl/plugins/types/update.hpp>
 #include <muse_amcl/plugins/types/propagation.hpp>
-
+#include <muse_amcl/plugins/data/map.hpp>
 
 #include "../mock/mock_data.hpp"
 
@@ -36,15 +36,16 @@ int main(int argc, char *argv[])
     muse_amcl::PluginFactory<muse_amcl::Propagation> pf;
     muse_amcl::PluginFactory<muse_amcl::DataProvider> df;
 
-    std::shared_ptr<muse_amcl::Update>      u = uf.create("mock_update",
-                                                          "muse_amcl::MockUpdate");
-    std::shared_ptr<muse_amcl::Propagation> p = pf.create("mock_propagation",
-                                                          "muse_amcl::MockPropagation");
+    muse_amcl::Update::Ptr      u = uf.create("mock_update",
+                                              "muse_amcl::MockUpdate");
+    muse_amcl::Propagation::Ptr p = pf.create("mock_propagation",
+                                              "muse_amcl::MockPropagation");
     muse_amcl::ParticleSet set(1);
 
-    muse_amcl::Data::ConstPtr data(new muse_amcl::MockData);
+    muse_amcl::Map::ConstPtr map;
+    muse_amcl::Data::ConstPtr data;
 
-    u->apply(data, set.getWeights());
+    u->apply(data, map, set.getWeights());
     p->apply(data, set.getPoses());
 
 

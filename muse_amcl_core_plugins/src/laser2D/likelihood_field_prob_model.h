@@ -9,10 +9,8 @@ public:
     LikelihoodFieldProbModel();
 
     virtual double apply(Data::ConstPtr &data,
+                         Map::ConstPtr &map,
                          ParticleSet::WeightIterator set) override;
-
-    virtual void setMap(Map::ConstPtr &map) override;
-    virtual bool hasMap() const override;
 
 protected:
     virtual void loadParameters(ros::NodeHandle &nh) override;

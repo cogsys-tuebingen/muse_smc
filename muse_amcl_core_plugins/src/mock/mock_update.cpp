@@ -14,21 +14,12 @@ MockUpdate::MockUpdate()
 }
 
 double MockUpdate::apply(Data::ConstPtr &data,
+                         Map::ConstPtr &map,
                          ParticleSet::WeightIterator set)
 {
     std::cout << "Hello, I am a mock update - Greetings Traveller!" << std::endl;
     std::cout <<  first_parameter << " " << second_parameter << std::endl;
     return 0.0;
-}
-
-void MockUpdate::setMap(Map::ConstPtr &map)
-{
-
-}
-
-bool MockUpdate::hasMap() const
-{
-    return true;
 }
 
 void MockUpdate::loadParameters(ros::NodeHandle &nh_private)

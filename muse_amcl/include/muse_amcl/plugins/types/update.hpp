@@ -42,11 +42,8 @@ public:
     }
 
     virtual double apply(Data::ConstPtr &data,
+                         Map::ConstPtr &map,
                          ParticleSet::WeightIterator set) = 0;
-
-    virtual void setMap(Map::ConstPtr &map) = 0;
-
-    virtual bool hasMap() const = 0;
 
 protected:
     std::string name_;
