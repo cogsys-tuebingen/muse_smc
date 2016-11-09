@@ -48,7 +48,7 @@ public:
      */
     DataConnection::Ptr connect(const Callback &callback)
     {
-        return signal_.connect(callback);
+        return data_received_.connect(callback);
     }
 
     /**
@@ -56,7 +56,7 @@ public:
      */
     void enable()
     {
-        signal_.enable();
+        data_received_.enable();
     }
 
     /**
@@ -64,12 +64,12 @@ public:
      */
     void disable()
     {
-        signal_.disable();
+        data_received_.disable();
     }
 
 protected:
     std::string name_;
-    DataSignal  signal_;
+    DataSignal  data_received_;
 
         virtual void loadParameters(ros::NodeHandle &nh_private) = 0;
 

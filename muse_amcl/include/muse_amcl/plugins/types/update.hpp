@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 #include <tf/tf.h>
+#include <tf/transform_listener.h>
 #include <ros/node_handle.h>
 
 #include <muse_amcl/plugins/data/data.hpp>
@@ -44,6 +45,7 @@ public:
                          ParticleSet::WeightIterator set) = 0;
 
     virtual void setMap(Map::ConstPtr &map) = 0;
+
 
 protected:
     std::string name_;

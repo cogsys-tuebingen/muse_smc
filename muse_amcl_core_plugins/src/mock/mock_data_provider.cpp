@@ -31,5 +31,5 @@ void MockDataProvider::callback(const std_msgs::String::ConstPtr& msg)
 
     Data::ConstPtr ptr(d);
 
-    signal_(ptr);
+    data_received_(ptr);
 }

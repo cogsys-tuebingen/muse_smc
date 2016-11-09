@@ -11,6 +11,8 @@
 		<group ns="propagation0">
             <param name="class" value="muse_amcl::MockPropagation" />
             <param name="base_class" value="muse_amcl::Propagation" />
+
+            <param name="data_provider" value="" />
             
             <param name="first" value="0.001" />
             <param name="second" value="100" />
@@ -18,13 +20,18 @@
 		<group ns="update1">
             <param name="class" value="muse_amcl::MockUpdate" />
             <param name="base_class" value="muse_amcl::Update" />
-		
+
+            <param name="data_provider" value="" />
+			<param name="map_provider" value="" />
+
             <param name="first" value="0.0001" />
             <param name="second" value="1000" />
 		</group>
 		<group ns="propagation1">
 			<param name="class" value="muse_amcl::MockPropagation" />
             <param name="base_class" value="muse_amcl::Propagation" />
+
+            <param name="data_provider" value="" />
 		
 		    <param name="first" value="0.00001" />
             <param name="second" value="10000" />
