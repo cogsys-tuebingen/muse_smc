@@ -4,7 +4,8 @@
 #include <memory>
 
 namespace muse_amcl {
-struct Map {
+class Map {
+public:
     typedef std::shared_ptr<Map> Ptr;
     typedef std::shared_ptr<Map const> ConstPtr;
 
@@ -42,7 +43,22 @@ struct Map {
         return frame_;
     }
 
+    template<typename T>
+    bool isType() const
+    {
+        const T *t = dynamic_cast<const T*>(this);
+        return t != nullptr;
+    }
+
+    template<typename T>
+    T const * as() const
+    {
+        return dynamic_cast<const T*>(this);
+    }
+
 protected:
+    Map(){}
+
     std::string frame_;
 };
 }

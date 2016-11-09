@@ -16,6 +16,11 @@ double LikelihoodFieldProbModel::apply(Data::ConstPtr &data,
     return 0.0;
 }
 
+void LikelihoodFieldProbModel::setMap(Map::ConstPtr &map)
+{
+
+}
+
 void LikelihoodFieldProbModel::loadParameters(ros::NodeHandle &nh)
 {
 

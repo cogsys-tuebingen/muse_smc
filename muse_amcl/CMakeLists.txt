@@ -58,6 +58,15 @@ target_link_libraries(muse_amcl_particle_filter
     ${tinyXML_LIBRARIES}
 )
 
+add_executable(muse_amcl_node
+    src/node/muse_amcl_node.cpp
+)
+
+target_link_libraries(muse_amcl_node
+    ${catkin_LIBRARIES}
+)
+
+
 if(${BUILD_EXAMPLES})
     add_executable(muse_amcl_exam_signals
         src/examples/example_signals.cpp

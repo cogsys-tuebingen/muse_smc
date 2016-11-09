@@ -1,11 +1,7 @@
-#ifndef MUSEAMCLNODE_H
-#define MUSEAMCLNODE_H
-
+#pragma once
 
 class MuseAMCLNode
 {
 public:
     MuseAMCLNode();
 };
-
-#endif // MUSEAMCLNODE_H

@@ -12,6 +12,11 @@ double LikelihoodFieldModel::apply(Data::ConstPtr &data,
     return 0.0;
 }
 
+void LikelihoodFieldModel::setMap(Map::ConstPtr &map)
+{
+
+}
+
 void LikelihoodFieldModel::loadParameters(ros::NodeHandle &nh)
 {
 

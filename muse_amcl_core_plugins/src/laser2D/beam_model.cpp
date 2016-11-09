@@ -13,6 +13,11 @@ double BeamModel::apply(Data::ConstPtr &data,
     return 0.0;
 }
 
+void BeamModel::setMap(Map::ConstPtr &map)
+{
+
+}
+
 void BeamModel::loadParameters(ros::NodeHandle &nh)
 {
 

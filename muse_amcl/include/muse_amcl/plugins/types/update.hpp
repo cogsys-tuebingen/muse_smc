@@ -5,7 +5,8 @@
 #include <tf/tf.h>
 #include <ros/node_handle.h>
 
-#include "../data/data.hpp"
+#include <muse_amcl/plugins/data/data.hpp>
+#include <muse_amcl/plugins/data/map.hpp>
 #include <muse_amcl/pf/particle_set.hpp>
 
 
@@ -41,6 +42,8 @@ public:
 
     virtual double apply(Data::ConstPtr &data,
                          ParticleSet::WeightIterator set) = 0;
+
+    virtual void setMap(Map::ConstPtr &map) = 0;
 
 protected:
     std::string name_;
