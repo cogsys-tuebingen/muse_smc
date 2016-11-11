@@ -1,6 +1,6 @@
 #pragma once
 
-#include "factory.hpp"
+#include "plugin_factory.hpp"
 #include <map>
 #include <ros/node_handle.h>
 #include <boost/regex.hpp>

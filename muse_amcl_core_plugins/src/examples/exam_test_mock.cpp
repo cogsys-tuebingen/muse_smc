@@ -1,5 +1,5 @@
 #include <muse_amcl/plugins/types/data_provider.hpp>
-#include <muse_amcl/plugins/factory.hpp>
+#include <muse_amcl/plugins/plugin_factory.hpp>
 #include <muse_amcl/plugins/types/update.hpp>
 #include <muse_amcl/plugins/types/propagation.hpp>
 #include <muse_amcl/plugins/data/map.hpp>
