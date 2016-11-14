@@ -41,6 +41,16 @@ public:
     virtual void apply(Data::ConstPtr &data,
                        ParticleSet::PoseIterator set) = 0;
 
+    virtual void predict(const std::time_t until,
+                         ParticleSet::PoseIterator set)
+    {
+    }
+
+    virtual bool canPredict(const std::time_t until)
+    {
+        return false;
+    }
+
 protected:
     std::string name_;
 

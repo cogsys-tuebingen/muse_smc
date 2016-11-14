@@ -2,12 +2,30 @@
 
 #include <tf/tf.h>
 #include <memory>
+#include <chrono>
 
 namespace muse_amcl {
 class Map {
 public:
     typedef std::shared_ptr<Map> Ptr;
     typedef std::shared_ptr<Map const> ConstPtr;
+
+    Map(const std::string &_frame) :
+        frame_(_frame),
+        stamp_(std::chrono::system_clock::now())
+    {
+    }
+
+    Map(const std::string &_frame,
+        const std::chrono::time_point<std::chrono::system_clock> &_stamp) :
+        frame_(_frame),
+        stamp_(_stamp)
+    {
+    }
+
+    virtual ~Map()
+    {
+    }
 
     virtual inline bool valid(const tf::Pose &_p) const
     {
@@ -33,14 +51,14 @@ public:
         return true;
     }
 
-    Map(const std::string &_frame) :
-        frame_(_frame)
-    {
-    }
-
-    inline std::string frame()
+    inline std::string frame() const
     {
         return frame_;
+    }
+
+    inline std::chrono::time_point<std::chrono::system_clock> stamp() const
+    {
+        return stamp_;
     }
 
     template<typename T>
@@ -57,8 +75,9 @@ public:
     }
 
 protected:
-    Map(){}
+    Map() = delete;
 
     std::string frame_;
+    std::chrono::time_point<std::chrono::system_clock> stamp_;
 };
 }
