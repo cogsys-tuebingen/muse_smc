@@ -1,8 +1,8 @@
 #include <muse_amcl/plugins/plugin_factory.hpp>
 #include <muse_amcl/plugins/types/update.hpp>
 #include <muse_amcl/plugins/types/propagation.hpp>
-#include <muse_amcl/plugins/types/map_provider.hpp>
-#include <muse_amcl/plugins/types/data_provider.hpp>
+#include <muse_amcl/data_sources/map_provider.hpp>
+#include <muse_amcl/data_sources/data_provider.hpp>
 
 #include "../mock/mock_update.h"
 #include "../mock/mock_propagation.h"

@@ -6,8 +6,8 @@
 #include <tf/transform_listener.h>
 #include <ros/node_handle.h>
 
-#include <muse_amcl/plugins/data/data.hpp>
-#include <muse_amcl/plugins/data/map.hpp>
+#include <muse_amcl/data_types/data.hpp>
+#include <muse_amcl/data_types/map.hpp>
 #include <muse_amcl/pf/particle_set.hpp>
 
 

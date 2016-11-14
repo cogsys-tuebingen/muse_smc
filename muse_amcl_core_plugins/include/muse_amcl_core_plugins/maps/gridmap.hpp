@@ -1,11 +1,12 @@
 #pragma once
 
-#include <muse_amcl/plugins/data/map.hpp>
-#include "bresenham.hpp"
-
 #include <array>
 #include <vector>
 #include <cmath>
+
+#include <muse_amcl/data_types/map.hpp>
+
+#include "bresenham.hpp"
 
 namespace muse_amcl {
 namespace maps {

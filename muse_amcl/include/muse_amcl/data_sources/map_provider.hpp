@@ -1,8 +1,8 @@
 #pragma once
 
 #include <memory>
-
-#include "../data/map.hpp"
+#include <muse_amcl/data_types/map.hpp>
+#include <ros/ros.h>
 
 namespace muse_amcl {
 class MapProvider {

@@ -1,6 +1,6 @@
 #include <ros/ros.h>
 
-#include <muse_amcl/plugins/types/data_provider.hpp>
+#include <muse_amcl/data_sources/data_provider.hpp>
 #include <muse_amcl/plugins/plugin_factory.hpp>
 
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <muse_amcl/plugins/types/map_provider.hpp>
+#include <muse_amcl/data_sources/map_provider.hpp>
 
 #include <ros/ros.h>
 #include <std_msgs/String.h>
