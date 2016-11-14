@@ -36,21 +36,25 @@ int main(int argc, char *argv[])
     muse_amcl::PluginFactory<muse_amcl::Propagation> pf;
     muse_amcl::PluginFactory<muse_amcl::DataProvider> df;
 
-    muse_amcl::Update::Ptr      u = uf.create("mock_update",
-                                              "muse_amcl::MockUpdate");
-    muse_amcl::Propagation::Ptr p = pf.create("mock_propagation",
-                                              "muse_amcl::MockPropagation");
+    muse_amcl::Update::Ptr      u = uf.create("muse_amcl::MockUpdate",
+                                              "MOU");
+    muse_amcl::Propagation::Ptr p = pf.create("muse_amcl::MockPropagation",
+                                              "MOP");
     muse_amcl::ParticleSet set(1);
 
     muse_amcl::Map::ConstPtr map;
     muse_amcl::Data::ConstPtr data;
 
+    if(!u || !p)
+        return -1;
+
+
     u->apply(data, map, set.getWeights());
     p->apply(data, set.getPoses());
 
 
-    std::shared_ptr<muse_amcl::DataProvider> d = df.create("mock_data",
-                                                           "muse_amcl::MockDataProvider");
+    std::shared_ptr<muse_amcl::DataProvider> d = df.create("muse_amcl::MockDataProvider",
+                                                           "MOD");
 
     muse_amcl::DataProvider::DataConnection::Ptr c1 = d->connect(doSth);
     muse_amcl::DataProvider::DataConnection::Ptr c2 = d->connect(doSthElse);
