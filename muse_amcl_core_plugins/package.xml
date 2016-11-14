@@ -22,6 +22,6 @@
 
 
   <export>
-       <muse_amcl plugin="${prefix}/plugins.xml" />
+    <muse_amcl plugin="${prefix}/plugins.xml" />
   </export>
 </package>

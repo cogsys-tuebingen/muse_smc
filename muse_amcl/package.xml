@@ -8,15 +8,6 @@
 
   <license>TODO</license>
 
-    nav_msgs
-    sensor_msgs
-    tf
-    roscpp
-    visualization_msgs
-    pluginlib
-
-
-
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>cslibs_kdtree</build_depend>

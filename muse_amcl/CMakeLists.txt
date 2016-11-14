@@ -24,7 +24,7 @@ include(cmake/show_headers.cmake)
 
 catkin_package(
     INCLUDE_DIRS include
-    LIBRARIES muse_amcl_particle_filter muse_amcl_plugins
+    LIBRARIES muse_amcl_particle_filter
     CFG_EXTRAS muse_amcl-extras.cmake
 )
 

@@ -111,7 +111,6 @@ if(${BUILD_EXAMPLES})
     endif()
 endif()
 
-
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
