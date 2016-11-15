@@ -8,7 +8,7 @@
 
 #include <muse_amcl/data_types/data.hpp>
 #include <muse_amcl/data_types/map.hpp>
-#include <muse_amcl/pf/particle_set.hpp>
+#include <muse_amcl/particle_filter/particle_set.hpp>
 
 
 namespace muse_amcl {

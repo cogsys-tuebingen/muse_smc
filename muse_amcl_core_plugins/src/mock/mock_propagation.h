@@ -1,6 +1,6 @@
 #pragma once
 
-#include <muse_amcl/plugins/types/propagation.hpp>
+#include <muse_amcl/particle_filter/propagation.hpp>
 
 namespace muse_amcl {
 class MockPropagation : public Propagation

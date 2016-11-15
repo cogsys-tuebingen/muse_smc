@@ -1,7 +1,7 @@
 #include <muse_amcl/data_sources/data_provider.hpp>
 #include <muse_amcl/plugins/plugin_factory.hpp>
-#include <muse_amcl/plugins/types/update.hpp>
-#include <muse_amcl/plugins/types/propagation.hpp>
+#include <muse_amcl/particle_filter/update.hpp>
+#include <muse_amcl/particle_filter/propagation.hpp>
 #include <muse_amcl/data_types/map.hpp>
 
 #include "../mock/mock_data.hpp"

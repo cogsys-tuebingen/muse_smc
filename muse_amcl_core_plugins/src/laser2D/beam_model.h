@@ -1,6 +1,6 @@
 #pragma once
 
-#include <muse_amcl/plugins/types/update.hpp>
+#include <muse_amcl/particle_filter/update.hpp>
 
 namespace muse_amcl {
 class BeamModel : public Update
