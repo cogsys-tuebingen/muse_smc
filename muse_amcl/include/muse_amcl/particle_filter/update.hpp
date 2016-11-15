@@ -40,8 +40,8 @@ public:
         loadParameters(nh_private);
     }
 
-    virtual double apply(Data::ConstPtr &data,
-                         Map::ConstPtr &map,
+    virtual double apply(const Data::ConstPtr &data,
+                         const Map::ConstPtr &map,
                          ParticleSet::WeightIterator set) = 0;
 
 protected:

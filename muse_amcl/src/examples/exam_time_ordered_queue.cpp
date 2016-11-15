@@ -1,4 +1,4 @@
-#include <muse_amcl/utils/sync_priority_queue.hpp>
+#include <muse_amcl/utils/synced_priority_queue.hpp>
 #include <chrono>
 #include <memory>
 
@@ -21,8 +21,8 @@ int main(int argc, char *argv[])
     auto comp1 = [] (Orderable &lhs, Orderable &rhs) {return lhs.stamp() > rhs.stamp();};
     auto comp2 = [] (Orderable::Ptr &lhs, Orderable::Ptr &rhs) {return lhs->stamp() > rhs->stamp();};
 
-    muse_amcl::SyncPriorityQueue<Orderable, decltype(comp1)> tq1(comp1);
-    muse_amcl::SyncPriorityQueue<Orderable::Ptr, decltype(comp2)> tq2(comp2);
+    muse_amcl::SyncedPriorityQueue<Orderable, decltype(comp1)> tq1(comp1);
+    muse_amcl::SyncedPriorityQueue<Orderable::Ptr, decltype(comp2)> tq2(comp2);
 
     /// *** implement a test *** ///
 

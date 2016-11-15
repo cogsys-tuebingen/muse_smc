@@ -1,22 +1,33 @@
 #pragma once
 
 #include <chrono>
+#include <memory>
 #include <functional>
 #include "particle_set.hpp"
 
 namespace muse_amcl {
 class UpdateLambda {
 public:
-    UpdateLambda(std::function<void(ParticleSet::WeightIterator set)> lambda,
+    typedef std::shared_ptr<UpdateLambda> Ptr;
+
+    struct Less {
+        bool operator()( const UpdateLambda& lhs, const UpdateLambda& rhs ) const
+        {
+            return lhs.stamp() > rhs.stamp();
+        }
+
+    };
+
+    UpdateLambda(std::function<double (ParticleSet::WeightIterator set)> lambda,
                  std::chrono::time_point<std::chrono::system_clock>   stamp) :
         lambda_(lambda),
         stamp_(stamp)
     {
     }
 
-    inline void operator ()()
+    inline double operator ()(ParticleSet::WeightIterator set)
     {
-        lambda_();
+        return lambda_(set);
     }
 
     inline std::chrono::time_point<std::chrono::system_clock> stamp() const
@@ -25,7 +36,7 @@ public:
     }
 
 private:
-    std::function<void(ParticleSet::WeightIterator set)>  lambda_;
+    std::function<double (ParticleSet::WeightIterator set)>  lambda_;
     std::chrono::time_point<std::chrono::system_clock>    stamp_;
 
 };

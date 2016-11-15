@@ -6,15 +6,19 @@
 
 namespace muse_amcl {
 template<typename T, typename Comparator>
-class SyncPriorityQueue
+class SyncedPriorityQueue
 {
 public:
-    SyncPriorityQueue(const Comparator &comparator) :
+    SyncedPriorityQueue(const Comparator &comparator) :
         q_(comparator)
     {
     }
 
-    virtual ~SyncPriorityQueue() = default;
+    SyncedPriorityQueue()
+    {
+    }
+
+    virtual ~SyncedPriorityQueue() = default;
 
     inline void push(const T &v)
     {
@@ -49,8 +53,20 @@ public:
         return q_.top();
     }
 
+    inline std::size_t size() const
+    {
+        std::unique_lock<std::mutex> l(m_);
+        return q_.size();
+    }
+
+    inline bool empty() const
+    {
+        std::unique_lock<std::mutex> l(m_);
+        return q_.empty();
+    }
+
 private:
-    std::mutex                                         m_;
+    mutable std::mutex                                 m_;
     std::priority_queue<T, std::vector<T>, Comparator> q_;
 
 };

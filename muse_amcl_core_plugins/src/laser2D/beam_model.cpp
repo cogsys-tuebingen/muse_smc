@@ -7,8 +7,8 @@ BeamModel::BeamModel()
 
 }
 
-double BeamModel::apply(Data::ConstPtr &data,
-                        Map::ConstPtr &map,
+double BeamModel::apply(const Data::ConstPtr &data,
+                        const Map::ConstPtr &map,
                         ParticleSet::WeightIterator set)
 {
     return 0.0;

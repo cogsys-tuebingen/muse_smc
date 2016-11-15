@@ -8,8 +8,8 @@ class LikelihoodFieldModel : public Update
 public:
     LikelihoodFieldModel();
 
-    virtual double apply(Data::ConstPtr &data,
-                         Map::ConstPtr &map,
+    virtual double apply(const Data::ConstPtr &data,
+                         const Map::ConstPtr &map,
                          ParticleSet::WeightIterator set) override;
 
 protected:

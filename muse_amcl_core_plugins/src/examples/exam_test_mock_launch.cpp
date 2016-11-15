@@ -1,8 +1,10 @@
 #include <muse_amcl/plugins/plugin_factory.hpp>
+#include <muse_amcl/plugins/association.hpp>
 #include <muse_amcl/particle_filter/update.hpp>
 #include <muse_amcl/particle_filter/propagation.hpp>
 #include <muse_amcl/data_sources/map_provider.hpp>
 #include <muse_amcl/data_sources/data_provider.hpp>
+#include <muse_amcl/particle_filter/update_manager.hpp>
 
 #include "../mock/mock_update.h"
 #include "../mock/mock_propagation.h"
@@ -67,6 +69,26 @@ int main(int argc, char *argv[])
     std::cout << "propagations second" << std::endl;
     for(auto &p : propagations) {
         p.second->apply(data, set.getPoses());
+    }
+
+
+    /// build up associations
+    std::map<std::string, std::string> assoc_data_providers;
+    std::map<std::string, std::string> assoc_map_providers;
+    muse_amcl::Associations::load(updates, nh, assoc_data_providers, assoc_map_providers);
+
+    muse_amcl::UpdateQueue   q;
+    muse_amcl::UpdateManager manager(datas, maps, updates, q);
+    manager.bind(assoc_data_providers,
+                 assoc_map_providers);
+
+    for(auto &d : datas) {
+        d.second->enable();
+    }
+
+    while(q.size() < 10) {
+        ros::spinOnce();
+        ros::Rate(30).sleep();
     }
 
     ros::shutdown();

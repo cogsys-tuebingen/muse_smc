@@ -6,8 +6,8 @@ LikelihoodFieldModel::LikelihoodFieldModel()
 {
 }
 
-double LikelihoodFieldModel::apply(Data::ConstPtr &data,
-                                   Map::ConstPtr &map,
+double LikelihoodFieldModel::apply(const Data::ConstPtr &data,
+                                   const Map::ConstPtr &map,
                                    ParticleSet::WeightIterator set)
 {
     return 0.0;

@@ -13,8 +13,8 @@ MockUpdate::MockUpdate()
 
 }
 
-double MockUpdate::apply(Data::ConstPtr &data,
-                         Map::ConstPtr &map,
+double MockUpdate::apply(const Data::ConstPtr &data,
+                         const Map::ConstPtr &map,
                          ParticleSet::WeightIterator set)
 {
     std::cout << "Hello, I am a mock update - Greetings Traveller!" << std::endl;
