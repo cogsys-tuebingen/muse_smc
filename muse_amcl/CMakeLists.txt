@@ -69,14 +69,18 @@ target_link_libraries(muse_amcl_node
 
 if(${BUILD_EXAMPLES})
     add_executable(muse_amcl_exam_signals
-        src/examples/example_signals.cpp
+        src/examples/exam_signals.cpp
+    )
+
+    add_executable(muse_amcl_exam_time_ordered_queue
+        src/examples/exam_time_ordered_queue.cpp
     )
 
     find_package(OpenCV QUIET)
-    include_directories(
-        ${OpenCV_INCLUDE_DIRS}
-    )
     if(${OpenCV_FOUND})
+        include_directories(
+            ${OpenCV_INCLUDE_DIRS}
+        )
         add_executable(muse_amcl_exam_visualise_distributions
             src/examples/exam_visualise_distributions.cpp
         )

@@ -5,22 +5,16 @@
 #include <mutex>
 
 namespace muse_amcl {
-template<typename T>
-class TimeOrderedQueue
+template<typename T, typename Comparator>
+class SyncPriorityQueue
 {
 public:
-    struct Comparator {
-        bool operator() (const T &lhs,
-                         const T &rhs) const
-        {
-            /// lowest element should be "at the top"
-            return lhs->stamp() > rhs->stamp();
-        }
-    };
+    SyncPriorityQueue(const Comparator &comparator) :
+        q_(comparator)
+    {
+    }
 
-
-    TimeOrderedQueue()          = default;
-    virtual ~TimeOrderedQueue() = default;
+    virtual ~SyncPriorityQueue() = default;
 
     inline void push(const T &v)
     {
