@@ -11,7 +11,7 @@ MockPropagation::MockPropagation()
 {
 }
 
-void MockPropagation::apply(Data::ConstPtr &data,
+void MockPropagation::apply(const Data::ConstPtr &data,
                             ParticleSet::PoseIterator set)
 {
     std::cout << "Hello, I am a mock propagation - Greetings Traveller!" << std::endl;

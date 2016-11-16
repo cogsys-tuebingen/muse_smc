@@ -5,6 +5,7 @@
 #include <muse_amcl/data_sources/map_provider.hpp>
 #include <muse_amcl/data_sources/data_provider.hpp>
 #include <muse_amcl/particle_filter/update_manager.hpp>
+#include <muse_amcl/particle_filter/propagation_manager.hpp>
 
 #include "../mock/mock_update.h"
 #include "../mock/mock_propagation.h"

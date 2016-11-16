@@ -11,11 +11,11 @@ public:
     typedef std::shared_ptr<UpdateLambda> Ptr;
 
     struct Less {
-        bool operator()( const UpdateLambda& lhs, const UpdateLambda& rhs ) const
+        bool operator()( const UpdateLambda& lhs,
+                         const UpdateLambda& rhs ) const
         {
             return lhs.stamp() > rhs.stamp();
         }
-
     };
 
     UpdateLambda(std::function<double (ParticleSet::WeightIterator set)> lambda,

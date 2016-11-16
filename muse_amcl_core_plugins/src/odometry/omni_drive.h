@@ -8,7 +8,7 @@ class OmniDrive : public Propagation
 public:
     OmniDrive();
 
-    virtual void apply(Data::ConstPtr &data,
+    virtual void apply(const Data::ConstPtr &data,
                        ParticleSet::PoseIterator set) override;
 
 protected:

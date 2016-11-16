@@ -13,8 +13,8 @@ int i = 0;
 void doSth(const muse_amcl::Data::ConstPtr &data)
 {
     if(data->isType<muse_amcl::MockData>()) {
-        const muse_amcl::MockData *m = data->as<muse_amcl::MockData>();
-        std::cout << "sth " << i << " : " << m->value << std::endl;
+        const muse_amcl::MockData &m = data->as<muse_amcl::MockData>();
+        std::cout << "sth " << i << " : " << m.value << std::endl;
         ++i;
     }
 }
@@ -22,8 +22,8 @@ void doSth(const muse_amcl::Data::ConstPtr &data)
 void doSthElse(const muse_amcl::Data::ConstPtr &data)
 {
     if(data->isType<muse_amcl::MockData>()) {
-        const muse_amcl::MockData *m = data->as<muse_amcl::MockData>();
-        std::cout << "sth else " << i << " : " << m->value << std::endl;
+        const muse_amcl::MockData &m = data->as<muse_amcl::MockData>();
+        std::cout << "sth else " << i << " : " << m.value << std::endl;
     }
 }
 

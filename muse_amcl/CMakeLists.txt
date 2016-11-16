@@ -72,10 +72,6 @@ if(${BUILD_EXAMPLES})
         src/examples/exam_signals.cpp
     )
 
-    add_executable(muse_amcl_exam_time_ordered_queue
-        src/examples/exam_time_ordered_queue.cpp
-    )
-
     find_package(OpenCV QUIET)
     if(${OpenCV_FOUND})
         include_directories(

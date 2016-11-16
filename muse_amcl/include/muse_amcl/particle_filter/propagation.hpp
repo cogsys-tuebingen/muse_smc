@@ -38,7 +38,7 @@ public:
         loadParameters(nh);
     }
 
-    virtual void apply(Data::ConstPtr &data,
+    virtual void apply(const Data::ConstPtr &data,
                        ParticleSet::PoseIterator set) = 0;
 
     virtual void predict(const std::time_t until,

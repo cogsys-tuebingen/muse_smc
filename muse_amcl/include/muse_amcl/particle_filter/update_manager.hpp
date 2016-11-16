@@ -69,11 +69,10 @@ public:
 
 
 private:
-    /// TODO get rid of these map copies
-    const std::map<std::string, DataProvider::Ptr> &data_providers_;
-    const std::map<std::string, MapProvider::Ptr>  &map_providers_;
-    std::map<std::string, Update::Ptr>             &update_functions_;
-    UpdateQueue                                    &update_queue_;
+    const std::map<std::string, DataProvider::Ptr>          &data_providers_;
+    const std::map<std::string, MapProvider::Ptr>           &map_providers_;
+    std::map<std::string, Update::Ptr>                      &update_functions_;
+    UpdateQueue                                             &update_queue_;
 
     std::map<std::string, DataProvider::DataConnection::Ptr> connections_;
 

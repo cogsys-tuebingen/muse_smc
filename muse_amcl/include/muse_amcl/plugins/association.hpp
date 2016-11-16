@@ -9,7 +9,7 @@
 namespace muse_amcl {
 struct Associations {
     inline static void load(const Propagation::Ptr &propagation_function,
-                            ros::NodeHandle &nh_private,
+                            ros::NodeHandle        &nh_private,
                             std::string            &data_provider)
     {
             data_provider =
