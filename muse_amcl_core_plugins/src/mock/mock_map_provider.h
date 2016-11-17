@@ -14,7 +14,7 @@ public:
     virtual Map::ConstPtr map() const override;
 
 protected:
-    virtual void loadParameters(ros::NodeHandle &nh_private) override;
+    virtual void doSetup(ros::NodeHandle &nh_private) override;
 
 };
 }

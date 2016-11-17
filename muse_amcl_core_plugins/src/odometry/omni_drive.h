@@ -12,6 +12,6 @@ public:
                        ParticleSet::PoseIterator set) override;
 
 protected:
-    virtual void loadParameters(ros::NodeHandle &nh) override;
+    virtual void doSetup(ros::NodeHandle &nh) override;
 };
 }

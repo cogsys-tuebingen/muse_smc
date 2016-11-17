@@ -14,7 +14,7 @@ double BeamModel::apply(const Data::ConstPtr &data,
     return 0.0;
 }
 
-void BeamModel::loadParameters(ros::NodeHandle &nh)
+void BeamModel::doSetup(ros::NodeHandle &nh)
 {
 
 }

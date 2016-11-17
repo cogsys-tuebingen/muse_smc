@@ -14,7 +14,7 @@ MockDataProvider::MockDataProvider()
 
 }
 
-void MockDataProvider::loadParameters(ros::NodeHandle &nh_private)
+void MockDataProvider::doSetup(ros::NodeHandle &nh_private)
 {
     ros::NodeHandle nh;
     topic = nh_private.param<std::string>(param("topic"), "/mock");

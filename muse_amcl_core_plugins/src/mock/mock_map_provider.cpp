@@ -17,7 +17,7 @@ Map::ConstPtr MockMapProvider::map() const
     return nullptr;
 }
 
-void MockMapProvider::loadParameters(ros::NodeHandle &nh_private)
+void MockMapProvider::doSetup(ros::NodeHandle &nh_private)
 {
 
 }

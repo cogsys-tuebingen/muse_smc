@@ -13,7 +13,7 @@ double LikelihoodFieldModel::apply(const Data::ConstPtr &data,
     return 0.0;
 }
 
-void LikelihoodFieldModel::loadParameters(ros::NodeHandle &nh)
+void LikelihoodFieldModel::doSetup(ros::NodeHandle &nh)
 {
 
 }

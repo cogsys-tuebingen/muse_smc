@@ -22,7 +22,7 @@ double MockUpdate::apply(const Data::ConstPtr &data,
     return 0.0;
 }
 
-void MockUpdate::loadParameters(ros::NodeHandle &nh_private)
+void MockUpdate::doSetup(ros::NodeHandle &nh_private)
 {
     first_parameter  = nh_private.param(param("first"), 0.5);
     second_parameter = nh_private.param(param("second"),1);

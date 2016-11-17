@@ -17,7 +17,7 @@ double LikelihoodFieldProbModel::apply(const Data::ConstPtr &data,
     return 0.0;
 }
 
-void LikelihoodFieldProbModel::loadParameters(ros::NodeHandle &nh)
+void LikelihoodFieldProbModel::doSetup(ros::NodeHandle &nh)
 {
 
 }

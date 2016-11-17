@@ -14,7 +14,7 @@ public:
     MockDataProvider();
 
 protected:
-    virtual void loadParameters(ros::NodeHandle &nh_private) override;
+    virtual void doSetup(ros::NodeHandle &nh_private) override;
 
     ros::Subscriber source;
     std::string     topic;

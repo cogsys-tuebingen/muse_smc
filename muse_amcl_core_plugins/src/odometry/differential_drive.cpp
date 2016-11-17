@@ -15,7 +15,7 @@ void DifferentialDrive::apply(const Data::ConstPtr &data,
 
 }
 
-void DifferentialDrive::loadParameters(ros::NodeHandle &nh)
+void DifferentialDrive::doSetup(ros::NodeHandle &nh)
 {
 
 }

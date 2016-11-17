@@ -37,7 +37,7 @@ public:
                ros::NodeHandle   &nh_private)
     {
         name_ = name;
-        loadParameters(nh_private);
+        doSetup(nh_private);
     }
 
     virtual double apply(const Data::ConstPtr &data,
@@ -47,7 +47,7 @@ public:
 protected:
     std::string name_;
 
-    virtual void loadParameters(ros::NodeHandle &nh_private) = 0;
+    virtual void doSetup(ros::NodeHandle &nh_private) = 0;
 
     std::string param(const std::string &name)
     {

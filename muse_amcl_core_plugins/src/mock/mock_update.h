@@ -18,7 +18,7 @@ public:
     int     second_parameter;
 
 protected:
-    virtual void loadParameters(ros::NodeHandle &nh_private) override;
+    virtual void doSetup(ros::NodeHandle &nh_private) override;
 
 
 };

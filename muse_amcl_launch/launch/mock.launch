@@ -53,6 +53,17 @@
     </group>
 	</group>
 
+ <group ns="particle_filter">
+   <group ns="resampling">
+
+   </group>
+   <group ns="pose_generation">
+
+   </group>
+ </group>
+
+
+
 
 	<node type="muse_amcl_exam_test_mock_launch" name="muse_amcl_exam_test_mock_launch" pkg="muse_amcl_core_plugins" output="screen">
 		<param name="config" value="muse" />

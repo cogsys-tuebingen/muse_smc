@@ -18,7 +18,7 @@ void MockPropagation::apply(const Data::ConstPtr &data,
     std::cout <<  first_parameter << " " << second_parameter << std::endl;
 }
 
-void MockPropagation::loadParameters(ros::NodeHandle &nh)
+void MockPropagation::doSetup(ros::NodeHandle &nh)
 {
     first_parameter  = nh.param(param("first"), 0.5);
     second_parameter = nh.param(param("second"),1);

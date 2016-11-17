@@ -16,7 +16,7 @@ void OmniDrive::apply(const Data::ConstPtr &data,
 
 }
 
-void OmniDrive::loadParameters(ros::NodeHandle &nh)
+void OmniDrive::doSetup(ros::NodeHandle &nh)
 {
 
 }

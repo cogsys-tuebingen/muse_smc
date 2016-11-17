@@ -135,7 +135,7 @@ public:
     Normal() = delete;
 
     Normal(const Vector &_mean,
-             const Matrix &_covariance)
+           const Matrix &_covariance)
     {
         set(_mean, _covariance);
     }
@@ -187,7 +187,7 @@ public:
     Normal() = delete;
 
     Normal(const double _mean,
-             const double _sigma)
+           const double _sigma)
     {
         set(_mean, _sigma);
     }

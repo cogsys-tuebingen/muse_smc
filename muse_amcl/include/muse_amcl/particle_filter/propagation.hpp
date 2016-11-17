@@ -35,7 +35,7 @@ public:
                ros::NodeHandle   &nh)
     {
         name_ = name;
-        loadParameters(nh);
+        doSetup(nh);
     }
 
     virtual void apply(const Data::ConstPtr &data,
@@ -54,7 +54,7 @@ public:
 protected:
     std::string name_;
 
-    virtual void loadParameters(ros::NodeHandle &nh) = 0;
+    virtual void doSetup(ros::NodeHandle &nh) = 0;
 
     std::string param(const std::string &name)
     {
