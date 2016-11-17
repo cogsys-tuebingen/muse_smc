@@ -15,7 +15,7 @@
             <param name="class" value="muse_amcl::MockPropagation" />
             <param name="base_class" value="muse_amcl::Propagation" />
 
-            <param name="data_provider" value="" />
+            <param name="data_provider" value="data1" />
 
             <param name="first" value="0.001" />
             <param name="second" value="100" />
@@ -34,7 +34,7 @@
 			<param name="class" value="muse_amcl::MockPropagation" />
             <param name="base_class" value="muse_amcl::Propagation" />
 
-            <param name="data_provider" value="" />
+            <param name="data_provider" value="data1" />
 
 		    <param name="first" value="0.00001" />
             <param name="second" value="10000" />
@@ -47,6 +47,10 @@
 			<param name="class" value="muse_amcl::MockDataProvider" />
 			<param name="base_class" value="muse_amcl::DataProvider" />
 		</group>
+    <group ns="data1">
+      <param name="class" value="muse_amcl::MockDataProvider" />
+      <param name="base_class" value="muse_amcl::DataProvider" />
+    </group>
 	</group>
 
 

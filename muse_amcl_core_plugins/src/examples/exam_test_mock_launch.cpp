@@ -1,10 +1,11 @@
 #include <muse_amcl/plugins/plugin_factory.hpp>
 #include <muse_amcl/plugins/association.hpp>
-#include <muse_amcl/particle_filter/update.hpp>
-#include <muse_amcl/particle_filter/propagation.hpp>
 #include <muse_amcl/data_sources/map_provider.hpp>
 #include <muse_amcl/data_sources/data_provider.hpp>
+
+#include <muse_amcl/particle_filter/update.hpp>
 #include <muse_amcl/particle_filter/update_manager.hpp>
+#include <muse_amcl/particle_filter/propagation.hpp>
 #include <muse_amcl/particle_filter/propagation_manager.hpp>
 
 #include "../mock/mock_update.h"
@@ -43,19 +44,18 @@ int main(int argc, char *argv[])
 
 
     /// iteration
-
     std::map<std::string, muse_amcl::Update::Ptr> updates;
-    std::map<std::string, muse_amcl::Propagation::Ptr> propagations;
+    muse_amcl::Propagation::Ptr propagation;
     std::map<std::string, muse_amcl::MapProvider::Ptr> maps;
     std::map<std::string, muse_amcl::DataProvider::Ptr> datas;
 
     muse_amcl::PluginLoader<muse_amcl::Update>::load(nh, updates);
-    muse_amcl::PluginLoader<muse_amcl::Propagation>::load(nh, propagations);
+    propagation = muse_amcl::PluginLoader<muse_amcl::Propagation>::load(nh);
     muse_amcl::PluginLoader<muse_amcl::MapProvider>::load(nh, maps);
     muse_amcl::PluginLoader<muse_amcl::DataProvider>::load(nh, datas);
 
     std::cout << "updates      " << updates.size() << std::endl;
-    std::cout << "propagations " << propagations.size() << std::endl;
+    std::cout << "propagations " << (propagation ? 1 : 0) << std::endl;
     std::cout << "maps         " << maps.size() << std::endl;
     std::cout << "datas        " << datas.size() << std::endl;
 
@@ -68,28 +68,36 @@ int main(int argc, char *argv[])
 
     }
     std::cout << "propagations second" << std::endl;
-    for(auto &p : propagations) {
-        p.second->apply(data, set.getPoses());
-    }
-
+    propagation->apply(data, set.getPoses());
 
     /// build up associations
     std::map<std::string, std::string> assoc_data_providers;
     std::map<std::string, std::string> assoc_map_providers;
     muse_amcl::Associations::load(updates, nh, assoc_data_providers, assoc_map_providers);
 
-    muse_amcl::UpdateQueue   q;
-    muse_amcl::UpdateManager manager(datas, maps, updates, q);
-    manager.bind(assoc_data_providers,
-                 assoc_map_providers);
+    muse_amcl::UpdateQueue   uq;
+    muse_amcl::UpdateManager um(datas, maps, updates, uq);
+    um.bind(assoc_data_providers,
+            assoc_map_providers);
+
+
+    std::string assoc_propagation_data_provider;
+    muse_amcl::Associations::load(propagation,
+                                  nh,
+                                  assoc_propagation_data_provider);
+    muse_amcl::PropagationQueue   pq;
+    muse_amcl::PropagationManager pm(datas, propagation, pq);
+    pm.bind(assoc_propagation_data_provider);
 
     for(auto &d : datas) {
         d.second->enable();
     }
 
-    while(q.size() < 10) {
+    while(uq.size() < 10 || pq.size() < 10) {
+        std::cout << " ++ " << uq.size() << " " << pq.size() << std::endl;
+
         ros::spinOnce();
-        ros::Rate(30).sleep();
+        ros::Rate(3).sleep();
     }
 
     ros::shutdown();

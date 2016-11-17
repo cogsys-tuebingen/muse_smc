@@ -16,10 +16,10 @@ public:
     typedef std::shared_ptr<PropagationManager> Ptr;
 
     PropagationManager(const std::map<std::string, DataProvider::Ptr> &data_providers,
-                       Propagation::Ptr  &propagation_functions,
+                       Propagation::Ptr  &propagation_function,
                        PropagationQueue  &propagation_queue) :
         data_providers_(data_providers),
-        propagation_functions_(propagation_functions),
+        propagation_function_(propagation_function),
         propagation_queue_(propagation_queue)
     {
     }
@@ -30,7 +30,7 @@ public:
 
         auto callback = [this] (const Data::ConstPtr &data) {
             auto f = [this, data] (ParticleSet::PoseIterator set) {
-                propagation_functions_->apply(data, set);
+                propagation_function_->apply(data, set);
             };
             PropagationLambda p(f, data->stamp());
             propagation_queue_.push(p);
@@ -41,7 +41,7 @@ public:
 
 private:
     const std::map<std::string, DataProvider::Ptr> &data_providers_;
-    Propagation::Ptr                               &propagation_functions_;
+    Propagation::Ptr                               &propagation_function_;
     PropagationQueue                               &propagation_queue_;
 
     DataProvider::DataConnection::Ptr               connection_;
