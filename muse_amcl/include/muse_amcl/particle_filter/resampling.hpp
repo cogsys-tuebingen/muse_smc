@@ -14,15 +14,20 @@ class Resampling {
 public:
     typedef std::shared_ptr<Resampling> Ptr;
 
-    Resampling(ParticleSet &particle_set) :
-        particle_set_(particle_set)
+    Resampling(ParticleSet &particle_set,
+               const std::size_t min_size,
+               const std::size_t max_size) :
+        particle_set_(particle_set),
+        min_size_(min_size),
+        max_size_(max_size)
     {
     }
 
     void resample() = 0;
 
-    void setup(ros::NodeHandle &nh_private) = 0;
 private:
     ParticleSet &particle_set_;
+    const std::size_t min_size_;    /// minimal size of the set
+    const std::size_t max_size_;    /// maximal size of the set / default size
 };
 }

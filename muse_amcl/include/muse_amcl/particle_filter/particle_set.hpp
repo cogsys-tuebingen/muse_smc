@@ -109,7 +109,7 @@ public:
     }
 
 private:
-    std::vector<Particle> samples;
+    Particles samples;
 
 };
 }

@@ -20,16 +20,21 @@ public:
 
 protected:
     RandomGenerator() :
-        random_device(),
-        random_engine(random_device())
+        random_device_(),
+        random_engine_(random_engine_())
+    {
+    }
+
+    RandomGenerator(const unsigned int seed) :
+        random_engine_(seed)
     {
     }
 
     RandomGenerator(const RandomGenerator &other) = delete;
 
 
-    std::random_device         random_device;
-    std::default_random_engine random_engine;
+    std::random_device         random_device_;
+    std::default_random_engine random_engine_;
 
 };
 
@@ -46,17 +51,25 @@ public:
 
     Uniform() = delete;
 
-    Uniform(const Vector &_min,
-            const Vector &_max)
+    Uniform(const Vector &min,
+            const Vector &max)
     {
-        set(_min, _max);
+        set(min, max);
     }
 
-    inline void set(const Vector &_min,
-                    const Vector &_max)
+    Uniform(const Vector &min,
+            const Vector &max,
+            const unsigned int seed) :
+        RandomGenerator(seed)
+    {
+        set(min, max);
+    }
+
+    inline void set(const Vector &min,
+                    const Vector &max)
     {
         for(std::size_t i = 0 ;  i < Dim ; ++i) {
-            distributions[i] = Distribution(_min[i], _max[i]);
+            distributions_[i] = Distribution(min[i], max[i]);
         }
     }
 
@@ -64,20 +77,20 @@ public:
     {
         Vector sample;
         for(std::size_t i = 0 ; i < Dim ; ++i) {
-            sample[i] = distributions[i](random_engine);
+            sample[i] = distributions_[i](random_engine_);
         }
         return sample;
     }
 
-    inline void get(Vector &_sample)
+    inline void get(Vector &sample)
     {
         for(std::size_t i = 0 ; i < Dim ; ++i) {
-            _sample[i] = distributions[i](random_engine);
+            sample[i] = distributions_[i](random_engine_);
         }
     }
 
 private:
-    std::array<Distribution, Dim> distributions;
+    std::array<Distribution, Dim> distributions_;
 };
 
 /**
@@ -92,30 +105,39 @@ public:
 
     Uniform() = delete;
 
-    Uniform(const double _min,
-            const double _max)
+    Uniform(const double min,
+            const double max)
     {
-        set(_min, _max);
+        set(min, max);
     }
 
-    inline void set(const double _min,
-                    const double _max)
+    Uniform(const double min,
+            const double max,
+            const unsigned int seed) :
+        RandomGenerator(seed)
     {
-        distribution = Distribution(_min, _max);
+        set(min, max);
+    }
+
+
+    inline void set(const double min,
+                    const double max)
+    {
+        distribution_ = Distribution(min, max);
     }
 
     inline double get()
     {
-        return distribution(random_engine);
+        return distribution_(random_engine_);
     }
 
-    inline void get(double &_sample)
+    inline void get(double &sample)
     {
-        _sample = distribution(random_engine);
+        sample = distribution_(random_engine_);
     }
 
 private:
-    Distribution distribution;
+    Distribution distribution_;
 
 };
 
@@ -140,38 +162,46 @@ public:
         set(_mean, _covariance);
     }
 
+    Normal(const Vector &_mean,
+           const Matrix &_covariance,
+           const unsigned int seed) :
+        RandomGenerator(seed)
+    {
+        set(_mean, _covariance);
+    }
+
     inline void set(const Vector &_mean,
                     const Matrix &_covariance)
     {
-        mean = _mean;
-        covariance = _covariance;
+        mean_ = _mean;
+        covariance_ = _covariance;
 
-        EigenSolver eigen(covariance);
-        rotation = eigen.eigenvectors().real();           /// rotation into the "world_frame"
-        scale = eigen.eigenvalues().real().cwiseSqrt();   /// scale along the main axis of distribution
+        EigenSolver eigen(covariance_);
+        rotation_ = eigen.eigenvectors().real();           /// rotation into the "world_frame"
+        scale_ = eigen.eigenvalues().real().cwiseSqrt();   /// scale along the main axis of distribution
     }
 
     inline Vector get()
     {
         Vector sample;
         for(std::size_t i = 0 ; i < Dim ; ++i)
-            sample(i) = distribution(random_engine) * scale(i);
-        return rotation * sample + mean;
+            sample(i) = distribution_(random_engine_) * scale_(i);
+        return rotation_ * sample + mean_;
     }
 
-    inline void get(Vector &_sample)
+    inline void get(Vector &sample)
     {
         for(std::size_t i = 0 ; i < Dim ; ++i)
-            _sample(i) = distribution(random_engine) * scale(i);
-        _sample = rotation * _sample + mean;
+            sample(i) = distribution_(random_engine_) * scale_(i);
+        sample = rotation_ * sample + mean_;
     }
 
 private:
-    Distribution distribution;
-    Vector mean;
-    Matrix covariance;
-    Matrix rotation;
-    Vector scale;
+    Distribution distribution_;
+    Vector mean_;
+    Matrix covariance_;
+    Matrix rotation_;
+    Vector scale_;
 };
 
 /**
@@ -192,24 +222,32 @@ public:
         set(_mean, _sigma);
     }
 
+    Normal(const double _mean,
+           const double _sigma,
+           const unsigned int seed) :
+        RandomGenerator(seed)
+    {
+        set(_mean, _sigma);
+    }
+
     inline void set(const double _mean,
                     const double _sigma)
     {
-        distribution = Distribution(_mean, _sigma);
+        distribution_ = Distribution(_mean, _sigma);
     }
 
     inline double get()
     {
-        return distribution(random_engine);
+        return distribution_(random_engine_);
     }
 
-    inline void get(double &_sample)
+    inline void get(double &sample)
     {
-        _sample = distribution(random_engine);
+        sample = distribution_(random_engine_);
     }
 
 private:
-    Distribution distribution;
+    Distribution distribution_;
 };
 }
 }
