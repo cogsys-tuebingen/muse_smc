@@ -117,23 +117,27 @@ int main(int argc, char *argv[])
     Eigen::Matrix3d n3d_cov = Eigen::Matrix3d::Zero();
     n3d_cov(0,0) = 0.0025;
     n3d_cov(1,1) = 0.025;
-    n3d_cov(2,2) = 0.5;
+    n3d_cov(2,2) = M_PI;
 
     display.setTo(cv::Scalar());
 
-    muse_amcl::pose_generation::Normal<Metric,Metric,Radian> n2Dp(n3d_mean, n3d_cov = Eigen::Matrix3d::Zero());
+    muse_amcl::pose_generation::Normal<Metric,Metric,Radian> n2Dp(n3d_mean, n3d_cov);
 
     for(std::size_t i = 0 ; i < sample_count ; ++i) {
-        Eigen::Vector2d sample = n2D.get();
+        Eigen::Vector3d sample = n2Dp();
         cv::Point pos(sample(0) * canvas.cols,
                       sample(1) * canvas.rows);
         cv::line(canvas, pos - dx, pos + dx, cv::Scalar(255));
         cv::line(canvas, pos - dy, pos + dy, cv::Scalar(255));
         cv::circle(canvas, pos, 1, cv::Scalar(0,255));
+
+        std::cout << sample(2) << std::endl;
+        assert(sample(2) >= 0.0);
+        assert(sample(2) < muse_amcl::math::angle::_2_M_PI);
+
     }
     cv::imshow("display", display);
     cv::waitKey(0);
-
 
     return 0;
 }

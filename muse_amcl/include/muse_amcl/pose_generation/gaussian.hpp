@@ -14,7 +14,6 @@ public:
     static_assert(is_valid_type<Types...>::value, "Parameter list contains forbidden type!");
 
     static const std::size_t Dimension = sizeof...(Types);
-    static constexpr std::array<int, sizeof...(Types)> types{{Types::info...}};
 
     using RNG = math::random::Normal<Dimension>;
 
@@ -25,30 +24,11 @@ public:
     {
     }
 
-    inline void operator () (const std::size_t                 sample_count,
-                             const std::vector<Map::ConstPtr> &maps,
-                             ParticleSet                      &particle_set)
-    {
-        /// first check if the initial pose is blocked
-    }
-
-    inline void operator () (const std::size_t sample_count,
-                             ParticleSet &particle_set)
-    {
-        std::size_t count = 0;
-        while(count < sample_count) {
-
-        }
-    }
-
-    inline typename RNG::Vector operator () (const std::vector<Map::ConstPtr> &maps)
-    {
-        /// first check if the mean is blocked
-    }
-
     inline typename RNG::Vector operator () ()
     {
-
+        typename RNG::Vector sample = rng_.get();
+        Argument<Dimension, typename RNG::Vector, Types...>::normalize(sample);
+        return sample;
     }
 
 private:
