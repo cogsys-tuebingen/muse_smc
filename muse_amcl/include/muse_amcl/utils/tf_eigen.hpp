@@ -6,7 +6,9 @@
 namespace muse_amcl {
 namespace transforms {
 typedef Eigen::Matrix<double, 3, 1> Pose2D;
+typedef Eigen::Matrix<double, 3, 3> Covariance2D;
 typedef Eigen::Matrix<double, 6, 1> Pose3D;
+typedef Eigen::Matrix<double, 6, 6> Covariance3D;
 
 /**
  * @brief Convert Eigen vector to tf pose.

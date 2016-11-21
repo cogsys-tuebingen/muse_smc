@@ -81,6 +81,9 @@ if(${BUILD_EXAMPLES})
             src/examples/exam_visualise_distributions.cpp
         )
         target_link_libraries(muse_amcl_exam_visualise_distributions
+            ${catkin_LIBRARIES}
+        )
+        target_link_libraries(muse_amcl_exam_visualise_distributions
             ${OpenCV_LIBRARIES}
         )
         add_executable(muse_amcl_exam_particle_set

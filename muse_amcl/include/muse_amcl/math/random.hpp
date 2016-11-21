@@ -156,25 +156,25 @@ public:
 
     Normal() = delete;
 
-    Normal(const Vector &_mean,
-           const Matrix &_covariance)
+    Normal(const Vector &mean,
+           const Matrix &covariance)
     {
-        set(_mean, _covariance);
+        set(mean, covariance);
     }
 
-    Normal(const Vector &_mean,
-           const Matrix &_covariance,
+    Normal(const Vector &mean,
+           const Matrix &covariance,
            const unsigned int seed) :
         RandomGenerator(seed)
     {
-        set(_mean, _covariance);
+        set(mean, covariance);
     }
 
-    inline void set(const Vector &_mean,
-                    const Matrix &_covariance)
+    inline void set(const Vector &mean,
+                    const Matrix &covariance)
     {
-        mean_ = _mean;
-        covariance_ = _covariance;
+        mean_ = mean;
+        covariance_ = covariance;
 
         EigenSolver eigen(covariance_);
         rotation_ = eigen.eigenvectors().real();           /// rotation into the "world_frame"
@@ -216,24 +216,24 @@ public:
 
     Normal() = delete;
 
-    Normal(const double _mean,
+    Normal(const double mean,
            const double _sigma)
     {
-        set(_mean, _sigma);
+        set(mean, _sigma);
     }
 
-    Normal(const double _mean,
+    Normal(const double mean,
            const double _sigma,
            const unsigned int seed) :
         RandomGenerator(seed)
     {
-        set(_mean, _sigma);
+        set(mean, _sigma);
     }
 
-    inline void set(const double _mean,
+    inline void set(const double mean,
                     const double _sigma)
     {
-        distribution_ = Distribution(_mean, _sigma);
+        distribution_ = Distribution(mean, _sigma);
     }
 
     inline double get()

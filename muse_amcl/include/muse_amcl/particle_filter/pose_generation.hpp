@@ -30,8 +30,8 @@ public:
      * @param pose          - 6 dimensional pose vector (x,y,z,roll,pitch,yaw)
      * @param covariance    - 6 dimensnioal covariance matrix
      */
-    void gaussian(const Pose &pose,
-                  const Covariance &covariance) = 0;
+    void normal(const Pose &pose,
+                const Covariance &covariance) = 0;
 
     /**
      * @brief Build a uniformely distributed particle set using maps that should
