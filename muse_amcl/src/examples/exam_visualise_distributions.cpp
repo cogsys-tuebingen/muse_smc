@@ -1,7 +1,7 @@
 #include <muse_amcl/math/math.hpp>
 #include <opencv2/opencv.hpp>
 
-#include "../../include/muse_amcl/pose_generation/gaussian.hpp"
+#include "../../include/muse_amcl/pose_generation/normal.hpp"
 #include "../../include/muse_amcl/utils/eigen.hpp"
 
 

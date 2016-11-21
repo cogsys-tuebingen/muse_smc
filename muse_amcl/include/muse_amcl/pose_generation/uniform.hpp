@@ -1,8 +1,39 @@
 #pragma once
 
-/**
- * Concept : write a template class that accepts dimensions of interest as template
- * parameter -> therefor we can specialize what needs to be scrambled
- * - Remember angular values must always be normalized !!!
- * - It should be correlated
- * /
+#include <muse_amcl/math/random.hpp>
+#include "arguments.hpp"
+
+namespace muse_amcl {
+namespace pose_generation {
+template<typename... Types>
+class Uniform {
+public:
+    static_assert(sizeof...(Types) > 0, "Constraint : Dimension > 0");
+    static_assert(is_valid_type<Types...>::value, "Parameter list contains forbidden type!");
+
+    static const std::size_t Dimension = sizeof...(Types);
+
+    using RNG = math::random::Uniform<Dimension>;
+
+    Uniform() = delete;
+    Uniform(const Uniform &other) = delete;
+
+    Uniform(const RNG::Vector &min,
+            const RNG::Vector &max,
+            const unsigned int seed) :
+        rng_(min, max, seed)
+    {
+    }
+
+    inline typename RNG::Vector operator() ()
+    {
+        typename RNG::Vector sample = rng_.get();
+        Arguments<Dimension, typename RNG::Vector, Types...>::normalize(sample);
+        return sample;
+    }
+
+private:
+    RNG rng_;
+};
+}
+}

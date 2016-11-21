@@ -56,7 +56,7 @@ struct Metric {
  * Semantic argument type traits.
  */
 template<unsigned int N, typename Array, typename... Ts>
-struct Argument;
+struct Arguments;
 
 /**
  * The argument list for the pose generators must be of size one at least.
@@ -64,7 +64,7 @@ struct Argument;
  * type.
  */
 template<typename Array, typename T, typename... Ts>
-struct Argument<1, Array, T, Ts...>
+struct Arguments<1, Array, T, Ts...>
 {
     typedef T Type;
     inline static void normalize(Array &arr)
@@ -80,7 +80,7 @@ struct Argument<1, Array, T, Ts...>
  * It applies the normalization to the (N - Dim)-th type argument.
  */
 template<unsigned int N, typename Array, typename T, typename... Ts>
-struct Argument<N, Array, T, Ts...>
+struct Arguments<N, Array, T, Ts...>
 {
     static_assert(N > 0, "Dimension of arguments must be at least 1!");
 
@@ -89,13 +89,13 @@ struct Argument<N, Array, T, Ts...>
         if(T::requiresNoramlization()) {
             T::normalize(arr[Array::RowsAtCompileTime - N]);
         }
-        Argument<N-1, Array, Ts...>::normalize(arr);
+        Arguments<N-1, Array, Ts...>::normalize(arr);
     }
 
 };
 
 /**
- * These are the type traits for allowed semantic types.
+ * These are the type traits for allowed semantic types.d
  */
 template<typename... T>
 struct is_valid_type : std::false_type { };

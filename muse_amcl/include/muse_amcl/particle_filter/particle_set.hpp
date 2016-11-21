@@ -108,7 +108,24 @@ public:
         samples.emplace_back(_sample);
     }
 
+    std::size_t minimumSampleSize() const
+    {
+        return minimum_sample_size_;
+    }
+
+    std::size_t maximumSampleSize() const
+    {
+        return maximum_sample_size_;
+    }
+
+    std::size_t currenSampleSize() const
+    {
+        return samples.size();
+    }
+
 private:
+    std::size_t minimum_sample_size_;
+    std::size_t maximum_sample_size_;
     Particles samples;
 
 };

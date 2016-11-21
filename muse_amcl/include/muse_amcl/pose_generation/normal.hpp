@@ -1,8 +1,6 @@
 #pragma once
 
-#include "../math/random.hpp"
-#include "../data_types/map.hpp"
-#include "../particle_filter/particle_set.hpp"
+#include <muse_amcl/math/random.hpp>
 #include "arguments.hpp"
 
 namespace muse_amcl {
@@ -17,6 +15,9 @@ public:
 
     using RNG = math::random::Normal<Dimension>;
 
+    Normal() = delete;
+    Normal(const Normal &other) = delete;
+
     Normal(const typename RNG::Vector &pose,
            const typename RNG::Matrix &covariance,
            const unsigned int seed = 0) :
@@ -27,7 +28,7 @@ public:
     inline typename RNG::Vector operator () ()
     {
         typename RNG::Vector sample = rng_.get();
-        Argument<Dimension, typename RNG::Vector, Types...>::normalize(sample);
+        Arguments<Dimension, typename RNG::Vector, Types...>::normalize(sample);
         return sample;
     }
 
@@ -36,10 +37,3 @@ private:
 };
 }
 }
-
-/*
- * Concept : write a template class that accepts dimensions of interest as template
- * parameter -> therefor we can specialize what needs to be scrambled
- * - Remember angular values must always be normalized !!!
- * - It should be correlated
- */

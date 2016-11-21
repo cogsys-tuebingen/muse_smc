@@ -52,7 +52,7 @@ inline tf::Pose toTF(const Pose3D &_pose)
  * @param _tf_pose tf::Pose
  */
 inline void toTF(const Pose3D &_pose,
-                 tf::Poise &_tf_pose)
+                 tf::Pose &_tf_pose)
 {
     _tf_pose.setOrigin(tf::Vector3(_pose(0), _pose(1), _pose(2)));
     _tf_pose.setRotation(tf::createQuaternionFromRPY(_pose(5), _pose(4), _pose(3)));

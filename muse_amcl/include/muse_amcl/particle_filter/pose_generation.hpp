@@ -15,8 +15,7 @@ namespace muse_amcl {
 class PoseGeneration {
 public:
     typedef std::shared_ptr<PoseGeneration> Ptr;
-    typedef Eigen::Matrix<double, 6,6>          Covariance;
-    typedef Eigen::Vector<double, 6>            Pose;
+    typedef Eigen::Matrix<double, 6,6>      Covariance;
 
     PoseGeneration(ParticleSet &particle_set) :
         particle_set_(particle_set)
@@ -30,14 +29,14 @@ public:
      * @param pose          - 6 dimensional pose vector (x,y,z,roll,pitch,yaw)
      * @param covariance    - 6 dimensnioal covariance matrix
      */
-    void normal(const Pose &pose,
-                const Covariance &covariance) = 0;
+    virtual void normal(const tf::Pose &pose,
+                        const Covariance &covariance) = 0;
 
     /**
      * @brief Build a uniformely distributed particle set using maps that should
      *        be used for pose generation.
      */
-    void uniform() = 0;
+    virtual void uniform() = 0;
 
     void setup(const std::map<std::string, MapProvider::Ptr>  &map_providers,
                ros::NodeHandle &nh_private)
@@ -45,8 +44,8 @@ public:
         /// build a list of maps that should be included
     }
 
-private:
+protected:
     ParticleSet                  &particle_set_;
-    std::vector<MapProvider::Ptr> maps_;
+    std::vector<MapProvider::Ptr> map_providers_;
 };
 }
