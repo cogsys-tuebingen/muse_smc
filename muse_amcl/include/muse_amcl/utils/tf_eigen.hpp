@@ -4,7 +4,7 @@
 #include <tf/tf.h>
 
 namespace muse_amcl {
-namespace transforms {
+namespace conversion {
 typedef Eigen::Matrix<double, 3, 1> Pose2D;
 typedef Eigen::Matrix<double, 3, 3> Covariance2D;
 typedef Eigen::Matrix<double, 6, 1> Pose3D;
@@ -35,19 +35,19 @@ inline void toTF(const Pose2D &pose,
 
 /**
  * @brief Convert Eigen vector to tf pose.
- *                                     yaw, pitch, roll
+ *                                     roll, pitch, yaw
  * @param pose - 2D eigen pose (x,y,z, phi, theta, psi)
  * @return tf::Pose
  */
 inline tf::Pose toTF(const Pose3D &pose)
 {
-    return tf::Pose(tf::createQuaternionFromRPY(pose(5), pose(4), pose(3)),
+    return tf::Pose(tf::createQuaternionFromRPY(pose(3), pose(4), pose(5)),
                     tf::Vector3(pose(0), pose(1), pose(2)));
 }
 
 /**
  * @brief Convert Eigen vector to tf pose.
- *                                     yaw, pitch, roll
+ *                                     roll, pitch, yaw
  * @param pose - 2D eigen pose (x,y,z, phi, theta, psi)
  * @param tfpose tf::Pose
  */
@@ -55,7 +55,7 @@ inline void toTF(const Pose3D &pose,
                  tf::Pose &tfpose)
 {
     tfpose.setOrigin(tf::Vector3(pose(0), pose(1), pose(2)));
-    tfpose.setRotation(tf::createQuaternionFromRPY(pose(5), pose(4), pose(3)));
+    tfpose.setRotation(tf::createQuaternionFromRPY(pose(3), pose(4), pose(5)));
 }
 
 /**
@@ -96,7 +96,7 @@ inline Pose3D toEigen3D(const tf::Pose &tfpose)
     pose(0) = origin.x();
     pose(1) = origin.y();
     pose(2) = origin.z();
-    rotation.getRPY(pose(5), pose(4), pose(3));
+    rotation.getRPY(pose(3), pose(4), pose(5));
     return pose;
 }
 
@@ -113,7 +113,7 @@ inline void toEigen3D(const tf::Pose &tfpose,
     pose(0) = origin.x();
     pose(1) = origin.y();
     pose(2) = origin.z();
-    rotation.getRPY(pose(5), pose(4), pose(3));
+    rotation.getRPY(pose(3), pose(4), pose(5));
 }
 }
 }

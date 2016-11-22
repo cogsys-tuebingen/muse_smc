@@ -42,6 +42,7 @@ public:
                ros::NodeHandle &nh_private)
     {
         /// build a list of maps that should be included
+        /// initial sample size
     }
 
 protected:

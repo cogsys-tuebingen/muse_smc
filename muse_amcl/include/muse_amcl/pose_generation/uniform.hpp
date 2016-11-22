@@ -18,8 +18,8 @@ public:
     Uniform() = delete;
     Uniform(const Uniform &other) = delete;
 
-    Uniform(const RNG::Vector &min,
-            const RNG::Vector &max,
+    Uniform(const typename RNG::Vector &min,
+            const typename RNG::Vector &max,
             const unsigned int seed) :
         rng_(min, max, seed)
     {

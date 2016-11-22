@@ -4,7 +4,7 @@
 #include <memory>
 
 namespace muse_amcl {
-namespace transforms {
+namespace conversion {
 /**
  * @brief Multikey object to identify a transformation.
  */

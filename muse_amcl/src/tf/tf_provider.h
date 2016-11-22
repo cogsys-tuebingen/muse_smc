@@ -6,7 +6,7 @@
 #include <tf/transform_listener.h>
 
 namespace muse_amcl {
-namespace transforms {
+namespace conversion {
 
 /**
  * @brief The TFProvider class keeps track of all tranformations when any sensor
