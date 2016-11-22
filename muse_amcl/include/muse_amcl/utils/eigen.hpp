@@ -20,9 +20,9 @@ inline Eigen::Matrix2d getRotation(const double yaw)
     return matrix;
 }
 
-void getRotation(const double roll,
+void getRotation(const double yaw,
                  const double pitch,
-                 const double yaw,
+                 const double roll,
                  Eigen::Matrix3d &matrix)
 {
 

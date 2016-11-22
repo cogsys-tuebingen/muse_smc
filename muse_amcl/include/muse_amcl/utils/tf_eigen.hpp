@@ -12,50 +12,108 @@ typedef Eigen::Matrix<double, 6, 6> Covariance3D;
 
 /**
  * @brief Convert Eigen vector to tf pose.
- * @param _pose - 2D eigen pose (x,y,phi)
+ * @param pose - 2D eigen pose (x,y,phi)
  * @return tf::Pose
  */
-inline tf::Pose toTF(const Pose2D &_pose)
+inline tf::Pose toTF(const Pose2D &pose)
 {
-    return tf::Pose(tf::createQuaternionFromYaw(_pose(2)),
-                    tf::Vector3(_pose(0), _pose(1), 0.0));
+    return tf::Pose(tf::createQuaternionFromYaw(pose(2)),
+                    tf::Vector3(pose(0), pose(1), 0.0));
 }
 
 /**
  * @brief Convert Eigen vector to tf pose.
- * @param _pose - 2D eigen pose (x,y, phi)
- * @param _tf_pose - tf::Pose
+ * @param pose - 2D eigen pose (x,y, phi)
+ * @param tfpose - tf::Pose
  */
-inline void toTF(const Pose2D &_pose,
-                 tf::Pose &_tf_pose)
+inline void toTF(const Pose2D &pose,
+                 tf::Pose &tfpose)
 {
-    _tf_pose.setOrigin(tf::Vector3(_pose(0), _pose(1), 0.0));
-    _tf_pose.setRotation(tf::createQuaternionFromYaw(_pose(2)));
+    tfpose.setOrigin(tf::Vector3(pose(0), pose(1), 0.0));
+    tfpose.setRotation(tf::createQuaternionFromYaw(pose(2)));
 }
 
 /**
  * @brief Convert Eigen vector to tf pose.
- *                                      yaw, pitch, roll
- * @param _pose - 2D eigen pose (x,y,z, phi, theta, psi)
+ *                                     yaw, pitch, roll
+ * @param pose - 2D eigen pose (x,y,z, phi, theta, psi)
  * @return tf::Pose
  */
-inline tf::Pose toTF(const Pose3D &_pose)
+inline tf::Pose toTF(const Pose3D &pose)
 {
-    return tf::Pose(tf::createQuaternionFromRPY(_pose(5), _pose(4), _pose(3)),
-                    tf::Vector3(_pose(0), _pose(1), _pose(2)));
+    return tf::Pose(tf::createQuaternionFromRPY(pose(5), pose(4), pose(3)),
+                    tf::Vector3(pose(0), pose(1), pose(2)));
 }
 
 /**
  * @brief Convert Eigen vector to tf pose.
- *                                      yaw, pitch, roll
- * @param _pose - 2D eigen pose (x,y,z, phi, theta, psi)
- * @param _tf_pose tf::Pose
+ *                                     yaw, pitch, roll
+ * @param pose - 2D eigen pose (x,y,z, phi, theta, psi)
+ * @param tfpose tf::Pose
  */
-inline void toTF(const Pose3D &_pose,
-                 tf::Pose &_tf_pose)
+inline void toTF(const Pose3D &pose,
+                 tf::Pose &tfpose)
 {
-    _tf_pose.setOrigin(tf::Vector3(_pose(0), _pose(1), _pose(2)));
-    _tf_pose.setRotation(tf::createQuaternionFromRPY(_pose(5), _pose(4), _pose(3)));
+    tfpose.setOrigin(tf::Vector3(pose(0), pose(1), pose(2)));
+    tfpose.setRotation(tf::createQuaternionFromRPY(pose(5), pose(4), pose(3)));
+}
+
+/**
+ * @brief Convert a tf::Pose to Pose2D.
+ * @param pose - the tf pose
+ * @return  Pose2D
+ */
+inline Pose2D toEigen2D(const tf::Pose &tfpose)
+{
+    return Pose2D(tfpose.getOrigin().x(),
+                  tfpose.getOrigin().y(),
+                  tf::getYaw(tfpose.getRotation()));
+}
+
+/**
+ * @brief Convert a tf::Pose to Pose2D.
+ * @param tfpose - the tf pose
+ * @param pose - Pose2D
+ */
+inline void toEigen2D(const tf::Pose &tfpose,
+                      Pose2D &pose)
+{
+    pose(0) = tfpose.getOrigin().x();
+    pose(1) = tfpose.getOrigin().y();
+    pose(2) = tf::getYaw(tfpose.getRotation());
+}
+
+/**
+ * @brief Convert tf::Pose to Pose3D.
+ * @param tfpose  - the tf pose
+ * @return  Pose3D
+ */
+inline Pose3D toEigen3D(const tf::Pose &tfpose)
+{
+    const tf::Vector3   &origin = tfpose.getOrigin();
+    const tf::Matrix3x3  rotation(tfpose.getRotation());
+    Pose3D  pose;
+    pose(0) = origin.x();
+    pose(1) = origin.y();
+    pose(2) = origin.z();
+    rotation.getRPY(pose(5), pose(4), pose(3));
+    return pose;
+}
+
+/**
+ * @brief Convert tf::Pose to Pose3D.
+ * @param tfpose - the tf pose
+ * @param pose - Pose3D
+ */
+inline void toEigen3D(const tf::Pose &tfpose,
+                      Pose3D &pose)
+{
+    const tf::Vector3   &origin = tfpose.getOrigin();
+    const tf::Matrix3x3 rotation(tfpose.getRotation());
+    pose(0) = origin.x();
+    pose(1) = origin.y();
+    pose(2) = origin.z();
+    rotation.getRPY(pose(5), pose(4), pose(3));
 }
 }
 }
