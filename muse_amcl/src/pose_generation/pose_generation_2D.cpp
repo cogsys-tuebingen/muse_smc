@@ -15,6 +15,9 @@ void PoseGeneration2D::normal(const tf::Pose &pose,
                               const Covariance &pose_covariance)
 {
     //// TODO : CHECK FOR MAP EXTENT
+    //// TODO : Define Major map and check the rest for consistency
+    //// TODO : Implement Map Manager and tf Pose Wrapper
+    //// TODO : Implement Covariance Wrapper
 
     std::vector<Map::ConstPtr> maps;
     for(auto m : map_providers_) {
