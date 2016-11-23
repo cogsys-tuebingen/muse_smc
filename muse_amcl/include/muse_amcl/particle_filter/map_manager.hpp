@@ -7,6 +7,7 @@ namespace muse_amcl {
 class MapManager {
 public:
 
+
 private:
 
 
