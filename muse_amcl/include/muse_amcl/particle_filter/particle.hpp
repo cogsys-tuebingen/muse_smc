@@ -1,36 +1,50 @@
 #pragma once
 
-#include <tf/tf.h>
+#include <muse_amcl/math/pose.hpp>
 
 namespace muse_amcl {
 struct Particle {
-    typedef tf::Pose PoseType;
-    typedef double   WeightType;
+    using PoseType   = math::Pose;
+    using WeightType = double;
 
     Particle() :
-       pose(tf::createQuaternionFromRPY(0,0,0),
+       pose_(tf::createQuaternionFromRPY(0,0,0),
             tf::Vector3(0,0,0)),
-       weight(0.0)
+       weight_(0.0)
     {
     }
 
-    Particle(const tf::Quaternion &_q,
-             const tf::Vector3    &_v,
-             const double         &_w) :
-        pose(_q, _v),
-        weight(_w)
+    Particle(const tf::Quaternion &q,
+             const tf::Vector3    &p,
+             const WeightType     &w) :
+        pose_(q, p),
+        weight_(w)
     {
     }
 
-    Particle(const tf::Pose &_p,
-             const double _w)  :
-        pose(_p),
-        weight(_w)
+    Particle(const tf::Pose &p,
+             const WeightType w)  :
+        pose_(p),
+        weight_(w)
     {
     }
 
-    tf::Pose pose;
-    double weight;
+    Particle(const PoseType::Vector3d &p,
+             const WeightType w) :
+        pose_(p),
+        weight_(w)
+    {
+    }
+
+    Particle(const PoseType::Vector6d &p,
+             const WeightType w) :
+        pose_(p),
+        weight_(w)
+    {
+    }
+
+    PoseType   pose_;
+    WeightType weight_;
 
 };
 }

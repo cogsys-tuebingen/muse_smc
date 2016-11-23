@@ -69,8 +69,8 @@ public:
         ParticleSet& set;
     };
 
-    using PoseIterator = ParticleDecorator<Particle::PoseType, &Particle::pose>;
-    using WeightIterator = ParticleDecorator<Particle::WeightType, &Particle::weight>;
+    using PoseIterator = ParticleDecorator<Particle::PoseType, &Particle::pose_>;
+    using WeightIterator = ParticleDecorator<Particle::WeightType, &Particle::weight_>;
     using Particles = std::vector<Particle>;
 
     ParticleSet(const std::size_t _sample_size) :

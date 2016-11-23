@@ -3,7 +3,7 @@
 
 #include "../../include/muse_amcl/pose_generation/normal.hpp"
 #include "../../include/muse_amcl/utils/eigen.hpp"
-
+#include "../../include/muse_amcl/math/pose.hpp"
 
 
 int main(int argc, char *argv[])

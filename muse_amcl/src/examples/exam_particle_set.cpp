@@ -5,7 +5,7 @@
 void states(muse_amcl::ParticleSet& set)
 {
     for(auto &state : set.getPoses()) {
-        state.getOrigin().m_floats[0] = 1.f;
+        state.origin().m_floats[0] = 1.f;
     }
 }
 
@@ -19,7 +19,7 @@ void weights(muse_amcl::ParticleSet &set)
 void particle(muse_amcl::ParticleSet &set)
 {
     for(auto &p : set.getParticles()) {
-        p.weight = 0.0;
+        p.weight_ = 0.0;
     }
 }
 

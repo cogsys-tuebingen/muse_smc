@@ -1,6 +1,6 @@
 #pragma once
 
-#include <tf/tf.h>
+#include <muse_amcl/math/pose.hpp>
 #include <memory>
 #include <chrono>
 
@@ -27,7 +27,7 @@ public:
     {
     }
 
-    virtual inline bool valid(const tf::Pose &_p) const
+    virtual inline bool valid(const math::Pose &_p) const
     {
         return true;
     }

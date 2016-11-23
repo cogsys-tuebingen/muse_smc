@@ -53,13 +53,13 @@ void PoseGeneration2D::normal(const tf::Pose &pose,
     covariance(2,2) = pose_covariance(2,5);
 
     const double weight = 1.0 / sample_size;
-    pose_generation::Normal<Metric,Metric,Radian> rng(mean, covariance);
-    for(Particle &p : particles) {
-        do {
-            p.pose = conversion::toTF(rng());
-            p.weight = weight;
-        } while(!valid(p.pose));
-    }
+//    pose_generation::Normal<Metric,Metric,Radian> rng(mean, covariance);
+//    for(Particle &p : particles) {
+//        do {
+//            p.pose = conversion::toTF(rng());
+//            p.weight = weight;
+//        } while(!valid(p.pose));
+//    }
 }
 
 void PoseGeneration2D::uniform()
