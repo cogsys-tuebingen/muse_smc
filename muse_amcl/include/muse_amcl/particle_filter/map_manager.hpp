@@ -1,4 +1,14 @@
-#ifndef MAP_MANAGER_HPP
-#define MAP_MANAGER_HPP
+#pragma once
 
-#endif // MAP_MANAGER_HPP
+#include <memory>
+#include <muse_amcl/data_types/map.hpp>
+
+namespace muse_amcl {
+class MapManager {
+public:
+
+private:
+
+
+};
+}
