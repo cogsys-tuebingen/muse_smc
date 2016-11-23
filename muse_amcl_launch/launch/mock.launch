@@ -40,6 +40,7 @@
         <group ns="map0">
             <param name="class" value="muse_amcl::MockMapProvider" />
             <param name="base_class" value="muse_amcl::MapProvider" />
+
         </group>
         <group ns="data0">
             <param name="class" value="muse_amcl::MockDataProvider" />
@@ -54,7 +55,12 @@
 
             </group>
             <group ns="pose_generation">
-
+              <rosparam name="use_maps">
+                ["map0", "map1"]
+              </rosparam>
+              <param name="method" value="" />
+              <param name="major_map" value="" />
+              <!-- Maximum Extent, Major Map, Minimum Bounding-->
             </group>
         </group>
     </group>
