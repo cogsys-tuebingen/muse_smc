@@ -9,8 +9,8 @@ class PoseGeneration3D : public PoseGeneration
 public:
     PoseGeneration3D(ParticleSet &particle_set);
 
-    void normal(const tf::Pose &pose,
-                const Covariance &covariance) override;
+    void normal(const math::Pose &pose,
+                const math::Covariance &covariance) override;
     void uniform();
 };
 }

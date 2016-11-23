@@ -1,6 +1,7 @@
 #pragma once
 
 #include <muse_amcl/math/pose.hpp>
+#include <muse_amcl/math/point.hpp>
 #include <memory>
 #include <chrono>
 
@@ -32,14 +33,14 @@ public:
         return true;
     }
 
-    virtual inline tf::Point min() const
+    virtual inline math::Point min() const
     {
         return tf::Point(std::numeric_limits<double>::lowest(),
                          std::numeric_limits<double>::lowest(),
                          std::numeric_limits<double>::lowest());
     }
 
-    virtual inline tf::Point max() const
+    virtual inline math::Point max() const
     {
         return tf::Point(std::numeric_limits<double>::max(),
                          std::numeric_limits<double>::max(),

@@ -9,8 +9,8 @@ PoseGeneration3D::PoseGeneration3D(ParticleSet &particle_set) :
 
 }
 
-void PoseGeneration3D::normal(const tf::Pose &pose,
-                              const Covariance &covariance)
+void PoseGeneration3D::normal(const math::Pose &pose,
+                              const math::Covariance &covariance)
 {
 
 }

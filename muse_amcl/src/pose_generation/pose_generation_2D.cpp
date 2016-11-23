@@ -11,8 +11,8 @@ PoseGeneration2D::PoseGeneration2D(ParticleSet &particle_set) :
 {
 }
 
-void PoseGeneration2D::normal(const tf::Pose &pose,
-                              const Covariance &pose_covariance)
+void PoseGeneration2D::normal(const math::Pose       &pose,
+                              const math::Covariance &pose_covariance)
 {
     //// TODO : CHECK FOR MAP EXTENT
     //// TODO : Define Major map and check the rest for consistency
@@ -29,7 +29,7 @@ void PoseGeneration2D::normal(const tf::Pose &pose,
     particles.resize(sample_size);
 
     /// first check if mean is blocked
-    auto valid = [maps](const tf::Pose &pose) {
+    auto valid = [maps](const math::Pose &pose) {
         bool v = true;
         for(auto m : maps)
             v &= m->valid(pose);
@@ -43,14 +43,8 @@ void PoseGeneration2D::normal(const tf::Pose &pose,
 
     using Metric = pose_generation::Metric;
     using Radian = pose_generation::Radian;
-    Eigen::Vector3d mean = conversion::toEigen2D(pose);
-    Eigen::Matrix3d covariance = Eigen::Matrix3d::Zero();
-    covariance.block<2,2>(0,0) = pose_covariance.block<2,2>(0,0);
-    covariance(2,0) = pose_covariance(5,1);
-    covariance(2,1) = pose_covariance(5,2);
-    covariance(0,2) = pose_covariance(0,5);
-    covariance(1,2) = pose_covariance(1,5);
-    covariance(2,2) = pose_covariance(2,5);
+    Eigen::Vector3d mean = pose.eigen3D();
+    Eigen::Matrix3d covariance = pose_covariance.eigen3D();
 
     const double weight = 1.0 / sample_size;
 //    pose_generation::Normal<Metric,Metric,Radian> rng(mean, covariance);

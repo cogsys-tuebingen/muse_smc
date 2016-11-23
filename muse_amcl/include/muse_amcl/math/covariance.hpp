@@ -47,11 +47,11 @@ public:
         data_(Matrix6d::Zero())
     {
         data_.block<2,2>(0,0) = data.block<2,2>(0,0);
-        data[5,1] = data_[2,0];
-        data[5,2] = data_[2,1];
-        data[0,5] = data_[0,2];
-        data[1,5] = data_[1,2];
-        data[2,5] = data_[2,2];
+        data_(5,1) = data(2,0);
+        data_(5,2) = data(2,1);
+        data_(0,5) = data(0,2);
+        data_(1,5) = data(1,2);
+        data_(2,5) = data(2,2);
     }
 
     /**
@@ -68,22 +68,20 @@ public:
 
         switch(data.size()) {
         case 9:
-            data_[0,0] = get(0,0,3);
-            data_[1,0] = get(1,0,3);
-            data_[5,0] = get(2,0,3);
-
-            data_[0,1] = get(0,1,3);
-            data_[1,1] = get(1,1,3);
-            data_[5,1] = get(0,2,3);
-
-            data_[0,5] = get(0,1,3);
-            data_[1,5] = get(1,1,3);
-            data_[5,5] = get(0,2,3);
+            data_(0,0) = get(0,0,3);
+            data_(1,0) = get(1,0,3);
+            data_(5,0) = get(2,0,3);
+            data_(0,1) = get(0,1,3);
+            data_(1,1) = get(1,1,3);
+            data_(5,1) = get(0,2,3);
+            data_(0,5) = get(0,1,3);
+            data_(1,5) = get(1,1,3);
+            data_(5,5) = get(0,2,3);
             break;
         case 36:
             for(std::size_t r = 0 ; r < 6 ; ++r) {
                 for(std::size_t c = 0 ; c < 6 ; ++c) {
-                    //                    data_[r,c] = get(r,c,6);      /// for formatting
+                    data_(r,c) = get(r,c,6);      /// for formatting
                 }
             }
             break;
@@ -115,7 +113,7 @@ public:
      *        data() getter methods can be used.
      * @return copy of 6D matrix
      */
-    inline Matrix6d as6D() const
+    inline Matrix6d eigen6D() const
     {
         return data_;
     }
@@ -125,15 +123,15 @@ public:
      *        with components x,y,psi
      * @return copy of 3D components
      */
-    inline Matrix3d as3D() const
+    inline Matrix3d eigen3D() const
     {
         Matrix3d m;
         m.block<2,2>(0,0) = data_.block<2,2>(0,0);
-        m[2,0] = data_[5,1];
-        m[2,1] = data_[5,2];
-        m[0,2] = data_[0,5];
-        m[1,2] = data_[1,5];
-        m[2,2] = data_[2,5];
+        m(2,0) = data_(5,1);
+        m(2,1) = data_(5,2);
+        m(0,2) = data_(0,5);
+        m(1,2) = data_(1,5);
+        m(2,2) = data_(2,5);
         return m;
     }
 
@@ -143,9 +141,9 @@ public:
      * @param c - the column
      * @return double reference
      */
-    inline double& operator [] (const std::size_t r, const std::size_t c)
+    inline double& operator () (const std::size_t r, const std::size_t c)
     {
-        return data_[r,c];
+        return data_(r,c);
     }
 
     /**
@@ -154,9 +152,9 @@ public:
      * @param c - the column
      * @return const double reference
      */
-    inline const double &operator [] (const std::size_t r, const std::size_t c) const
+    inline const double &operator () (const std::size_t r, const std::size_t c) const
     {
-        return data_[r,c];
+        return data_(r,c);
     }
 
 private:
