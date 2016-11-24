@@ -14,6 +14,23 @@ PoseGeneration2D::PoseGeneration2D(ParticleSet &particle_set) :
 void PoseGeneration2D::normal(const math::Pose       &pose,
                               const math::Covariance &pose_covariance)
 {
+    /**
+      +-----------------------------------------+
+      | Rejection Sampling                      |
+      | -> Major Map                            |
+      |    + generate within major map          |
+      |    + check with minor maps              |
+      | -> Minimum Bounding Volume ( Interval ) |
+      | -> Maximum Bounding Volume ( Interval ) |
+      | -> Optimization                         |
+      |    + Map Free Space Definition          |
+      |    + and sampling.                      |
+      +-----------------------------------------+
+
+     **/
+
+
+
     //// TODO : CHECK FOR MAP EXTENT
     //// TODO : Define Major map and check the rest for consistency
     //// TODO : Implement Map Manager and tf Pose Wrapper
