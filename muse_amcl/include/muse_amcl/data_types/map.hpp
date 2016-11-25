@@ -35,16 +35,16 @@ public:
 
     virtual inline math::Point min() const
     {
-        return tf::Point(std::numeric_limits<double>::lowest(),
-                         std::numeric_limits<double>::lowest(),
-                         std::numeric_limits<double>::lowest());
+        return math::Point(std::numeric_limits<double>::lowest(),
+                           std::numeric_limits<double>::lowest(),
+                           std::numeric_limits<double>::lowest());
     }
 
     virtual inline math::Point max() const
     {
-        return tf::Point(std::numeric_limits<double>::max(),
-                         std::numeric_limits<double>::max(),
-                         std::numeric_limits<double>::max());
+        return math::Point(std::numeric_limits<double>::max(),
+                           std::numeric_limits<double>::max(),
+                           std::numeric_limits<double>::max());
     }
 
     virtual inline bool isLoaded() const

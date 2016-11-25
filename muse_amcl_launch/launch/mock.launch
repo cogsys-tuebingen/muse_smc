@@ -55,7 +55,7 @@
 
             </group>
             <group ns="pose_generation">
-              <rosparam name="use_maps">
+              <rosparam name="maps">
                 ["map0", "map1"]
               </rosparam>
               <param name="method" value="" />

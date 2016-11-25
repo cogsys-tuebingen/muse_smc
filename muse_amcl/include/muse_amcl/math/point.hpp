@@ -8,25 +8,21 @@ namespace math {
 /**
  * @brief The Point class is an adapter class for Eigen and tf types.
  */
-class Point {
+class Point : public tf::Point {
 public:
     using Point3d = Eigen::Vector3d;
     using Point2d = Eigen::Vector2d;
 
-    /**
-     * @brief Point default constructor.
-     */
-    Point() :
-        point_(0.0,0.0,0.0)
+
+    Point(const double x = .0,
+          const double y = .0,
+          const double z = .0) :
+        tf::Point(x, y, z)
     {
     }
 
-    /**
-     * @brief Point constructor for tf data types.
-     * @param point
-     */
-    Point(const tf::Point &point) :
-        point_(point)
+    Point(const tf::Point &other) :
+        tf::Point(other)
     {
     }
 
@@ -35,7 +31,7 @@ public:
      * @param point - 2D Eigen vector
      */
     Point(const Point2d &point) :
-        point_(point(0),point(1),0)
+        tf::Point(point(0),point(1),0)
     {
     }
 
@@ -44,26 +40,38 @@ public:
      * @param point - 3D Eigen vector
      */
     Point(const Point3d &point) :
-        point_(point(0),point(1),point(2))
+        tf::Point(point(0),point(1),point(2))
     {
     }
 
-    /**
-     * @brief tf returns a reference to the encapsuled tf point.
-     * @return
-     */
-    inline tf::Point & tf()
+    inline const tfScalar &x() const
     {
-        return point_;
+        return tf::Point::x();
     }
 
-    /**
-     * @brief tf returns a const reference to the encapsuled tf point.
-     * @return
-     */
-    inline const tf::Point & tf() const
+    inline const tfScalar &y() const
     {
-        return point_;
+        return tf::Point::y();
+    }
+
+    inline const tfScalar &z() const
+    {
+        return tf::Point::z();
+    }
+
+    inline tfScalar &x()
+    {
+        return m_floats[0];
+    }
+
+    inline tfScalar &y()
+    {
+        return m_floats[1];
+    }
+
+    inline tfScalar &z()
+    {
+        return m_floats[2];
     }
 
     /**
@@ -72,7 +80,7 @@ public:
      */
     inline Point2d eigen2D() const
     {
-        return Point2d(point_.x(), point_.y());
+        return Point2d(m_floats[0], m_floats[1]);
     }
 
     /**
@@ -81,11 +89,76 @@ public:
      */
     inline Point3d eigen3D() const
     {
-        return Point3d(point_.x(), point_.y(), point_.z());
+        return Point3d(m_floats[0], m_floats[1], m_floats[2]);
     }
 
-private:
-    tf::Point point_;
+
+    /**
+     * @brief Return the element-wise minimum.
+     * @param other - another point
+     * @return  the minimum
+     */
+    inline Point cwiseMin(const Point &other)
+    {
+        Point p(*this);
+        p.setMin(other);
+        return p;
+    }
+
+    /**
+     * @brief Return the element-wise minimum.
+     * @param other - another point
+     * @param max - reference to the variable the value should be return to.
+     */
+    inline void cwiseMin(const Point &other,
+                         Point &min)
+    {
+        min = *this;
+        min.setMin(other);
+    }
+
+    /**
+     * @brief Return the element-wise maximum.
+     * @param other - another point
+     * @return  the maximumg
+     */
+    inline Point cwiseMax(const Point &other)
+    {
+        Point p(*this);
+        p.setMax(other);
+        return p;
+    }
+
+    /**
+     * @brief Return the element-wise maximum.
+     * @param other - another point
+     * @param max - reference to the variable the value should be return to.
+     */
+    inline void cwiseMax(const Point &other,
+                         Point &max)
+    {
+        max = *this;
+        max.setMax(other);
+    }
+
+    inline Point operator + (const tf::Vector3 &other) const
+    {
+        return Point(m_floats[0] + other.m_floats[0],
+                     m_floats[1] + other.m_floats[1],
+                     m_floats[2] + other.m_floats[2]);
+    }
+
+    inline Point operator + (const Point &other) const
+    {
+        return Point(m_floats[0] + other.m_floats[0],
+                     m_floats[1] + other.m_floats[1],
+                     m_floats[2] + other.m_floats[2]);
+    }
+
+    inline Point operator * (const tf::Transform &transform) const
+    {
+        return Point(transform * (tf::Point)(*this));
+    }
 
 };
 }

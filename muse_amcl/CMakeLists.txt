@@ -74,6 +74,13 @@ if(${BUILD_EXAMPLES})
         src/examples/exam_signals.cpp
     )
 
+    add_executable(muse_amcl_exam_bounding_boxes
+        src/examples/exam_bounding_boxes.cpp
+    )
+    target_link_libraries(muse_amcl_exam_bounding_boxes
+        ${catkin_LIBRARIES}
+    )
+
     find_package(OpenCV QUIET)
     if(${OpenCV_FOUND})
         include_directories(
