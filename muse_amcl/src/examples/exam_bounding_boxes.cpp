@@ -49,41 +49,72 @@ int main(int argc, char *argv[])
     ros::Publisher pub = nh.advertise<visualization_msgs::MarkerArray>("/markers", 1);
 
 
-    double angle = 0.0;
-    double angle_incr = 0.01;
+    double yaw = 0.0;
+    double yaw_incr = 0.01;
+    double pitch = 0.0;
+    double pitch_incr = 0.001;
+    double roll = 0.0;
+    double roll_incr = 0.0;
 
     while(ros::ok()) {
-        tf::Transform transform(tf::createQuaternionFromYaw(angle));
+        tf::Transform transform(tf::createQuaternionFromRPY(roll, pitch, yaw));
+        yaw = muse_amcl::math::angle::normalize(yaw + yaw_incr);
+        roll = muse_amcl::math::angle::normalize(roll + roll_incr);
+        pitch = muse_amcl::math::angle::normalize(pitch + pitch_incr);
 
         visualization_msgs::MarkerArray markers;
 
+        // bounding box itself
         muse_amcl::math::BoundingBox be = bb * transform;
-        muse_amcl::math::BoundingBox::Edges edges;
-        be.edges(edges);
+        muse_amcl::math::BoundingBox::Edges be_edges;
+        be.edges(be_edges);
 
         visualization_msgs::Marker bottom = marker_template;
-        emplace(0, 4, edges, bottom);
+        emplace(0, 4, be_edges, bottom);
         markers.markers.emplace_back(bottom);
 
         visualization_msgs::Marker mid = marker_template;
-        mid.color.r = 1.0;
         mid.id = 1;
-        emplace(4, 8, edges, mid);
+        emplace(4, 8, be_edges, mid);
         markers.markers.emplace_back(mid);
 
         visualization_msgs::Marker top = marker_template;
         top.id = 2;
-        top.color.r = 0.0;
-        top.color.g = 0.0;
-        top.color.b = 1.0;
-        emplace(8, 12, edges, top);
+        emplace(8, 12, be_edges, top);
         markers.markers.emplace_back(top);
 
+        // axis aligned
+        muse_amcl::math::BoundingBox ba = be.axisAlignedEnclosing();
+        muse_amcl::math::BoundingBox::Edges ba_edges;
+        ba.edges(ba_edges);
+
+        bottom.color.g = 0.0;
+        bottom.color.b = 1.0;
+        bottom.id = 3;
+        bottom.points.clear();
+        emplace(0, 4, ba_edges, bottom);
+        markers.markers.emplace_back(bottom);
+
+        mid.id = 4;
+        mid.color.g = 0.0;
+        mid.color.b = 1.0;
+        mid.points.clear();
+        emplace(4, 8, ba_edges, mid);
+        markers.markers.emplace_back(mid);
+
+        top.id = 5;
+        top.color.g = 0.0;
+        top.color.b = 1.0;
+        top.points.clear();
+        emplace(8, 12, ba_edges, top);
+        markers.markers.emplace_back(top);
+
+        // corner points
         visualization_msgs::Marker corners = marker_template;
         corners.scale.x = 0.1;
         corners.scale.y = 0.1;
         corners.scale.z = 0.1;
-        corners.id = 3;
+        corners.id = 6;
         corners.type = visualization_msgs::Marker::SPHERE;
         corners.pose.position.x = be.minimum().x();
         corners.pose.position.y = be.minimum().y();
@@ -93,7 +124,7 @@ int main(int argc, char *argv[])
         corners.color.b = 0.f;
         markers.markers.emplace_back(corners);
 
-        corners.id = 4;
+        corners.id = 7;
         corners.pose.position.x = be.maximum().x();
         corners.pose.position.y = be.maximum().y();
         corners.pose.position.z = be.maximum().z();
@@ -101,9 +132,8 @@ int main(int argc, char *argv[])
         markers.markers.emplace_back(corners);
 
         pub.publish(markers);
-        std::cout << angle << std::endl;
 
-        angle = muse_amcl::math::angle::normalize(angle + angle_incr);
+
         ros::Rate(30).sleep();
     }
 

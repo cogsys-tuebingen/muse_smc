@@ -112,7 +112,7 @@ public:
      * @param max - reference to the variable the value should be return to.
      */
     inline void cwiseMin(const Point &other,
-                         Point &min)
+                                Point &min)
     {
         min = *this;
         min.setMin(other);

@@ -64,15 +64,7 @@ public:
     inline Points corners() const
     {
         Points pts;
-        pts[0] = minimum_;
-        pts[1] = minimum_ + axis_x_;
-        pts[2] = minimum_ + axis_x_ + axis_y_;
-        pts[3] = minimum_ + axis_y_;
-
-        pts[4] = pts[0] + axis_z_;
-        pts[5] = pts[1] + axis_z_;
-        pts[6] = pts[2] + axis_z_;
-        pts[7] = pts[3] + axis_z_;
+        corners(pts);
         return pts;
     }
 
@@ -80,7 +72,7 @@ public:
      * @brief Get the corner points of the bounding box by reference.
      * @param pts - the output points
      */
-    inline void corners(Points &pts)
+    inline void corners(Points &pts) const
     {
         pts[0] = minimum_;
         pts[1] = minimum_ + axis_x_;
@@ -99,38 +91,9 @@ public:
      */
     inline Edges edges() const
     {
-        Points pts = corners();
-        Edges edges;
-        /// bottom plane edges
-        edges[0][0] = pts[0];
-        edges[0][1] = pts[1];
-        edges[1][0] = pts[1];
-        edges[1][1] = pts[2];
-        edges[2][0] = pts[2];
-        edges[2][1] = pts[3];
-        edges[3][0] = pts[3];
-        edges[3][1] = pts[0];
-
-        /// upwards edges
-        edges[4][0] = pts[0];
-        edges[4][1] = pts[4];
-        edges[5][0] = pts[1];
-        edges[5][1] = pts[5];
-        edges[6][0] = pts[2];
-        edges[6][1] = pts[6];
-        edges[7][0] = pts[3];
-        edges[7][1] = pts[7];
-
-        /// top layer edges
-        edges[8][0]  = pts[4];
-        edges[8][1]  = pts[5];
-        edges[9][0]  = pts[5];
-        edges[9][1]  = pts[6];
-        edges[10][0] = pts[6];
-        edges[10][1] = pts[7];
-        edges[11][0] = pts[7];
-        edges[11][1] = pts[4];
-        return edges;
+        Edges e;
+        edges(e);
+        return e;
     }
 
     /**
@@ -212,7 +175,45 @@ public:
         return BoundingBox(*this, transform);
     }
 
+    /**
+     * @brief axisAlignedEnclosing returns the axis aligned bounding box for the bounding box.
+     * @return axis aligned bounding box
+     */
+    inline BoundingBox axisAlignedEnclosing() const
+    {
+        BoundingBox b;
+        axisAlignedEnclosing(b);
+        return b;
+    }
+
+    /**
+     * @brief axisAlignedEnclosing returns the axis aligned bounding box for the bounding box by
+     *        reference.
+     */
+    inline void axisAlignedEnclosing(BoundingBox &bounding) const
+    {
+        Point min, max;
+        Points pts;
+        corners(pts);
+        for(const Point &p : pts) {
+            min.setMin(p);
+            max.setMax(p);
+        }
+        bounding = BoundingBox(min, max);
+    }
+
+
 private:
+    /**
+     * Default constructor.
+     */
+    BoundingBox() = default;
+
+    /**
+     * @brief Copy constructor allowing to apply a transform in place.
+     * @param other - other bounding box
+     * @param transform - the transformation to apply
+     */
     BoundingBox(const BoundingBox &other,
                 const tf::Transform &transform) :
         BoundingBox(other)
