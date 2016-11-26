@@ -64,28 +64,15 @@ public:
     inline Points corners() const
     {
         Points pts;
-        pts[0] = minimum_ + axis_x_;
+        pts[0] = minimum_;
+        pts[1] = minimum_ + axis_x_;
+        pts[2] = minimum_ + axis_x_ + axis_y_;
+        pts[3] = minimum_ + axis_y_;
 
-        pts[1] = minimum_;
-        pts[1].x() = maximum_.x();
-
-        pts[2] = maximum_;
-        pts[2].z() = minimum_.z();
-
-        pts[3] = minimum_;
-        pts[3].y() = maximum_.y();
-
-        pts[4] = minimum_;
-        pts[4].z() = maximum_.z();
-
-        pts[5] = maximum_;
-        pts[5].y() = minimum_.y();
-
-        pts[6] = maximum_;
-
-        pts[7] = maximum_;
-        pts[7].x() = minimum_.x();
-
+        pts[4] = pts[0] + axis_z_;
+        pts[5] = pts[1] + axis_z_;
+        pts[6] = pts[2] + axis_z_;
+        pts[7] = pts[3] + axis_z_;
         return pts;
     }
 
@@ -96,25 +83,14 @@ public:
     inline void corners(Points &pts)
     {
         pts[0] = minimum_;
+        pts[1] = minimum_ + axis_x_;
+        pts[2] = minimum_ + axis_x_ + axis_y_;
+        pts[3] = minimum_ + axis_y_;
 
-        pts[1] = minimum_;
-
-        pts[2] = maximum_;
-        pts[2].z() = minimum_.z();
-
-        pts[3] = minimum_;
-        pts[3].y() = maximum_.y();
-
-        pts[4] = minimum_;
-        pts[4].z() = maximum_.z();
-
-        pts[5] = maximum_;
-        pts[5].y() = minimum_.y();
-
-        pts[6] = maximum_;
-
-        pts[7] = maximum_;
-        pts[7].x() = minimum_.x();
+        pts[4] = pts[0] + axis_z_;
+        pts[5] = pts[1] + axis_z_;
+        pts[6] = pts[2] + axis_z_;
+        pts[7] = pts[3] + axis_z_;
     }
 
     /**
@@ -204,9 +180,10 @@ public:
     {
         minimum_ = transform * minimum_;
         maximum_ = transform * maximum_;
-        axis_x_  = transform * axis_x_;
-        axis_y_  = transform * axis_y_;
-        axis_z_  = transform * axis_z_;
+        tf::Transform rotation (transform.getRotation());
+        axis_x_  = rotation * axis_x_;
+        axis_y_  = rotation * axis_y_;
+        axis_z_  = rotation * axis_z_;
         transform_ = transform;
     }
 
@@ -219,9 +196,10 @@ public:
     {
         minimum_ = transform * minimum_;
         maximum_ = transform * maximum_;
-        axis_x_   = transform * axis_x_;
-        axis_y_   = transform * axis_y_;
-        axis_z_   = transform * axis_z_;
+        tf::Transform rotation (transform.getRotation());
+        axis_x_  = rotation * axis_x_;
+        axis_y_  = rotation * axis_y_;
+        axis_z_  = rotation * axis_z_;
         transform_ = transform;
     }
 
