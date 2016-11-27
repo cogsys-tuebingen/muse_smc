@@ -1,5 +1,7 @@
 #include <muse_amcl/math/bounding_box.hpp>
+#include <muse_amcl/math/bounding_rectangle.hpp>
 #include <muse_amcl/math/angle.hpp>
+
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 #include <ros/ros.h>
@@ -52,12 +54,13 @@ int main(int argc, char *argv[])
     double yaw = 0.0;
     double yaw_incr = 0.01;
     double pitch = 0.0;
-    double pitch_incr = 0.001;
+    double pitch_incr = 0.000;
     double roll = 0.0;
     double roll_incr = 0.0;
 
     while(ros::ok()) {
-        tf::Transform transform(tf::createQuaternionFromRPY(roll, pitch, yaw));
+        tf::Transform translation(tf::createIdentityQuaternion(), tf::Vector3(1.0, 0.0, 0.0));
+        tf::Transform rotation(tf::createQuaternionFromRPY(roll, pitch, yaw));
         yaw = muse_amcl::math::angle::normalize(yaw + yaw_incr);
         roll = muse_amcl::math::angle::normalize(roll + roll_incr);
         pitch = muse_amcl::math::angle::normalize(pitch + pitch_incr);
@@ -65,7 +68,7 @@ int main(int argc, char *argv[])
         visualization_msgs::MarkerArray markers;
 
         // bounding box itself
-        muse_amcl::math::BoundingBox be = bb * transform;
+        muse_amcl::math::BoundingBox be = (translation * rotation) * bb;
         muse_amcl::math::BoundingBox::Edges be_edges;
         be.edges(be_edges);
 
