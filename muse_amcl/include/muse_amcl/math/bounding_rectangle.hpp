@@ -15,9 +15,22 @@ public:
                       const Point &max) :
         minimum_(min),
         maximum_(max),
-        axis_x_((max - min).x(), 0, 0),
-        axis_y_(0, (max - min).y(), 0)
+        axis_1st_((max - min).x(), 0, 0),
+        axis_2nd_(0, (max - min).y(), 0)
     {
+        assert(min.z() == 0);
+        assert(max.z() == 0);
+    }
+
+    BoundingRectangle(const Point &min,
+                      const tf::Vector3 &axis_1st,
+                      const tf::Vector3 &axis_2nd) :
+        minimum_(min),
+        maximum_(min + axis_1st + axis_2nd),
+        axis_1st_(axis_1st),
+        axis_2nd_(axis_2nd)
+    {
+        assert(axis_1st.dot(axis_2nd) == 0);
     }
 
     /**
@@ -86,9 +99,9 @@ public:
     inline void corners(Points &pts) const
     {
         pts[0] = minimum_;
-        pts[1] = minimum_ + axis_x_;
+        pts[1] = minimum_ + axis_1st_;
         pts[2] = maximum_;
-        pts[3] = minimum_ + axis_y_;
+        pts[3] = minimum_ + axis_2nd_;
     }
 
     /**
@@ -129,28 +142,19 @@ public:
         minimum_ = transform * minimum_;
         maximum_ = transform * maximum_;
         tf::Transform rotation (transform.getRotation());
-        axis_x_  = rotation * axis_x_;
-        axis_y_  = rotation * axis_y_;
+        axis_1st_  = rotation * axis_1st_;
+        axis_2nd_  = rotation * axis_2nd_;
         transform_ = transform;
     }
 
-    /**
-     * @brief axisAlignedEnclosing returns the axis aligned bounding rectangle
-     * for the bounding rectangle.
-     * @return axis aligned bounding rectangle
-     */
-    inline BoundingRectangle axisAlignedEnclosing() const
+    inline BoundingRectangle axisAlignedEnclosingXY() const
     {
         BoundingRectangle b;
-        axisAlignedEnclosing(b);
+        axisAlignedEnclosingXY(b);
         return b;
     }
 
-    /**
-     * @brief axisAlignedEnclosing returns the axis aligned bounding rectangle
-     *        for the bounding rectangle by reference.
-     */
-    inline void axisAlignedEnclosing(BoundingRectangle &bounding) const
+    inline void axisAlignedEnclosingXY(BoundingRectangle &bounding) const
     {
         using limits = std::numeric_limits<tfScalar>;
         Point min(limits::max(), limits::max(), limits::max());
@@ -161,8 +165,70 @@ public:
             min.setMin(p);
             max.setMax(p);
         }
-        bounding = BoundingRectangle(min, max);
+        tf::Vector3 diagonal = max - min;
+        diagonal[2] = 0;
+        tf::Vector3 axis_1st = diagonal;
+        tf::Vector3 axis_2nd = diagonal;
+        axis_1st[1] = 0;
+        axis_2nd[0] = 0;
+        bounding = BoundingRectangle(min, axis_1st, axis_2nd);
     }
+
+    inline BoundingRectangle axisAlignedEnclosingXZ() const
+    {
+        BoundingRectangle b;
+        axisAlignedEnclosingXZ(b);
+        return b;
+    }
+
+    inline void axisAlignedEnclosingXZ(BoundingRectangle &bounding) const
+    {
+        using limits = std::numeric_limits<tfScalar>;
+        Point min(limits::max(), limits::max(), limits::max());
+        Point max(limits::lowest(), limits::lowest(), limits::lowest());
+        Points pts;
+        corners(pts);
+        for(const Point &p : pts) {
+            min.setMin(p);
+            max.setMax(p);
+        }
+        tf::Vector3 diagonal = max - min;
+        diagonal[1] = 0;
+        tf::Vector3 axis_1st = diagonal;
+        tf::Vector3 axis_2nd = diagonal;
+        axis_1st[2] = 0;
+        axis_2nd[0] = 0;
+        bounding = BoundingRectangle(min, axis_1st, axis_2nd);
+    }
+
+
+    inline BoundingRectangle axisAlignedEnclosingYZ() const
+    {
+        BoundingRectangle b;
+        axisAlignedEnclosingYZ(b);
+        return b;
+    }
+
+    inline void axisAlignedEnclosingYZ(BoundingRectangle &bounding) const
+    {
+        using limits = std::numeric_limits<tfScalar>;
+        Point min(limits::max(), limits::max(), limits::max());
+        Point max(limits::lowest(), limits::lowest(), limits::lowest());
+        Points pts;
+        corners(pts);
+        for(const Point &p : pts) {
+            min.setMin(p);
+            max.setMax(p);
+        }
+        tf::Vector3 diagonal = max - min;
+        diagonal[0] = 0;
+        tf::Vector3 axis_1st = diagonal;
+        tf::Vector3 axis_2nd = diagonal;
+        axis_1st[2] = 0;
+        axis_2nd[1] = 0;
+        bounding = BoundingRectangle(min, axis_1st, axis_2nd);
+    }
+
 
 private:
     /**
@@ -174,8 +240,8 @@ private:
     Point         minimum_;
     Point         maximum_;
 
-    tf::Vector3   axis_x_;
-    tf::Vector3   axis_y_;
+    tf::Vector3   axis_1st_;
+    tf::Vector3   axis_2nd_;
 
     tf::Transform transform_;
 
@@ -188,7 +254,7 @@ private:
  * @param transform - transformation to apply
  */
 inline muse_amcl::math::BoundingRectangle operator * (const tf::Transform &transform ,
-                                                      const muse_amcl::math::BoundingRectangle bb)
+                                                      const muse_amcl::math::BoundingRectangle &bb)
 {
     return muse_amcl::math::BoundingRectangle(bb, transform);
 }

@@ -12,11 +12,14 @@ int main(int argc, char *argv[])
     ros::init(argc, argv, "muse_amcl_exam_bounding_boxes");
 
 
-    muse_amcl::math::Point min(-0.5,-0.5);
-    muse_amcl::math::Point max(0.5,0.5,1.0);
-    muse_amcl::math::BoundingBox bb(min, max);
+    muse_amcl::math::Point min_bb(-0.5,-0.5);
+    muse_amcl::math::Point max_bb(0.5,0.5,1.0);
+    muse_amcl::math::Point min_br(-0.5,-0.5, 0.0);
+    muse_amcl::math::Point max_br(0.5,0.5, 0.0);
+    muse_amcl::math::BoundingBox bb(min_bb, max_bb);
+    muse_amcl::math::BoundingRectangle br(min_br, max_br);
 
-    visualization_msgs::Marker      marker_template;
+    visualization_msgs::Marker  marker_template;
     marker_template.header.frame_id = "world";
     marker_template.header.stamp = ros::Time();
     marker_template.ns = "muse_amcl_exam_bounding_boxes";
@@ -30,7 +33,7 @@ int main(int argc, char *argv[])
     marker_template.color.b = 0.0;
 
 
-    auto emplace = [] (const std::size_t start,
+    auto emplace3D = [] (const std::size_t start,
             const std::size_t end,
             const muse_amcl::math::BoundingBox::Edges &edges,
             visualization_msgs::Marker &marker) {
@@ -47,6 +50,25 @@ int main(int argc, char *argv[])
             marker.points.emplace_back(p2);
         }
     };
+
+    auto emplace2D = [] (const std::size_t start,
+                         const std::size_t end,
+                         const muse_amcl::math::BoundingRectangle::Edges &edges,
+                         visualization_msgs::Marker &marker) {
+        for(std::size_t i = start ; i < end; ++i) {
+            geometry_msgs::Point p1;
+            geometry_msgs::Point p2;
+            p1.x = edges[i][0].x();
+            p1.y = edges[i][0].y();
+            p1.z = edges[i][0].z();
+            p2.x = edges[i][1].x();
+            p2.y = edges[i][1].y();
+            p2.z = edges[i][1].z();
+            marker.points.emplace_back(p1);
+            marker.points.emplace_back(p2);
+        }
+    };
+
     ros::NodeHandle nh("~");
     ros::Publisher pub = nh.advertise<visualization_msgs::MarkerArray>("/markers", 1);
 
@@ -54,13 +76,17 @@ int main(int argc, char *argv[])
     double yaw = 0.0;
     double yaw_incr = 0.01;
     double pitch = 0.0;
-    double pitch_incr = 0.000;
+    double pitch_incr = 0.005;
     double roll = 0.0;
     double roll_incr = 0.0;
 
+
     while(ros::ok()) {
-        tf::Transform translation(tf::createIdentityQuaternion(), tf::Vector3(1.0, 0.0, 0.0));
+        int id = 0;
+        tf::Transform translation_bb(tf::createIdentityQuaternion(), tf::Vector3(1.0, 0.0, 0.0));
+        tf::Transform translation_br(tf::createIdentityQuaternion(), tf::Vector3(-1.0, 0.0, 0.0));
         tf::Transform rotation(tf::createQuaternionFromRPY(roll, pitch, yaw));
+
         yaw = muse_amcl::math::angle::normalize(yaw + yaw_incr);
         roll = muse_amcl::math::angle::normalize(roll + roll_incr);
         pitch = muse_amcl::math::angle::normalize(pitch + pitch_incr);
@@ -68,71 +94,124 @@ int main(int argc, char *argv[])
         visualization_msgs::MarkerArray markers;
 
         // bounding box itself
-        muse_amcl::math::BoundingBox be = (translation * rotation) * bb;
+        muse_amcl::math::BoundingBox       bb_transformed = (translation_bb * rotation) * bb;
+        muse_amcl::math::BoundingRectangle br_transformed = (translation_br * rotation) * br;
+
         muse_amcl::math::BoundingBox::Edges be_edges;
-        be.edges(be_edges);
+        bb_transformed.edges(be_edges);
+        muse_amcl::math::BoundingRectangle::Edges br_edges;
+        br_transformed.edges(br_edges);
 
-        visualization_msgs::Marker bottom = marker_template;
-        emplace(0, 4, be_edges, bottom);
-        markers.markers.emplace_back(bottom);
+        visualization_msgs::Marker bb_bottom = marker_template;
+        bb_bottom.id = ++id;
+        emplace3D(0, 4, be_edges, bb_bottom);
+        markers.markers.emplace_back(bb_bottom);
 
-        visualization_msgs::Marker mid = marker_template;
-        mid.id = 1;
-        emplace(4, 8, be_edges, mid);
-        markers.markers.emplace_back(mid);
+        visualization_msgs::Marker bb_mid = marker_template;
+        bb_mid.id = ++id;
+        emplace3D(4, 8, be_edges, bb_mid);
+        markers.markers.emplace_back(bb_mid);
 
-        visualization_msgs::Marker top = marker_template;
-        top.id = 2;
-        emplace(8, 12, be_edges, top);
-        markers.markers.emplace_back(top);
+        visualization_msgs::Marker bb_top = marker_template;
+        bb_top.id = ++id;
+        emplace3D(8, 12, be_edges, bb_top);
+        markers.markers.emplace_back(bb_top);
+
+        visualization_msgs::Marker br_bottom = marker_template;
+        br_bottom.id = ++id;
+        emplace2D(0, 4, br_edges, br_bottom);
+        markers.markers.emplace_back(br_bottom);
 
         // axis aligned
-        muse_amcl::math::BoundingBox ba = be.axisAlignedEnclosing();
-        muse_amcl::math::BoundingBox::Edges ba_edges;
-        ba.edges(ba_edges);
+        muse_amcl::math::BoundingBox bba = bb_transformed.axisAlignedEnclosing();
+        muse_amcl::math::BoundingBox::Edges bba_edges = bba.edges();
+        bb_bottom.color.g = 0.0;
+        bb_bottom.color.b = 1.0;
+        bb_bottom.id = ++id;
+        bb_bottom.points.clear();
+        emplace3D(0, 4, bba_edges, bb_bottom);
+        markers.markers.emplace_back(bb_bottom);
 
-        bottom.color.g = 0.0;
-        bottom.color.b = 1.0;
-        bottom.id = 3;
-        bottom.points.clear();
-        emplace(0, 4, ba_edges, bottom);
-        markers.markers.emplace_back(bottom);
+        bb_mid.id = ++id;
+        bb_mid.color.g = 0.0;
+        bb_mid.color.b = 1.0;
+        bb_mid.points.clear();
+        emplace3D(4, 8, bba_edges, bb_mid);
+        markers.markers.emplace_back(bb_mid);
 
-        mid.id = 4;
-        mid.color.g = 0.0;
-        mid.color.b = 1.0;
-        mid.points.clear();
-        emplace(4, 8, ba_edges, mid);
-        markers.markers.emplace_back(mid);
+        bb_top.id = ++id;
+        bb_top.color.g = 0.0;
+        bb_top.color.b = 1.0;
+        bb_top.points.clear();
+        emplace3D(8, 12, bba_edges, bb_top);
+        markers.markers.emplace_back(bb_top);
 
-        top.id = 5;
-        top.color.g = 0.0;
-        top.color.b = 1.0;
-        top.points.clear();
-        emplace(8, 12, ba_edges, top);
-        markers.markers.emplace_back(top);
+        muse_amcl::math::BoundingRectangle bar = br_transformed.axisAlignedEnclosingXY();
+        muse_amcl::math::BoundingRectangle::Edges bar_edges = bar.edges();
+        br_bottom.id = ++id;
+        br_bottom.color.g = 0.0;
+        br_bottom.color.b = 1.0;
+        br_bottom.points.clear();
+        emplace2D(0,4, bar_edges, br_bottom);
+        markers.markers.emplace_back(br_bottom);
+
+        bar = br_transformed.axisAlignedEnclosingXZ();
+        bar_edges = bar.edges();
+        br_bottom.id = ++id;
+        br_bottom.color.g = 1.0;
+        br_bottom.color.b = 1.0;
+        br_bottom.points.clear();
+        emplace2D(0,4, bar_edges, br_bottom);
+        markers.markers.emplace_back(br_bottom);
+
+        bar = br_transformed.axisAlignedEnclosingYZ();
+        bar_edges = bar.edges();
+        br_bottom.id = ++id;
+        br_bottom.color.b = 0.0;
+        br_bottom.color.g = 1.0;
+        br_bottom.color.r = 1.0;
+        br_bottom.points.clear();
+        emplace2D(0,4, bar_edges, br_bottom);
+        markers.markers.emplace_back(br_bottom);
+
+
 
         // corner points
         visualization_msgs::Marker corners = marker_template;
         corners.scale.x = 0.1;
         corners.scale.y = 0.1;
         corners.scale.z = 0.1;
-        corners.id = 6;
+        corners.id = ++id;
         corners.type = visualization_msgs::Marker::SPHERE;
-        corners.pose.position.x = be.minimum().x();
-        corners.pose.position.y = be.minimum().y();
-        corners.pose.position.z = be.minimum().z();
+        corners.pose.position.x = bb_transformed.minimum().x();
+        corners.pose.position.y = bb_transformed.minimum().y();
+        corners.pose.position.z = bb_transformed.minimum().z();
         corners.color.r = 0.f;
         corners.color.g = 0.f;
         corners.color.b = 0.f;
         markers.markers.emplace_back(corners);
 
-        corners.id = 7;
-        corners.pose.position.x = be.maximum().x();
-        corners.pose.position.y = be.maximum().y();
-        corners.pose.position.z = be.maximum().z();
+        corners.id = ++id;
+        corners.pose.position.x = bb_transformed.maximum().x();
+        corners.pose.position.y = bb_transformed.maximum().y();
+        corners.pose.position.z = bb_transformed.maximum().z();
         corners.color.r = 1.f;
         markers.markers.emplace_back(corners);
+
+        corners.id = ++id;
+        corners.pose.position.x = br_transformed.minimum().x();
+        corners.pose.position.y = br_transformed.minimum().y();
+        corners.pose.position.z = br_transformed.minimum().z();
+        corners.color.r = 0.f;
+        markers.markers.emplace_back(corners);
+
+        corners.id = ++id;
+        corners.pose.position.x = br_transformed.maximum().x();
+        corners.pose.position.y = br_transformed.maximum().y();
+        corners.pose.position.z = br_transformed.maximum().z();
+        corners.color.r = 1.f;
+        markers.markers.emplace_back(corners);
+
 
         pub.publish(markers);
 

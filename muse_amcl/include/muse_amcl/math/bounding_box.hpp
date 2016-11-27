@@ -223,7 +223,7 @@ private:
  * @param transform - transformation to apply
  */
 inline muse_amcl::math::BoundingBox operator * (const tf::Transform &transform ,
-                                                const muse_amcl::math::BoundingBox bb)
+                                                const muse_amcl::math::BoundingBox &bb)
 {
     return muse_amcl::math::BoundingBox(bb, transform);
 }
