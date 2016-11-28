@@ -51,17 +51,20 @@
             <param name="base_class" value="muse_amcl::DataProvider" />
         </group>
         <group ns="particle_filter">
+            <param name="frame_id" vlaue="world" />
             <group ns="resampling">
 
             </group>
             <group ns="pose_generation">
-              <rosparam name="maps">
+              <rosparam param="maps">
                 ["map0", "map1"]
               </rosparam>
+              <param name="type" value="2D" />
+              <!-- aa_enclosing, aa_main_map -->
+              <param name="method" value="aa_enclosing" />
               <param name="method" value="" />
-              <param name="major_map" value="" />
               <param name="timeout" value="10.0" />
-              <!-- Maximum Extent, Major Map, Minimum Bounding-->
+              <param name="sample_size" value="500" />
             </group>
         </group>
     </group>

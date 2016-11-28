@@ -104,3 +104,8 @@ void PoseGeneration2D::uniform()
 //    }
 
 }
+
+void PoseGeneration2D::doSetup(ros::NodeHandle &nh_private)
+{
+
+}
