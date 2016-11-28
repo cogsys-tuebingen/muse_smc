@@ -60,6 +60,7 @@
               </rosparam>
               <param name="method" value="" />
               <param name="major_map" value="" />
+              <param name="timeout" value="10.0" />
               <!-- Maximum Extent, Major Map, Minimum Bounding-->
             </group>
         </group>

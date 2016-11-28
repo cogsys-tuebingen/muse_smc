@@ -50,6 +50,8 @@ public:
 
 protected:
     ParticleSet                  &particle_set_;
+    const std::string             frame_id_;
     std::vector<MapProvider::Ptr> map_providers_;
+
 };
 }
