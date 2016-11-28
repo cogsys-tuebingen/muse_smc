@@ -165,6 +165,18 @@ public:
                      m_floats[1] + other.m_floats[1],
                      m_floats[2] + other.m_floats[2]);
     }
+
+    /**
+     * @brief operator + implements the addition to another point.
+     * @param other - another point
+     * @return the addtion of both points.
+     */
+    inline Point operator - (const Point &other) const
+    {
+        return Point(m_floats[0] - other.m_floats[0],
+                     m_floats[1] - other.m_floats[1],
+                     m_floats[2] - other.m_floats[2]);
+    }
 };
 }
 }

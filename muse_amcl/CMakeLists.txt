@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
     cslibs_kdtree
 )
 
+
 set(BUILD_EXAMPLES True)
 
 ## Additional cmake modules and configurations
@@ -40,6 +41,7 @@ include_directories(
     src
     ${catkin_INCLUDE_DIRS}
     ${Eigen_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
 )
 
 add_library(muse_amcl_tf

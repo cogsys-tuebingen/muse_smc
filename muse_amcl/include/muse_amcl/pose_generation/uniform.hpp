@@ -14,21 +14,22 @@ public:
     static const std::size_t Dimension = sizeof...(Types);
 
     using RNG = math::random::Uniform<Dimension>;
+    using Vector = typename RNG::Vector;
 
     Uniform() = delete;
     Uniform(const Uniform &other) = delete;
 
-    Uniform(const typename RNG::Vector &min,
-            const typename RNG::Vector &max,
-            const unsigned int seed) :
+    Uniform(const Vector &min,
+            const Vector &max,
+            const unsigned int seed = 0) :
         rng_(min, max, seed)
     {
     }
 
-    inline typename RNG::Vector operator() ()
+    inline Vector operator() ()
     {
-        typename RNG::Vector sample = rng_.get();
-        Arguments<Dimension, typename RNG::Vector, Types...>::normalize(sample);
+        Vector sample = rng_.get();
+        Arguments<Dimension, Vector, Types...>::normalize(sample);
         return sample;
     }
 

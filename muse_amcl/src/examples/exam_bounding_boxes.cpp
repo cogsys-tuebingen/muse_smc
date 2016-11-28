@@ -1,7 +1,9 @@
 #include <muse_amcl/math/bounding_box.hpp>
 #include <muse_amcl/math/bounding_rectangle.hpp>
 #include <muse_amcl/math/angle.hpp>
+#include <muse_amcl/pose_generation/uniform.hpp>
 
+#include <geometry_msgs/PoseArray.h>
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 #include <ros/ros.h>
@@ -80,8 +82,8 @@ int main(int argc, char *argv[])
     };
 
     ros::NodeHandle nh("~");
-    ros::Publisher pub = nh.advertise<visualization_msgs::MarkerArray>("/markers", 1);
-
+    ros::Publisher pub_boxes = nh.advertise<visualization_msgs::MarkerArray>("/markers", 1);
+    ros::Publisher pub_poses = nh.advertise<geometry_msgs::PoseArray>("/poses", 1);
 
     double yaw = 0.0;
     double yaw_incr = 0.01;
@@ -139,22 +141,8 @@ int main(int argc, char *argv[])
         bb_bottom.color.b = 1.0;
         bb_bottom.id = ++id;
         bb_bottom.points.clear();
-        emplace3D(0, 4, bba_edges, bb_bottom);
+        emplace3D(0, 12, bba_edges, bb_bottom);
         markers.markers.emplace_back(bb_bottom);
-
-        bb_mid.id = ++id;
-        bb_mid.color.g = 0.0;
-        bb_mid.color.b = 1.0;
-        bb_mid.points.clear();
-        emplace3D(4, 8, bba_edges, bb_mid);
-        markers.markers.emplace_back(bb_mid);
-
-        bb_top.id = ++id;
-        bb_top.color.g = 0.0;
-        bb_top.color.b = 1.0;
-        bb_top.points.clear();
-        emplace3D(8, 12, bba_edges, bb_top);
-        markers.markers.emplace_back(bb_top);
 
         muse_amcl::math::BoundingRectangle bar = br_transformed.axisAlignedEnclosingXY();
         muse_amcl::math::BoundingRectangle::Edges bar_edges = bar.edges();
@@ -259,9 +247,43 @@ int main(int argc, char *argv[])
         corners.color.r = 1.f;
         markers.markers.emplace_back(corners);
 
+        muse_amcl::math::random::Uniform<6>::Vector min;
+        muse_amcl::math::random::Uniform<6>::Vector max;
+        min(0) = bba.minimum().x();
+        min(1) = bba.minimum().y();
+        min(2) = bba.minimum().z();
+        min(3) = 0.0;
+        min(4) = 0.0;
+        min(5) = 0.0;
+        max(0) = bba.maximum().x();
+        max(1) = bba.maximum().y();
+        max(2) = bba.maximum().z();
+        max(3) = 2 * M_PI;
+        max(4) = 2 * M_PI;
+        max(5) = 2 * M_PI;
 
-        pub.publish(markers);
+        using M = muse_amcl::pose_generation::Metric;
+        using R = muse_amcl::pose_generation::Metric;
+        using RNG = muse_amcl::pose_generation::Uniform<M, M, M, R, R, R>;
 
+        RNG rng(min, max);
+        geometry_msgs::PoseArray pose_arr;
+        pose_arr.header.frame_id = marker_template.header.frame_id;
+        for(std::size_t i = 0 ; i < 1000 ; ++i) {
+            geometry_msgs::Pose p;
+            RNG::Vector v;
+            do {
+                v = rng();
+            } while(!bb_transformed.contains(muse_amcl::math::Point(v(0),v(1),v(2))));
+            p.position.x = v(0);
+            p.position.y = v(1);
+            p.position.z = v(2);
+            p.orientation = tf::createQuaternionMsgFromRollPitchYaw(v(3), v(4), v(5));
+            pose_arr.poses.emplace_back(p);
+        }
+
+        pub_boxes.publish(markers);
+        pub_poses.publish(pose_arr);
 
         ros::Rate(30).sleep();
     }

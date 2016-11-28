@@ -20,9 +20,11 @@ public:
                 const Point &max) :
         minimum_(min),
         maximum_(max),
+        axis_(max - min),
         axis_x_((max - min).x(), 0, 0),
         axis_y_(0, (max - min).y(), 0),
-        axis_z_(0, 0, (max - min).z())
+        axis_z_(0, 0, (max - min).z()),
+        transform_(tf::createIdentityQuaternion(), min)
     {
     }
 
@@ -165,7 +167,7 @@ public:
         axis_x_  = rotation * axis_x_;
         axis_y_  = rotation * axis_y_;
         axis_z_  = rotation * axis_z_;
-        transform_ = transform;
+        transform_ = transform * transform_;
     }
 
 
@@ -231,6 +233,14 @@ public:
         aunion = BoundingBox(min, max);
     }
 
+    inline bool contains(const Point &p) const
+    {
+        Point p_ = transform_.inverse() * p
+               ;
+        return p_.x() >= 0.0 && p_.y() >= 0.0 && p_.z() >= 0.0 &&
+               p_.x() <= axis_[0] && p_.y() <= axis_[1] && p_.z() <= axis_[2];
+    }
+
 
     /**
      * Default constructor.
@@ -240,6 +250,8 @@ private:
 
     Point         minimum_;
     Point         maximum_;
+
+    tf::Vector3   axis_;
 
     tf::Vector3   axis_x_;
     tf::Vector3   axis_y_;
