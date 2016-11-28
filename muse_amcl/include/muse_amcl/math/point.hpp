@@ -12,8 +12,8 @@ class Point : public tf::Point {
 public:
     using Point3d = Eigen::Vector3d;
     using Point2d = Eigen::Vector2d;
-    using Point3f = Eigen::Matrix<tfScalar, 3, 1>;
-    using Point2f = Eigen::Matrix<tfScalar, 2, 1>;
+    using Point3tf = Eigen::Matrix<tfScalar, 3, 1>;
+    using Point2tf = Eigen::Matrix<tfScalar, 2, 1>;
 
     Point(const double x = .0,
           const double y = .0,
@@ -79,18 +79,18 @@ public:
      * @brief eigen2D returns a 2D Eigen-based point.
      * @return
      */
-    inline Point2f eigen2D()
+    inline Point2tf eigen2D()
     {
-        return Eigen::Map<Point2f>(m_floats);
+        return Eigen::Map<Point2tf>(m_floats);
     }
 
     /**
      * @brief eigen3D returns a 3D Eigen-based point.
      * @return
      */
-    inline Point3f eigen3D()
+    inline Point3tf eigen3D()
     {
-        return Eigen::Map<Point3f>(m_floats);
+        return Eigen::Map<Point3tf>(m_floats);
     }
 
 
