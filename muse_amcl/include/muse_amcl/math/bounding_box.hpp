@@ -198,12 +198,45 @@ public:
         bounding = BoundingBox(min, max);
     }
 
+    inline bool axisAlignedIntersection(const BoundingBox &other,
+                                        BoundingBox &aintersection)
+    {
+        BoundingBox aao = other.axisAlignedEnclosing();
+        BoundingBox aa = axisAlignedEnclosing();
 
-private:
+        Point max = aao.maximum_;
+        Point min = aao.minimum_;
+        max.setMin(aa.maximum_);
+        min.setMax(aa.minimum_);
+
+        aintersection = BoundingBox(min, max);
+
+        tf::Vector3 diagonal = max - min;
+        bool valid = true;
+        for(std::size_t i = 0 ; i < 3 ; ++i)
+            valid &= diagonal[i] >= 0.0;
+        return valid;
+    }
+
+    inline void axisAlignedUnion(const BoundingBox &other,
+                                 BoundingBox &aunion)
+    {
+        BoundingBox aao = other.axisAlignedEnclosing();
+        BoundingBox aa = axisAlignedEnclosing();
+
+        Point max = aao.maximum_;
+        Point min = aao.minimum_;
+        min.setMin(aa.minimum_);
+        max.setMax(aa.maximum_);
+        aunion = BoundingBox(min, max);
+    }
+
+
     /**
      * Default constructor.
      */
     BoundingBox() = default;
+private:
 
     Point         minimum_;
     Point         maximum_;

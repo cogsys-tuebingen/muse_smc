@@ -12,11 +12,14 @@ int main(int argc, char *argv[])
     ros::init(argc, argv, "muse_amcl_exam_bounding_boxes");
 
 
-    muse_amcl::math::Point min_bb(-0.5,-0.5);
-    muse_amcl::math::Point max_bb(0.5,0.5,1.0);
+    muse_amcl::math::Point min_bb1(-0.5,-0.5);
+    muse_amcl::math::Point max_bb1(0.5,0.5,1.0);
+    muse_amcl::math::Point min_bb2(-1.5,-1.5);
+    muse_amcl::math::Point max_bb2(0.0,0.0,1.0);
     muse_amcl::math::Point min_br(-0.5,-0.5, 0.0);
     muse_amcl::math::Point max_br(0.5,0.5, 0.0);
-    muse_amcl::math::BoundingBox bb(min_bb, max_bb);
+    muse_amcl::math::BoundingBox bb1(min_bb1, max_bb1);
+    muse_amcl::math::BoundingBox bb2(min_bb2, max_bb2);
     muse_amcl::math::BoundingRectangle br(min_br, max_br);
 
     muse_amcl::math::Point min_br1(1, 1, 0.0);
@@ -59,9 +62,9 @@ int main(int argc, char *argv[])
     };
 
     auto emplace2D = [] (const std::size_t start,
-                         const std::size_t end,
-                         const muse_amcl::math::BoundingRectangle::Edges &edges,
-                         visualization_msgs::Marker &marker) {
+            const std::size_t end,
+            const muse_amcl::math::BoundingRectangle::Edges &edges,
+            visualization_msgs::Marker &marker) {
         for(std::size_t i = start ; i < end; ++i) {
             geometry_msgs::Point p1;
             geometry_msgs::Point p2;
@@ -101,7 +104,7 @@ int main(int argc, char *argv[])
         visualization_msgs::MarkerArray markers;
 
         // bounding box itself
-        muse_amcl::math::BoundingBox       bb_transformed = (translation_bb * rotation) * bb;
+        muse_amcl::math::BoundingBox       bb_transformed = (translation_bb * rotation) * bb1;
         muse_amcl::math::BoundingRectangle br_transformed = (translation_br * rotation) * br;
 
         muse_amcl::math::BoundingBox::Edges be_edges;
@@ -208,6 +211,17 @@ int main(int argc, char *argv[])
         br2.axisAlignedUnion(br1, brum);
         emplace2D(0, 4, brum.edges(), brim);
         markers.markers.emplace_back(brim);
+
+        muse_amcl::math::BoundingBox bbum;
+        brim.id = ++id;
+        brim.points.clear();
+        brim.color.r = 1.0;
+        brim.color.g = 1.0;
+        brim.color.b = 0.0;
+        if(bb2.axisAlignedIntersection(bb_transformed, bbum)) {
+            emplace3D(0, 12, bbum.edges(), brim);
+            markers.markers.emplace_back(brim);
+        }
 
         // corner points
         visualization_msgs::Marker corners = marker_template;
