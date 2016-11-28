@@ -19,6 +19,13 @@ int main(int argc, char *argv[])
     muse_amcl::math::BoundingBox bb(min_bb, max_bb);
     muse_amcl::math::BoundingRectangle br(min_br, max_br);
 
+    muse_amcl::math::Point min_br1(1, 1, 0.0);
+    muse_amcl::math::Point max_br1(2, 2, 0.0);
+    muse_amcl::math::Point min_br2(2.5,2.5, 0.0);
+    muse_amcl::math::Point max_br2(3.5,3.5, 0.0);
+    muse_amcl::math::BoundingRectangle br1(min_br1, max_br1);
+    muse_amcl::math::BoundingRectangle br2(min_br2, max_br2);
+
     visualization_msgs::Marker  marker_template;
     marker_template.header.frame_id = "world";
     marker_template.header.stamp = ros::Time();
@@ -174,7 +181,33 @@ int main(int argc, char *argv[])
         emplace2D(0,4, bar_edges, br_bottom);
         markers.markers.emplace_back(br_bottom);
 
+        visualization_msgs::Marker brim = marker_template;
+        brim.id = ++id;
+        emplace2D(0,4,br1.edges(), brim);
+        markers.markers.emplace_back(brim);
 
+        brim.id = ++id;
+        brim.points.clear();
+        emplace2D(0,4,br2.edges(), brim);
+        markers.markers.emplace_back(brim);
+
+        muse_amcl::math::BoundingRectangle bri;
+        brim.id = ++id;
+        brim.points.clear();
+        brim.color.b = 1.0;
+        if(br2.axisAlignedIntersection(br1, bri))
+        {
+            emplace2D(0, 4, bri.edges(), brim);
+            markers.markers.emplace_back(brim);
+        }
+        muse_amcl::math::BoundingRectangle brum;
+        brim.id = ++id;
+        brim.points.clear();
+        brim.color.b = 1.0;
+        brim.color.r = 1.0;
+        br2.axisAlignedUnion(br1, brum);
+        emplace2D(0, 4, brum.edges(), brim);
+        markers.markers.emplace_back(brim);
 
         // corner points
         visualization_msgs::Marker corners = marker_template;

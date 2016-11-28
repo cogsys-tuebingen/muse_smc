@@ -147,6 +147,11 @@ public:
         transform_ = transform;
     }
 
+    /**
+     * @brief axisAlignedEnclosingXY returns the axis aligned enclosing
+     *        rectangle projected to the xy plane.
+     * @return  the enclosing rectangle in the xy plane.
+     */
     inline BoundingRectangle axisAlignedEnclosingXY() const
     {
         BoundingRectangle b;
@@ -154,6 +159,11 @@ public:
         return b;
     }
 
+    /**
+     * @brief axisAlignedEnclosingXY returns the axis aligned enclosing
+     *        rectangle projected to the xy plane by reference.
+     * @param bounding - reference to return result to
+     */
     inline void axisAlignedEnclosingXY(BoundingRectangle &bounding) const
     {
         using limits = std::numeric_limits<tfScalar>;
@@ -174,6 +184,11 @@ public:
         bounding = BoundingRectangle(min, axis_1st, axis_2nd);
     }
 
+    /**
+     * @brief axisAlignedEnclosingXZ returns the axis aligned enclosing
+     *        rectangle projected to the xy plane.
+     * @return  the enclosing rectangle in the xz plane.
+     */
     inline BoundingRectangle axisAlignedEnclosingXZ() const
     {
         BoundingRectangle b;
@@ -181,6 +196,11 @@ public:
         return b;
     }
 
+    /**
+     * @brief axisAlignedEnclosingXZ returns the axis aligned enclosing
+     *        rectangle projected to the xz plane by reference.
+     * @param bounding - reference to return result to
+     */
     inline void axisAlignedEnclosingXZ(BoundingRectangle &bounding) const
     {
         using limits = std::numeric_limits<tfScalar>;
@@ -201,7 +221,11 @@ public:
         bounding = BoundingRectangle(min, axis_1st, axis_2nd);
     }
 
-
+    /**
+     * @brief axisAlignedEnclosingYZ returns the axis aligned enclosing
+     *        rectangle projected to the yz plane.
+     * @return  the enclosing rectangle in the xz plane.
+     */
     inline BoundingRectangle axisAlignedEnclosingYZ() const
     {
         BoundingRectangle b;
@@ -209,6 +233,11 @@ public:
         return b;
     }
 
+    /**
+     * @brief axisAlignedEnclosingYZ returns the axis aligned enclosing
+     *        rectangle projected to the yz plane by reference.
+     * @param bounding - reference to return result to
+     */
     inline void axisAlignedEnclosingYZ(BoundingRectangle &bounding) const
     {
         using limits = std::numeric_limits<tfScalar>;
@@ -229,12 +258,39 @@ public:
         bounding = BoundingRectangle(min, axis_1st, axis_2nd);
     }
 
+    inline bool axisAlignedIntersection(const BoundingRectangle &other,
+                                        BoundingRectangle &aintersection)
+    {
+        Point max = other.maximum_;
+        Point min = other.minimum_;
+        max.setMin(maximum_);
+        min.setMax(minimum_);
 
-private:
+        aintersection = BoundingRectangle(min, max);
+
+        tf::Vector3 diagonal = max - min;
+        bool valid = true;
+        for(std::size_t i = 0 ; i < 3 ; ++i)
+            valid &= diagonal[i] >= 0.0;
+        return valid;
+    }
+
+    inline void axisAlignedUnion(const BoundingRectangle &other,
+                                 BoundingRectangle &aunion)
+    {
+        Point max = other.maximum_;
+        Point min = other.minimum_;
+        min.setMin(minimum_);
+        max.setMax(maximum_);
+        aunion = BoundingRectangle(min, max);
+    }
+
+
     /**
      * Default constructor.
      */
     BoundingRectangle() = default;
+private:
 
 
     Point         minimum_;
