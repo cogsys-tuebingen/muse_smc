@@ -7,13 +7,7 @@
 #include <ros/node_handle.h>
 
 #include <muse_amcl/particle_filter/particle_set.hpp>
-#include "../particle_filter/particle_set.hpp"
-#include "../data_sources/map_provider.hpp"
-#include "../math/random.hpp"
-
-// #include <muse_amcl/particle_filter/map_manager.hpp>
-// #include <muse_amcl/math/pose.hpp>
-// #include <muse_amcl/math/random.hpp>
+#include <muse_amcl/data_sources/map_provider.hpp>
 #include <muse_amcl/math/covariance.hpp>
 
 namespace muse_amcl {
@@ -44,29 +38,15 @@ public:
         frame_id_          = nh_private.param<std::string>("particle_filter/frame_id", "/world");
         sample_size_       = nh_private.param("particle_filter/pose_generation/sample_size", 500);
 
-        std::string method = nh_private.param<std::string>("particle_filter/pose_generation/method", "aa_enclosing");
-        if(method == "aa_enclosing")
-            method_ = AA_ENCLOSING;
-        else if (method == "aa_main_map")
-            method_ = AA_MAIN_MAP;
-        else
-            throw std::runtime_error("Unknown sample method '" + method + "'!");
-
-        std::vector<std::string> map_keys;
-        nh_private.getParam("particle_filter/prose_generation/maps", map_keys);
-        for(std::string &k : map_keys) {
-            map_providers_.emplace_back(map_providers.at(k));
-        }
     }
 
 protected:
-    enum MethodType {AA_ENCLOSING, AA_MAIN_MAP};
+    std::string name_;
+
+    virtual void doSetup(ros::NodeHandle &nh) = 0;
 
     std::string                     frame_id_;
     std::size_t                     sample_size_;
-    std::vector<MapProvider::Ptr>   map_providers_;
-    MethodType                      method_;
-
 
 };
 }

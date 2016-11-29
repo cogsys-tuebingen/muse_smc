@@ -4,6 +4,7 @@
 #include <queue>
 #include <memory>
 #include <mutex>
+#include <condition_variable>
 
 namespace muse_amcl {
 template<typename T, typename Comparator>
@@ -19,39 +20,47 @@ public:
     {
     }
 
-    virtual ~SyncedPriorityQueue() = default;
+    virtual ~SyncedPriorityQueue()
+    {
+
+    }
 
     inline void push(const T &v)
     {
         std::unique_lock<std::mutex> l(m_);
         q_.push(v);
+        l.unlock();
+        c_.notify_one();
     }
 
-    inline T pop()
+    inline void push(const T &&v)
     {
         std::unique_lock<std::mutex> l(m_);
-        T v = q_.top();
-        q_.pop();
-        return v;
+        q_.push(std::move(v));
+        l.unlock();
+        c_.notify_one();
     }
 
-    inline void pop(T &v)
+    inline bool pop(T &v)
     {
         std::unique_lock<std::mutex> l(m_);
+        wait(l);
+        if(q_.empty())
+            return false;
+
         v = q_.top();
         q_.pop();
+        return true;
     }
 
-    inline void top(T &v)
+    inline bool top(T &v)
     {
         std::unique_lock<std::mutex> l(m_);
+        wait(l);
+        if(q_.empty())
+            return false;
         v = q_.top();
-    }
-
-    inline T top()
-    {
-        std::unique_lock<std::mutex> l(m_);
-        return q_.top();
+        return true;
     }
 
     inline std::size_t size() const
@@ -67,8 +76,16 @@ public:
     }
 
 private:
+    inline void wait(std::unique_lock<std::mutex> &&lock)
+    {
+        while(q_.empty()) {
+            c_.wait(lock);
+        }
+    }
+
     mutable std::mutex                                 m_;
     std::priority_queue<T, std::vector<T>, Comparator> q_;
+    std::condition_variable                            c_;
 
 };
 }
