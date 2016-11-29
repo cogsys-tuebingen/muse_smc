@@ -11,7 +11,7 @@ public:
                 const math::Covariance &covariance,
                 ParticleSet            &particle_set) override;
 
-    void uniform();
+    void uniform(ParticleSet &particle_set);
 
 protected:
     void doSetup(ros::NodeHandle &nh_private);

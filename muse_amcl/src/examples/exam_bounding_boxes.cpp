@@ -285,7 +285,7 @@ int main(int argc, char *argv[])
         pub_boxes.publish(markers);
         pub_poses.publish(pose_arr);
 
-        ros::Rate(30).sleep();
+        ros::Rate(100).sleep();
     }
 
 

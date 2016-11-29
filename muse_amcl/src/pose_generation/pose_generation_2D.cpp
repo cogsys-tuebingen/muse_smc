@@ -6,13 +6,9 @@
 using namespace muse_amcl;
 using namespace pose_generation;
 
-PoseGeneration2D::PoseGeneration2D(ParticleSet &particle_set) :
-    PoseGeneration(particle_set)
-{
-}
-
 void PoseGeneration2D::normal(const math::Pose       &pose,
-                              const math::Covariance &pose_covariance)
+                              const math::Covariance &pose_covariance,
+                              ParticleSet            &particle_set)
 {
 //    std::vector<Map::ConstPtr> maps;
 //    for(auto m : map_providers_) {
@@ -51,7 +47,7 @@ void PoseGeneration2D::normal(const math::Pose       &pose,
 //    }
 }
 
-void PoseGeneration2D::uniform()
+void PoseGeneration2D::uniform(ParticleSet &particle_set)
 {
     /**
       +-----------------------------------------+

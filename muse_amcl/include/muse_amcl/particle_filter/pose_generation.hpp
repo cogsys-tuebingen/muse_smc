@@ -40,7 +40,7 @@ public:
     void setup(const std::map<std::string, MapProvider::Ptr>  &map_providers,
                ros::NodeHandle &nh_private)
     {
-        frame_id_    = nh_private.param("particle_filter/frame_id", "/world");
+        frame_id_    = nh_private.param<std::string>("particle_filter/frame_id", "/world");
         sample_size_ = nh_private.param("particle_filter/pose_generation/sample_size", 500);
 
         std::vector<std::string> map_keys;

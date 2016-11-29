@@ -115,7 +115,7 @@ public:
     inline Vector3d eigen3D() const
     {
         const tf::Vector3 &position = pose_.getOrigin();
-        return Vector3d(position.x(), position.y(), tf::getYaw(pose_.getRotation()));
+        return Vector3d(position.x(), position.y(), yaw());
     }
 
     /**
