@@ -15,6 +15,32 @@ class PoseGeneration {
 public:
     typedef std::shared_ptr<PoseGeneration> Ptr;
 
+    PoseGeneration()
+    {
+    }
+
+    virtual ~PoseGeneration()
+    {
+    }
+
+    inline const static std::string Type()
+    {
+        return "muse_amcl::PoseGeneration";
+    }
+
+    inline std::string name() const
+    {
+        return name_;
+    }
+
+    void setup(const std::map<std::string, MapProvider::Ptr>  &map_providers,
+               ros::NodeHandle &nh_private)
+    {
+        frame_id_          = nh_private.param<std::string>("particle_filter/frame_id", "/world");
+        sample_size_       = nh_private.param("particle_filter/pose_generation/sample_size", 500);
+        doSetup(map_providers, nh_private);
+    }
+
     /**
      * @brief Generate a multivariate Gaussian distributed particle set with
      *        a mean given by a desired initialization pose and the covariance
@@ -32,18 +58,11 @@ public:
      */
     virtual void uniform(ParticleSet &particle_set) = 0;
 
-    void setup(const std::map<std::string, MapProvider::Ptr>  &map_providers,
-               ros::NodeHandle &nh_private)
-    {
-        frame_id_          = nh_private.param<std::string>("particle_filter/frame_id", "/world");
-        sample_size_       = nh_private.param("particle_filter/pose_generation/sample_size", 500);
-
-    }
-
 protected:
     std::string name_;
 
-    virtual void doSetup(ros::NodeHandle &nh) = 0;
+    virtual void doSetup(const std::map<std::string, MapProvider::Ptr>  &map_providers,
+                         ros::NodeHandle &nh_private) = 0;
 
     std::string                     frame_id_;
     std::size_t                     sample_size_;
