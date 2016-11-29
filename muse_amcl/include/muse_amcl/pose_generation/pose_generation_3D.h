@@ -7,11 +7,15 @@ namespace pose_generation {
 class PoseGeneration3D : public PoseGeneration
 {
 public:
-    PoseGeneration3D(ParticleSet &particle_set);
-
     void normal(const math::Pose &pose,
-                const math::Covariance &covariance) override;
-    void uniform();
+                const math::Covariance &covariance,
+                ParticleSet &particle_set) override;
+
+    void uniform(ParticleSet &particle_set);
+
+protected:
+    void doSetup(ros::NodeHandle &nh_private);
+
 };
 }
 }

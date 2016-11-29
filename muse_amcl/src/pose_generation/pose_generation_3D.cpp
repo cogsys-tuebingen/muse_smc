@@ -19,3 +19,8 @@ void PoseGeneration3D::uniform()
 {
 
 }
+
+void PoseGeneration3D::doSetup(ros::NodeHandle &nh_private)
+{
+
+}
