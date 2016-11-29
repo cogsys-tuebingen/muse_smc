@@ -1,4 +1,5 @@
-#pragma once
+#ifndef BOUNDING_RECTANGLE_HPP
+#define BOUNDING_RECTANGLE_HPP
 
 #include "point.hpp"
 #include <array>
@@ -315,3 +316,5 @@ inline muse_amcl::math::BoundingRectangle operator * (const tf::Transform &trans
     return muse_amcl::math::BoundingRectangle(bb, transform);
 }
 
+
+#endif /* BOUNDING_RECTANGLE_HPP */

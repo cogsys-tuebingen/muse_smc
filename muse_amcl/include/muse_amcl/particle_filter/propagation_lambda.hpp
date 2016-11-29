@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PROPAGATION_LAMBDA_HPP
+#define PROPAGATION_LAMBDA_HPP
 
 #include <chrono>
 #include <memory>
@@ -41,3 +42,5 @@ private:
 
 };
 }
+
+#endif /* PROPAGATION_LAMBDA_HPP */

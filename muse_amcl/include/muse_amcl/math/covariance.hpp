@@ -1,4 +1,5 @@
-#pragma once
+#ifndef COVARIANCE_HPP
+#define COVARIANCE_HPP
 
 #include <eigen3/Eigen/Core>
 
@@ -162,3 +163,5 @@ private:
 };
 }
 }
+
+#endif /* COVARIANCE_HPP */

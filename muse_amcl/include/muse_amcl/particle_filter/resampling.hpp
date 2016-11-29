@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RESAMPLING_HPP
+#define RESAMPLING_HPP
 
 #include <memory>
 #include <vector>
@@ -31,3 +32,5 @@ private:
     const std::size_t max_size_;    /// maximal size of the set / default size
 };
 }
+
+#endif /* RESAMPLING_HPP */

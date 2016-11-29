@@ -1,4 +1,5 @@
-#pragma once
+#ifndef UPDATE_LAMBDA_HPP
+#define UPDATE_LAMBDA_HPP
 
 #include <chrono>
 #include <memory>
@@ -41,3 +42,5 @@ private:
 
 };
 }
+
+#endif /* UPDATE_LAMBDA_HPP */

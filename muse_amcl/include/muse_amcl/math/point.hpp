@@ -1,4 +1,5 @@
-#pragma once
+#ifndef POINT_HPP
+#define POINT_HPP
 
 #include <eigen3/Eigen/Core>
 #include <tf/tf.h>
@@ -180,3 +181,4 @@ public:
 };
 }
 }
+#endif /* POINT_HPP */

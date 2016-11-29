@@ -1,4 +1,5 @@
-#pragma once
+#ifndef UPDATE_MANAGER_HPP
+#define UPDATE_MANAGER_HPP
 
 #include <memory>
 #include <map>
@@ -78,3 +79,5 @@ private:
 
 };
 }
+
+#endif /* UPDATE_MANAGER_HPP */

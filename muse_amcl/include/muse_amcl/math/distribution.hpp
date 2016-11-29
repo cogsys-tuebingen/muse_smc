@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DISTRIBUTION_HPP
+#define DISTRIBUTION_HPP
 
 #undef NDEBUG
 #include <assert.h>
@@ -330,3 +331,4 @@ private:
 }
 }
 
+#endif /* DISTRIBUTION_HPP */

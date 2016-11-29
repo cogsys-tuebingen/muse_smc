@@ -1,4 +1,5 @@
-#pragma once
+#ifndef EIGEN_HPP
+#define EIGEN_HPP
 
 #include <eigen3/Eigen/Geometry>
 
@@ -55,7 +56,6 @@ inline Eigen::Matrix3d getRotation(const double roll,
     getRotation(roll, pitch, yaw, matrix);
     return matrix;
 }
-
-
-
 }
+
+#endif /* EIGEN_HPP */

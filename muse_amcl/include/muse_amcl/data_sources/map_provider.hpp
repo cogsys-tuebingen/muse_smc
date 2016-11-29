@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MAP_PROVIDER_HPP
+#define MAP_PROVIDER_HPP
 
 #include <memory>
 #include <muse_amcl/data_types/map.hpp>
@@ -44,3 +45,5 @@ protected:
 
 };
 }
+
+#endif /* MAP_PROVIDER_HPP */

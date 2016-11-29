@@ -1,4 +1,5 @@
-#pragma once
+#ifndef POSE_GENERATION_3D_H
+#define POSE_GENERATION_3D_H
 
 #include "../particle_filter/pose_generation.hpp"
 
@@ -12,11 +13,8 @@ public:
                 ParticleSet &particle_set) override;
 
     void uniform(ParticleSet &particle_set);
-
-protected:
-    void doSetup(ros::NodeHandle &nh_private);
-
 };
 }
 }
 
+#endif /* POSE_GENERATION_3D_H */

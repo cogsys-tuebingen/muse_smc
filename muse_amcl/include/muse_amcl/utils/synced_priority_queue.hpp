@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SYNCED_PRIORITY_QUEUE_HPP
+#define SYNCED_PRIORITY_QUEUE_HPP
 
 #include <queue>
 #include <memory>
@@ -71,3 +72,5 @@ private:
 
 };
 }
+
+#endif /* SYNCED_PRIORITY_QUEUE_HPP */

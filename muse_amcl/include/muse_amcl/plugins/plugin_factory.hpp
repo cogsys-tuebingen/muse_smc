@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PLUGIN_FACTORY_HPP
+#define PLUGIN_FACTORY_HPP
 
 #include <string>
 #include <ros/node_handle.h>
@@ -45,3 +46,4 @@ protected:
 };
 }
 
+#endif /* PLUGIN_FACTORY_HPP */

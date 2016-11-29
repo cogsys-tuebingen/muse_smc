@@ -1,4 +1,5 @@
-#pragma once
+#ifndef UNIFORM_HPP
+#define UNIFORM_HPP
 
 #include <muse_amcl/math/random.hpp>
 #include "arguments.hpp"
@@ -38,3 +39,5 @@ private:
 };
 }
 }
+
+#endif /* UNIFORM */

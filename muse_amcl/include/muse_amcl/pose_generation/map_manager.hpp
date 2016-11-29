@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MAP_MANAGER_HPP
+#define MAP_MANAGER_HPP
 
 #include <memory>
 #include <map>
@@ -32,3 +33,5 @@ private:
 
 };
 }
+
+#endif /* MAP_MANGER_HPP */

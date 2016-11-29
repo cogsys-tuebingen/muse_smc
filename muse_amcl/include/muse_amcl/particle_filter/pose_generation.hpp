@@ -1,4 +1,5 @@
-#pragma once
+#ifndef POSE_GENERATION_HPP
+#define POSE_GENERATION_HPP
 
 #include <memory>
 #include <vector>
@@ -40,8 +41,16 @@ public:
     void setup(const std::map<std::string, MapProvider::Ptr>  &map_providers,
                ros::NodeHandle &nh_private)
     {
-        frame_id_    = nh_private.param<std::string>("particle_filter/frame_id", "/world");
-        sample_size_ = nh_private.param("particle_filter/pose_generation/sample_size", 500);
+        frame_id_          = nh_private.param<std::string>("particle_filter/frame_id", "/world");
+        sample_size_       = nh_private.param("particle_filter/pose_generation/sample_size", 500);
+
+        std::string method = nh_private.param<std::string>("particle_filter/pose_generation/method", "aa_enclosing");
+        if(method == "aa_enclosing")
+            method_ = AA_ENCLOSING;
+        else if (method == "aa_main_map")
+            method_ = AA_MAIN_MAP;
+        else
+            throw std::runtime_error("Unknown sample method '" + method + "'!");
 
         std::vector<std::string> map_keys;
         nh_private.getParam("particle_filter/prose_generation/maps", map_keys);
@@ -51,11 +60,15 @@ public:
     }
 
 protected:
-    virtual void doSetup(ros::NodeHandle &nh_private) = 0;
+    enum MethodType {AA_ENCLOSING, AA_MAIN_MAP};
 
     std::string                     frame_id_;
     std::size_t                     sample_size_;
     std::vector<MapProvider::Ptr>   map_providers_;
+    MethodType                      method_;
+
 
 };
 }
+
+#endif /* POSE_GENERATION_HPP */

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MAP_HPP
+#define MAP_HPP
 
 #include <muse_amcl/math/pose.hpp>
 #include <muse_amcl/math/point.hpp>
@@ -82,3 +83,5 @@ protected:
     std::chrono::time_point<std::chrono::system_clock> stamp_;
 };
 }
+
+#endif /* MAP_HPP */

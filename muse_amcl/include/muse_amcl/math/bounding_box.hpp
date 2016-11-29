@@ -1,4 +1,5 @@
-#pragma once
+#ifndef BOUNDING_BOX_HPP
+#define BOUNDING_BOX_HPP
 
 #include "point.hpp"
 #include <array>
@@ -273,4 +274,4 @@ inline muse_amcl::math::BoundingBox operator * (const tf::Transform &transform ,
     return muse_amcl::math::BoundingBox(bb, transform);
 }
 
-
+#endif /* BOUNDING_BOX_HPP */

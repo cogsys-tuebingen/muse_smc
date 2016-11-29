@@ -1,5 +1,4 @@
 #include <muse_amcl/pose_generation/pose_generation_2D.h>
-#include <muse_amcl/utils/tf_eigen.hpp>
 #include <muse_amcl/pose_generation/normal.hpp>
 #include <muse_amcl/pose_generation/uniform.hpp>
 
@@ -98,10 +97,5 @@ void PoseGeneration2D::uniform(ParticleSet &particle_set)
 //            p.weight = weight;
 //        } while(!valid(p.pose));
 //    }
-
-}
-
-void PoseGeneration2D::doSetup(ros::NodeHandle &nh_private)
-{
 
 }

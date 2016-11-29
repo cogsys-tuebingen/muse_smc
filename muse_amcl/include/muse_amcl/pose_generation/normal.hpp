@@ -1,4 +1,5 @@
-#pragma once
+#ifndef NORMAL_HPP
+#define NORMAL_HPP
 
 #include <muse_amcl/math/random.hpp>
 #include "arguments.hpp"
@@ -37,3 +38,5 @@ private:
 };
 }
 }
+
+#endif /* NORMAL_HPP */

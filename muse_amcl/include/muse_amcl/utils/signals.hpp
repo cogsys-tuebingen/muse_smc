@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SIGNALS_HPP
+#define SIGNAL_HPP
 
 #include <mutex>
 #include <memory>
@@ -87,4 +88,4 @@ private:
 
 };
 
-
+#endif /* SIGNAL_HPP */

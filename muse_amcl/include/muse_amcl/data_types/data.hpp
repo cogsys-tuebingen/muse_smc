@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DATA_HPP
+#define DATA_HPP
 
 #include <memory>
 #include <chrono>
@@ -57,3 +58,5 @@ protected:
     std::chrono::time_point<std::chrono::system_clock> stamp_;
 };
 }
+
+#endif /* DATA_HPP */

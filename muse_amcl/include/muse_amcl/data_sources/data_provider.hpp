@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DATA_PROVIDER_HPP
+#define DATA_PROVIDER_HPP
 
 #include <memory>
 #include <functional>
@@ -80,3 +81,5 @@ protected:
 
 };
 }
+
+#endif /* DATA_PROVIDER_HPP */

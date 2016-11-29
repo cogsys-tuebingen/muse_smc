@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ASSOCIATIONS_HPP
+#define ASSOCIATIONS_HPP
 
 #include <map>
 #include <string>
@@ -30,3 +31,5 @@ struct Associations {
     }
 };
 }
+
+#endif /* ASSOCIATIONS_HPP */

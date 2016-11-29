@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RANDOM_HPP
+#define RANDOM_HPP
 
 #include <cmath>
 #include <random>
@@ -252,3 +253,5 @@ private:
 }
 }
 }
+
+#endif /* RANDOM_HPP */

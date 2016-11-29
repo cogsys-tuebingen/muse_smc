@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ANGLE_HPP
+#define ANGLE_HPP
 
 #include <cmath>
 
@@ -43,3 +44,5 @@ inline double fromRad(const double _rad)
 }
 }
 }
+
+#endif /* ANGLE_HPP */

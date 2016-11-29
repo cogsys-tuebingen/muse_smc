@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PLUGIN_LOADER_HPP
+#define PLUGIN_LOADER_HPP
 
 #include "plugin_factory.hpp"
 #include <map>
@@ -78,3 +79,5 @@ struct PluginLoader
     }
 };
 }
+
+#endif /* PLUGIN_LOADER_HPP */

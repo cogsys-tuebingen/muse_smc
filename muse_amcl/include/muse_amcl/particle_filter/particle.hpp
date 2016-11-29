@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PARTICLE_HPP
+#define PARTICLE_HPP
 
 #include <muse_amcl/math/pose.hpp>
 
@@ -48,3 +49,5 @@ struct Particle {
 
 };
 }
+
+#endif /* PARTICLE */

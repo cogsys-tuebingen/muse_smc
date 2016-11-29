@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PROPAGATION_HPP
+#define PROPAGATION_HPP
 
 #include <memory>
 #include <vector>
@@ -63,3 +64,5 @@ protected:
 
 };
 }
+
+#endif /* PROPAGATION_HPP */

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PROPAGATION_MANAGER_HPP
+#define PROPAGATION_MANAGER_HPP
 
 #include <memory>
 #include <string>
@@ -48,3 +49,4 @@ private:
 };
 }
 
+#endif /* PROPAGATION_MANAGER_HPP */

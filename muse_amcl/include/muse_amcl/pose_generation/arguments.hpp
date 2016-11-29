@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ARGUMENTS_HPP
+#define ARGUMENTS_HPP
 
 #include <array>
 #include <typeinfo>
@@ -114,3 +115,5 @@ struct is_valid_type<T1, T2, Ts...> : is_valid_type<T2, Ts...> { };
 
 }
 }
+
+#endif /* ARGUMENTS_HPP */

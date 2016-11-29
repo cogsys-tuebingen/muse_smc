@@ -1,4 +1,5 @@
-#pragma once
+#ifndef UPDATE_HPP
+#define UPDATE_HPP
 
 #include <memory>
 #include <vector>
@@ -56,3 +57,5 @@ protected:
 
 };
 }
+
+#endif /* UPDATE_HPP */

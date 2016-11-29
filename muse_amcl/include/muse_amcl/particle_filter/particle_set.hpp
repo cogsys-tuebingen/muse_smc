@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PARTICLE_SET_HPP
+#define PARTICLE_SET_HPP
 
 #include "particle.hpp"
 
@@ -130,3 +131,5 @@ private:
 
 };
 }
+
+#endif /* PARTICLE_SET_HPP */

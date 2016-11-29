@@ -1,4 +1,5 @@
-#pragma once
+#ifndef POSE_HPP
+#define POSE_HPP
 
 #include <tf/tf.h>
 #include <eigen3/Eigen/Core>
@@ -184,3 +185,5 @@ private:
 };
 }
 }
+
+#endif /* POSE_HPP */
