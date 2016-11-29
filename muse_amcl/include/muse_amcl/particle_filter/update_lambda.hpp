@@ -1,7 +1,7 @@
 #ifndef UPDATE_LAMBDA_HPP
 #define UPDATE_LAMBDA_HPP
 
-#include <chrono>
+#include <ros/time.h>
 #include <memory>
 #include <functional>
 #include "particle_set.hpp"
@@ -20,7 +20,7 @@ public:
     };
 
     UpdateLambda(std::function<double (ParticleSet::WeightIterator set)> lambda,
-                 std::chrono::time_point<std::chrono::system_clock>   stamp) :
+                 const ros::Time & stamp) :
         lambda_(lambda),
         stamp_(stamp)
     {
@@ -31,14 +31,14 @@ public:
         return lambda_(set);
     }
 
-    inline std::chrono::time_point<std::chrono::system_clock> stamp() const
+    inline const ros::Time & stamp() const
     {
         return stamp_;
     }
 
 private:
     std::function<double (ParticleSet::WeightIterator set)>  lambda_;
-    std::chrono::time_point<std::chrono::system_clock>    stamp_;
+    ros::Time                                                stamp_;
 
 };
 }

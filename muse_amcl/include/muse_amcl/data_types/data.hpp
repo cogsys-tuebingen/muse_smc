@@ -2,7 +2,7 @@
 #define DATA_HPP
 
 #include <memory>
-#include <chrono>
+#include <ros/time.h>
 
 namespace muse_amcl {
 class Data {
@@ -12,12 +12,12 @@ public:
 
     Data(const std::string &_frame) :
         frame_(_frame),
-        stamp_(std::chrono::system_clock::now())
+        stamp_(ros::Time::now())
     {
     }
 
     Data(const std::string &_frame,
-         const std::chrono::time_point<std::chrono::system_clock> &_stamp) :
+         const ros::Time   &_stamp) :
         frame_(_frame),
         stamp_(_stamp)
     {
@@ -27,12 +27,12 @@ public:
     {
     }
 
-    inline std::string frame() const
+    inline const std::string & frame() const
     {
         return frame_;
     }
 
-    inline std::chrono::time_point<std::chrono::system_clock> stamp() const
+    inline const ros::Time & stamp() const
     {
         return stamp_;
     }
@@ -55,7 +55,7 @@ protected:
     Data(const Data &other) = delete;
 
     std::string frame_;
-    std::chrono::time_point<std::chrono::system_clock> stamp_;
+    ros::Time   stamp_;
 };
 }
 

@@ -64,8 +64,8 @@ protected:
     virtual void doSetup(const std::map<std::string, MapProvider::Ptr>  &map_providers,
                          ros::NodeHandle &nh_private) = 0;
 
-    std::string                     frame_id_;
-    std::size_t                     sample_size_;
+    std::string  frame_id_;
+    std::size_t  sample_size_;
 
 };
 }
