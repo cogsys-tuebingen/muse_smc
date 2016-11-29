@@ -32,6 +32,18 @@ add_library(${PROJECT_NAME} SHARED
 
     src/odometry/differential_drive.cpp
     src/odometry/omni_drive.cpp
+
+    src/pose_generation/enclosing_aa_2d.cpp
+    src/pose_generation/enclosing_aa_3d.cpp
+    src/pose_generation/major_map_aa_2d.cpp
+    src/pose_generation/major_map_aa_3d.cpp
+
+    src/resampling/multinomial.cpp
+    src/resampling/residual.cpp
+    src/resampling/stratified.cpp
+    src/resampling/systematic.cpp
+    src/resampling/kld_2d.cpp
+    src/resampling/kld_3d.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
