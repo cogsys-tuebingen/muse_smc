@@ -53,8 +53,6 @@ target_link_libraries(muse_amcl_tf
 
 add_library(muse_amcl_particle_filter
     src/particle_filter/particle_filter.cpp
-    src/pose_generation/pose_generation_2D.cpp
-    src/pose_generation/pose_generation_3D.cpp
 )
 
 target_link_libraries(muse_amcl_particle_filter
