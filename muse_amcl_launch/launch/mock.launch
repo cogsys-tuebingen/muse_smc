@@ -51,7 +51,7 @@
             <param name="base_class" value="muse_amcl::DataProvider" />
         </group>
         <group ns="particle_filter">
-            <param name="frame_id" vlaue="world" />
+            <param name="frame_id" value="world" />
             <group ns="resampling">
 
             </group>

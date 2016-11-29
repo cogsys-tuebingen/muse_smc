@@ -1,5 +1,4 @@
 #include <muse_amcl/plugins/plugin_factory.hpp>
-#include <muse_amcl/plugins/association.hpp>
 #include <muse_amcl/data_sources/map_provider.hpp>
 #include <muse_amcl/data_sources/data_provider.hpp>
 
@@ -70,24 +69,17 @@ int main(int argc, char *argv[])
     std::cout << "propagations second" << std::endl;
     propagation->apply(data, set.getPoses());
 
-    /// build up associations
-    std::map<std::string, std::string> assoc_data_providers;
-    std::map<std::string, std::string> assoc_map_providers;
-    muse_amcl::Associations::load(updates, nh, assoc_data_providers, assoc_map_providers);
-
     muse_amcl::UpdateQueue   uq;
-    muse_amcl::UpdateManager um(datas, maps, updates, uq);
-    um.bind(assoc_data_providers,
-            assoc_map_providers);
+    muse_amcl::UpdateManager um(updates, uq);
+    um.bind(datas,
+            maps,
+            nh);
 
 
-    std::string assoc_propagation_data_provider;
-    muse_amcl::Associations::load(propagation,
-                                  nh,
-                                  assoc_propagation_data_provider);
+
     muse_amcl::PropagationQueue   pq;
-    muse_amcl::PropagationManager pm(datas, propagation, pq);
-    pm.bind(assoc_propagation_data_provider);
+    muse_amcl::PropagationManager pm(propagation, pq);
+    pm.bind(datas, nh);
 
     for(auto &d : datas) {
         d.second->enable();

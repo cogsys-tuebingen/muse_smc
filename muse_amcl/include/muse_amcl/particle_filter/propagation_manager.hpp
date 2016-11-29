@@ -16,18 +16,20 @@ class PropagationManager {
 public:
     typedef std::shared_ptr<PropagationManager> Ptr;
 
-    PropagationManager(const std::map<std::string, DataProvider::Ptr> &data_providers,
-                       Propagation::Ptr  &propagation_function,
+    PropagationManager(Propagation::Ptr  &propagation_function,
                        PropagationQueue  &propagation_queue) :
-        data_providers_(data_providers),
         propagation_function_(propagation_function),
         propagation_queue_(propagation_queue)
     {
     }
 
-    void bind(const std::string &data_provider_name)
+    void bind(const std::map<std::string, DataProvider::Ptr> &data_providers,
+              ros::NodeHandle &nh_private)
     {
-        const DataProvider::Ptr &data_provider = data_providers_.at(data_provider_name);
+        const std::string data_provider_param = propagation_function_->name() + "/data_provider";
+        const std::string data_provider_name = nh_private.param<std::string>(data_provider_param, "");
+
+        const DataProvider::Ptr &data_provider = data_providers.at(data_provider_name);
 
         auto callback = [this] (const Data::ConstPtr &data) {
             auto f = [this, data] (ParticleSet::PoseIterator set) {
@@ -41,7 +43,6 @@ public:
 
 
 private:
-    const std::map<std::string, DataProvider::Ptr> &data_providers_;
     Propagation::Ptr                               &propagation_function_;
     PropagationQueue                               &propagation_queue_;
 
