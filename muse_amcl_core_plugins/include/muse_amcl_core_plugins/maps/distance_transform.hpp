@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DISTANCE_TRANSFORM_HPP
+#define DISTANCE_TRANSFORM_HPP
 
 #include <cmath>
 #include <vector>
@@ -448,3 +449,5 @@ struct ModifiedDijkstraDeadReckoning {
 }
 }
 }
+
+#endif /* DISTANCE_TRANSFORM_HPP */

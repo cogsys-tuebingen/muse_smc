@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MOCK_UPDATE_H
+#define MOCK_UPDATE_H
 
 #include <muse_amcl/particle_filter/update.hpp>
 
@@ -23,3 +24,5 @@ protected:
 
 };
 }
+
+#endif /* MOCK_UPDATE_H */

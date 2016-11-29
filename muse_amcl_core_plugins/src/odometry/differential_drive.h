@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DIFFERENTIAL_DRIVE_H
+#define DIFFERENTIAL_DRIVE_H
 
 #include <muse_amcl/particle_filter/propagation.hpp>
 
@@ -17,3 +18,4 @@ protected:
 };
 }
 
+#endif /* DIFFERENTIAL_DRIVE_H */

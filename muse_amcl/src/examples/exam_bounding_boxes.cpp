@@ -1,7 +1,7 @@
 #include <muse_amcl/math/bounding_box.hpp>
 #include <muse_amcl/math/bounding_rectangle.hpp>
 #include <muse_amcl/math/angle.hpp>
-#include <muse_amcl/pose_generation/uniform.hpp>
+#include <muse_amcl/pose_generators/uniform.hpp>
 
 #include <geometry_msgs/PoseArray.h>
 #include <visualization_msgs/Marker.h>

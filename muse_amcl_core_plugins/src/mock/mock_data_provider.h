@@ -1,4 +1,6 @@
-#pragma once
+#ifndef MOCK_DATA_PROVIDER_H
+#define MOCK_DATA_PROVIDER_H
+
 
 #include <muse_amcl/data_sources/data_provider.hpp>
 
@@ -23,3 +25,5 @@ protected:
 
 };
 }
+
+#endif /* MOCK_DATA_PROVIDER_H */

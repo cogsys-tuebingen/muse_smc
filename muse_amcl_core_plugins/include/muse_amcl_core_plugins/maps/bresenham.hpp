@@ -1,4 +1,6 @@
-#pragma once
+#ifndef BRESENHAM_HPP
+#define BRESENHAM_HPP
+
 
 #include <muse_amcl/data_types/map.hpp>
 
@@ -98,3 +100,5 @@ private:
 
 }
 }
+
+#endif /* BRESENHAM_HPP */

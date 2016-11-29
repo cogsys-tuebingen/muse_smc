@@ -1,4 +1,6 @@
-#pragma once
+#ifndef LIKELIHOOD_FIELD_PROB_MODEL_H
+#define LIKELIHOOD_FIELD_PROB_MODEL_H
+
 
 #include <muse_amcl/particle_filter/update.hpp>
 
@@ -18,3 +20,4 @@ protected:
 };
 }
 
+#endif /* LIKELIHOOD_FIELD_PROB_MODEL_H */

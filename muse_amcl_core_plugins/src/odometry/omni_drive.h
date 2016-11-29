@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OMNI_DRIVE_H
+#define OMNI_DRIVE_H
 
 #include <muse_amcl/particle_filter/propagation.hpp>
 
@@ -15,3 +16,5 @@ protected:
     virtual void doSetup(ros::NodeHandle &nh) override;
 };
 }
+
+#endif /* OMNI_DRIVE_H */

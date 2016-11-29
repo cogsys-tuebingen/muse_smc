@@ -1,4 +1,5 @@
-#pragma once
+#ifndef POSE_GENERATION_HPP
+#define POSE_GENERATION_HPP
 
 #include <memory>
 #include <vector>
@@ -19,3 +20,5 @@ struct PoseGeneration {
 };
 }
 }
+
+#endif /* POSE_GENERATION_HPP */

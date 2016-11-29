@@ -1,4 +1,3 @@
-#pragma once
 
 #include "gridmap.hpp"
 #include <nav_msgs/OccupancyGrid.h>

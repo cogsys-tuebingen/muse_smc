@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MOCK_MAP_PROVIDER_H
+#define MOCK_MAP_PROVIDER_H
 
 #include <muse_amcl/data_sources/map_provider.hpp>
 
@@ -19,3 +20,4 @@ protected:
 };
 }
 
+#endif /* MOCK_MAP_PROVIDER_H */

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef MOCK_DATA_HPP
+#define MOCK_DATA_HPP
+
 
 #include <string>
 #include <muse_amcl/data_types/data.hpp>
@@ -18,3 +20,5 @@ struct MockData : public Data
 
 };
 }
+
+#endif /* MOCK_DATA_HPP */

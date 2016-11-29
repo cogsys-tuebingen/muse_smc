@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PARTICLE_FILTER_H
+#define PARTICLE_FILTER_H
 
 #include <vector>
 #include <tf/tf.h>
@@ -25,3 +26,5 @@ private:
 };
 }
 }
+
+#endif /* PARTICLE_FILTER_H */

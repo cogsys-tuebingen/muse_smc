@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DISTANCE_GRIDMAP_H
+#define DISTANCE_GRIDMAP_H
 
 #include "gridmap.hpp"
 #include <nav_msgs/OccupancyGrid.h>
@@ -20,3 +21,5 @@ private:
 };
 }
 }
+
+#endif /* DISTANCE_GRIDMAP_H */

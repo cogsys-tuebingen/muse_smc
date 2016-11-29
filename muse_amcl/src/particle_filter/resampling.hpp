@@ -1,4 +1,6 @@
-#pragma once
+#ifndef RESAMPLING_HPP
+#define RESAMPLING_HPP
+
 namespace muse_amcl {
 namespace particle_filter {
 #include <memory>
@@ -13,3 +15,5 @@ struct Resampling {
 };
 }
 }
+
+#endif /* RESAMPLING */

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GRIDMAP_HPP
+#define GRIDMAP_HPP
 
 #include <array>
 #include <vector>
@@ -149,3 +150,4 @@ protected:
 
 }
 }
+#endif /* GRIDMAP_HPP */

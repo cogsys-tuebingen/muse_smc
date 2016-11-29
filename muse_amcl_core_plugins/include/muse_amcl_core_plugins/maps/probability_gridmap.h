@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PROBABILITY_GRIDMAP_H
+#define PROBABILITY_GRIDMAP_H
 
 #include "gridmap.hpp"
 #include <nav_msgs/OccupancyGrid.h>
@@ -17,4 +18,4 @@ private:
 };
 }
 }
-
+#endif /* PROBABILITY_GRIDMAP_H */

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef BEAM_MODEL_H
+#define BEAM_MODEL_H
 
 #include <muse_amcl/particle_filter/update.hpp>
 
@@ -19,3 +20,4 @@ protected:
 };
 }
 
+#endif /* BEAM_MODEL_H */

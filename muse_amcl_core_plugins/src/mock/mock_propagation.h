@@ -1,4 +1,6 @@
-#pragma once
+#ifndef MOCK_PROPAGATION_H
+#define MOCK_PROPAGATION_H
+
 
 #include <muse_amcl/particle_filter/propagation.hpp>
 
@@ -24,3 +26,4 @@ protected:
 };
 }
 
+#endif /* MOCK_PROPAGATION_H */

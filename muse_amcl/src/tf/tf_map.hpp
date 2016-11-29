@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TF_MAP_HPP
+#define TF_MAP_HPP
 
 #include <tf/tf.h>
 #include <memory>
@@ -32,3 +33,5 @@ struct less {
 typedef std::map<TransformKey, tf::StampedTransform, less> TransformMap;
 }
 }
+
+#endif /* TF_MAP_HPP */
