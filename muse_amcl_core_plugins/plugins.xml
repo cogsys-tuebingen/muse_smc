@@ -12,3 +12,74 @@
    	 <description>Mockup</description>
    </class>
 </library>
+<library path="libmuse_amcl_core_plugins">
+   <!-- Update functions -->
+   <class type="muse_amcl::BeamModel" base_class_type="muse_amcl::Update">
+     <description>Beam model update function.</description>
+   </class>
+   <class type="muse_amcl::LikelihoodFieldModel" base_class_type="muse_amcl::Update">
+     <description>Likelihoodfield model update function.</description>
+   </class>
+   <class type="muse_amcl::LikelihoodFieldProbModel" base_class_type="muse_amcl::Update">
+     <description>Likelihoodfield model update function with consistency check.</description>
+   </class>
+   <!-- Propagation Functions -->
+   <class type="muse_amcl::DifferentialDrive" base_class_type="muse_amcl::Propagation">
+     <description>Differential drive propagation model.</description>
+   </class>
+   <class type="muse_amcl::OmniDrive" base_class_type="muse_amcl::Propagation">
+     <description>Omnidirectional drive propagation model.</description>
+   </class>
+   <!-- Pose Generation -->
+   <class type="muse_amcl::Normal2D" base_class_type="muse_amcl::NormalPoseGeneration">
+     <description>2D normal distributed pose generation for pose initialation by the user.</description>
+   </class>
+   <class type="muse_amcl::Normal3D" base_class_type="muse_amcl::NormalPoseGeneration">
+     <description>3D normal distributed pose generation for pose initialation by the user.</description>
+   </class>
+   <class type="muse_amcl::UniformEnclosingAA2D" base_class_type="muse_amcl::UniformPoseGeneration">
+     <description>
+        2D uniform pose generation for global initialization with an axis aligned
+        bounding rectangle containing all given maps.
+     </description>
+   </class>
+   <class type="muse_amcl::UniformEnclosingAA3D" base_class_type="muse_amcl::UniformPoseGeneration">
+     <description>Omnidirectional drive propagation model.</description>
+     <description>
+        3D uniform pose generation for global initialization with an axis aligned
+        bounding box containing all given maps.
+     </description>
+   </class>
+   <class type="muse_amcl::UniformMainMapAA2D" base_class_type="muse_amcl::UniformPoseGeneration">
+     <description>
+        2D uniform pose generation for global initialization with an axis aligned
+        bounding rectangle of the main map. All other maps are used for validation.
+     </description>
+   </class>
+   <class type="muse_amcl::UniformMainMapAA3D" base_class_type="muse_amcl::UniformPoseGeneration">
+     <description>
+        3D uniform pose generation for global initialization with an axis aligned
+        bounding box of the main map. All other maps are used for validation.
+     </description>
+   </class>
+   <!-- Resampling -->
+   <class type="muse_amcl::KLD2D" base_class_type="muse_amcl::Resampling">
+     <description>2D resampling with adaptive sample size.</description>
+   </class>
+   <class type="muse_amcl::KLD3D" base_class_type="muse_amcl::Resampling">
+     <description>3D resampling with adaptive sample size.</description>
+   </class>
+   <class type="muse_amcl::Multinomial" base_class_type="muse_amcl::Resampling">
+     <description>Multinomial sampling.</description>
+   </class>
+   <class type="muse_amcl::Residual" base_class_type="muse_amcl::Resampling">
+     <description>Residual resampling.</description>
+   </class>
+   <class type="muse_amcl::Stratified" base_class_type="muse_amcl::Resampling">
+     <description>Stratified resampling.</description>
+   </class>
+   <class type="muse_amcl::Systematic" base_class_type="muse_amcl::Resampling">
+     <description>Systematic resampling.</description>
+   </class>
+
+</library>
