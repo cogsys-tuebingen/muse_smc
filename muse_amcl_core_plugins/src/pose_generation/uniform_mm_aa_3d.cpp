@@ -1,5 +1,8 @@
 #include "uniform_mm_aa_3d.h"
 
+#include <class_loader/class_loader_register_macro.h>
+CLASS_LOADER_REGISTER_CLASS(muse_amcl::UniformMainMapAA3D, muse_amcl::UniformPoseGeneration)
+
 #include <muse_amcl/pose_generators/uniform.hpp>
 
 using namespace muse_amcl;

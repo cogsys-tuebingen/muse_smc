@@ -5,6 +5,7 @@ CLASS_LOADER_REGISTER_CLASS(muse_amcl::LikelihoodFieldProbModel, muse_amcl::Upda
 
 using namespace muse_amcl;
 
+
 LikelihoodFieldProbModel::LikelihoodFieldProbModel()
 {
 
