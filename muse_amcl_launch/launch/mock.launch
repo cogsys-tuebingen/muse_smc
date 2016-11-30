@@ -55,17 +55,27 @@
             <group ns="resampling">
 
             </group>
-            <group ns="pose_generation">
+            <group ns="uniform_pose_generation">
               <rosparam param="maps">
                 ["map0", "map1"]
               </rosparam>
-              <param name="type" value="2D" />
-              <!-- aa_enclosing, aa_main_map -->
-              <param name="method" value="aa_enclosing" />
-              <param name="method" value="" />
               <param name="timeout" value="10.0" />
               <param name="sample_size" value="500" />
+              <param name="class" value="" />
+              <param name="base_class" value="muse_amcl::UniformPoseGeneration" />
+
             </group>
+            <group ns="normal_pose_generation">
+              <rosparam param="maps">
+                ["map0", "map1"]
+              </rosparam>
+              <param name="timeout" value="10.0" />
+              <param name="sample_size" value="500" />
+              <param name="class" value="" />
+              <param name="base_class" value="muse_amcl::NormalPoseGeneration" />
+
+            </group>
+
         </group>
     </group>
     <node type="muse_amcl_exam_test_mock_launch" name="muse_amcl_exam_test_mock_launch" pkg="muse_amcl_core_plugins" output="screen">
