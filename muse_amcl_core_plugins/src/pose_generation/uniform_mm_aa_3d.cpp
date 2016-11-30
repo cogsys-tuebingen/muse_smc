@@ -16,8 +16,7 @@ void UniformMainMapAA3D::apply(ParticleSet &particle_set)
 
 }
 
-void UniformMainMapAA3D::doSetup(const std::map<std::string, MapProvider::Ptr> &map_providers,
-                                 ros::NodeHandle &nh_private)
+void UniformMainMapAA3D::doSetup(ros::NodeHandle &nh_private)
 {
 
 }

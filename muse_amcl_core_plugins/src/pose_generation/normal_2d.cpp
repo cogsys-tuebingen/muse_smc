@@ -18,8 +18,7 @@ void Normal2D::apply(const math::Pose       &pose,
 
 }
 
-void Normal2D::doSetup(const std::map<std::string, MapProvider::Ptr> &map_providers,
-                       ros::NodeHandle &nh_private)
+void Normal2D::doSetup(ros::NodeHandle &nh_private)
 {
 
 }

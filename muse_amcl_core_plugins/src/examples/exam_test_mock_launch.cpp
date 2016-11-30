@@ -6,6 +6,10 @@
 #include <muse_amcl/particle_filter/update_manager.hpp>
 #include <muse_amcl/particle_filter/propagation.hpp>
 #include <muse_amcl/particle_filter/propagation_manager.hpp>
+#include <muse_amcl/particle_filter/resampling.hpp>
+#include <muse_amcl/particle_filter/pose_generation_uniform.hpp>
+#include <muse_amcl/particle_filter/pose_generation_normal.hpp>
+
 
 #include "../mock/mock_update.h"
 #include "../mock/mock_propagation.h"
@@ -45,6 +49,9 @@ int main(int argc, char *argv[])
     /// iteration
     std::map<std::string, muse_amcl::Update::Ptr> updates;
     muse_amcl::Propagation::Ptr propagation;
+    muse_amcl::UniformPoseGeneration::Ptr uniform_pose_generation;
+    muse_amcl::NormalPoseGeneration::Ptr  normal_pose_generation;
+    muse_amcl::Resampling::Ptr            resampling;
     std::map<std::string, muse_amcl::MapProvider::Ptr> maps;
     std::map<std::string, muse_amcl::DataProvider::Ptr> datas;
 
@@ -52,11 +59,17 @@ int main(int argc, char *argv[])
     propagation = muse_amcl::PluginLoader<muse_amcl::Propagation>::load(nh);
     muse_amcl::PluginLoader<muse_amcl::MapProvider>::load(nh, maps);
     muse_amcl::PluginLoader<muse_amcl::DataProvider>::load(nh, datas);
+    uniform_pose_generation = muse_amcl::PluginLoader<muse_amcl::UniformPoseGeneration>::load(nh);
+    normal_pose_generation = muse_amcl::PluginLoader<muse_amcl::NormalPoseGeneration>::load(nh);
+    resampling = muse_amcl::PluginLoader<muse_amcl::Resampling>::load(nh);
 
     std::cout << "updates      " << updates.size() << std::endl;
     std::cout << "propagations " << (propagation ? 1 : 0) << std::endl;
     std::cout << "maps         " << maps.size() << std::endl;
     std::cout << "datas        " << datas.size() << std::endl;
+    std::cout << "uniform pose " << (propagation ? 1 : 0) << std::endl;
+    std::cout << "normal pose  " << (propagation ? 1 : 0) << std::endl;
+    std::cout << "resampling   " << (propagation ? 1 : 0) << std::endl;
 
     muse_amcl::Data::ConstPtr data;
     muse_amcl::Map::ConstPtr map;

@@ -14,8 +14,7 @@ public:
                        ParticleSet            &particle_set) override;
 
 protected:
-    virtual void doSetup(const std::map<std::string, MapProvider::Ptr>  &map_providers,
-                         ros::NodeHandle &nh_private) override;
+    virtual void doSetup(ros::NodeHandle &nh_private) override;
 
 };
 }

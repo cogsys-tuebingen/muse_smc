@@ -16,8 +16,7 @@ void UniformEnclosingAA2D::apply(ParticleSet &particle_set)
 
 }
 
-void UniformEnclosingAA2D::doSetup(const std::map<std::string, MapProvider::Ptr> &map_providers,
-                                   ros::NodeHandle &nh_private)
+void UniformEnclosingAA2D::doSetup(ros::NodeHandle &nh_private)
 {
 
 }
