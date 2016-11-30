@@ -20,7 +20,7 @@ void Multinomial::apply(ParticleSet &particle_set)
         cumsum[i] = cumsum[i-1] + p_old[i].weight_;
     }
 
-    math::random::Uniform<1> rng(0.0, 1.0);
+    math::random::Uniform<1> rng(cumsum.front(), 1.0);
     for(std::size_t i = 0 ; i < size ; ++i) {
         double u = rng.get();
         double q = 0;
@@ -29,6 +29,7 @@ void Multinomial::apply(ParticleSet &particle_set)
                 p_new[i] = p_old[j];
                 break;
             }
+            q = cumsum[j];
         }
     }
 
