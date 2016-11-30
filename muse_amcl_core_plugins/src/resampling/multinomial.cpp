@@ -1,8 +1,9 @@
 #include "multinomial.h"
 
-#include <muse_amcl/math/random.hpp>
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_amcl::Multinomial, muse_amcl::Resampling)
+
+#include <muse_amcl/math/random.hpp>
 
 using namespace muse_amcl;
 
@@ -32,11 +33,9 @@ void Multinomial::apply(ParticleSet &particle_set)
             q = cumsum[j];
         }
     }
-
     std::swap(p_old, p_new);
 }
 
 void Multinomial::doSetup(ros::NodeHandle &nh_private)
 {
-
 }

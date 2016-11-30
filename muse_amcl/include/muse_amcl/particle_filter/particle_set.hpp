@@ -3,8 +3,10 @@
 
 #include "particle.hpp"
 
+#include <assert.h>
 #include <memory>
 #include <vector>
+#include <limits>
 
 namespace muse_amcl {
 template<typename T, T Particle::*Member>
@@ -60,11 +62,11 @@ public:
 
         ParticleMemberIterator<T, Member> begin()
         {
-            return ParticleMemberIterator<T, Member>(&set.samples.front());
+            return ParticleMemberIterator<T, Member>(&set.samples_.front());
         }
 
         ParticleMemberIterator<T, Member> end() {
-            return ParticleMemberIterator<T, Member>(&set.samples.back());
+            return ParticleMemberIterator<T, Member>(&set.samples_.back());
         }
     private:
         ParticleSet& set;
@@ -75,7 +77,7 @@ public:
     using Particles = std::vector<Particle>;
 
     ParticleSet(const std::size_t size) :
-        samples(size),
+        samples_(size),
         minimum_size_(size),
         maximum_size_(size)
     {
@@ -85,7 +87,7 @@ public:
     ParticleSet(const std::size_t size,
                 const std::size_t minimum_size,
                 const std::size_t maximum_size) :
-        samples(size),
+        samples_(size),
         minimum_size_(minimum_size),
         maximum_size_(maximum_size)
     {
@@ -103,22 +105,22 @@ public:
 
     Particles & getParticles()
     {
-        return samples;
+        return samples_;
     }
 
     void resize(const std::size_t _sample_size)
     {
-        samples.resize(_sample_size);
+        samples_.resize(_sample_size);
     }
 
     void reserve(const std::size_t _sample_size)
     {
-        samples.reserve(_sample_size);
+        samples_.reserve(_sample_size);
     }
 
     void emplace_back(const Particle &_sample)
     {
-        samples.emplace_back(_sample);
+        samples_.emplace_back(_sample);
     }
 
     std::size_t minimumSize() const
@@ -133,11 +135,45 @@ public:
 
     std::size_t size() const
     {
-        return samples.size();
+        return samples_.size();
+    }
+
+    double maxWeight() const
+    {
+        return max_weight_;
+    }
+
+    void normalize()
+    {
+        double W = 0.0;
+        for(auto &p : samples_) {
+            W += p.weight_;
+        }
+
+        max_weight_ = std::numeric_limits<double>::lowest();
+        for(auto &p : samples_) {
+            p.weight_ /= W;
+
+            if(p.weight_ > max_weight_)
+                max_weight_ = p.weight_;
+        }
+    }
+
+    void normalize(const double W)
+    {
+
+        max_weight_ = std::numeric_limits<double>::lowest();
+        for(auto &p : samples_) {
+            p.weight_ /= W;
+
+            if(p.weight_ > max_weight_)
+                max_weight_ = p.weight_;
+        }
     }
 
 private:
-    Particles samples;
+    double      max_weight_;
+    Particles   samples_;
     std::size_t minimum_size_;
     std::size_t maximum_size_;
 
