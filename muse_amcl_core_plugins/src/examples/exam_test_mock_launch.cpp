@@ -67,9 +67,13 @@ int main(int argc, char *argv[])
     std::cout << "propagations " << (propagation ? 1 : 0) << std::endl;
     std::cout << "maps         " << maps.size() << std::endl;
     std::cout << "datas        " << datas.size() << std::endl;
-    std::cout << "uniform pose " << (propagation ? 1 : 0) << std::endl;
-    std::cout << "normal pose  " << (propagation ? 1 : 0) << std::endl;
-    std::cout << "resampling   " << (propagation ? 1 : 0) << std::endl;
+    std::cout << "uniform pose " << (uniform_pose_generation ? 1 : 0) << std::endl;
+    std::cout << "normal pose  " << (normal_pose_generation ? 1 : 0) << std::endl;
+    std::cout << "resampling   " << (resampling ? 1 : 0) << std::endl;
+
+    uniform_pose_generation->setMapProviders(maps);
+    normal_pose_generation->setMapProviders(maps);
+
 
     muse_amcl::Data::ConstPtr data;
     muse_amcl::Map::ConstPtr map;

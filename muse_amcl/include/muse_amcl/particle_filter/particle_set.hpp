@@ -74,8 +74,20 @@ public:
     using WeightIterator = ParticleDecorator<Particle::WeightType, &Particle::weight_>;
     using Particles = std::vector<Particle>;
 
-    ParticleSet(const std::size_t _sample_size) :
-        samples(_sample_size)
+    ParticleSet(const std::size_t size) :
+        samples(size),
+        minimum_size_(size),
+        maximum_size_(size)
+    {
+
+    }
+
+    ParticleSet(const std::size_t size,
+                const std::size_t minimum_size,
+                const std::size_t maximum_size) :
+        samples(size),
+        minimum_size_(minimum_size),
+        maximum_size_(maximum_size)
     {
     }
 
@@ -109,25 +121,25 @@ public:
         samples.emplace_back(_sample);
     }
 
-    std::size_t minimumSampleSize() const
+    std::size_t minimumSize() const
     {
-        return minimum_sample_size_;
+        return minimum_size_;
     }
 
-    std::size_t maximumSampleSize() const
+    std::size_t maximumSize() const
     {
-        return maximum_sample_size_;
+        return maximum_size_;
     }
 
-    std::size_t currenSampleSize() const
+    std::size_t size() const
     {
         return samples.size();
     }
 
 private:
-    std::size_t minimum_sample_size_;
-    std::size_t maximum_sample_size_;
     Particles samples;
+    std::size_t minimum_size_;
+    std::size_t maximum_size_;
 
 };
 }
