@@ -32,18 +32,23 @@ public:
         return name_;
     }
 
-    void setup(ros::NodeHandle &nh_private)
+    void setup(const std::string &name,
+               ros::NodeHandle &nh_private)
     {
-
+        name_ = name;
     }
 
-    void resample(ParticleSet &particle_set) = 0;
+    virtual void apply(ParticleSet &particle_set) = 0;
 
-private:
+protected:
     std::string name_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) = 0;
 
+    std::string param (const std::string &name)
+    {
+        return name_ + "/" + name;
+    }
 };
 }
 
