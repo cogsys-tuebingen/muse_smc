@@ -16,19 +16,19 @@ void Multinomial::apply(ParticleSet &particle_set)
 
     /// prepare ordered sequence of random numbers
     math::random::Uniform<1> rng(0.0, 1.0);
-    std::vector<double> seq(size, rng.get());
+    std::vector<double> u(size, rng.get());
     {
-        auto seq_it = seq.rbegin();
-        auto seq_it_last = seq_it;
-        auto seq_end = seq.rend();
-        ++seq_it;
-        while(seq_it != seq_end) {
-            *seq_it = rng.get() + *seq_it_last;
-            seq_it_last = seq_it;
-            ++seq_it;
+        auto u_it = u.rbegin();
+        auto u_it_last = u_it;
+        auto u_end = u.rend();
+        ++u_it;
+        while(u_it != u_end) {
+            *u_it = rng.get() + *u_it_last;
+            u_it_last = u_it;
+            ++u_it;
         }
     }
-    /// resampling starts here
+    /// draw samples
     {
         double cumsum_last = 0.0;
         double cumsum = 0.0;
@@ -36,15 +36,15 @@ void Multinomial::apply(ParticleSet &particle_set)
         {
             return u >= cumsum_last && u < cumsum;
         };
-        auto seq_it   = seq.begin();
-        auto seq_end  = seq.end();
+        auto u_it   = u.begin();
+        auto u_end  = u.end();
         auto p_new_it = p_new.begin();
         for(const auto &p : p_old) {
             cumsum += p.weight_;
-            while(seq_it != seq_end && in_range(*seq_it)) {
+            while(u_it != u_end && in_range(*u_it)) {
                 *p_new_it = p;
             }
-            if(seq_it == seq_end)
+            if(u_it == u_end)
                 break;
         }
     }
