@@ -81,5 +81,7 @@
    <class type="muse_amcl::Systematic" base_class_type="muse_amcl::Resampling">
      <description>Systematic resampling.</description>
    </class>
-
+   <class type="muse_amcl::WheelOfFortune" base_class_type="muse_amcl::Resampling">
+     <description>Systematic resampling.</description>
+   </class>
 </library>
