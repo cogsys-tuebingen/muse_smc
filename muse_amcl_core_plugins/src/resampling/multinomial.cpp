@@ -43,6 +43,7 @@ void Multinomial::apply(ParticleSet &particle_set)
             cumsum += p.weight_;
             while(u_it != u_end && in_range(*u_it)) {
                 *p_new_it = p;
+                ++u_it;
             }
             if(u_it == u_end)
                 break;
