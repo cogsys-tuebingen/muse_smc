@@ -15,17 +15,19 @@ void Multinomial::apply(ParticleSet &particle_set)
     ParticleSet::Particles  p_new(size);
 
     /// prepare ordered sequence of random numbers
+    std::size_t k = size;
     math::random::Uniform<1> rng(0.0, 1.0);
-    std::vector<double> u(size, rng.get());
+    std::vector<double> u(size, std::pow(rng.get(), 1.0 / k));
     {
         auto u_it = u.rbegin();
         auto u_it_last = u_it;
         auto u_end = u.rend();
         ++u_it;
         while(u_it != u_end) {
-            *u_it = rng.get() + *u_it_last;
+            *u_it = *u_it_last * std::pow(rng.get(), 1.0 / k);
             u_it_last = u_it;
             ++u_it;
+            --k;
         }
     }
     /// draw samples

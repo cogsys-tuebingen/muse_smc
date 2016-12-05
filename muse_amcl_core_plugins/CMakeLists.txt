@@ -92,7 +92,6 @@ if(${BUILD_EXAMPLES})
         ${tinyXML_LIBRARIES}
     )
 
-
     add_executable(muse_amcl_exam_test_mock_provider
         src/examples/exam_test_mock_provider.cpp
     )
@@ -101,6 +100,14 @@ if(${BUILD_EXAMPLES})
         ${tinyXML_LIBRARIES}
     )
 
+    add_executable(muse_amcl_exam_resampling
+        src/examples/exam_resampling.cpp
+    )
+
+    target_link_libraries(muse_amcl_exam_resampling
+        ${catkin_LIBRARIES}
+        ${PROJECT_NAME}
+    )
 
     find_package(OpenCV QUIET)
     include_directories(

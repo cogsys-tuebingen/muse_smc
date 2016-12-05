@@ -139,17 +139,5 @@ int main(int argc, char *argv[])
     cv::imshow("display", display);
     cv::waitKey(0);
 
-    std::vector<double> u(10);
-    {
-        std::cout << std::endl;
-        muse_amcl::math::random::Uniform<1> rng(0.0, 1.0);
-        double u_static = rng.get();
-        for(std::size_t i = 0 ; i < 10 ; ++i) {
-            u[i] = (i + u_static) / 10;
-            std::cout << u[i] << " ";
-        }
-        std::cout << std::endl;
-    }
-
     return 0;
 }
