@@ -110,6 +110,10 @@ if(${BUILD_EXAMPLES})
         ${PROJECT_NAME}
     )
 
+    add_executable(muse_amcl_exam_vector
+        src/examples/exam_vector.cpp
+    )
+
     find_package(OpenCV QUIET)
     include_directories(
         ${OpenCV_INCLUDE_DIRS}

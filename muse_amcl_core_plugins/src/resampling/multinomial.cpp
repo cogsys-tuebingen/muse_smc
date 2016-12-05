@@ -56,7 +56,7 @@ void Multinomial::apply(ParticleSet &particle_set)
 
     /// assign new content
     assert(p_new.size() == p.size());
-    p.assign(p_new.begin(), p_new.end());
+    std::swap(p_new, p);
 }
 
 void Multinomial::doSetup(ros::NodeHandle &nh_private)
