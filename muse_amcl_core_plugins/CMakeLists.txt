@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   pluginlib
   roscpp
   sensor_msgs
+  cslibs_kdtree
 )
 
 catkin_package()

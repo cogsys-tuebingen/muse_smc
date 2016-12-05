@@ -53,17 +53,24 @@
         <group ns="particle_filter">
             <param name="frame_id" value="world" />
             <group ns="resampling">
+			  <param name="class" value="muse_amcl::KLD2D" />
+              <param name="base_class" value="muse_amcl::Resampling" />
 
-            </group>
+              <param name="resolution" value="0.05" />
+
+              <param name="voxel_grid" value="true" />
+              <param name="voxel_grid_max_extent" value="10.0" /> <!-- maximum extend of voxel grid (limit cache size) -->
+              
+	        </group>
             <group ns="uniform_pose_generation">
+              <param name="class" value="muse_amcl::UniformMainMapAA2D" />
+              <param name="base_class" value="muse_amcl::UniformPoseGeneration" />
+
               <rosparam param="maps">
                 ["map0", "map1"]
               </rosparam>
               <param name="timeout" value="10.0" />
               <param name="sample_size" value="500" />
-              <param name="class" value="muse_amcl::UniformMainMapAA2D" />
-              <param name="base_class" value="muse_amcl::UniformPoseGeneration" />
-
             </group>
             <group ns="normal_pose_generation">
               <rosparam param="maps">

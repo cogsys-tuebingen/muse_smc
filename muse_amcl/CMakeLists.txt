@@ -12,7 +12,6 @@ find_package(catkin REQUIRED COMPONENTS
     roscpp
     visualization_msgs
     pluginlib
-    cslibs_kdtree
 )
 
 
