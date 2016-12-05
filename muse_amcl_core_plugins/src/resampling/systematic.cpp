@@ -20,28 +20,30 @@ void Systematic::apply(ParticleSet &particle_set)
         math::random::Uniform<1> rng(0.0, 1.0);
         double u_static = rng.get();
         for(std::size_t i = 0 ; i < size ; ++i) {
-            u[i] = (i - 1 + u_static) / size;
+            u[i] = (i + u_static) / size;
         }
     }
     /// draw samples
     {
+        auto p_old_it = p_old.begin();
+        auto p_new_it = p_new.begin();
         double cumsum_last = 0.0;
-        double cumsum = 0.0;
+        double cumsum = p_old_it->weight_;
+
         auto in_range = [cumsum, cumsum_last] (double u)
         {
             return u >= cumsum_last && u < cumsum;
         };
-        auto u_it   = u.begin();
-        auto u_end  = u.end();
-        auto p_new_it = p_new.begin();
-        for(const auto &p : p_old) {
-            cumsum += p.weight_;
-            while(u_it != u_end && in_range(*u_it)) {
-                *p_new_it = p;
-                ++u_it;
+
+        for(auto &u_r : u) {
+            while(!in_range(u_r)) {
+                ++p_old_it;
+                cumsum_last = cumsum;
+                cumsum += p_old_it->weight_;
             }
-            if(u_it == u_end)
-                break;
+
+            *p_new_it = *p_old_it;
+            ++p_new_it;
         }
     }
     /// swap it

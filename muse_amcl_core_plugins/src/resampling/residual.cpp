@@ -15,7 +15,7 @@ void Residual::apply(ParticleSet &particle_set)
     ParticleSet::Particles  p_new(size);
 
     /// draw copies of each particle
-    auto p_new_it = p_new.begin();
+    auto p_new_it  = p_new.begin();
     auto p_new_end = p_new.end();
     std::vector<double> u(size);
     std::vector<double> w_residual(size);
@@ -31,22 +31,38 @@ void Residual::apply(ParticleSet &particle_set)
             w_residual[i] = size * p.weight_ - copies;
             n_w_residual += w_residual[i];
 
-            for(std::size_t i = 0 ; i < copies && p_new_it != p_new_end ; ++i ,++p_new_it) {
+            for(std::size_t i = 0 ;
+                i < copies && p_new_it != p_new_end ;
+                ++i ,++p_new_it) {
                 *p_new_it = p;
             }
         }
     }
-    /// if particles to draw are left, do it systematically
-    std::size_t left = std::distance(p_new_it, p_new_end);
-    if(left > 0) {
-        // normalize the residual_weights
-        for(double &w : w_residual) {
-            w /= n_w_residual;
+    {
+        auto u_it = u.begin();
+        auto p_old_it = p_old.begin();
+        auto w_it = w_residual.begin();
+
+        double cumsum_last = 0.0;
+        double cumsum = 0.0;
+        auto in_range = [cumsum, cumsum_last] (double u)
+        {
+            return u >= cumsum_last && u < cumsum;
+        };
+
+        std::size_t left = std::distance(p_new_it, p_new_end);
+        for(std::size_t i = 0 ; i < left ; ++i) {
+            while(!in_range(*u_it)) {
+                ++p_old_it;
+                ++w_it;
+                cumsum_last = cumsum;
+                cumsum += *w_it / n_w_residual;
+            }
+
+            *p_new_it = *p_old_it;
+            ++p_new_it;
+            ++u_it;
         }
-
-        /// draw systemaitcally here ... almost done.
-
-
     }
     std::swap(p_old, p_new);
 }

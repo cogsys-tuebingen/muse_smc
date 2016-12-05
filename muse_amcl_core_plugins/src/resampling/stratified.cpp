@@ -19,27 +19,30 @@ void Stratified::apply(ParticleSet &particle_set)
     std::vector<double> u(size);
     {
         for(std::size_t i = 0 ; i < size ; ++i) {
-            u[i] = (i - 1 + rng.get()) / size;
+            u[i] = (i + rng.get()) / size;
         }
     }
     /// draw samples
     {
+        auto p_old_it = p_old.begin();
+        auto p_new_it = p_new.begin();
         double cumsum_last = 0.0;
-        double cumsum = 0.0;
+        double cumsum = p_old_it->weight_;
+
         auto in_range = [cumsum, cumsum_last] (double u)
         {
             return u >= cumsum_last && u < cumsum;
         };
-        auto u_it   = u.begin();
-        auto u_end  = u.end();
-        auto p_new_it = p_new.begin();
-        for(const auto &p : p_old) {
-            cumsum += p.weight_;
-            while(u_it != u_end && in_range(*u_it)) {
-                *p_new_it = p;
+
+        for(auto &u_r : u) {
+            while(!in_range(u_r)) {
+                ++p_old_it;
+                cumsum_last = cumsum;
+                cumsum += p_old_it->weight_;
             }
-            if(u_it == u_end)
-                break;
+
+            *p_new_it = *p_old_it;
+            ++p_new_it;
         }
     }
     /// swap it
