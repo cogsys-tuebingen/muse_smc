@@ -134,6 +134,37 @@ public:
         return e;
     }
 
+    inline const double &x() const
+    {
+        return pose_.getOrigin().x();
+    }
+
+    inline const double &y() const
+    {
+        return pose_.getOrigin().y();
+    }
+
+    inline const double &z() const
+    {
+        return pose_.getOrigin().z();
+    }
+
+    inline double &x()
+    {
+        return pose_.getOrigin().m_floats[0];
+    }
+
+    inline double &y()
+    {
+        return pose_.getOrigin().m_floats[1];
+    }
+
+    inline double &z()
+    {
+        return pose_.getOrigin().m_floats[2];
+    }
+
+
     /**
      * @brief roll returns the roll angle.
      * @return - the roll angle

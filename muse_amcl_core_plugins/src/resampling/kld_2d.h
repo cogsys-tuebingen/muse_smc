@@ -15,6 +15,13 @@ public:
 protected:
 
     virtual void doSetup(ros::NodeHandle &nh_private) override;
+
+    double resolution_linear_;
+    double resolution_radial_;
+
+    double voxel_grid_size_;
+    /// enter voxelgrid ptr here
+    /// will also serve as a bool
 };
 }
 
