@@ -27,8 +27,8 @@
   <run_depend>roscpp</run_depend>
   <run_depend>visualization_msgs</run_depend>
   <run_depend>pluginlib</run_depend>
-  <run_depend>tinyxml</run_depened>
-  <run_depend>Eigen3</run_depened>
+  <run_depend>tinyxml</run_depend>
+  <run_depend>Eigen3</run_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
