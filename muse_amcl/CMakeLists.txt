@@ -1,36 +1,31 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(muse_amcl)
 
-find_package(catkin REQUIRED COMPONENTS
-  geometry_msgs
-  nav_msgs
-  roscpp
-  sensor_msgs
-  visualization_msgs
-  pluginlib
-)
-
-## Additional cmake modules and configurations
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-include(cmake/muse_amcl-extras.cmake)
-include(cmake/open_mp.cmake)
-
-## Find external libraries
 find_package(Eigen3  REQUIRED)
 find_package(TinyXML REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+    geometry_msgs
+    nav_msgs
+    sensor_msgs
+    tf
+    roscpp
+    visualization_msgs
+    pluginlib
+)
 
-###################################
-## catkin specific configuration ##
-###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if you package contains header files
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
+
+set(BUILD_EXAMPLES True)
+
+## Additional cmake modules and configurations
+include(cmake/muse_amcl-extras.cmake)
+include(cmake/open_mp.cmake)
+include(cmake/show_headers.cmake)
+
 catkin_package(
-  INCLUDE_DIRS include
-  CFG_EXTRAS muse_amcl-extras.cmake
+    INCLUDE_DIRS include
+    LIBRARIES muse_amcl_particle_filter
+    CFG_EXTRAS muse_amcl-extras.cmake
 )
 
 ###########
@@ -41,28 +36,74 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
-  ${catkin_INCLUDE_DIRS}
-  ${EIGEN_INCLUDE_DIRS}
-  include
+    include
+    src
+    ${catkin_INCLUDE_DIRS}
+    ${Eigen_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
 )
 
-file(GLOB_RECURSE ALL_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS include/*.hpp include/*.h)
-
-add_library(${PROJECT_NAME}
-    # for visibility ...
-    ${ALL_HEADERS}
-
-    src/sensor/sensor_model.cpp
-    src/sensor/sensor_model_factory.cpp
+add_library(muse_amcl_tf
+    src/tf/tf_provider.cpp
 )
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(muse_amcl_tf
+    ${catkin_LIBRARIES}
+)
+
+add_library(muse_amcl_particle_filter
+    src/particle_filter/particle_filter.cpp
+)
+
+target_link_libraries(muse_amcl_particle_filter
     ${catkin_LIBRARIES}
     ${tinyXML_LIBRARIES}
 )
 
-add_executable(${PROJECT_NAME}_node
-    src/muse_amcl_node.cpp
+add_executable(muse_amcl_node
+    src/node/muse_amcl_node.cpp
 )
-target_link_libraries(${PROJECT_NAME}_node
-    ${PROJECT_NAME}
+
+target_link_libraries(muse_amcl_node
+    ${catkin_LIBRARIES}
 )
+
+
+if(${BUILD_EXAMPLES})
+    add_executable(muse_amcl_exam_signals
+        src/examples/exam_signals.cpp
+    )
+
+    add_executable(muse_amcl_exam_bounding_boxes
+        src/examples/exam_bounding_boxes.cpp
+    )
+    target_link_libraries(muse_amcl_exam_bounding_boxes
+        ${catkin_LIBRARIES}
+    )
+
+    find_package(OpenCV QUIET)
+    if(${OpenCV_FOUND})
+        include_directories(
+            ${OpenCV_INCLUDE_DIRS}
+        )
+        add_executable(muse_amcl_exam_visualise_distributions
+            src/examples/exam_visualise_distributions.cpp
+        )
+        target_link_libraries(muse_amcl_exam_visualise_distributions
+            ${catkin_LIBRARIES}
+        )
+        target_link_libraries(muse_amcl_exam_visualise_distributions
+            ${OpenCV_LIBRARIES}
+        )
+        add_executable(muse_amcl_exam_particle_set
+            src/examples/exam_particle_set.cpp
+        )
+        target_link_libraries(muse_amcl_exam_particle_set
+            muse_amcl_particle_filter
+        )
+    endif()
+endif()
+
+
+
+
+
