@@ -22,7 +22,7 @@ public:
 protected:
     RandomGenerator() :
         random_device_(),
-        random_engine_(random_engine_())
+        random_engine_(random_device_())
     {
     }
 
