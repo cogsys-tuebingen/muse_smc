@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(muse_amcl_core_plugins)
 
-
 find_package(catkin REQUIRED COMPONENTS
   muse_amcl
   nav_msgs
