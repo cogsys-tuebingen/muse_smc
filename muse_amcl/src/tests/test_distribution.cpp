@@ -247,9 +247,57 @@ TEST(test_distribution, test_eigen_vectors)
 
 }
 
+TEST(test_distribution, test_copy)
+{
+    mms::Distribution<2> distribution_a;
+    mms::Distribution<2> distribution_b;
+    for(std::size_t i = 0 ; i < Distribution200::size ; ++i) {
+        distribution_a.add({Distribution200::data[i * 2 + 0],
+                            Distribution200::data[i * 2 + 1]});
+    }
+
+    distribution_b = distribution_a;
+
+    EXPECT_TRUE(distribution_a.getMean() == distribution_b.getMean());
+    EXPECT_TRUE(distribution_a.getN()    == distribution_b.getN());
+
+    EXPECT_TRUE(distribution_a.getCovariance() == distribution_b.getCovariance());
+    EXPECT_TRUE(distribution_a.getInformationMatrix()    == distribution_b.getInformationMatrix());
+
+    EXPECT_TRUE(distribution_a.getEigenValues() == distribution_b.getEigenValues());
+    EXPECT_TRUE(distribution_a.getEigenVectors()   == distribution_b.getEigenVectors());
+}
+
+
 TEST(test_distribution, test_distribution_addition)
 {
+    const double tolerance = 1e-6;
 
+    mms::Distribution<2> distribution_a;
+    mms::Distribution<2> distribution_b;
+    for(std::size_t i = 0 ; i < Distribution200::size ; ++i) {
+        distribution_a.add({Distribution200::data[i * 2 + 0],
+                            Distribution200::data[i * 2 + 1]});
+    }
+
+    distribution_b  = distribution_a;
+    distribution_b += distribution_a;
+
+    for(std::size_t i = 0 ; i < Distribution200::size ; ++i) {
+        distribution_a.add({Distribution200::data[i * 2 + 0],
+                            Distribution200::data[i * 2 + 1]});
+    }
+
+    std::cout << (distribution_a.getMean() - distribution_b.getMean()).norm() << std::endl;
+
+    EXPECT_NEAR((distribution_a.getMean() - distribution_b.getMean()).norm(), 0.0, tolerance);
+    EXPECT_TRUE(distribution_a.getN() == distribution_b.getN());
+
+    EXPECT_NEAR((distribution_a.getCovariance() - distribution_b.getCovariance()).norm(), 0.0, tolerance);
+    EXPECT_NEAR((distribution_a.getInformationMatrix() - distribution_b.getInformationMatrix()).norm(), 0.0, tolerance);
+
+    EXPECT_NEAR((distribution_a.getEigenValues() - distribution_b.getEigenValues()).norm(), 0.0, tolerance);
+    EXPECT_NEAR((distribution_a.getEigenVectors() - distribution_b.getEigenVectors()).norm(), 0.0, tolerance);
 }
 
 int main(int argc, char *argv[])
