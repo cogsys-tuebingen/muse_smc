@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+using namespace muse_amcl;
+
 void triggered(int a, int b)
 {
     std::cout << a << " " << b << std::endl;

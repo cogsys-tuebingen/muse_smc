@@ -7,7 +7,7 @@
 #include <functional>
 #include <map>
 
-
+namespace muse_amcl {
 template<typename Slot>
 class Signal;
 
@@ -49,6 +49,11 @@ public:
         enabled = false;
     }
 
+    bool isEnabled() const
+    {
+        return enabled;
+    }
+
     template<typename Function>
     typename Connection::Ptr connect(Function &_f)
     {
@@ -87,5 +92,6 @@ private:
     std::atomic_bool            enabled;
 
 };
+}
 
 #endif /* SIGNAL_HPP */
