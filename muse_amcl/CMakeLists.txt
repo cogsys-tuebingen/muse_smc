@@ -82,15 +82,16 @@ if(${${PROJECT_NAME}_BUILD_TESTS})
         ${PROJECT_NAME}_particle_filter
     )
 
-    add_executable(muse_amcl_exam_signals
-        src/examples/exam_signals.cpp
+    add_unit_test(${PROJECT_NAME}_test_particle_set
+        src/tests/test_particle_set.cpp
+        ${PROJECT_NAME}_particle_filter
     )
 
-    add_executable(muse_amcl_exam_bounding_boxes
-        src/examples/exam_bounding_boxes.cpp
+    add_executable(${PROJECT_NAME}_eval_particle_set_access_times
+        src/examples/eval_particle_set_access_times.cpp
     )
-    target_link_libraries(muse_amcl_exam_bounding_boxes
-        ${catkin_LIBRARIES}
+    target_link_libraries(${PROJECT_NAME}_eval_particle_set_access_times
+        muse_amcl_particle_filter
     )
 
 endif()
@@ -102,7 +103,7 @@ if(${${PROJECT_NAME}_BUILD_VISUAL_EXAMPLES})
             ${OpenCV_INCLUDE_DIRS}
         )
 
-        add_executable(muse_amcl_exam_visualise_distributions
+        add_executable(${PROJECT_NAME}_exam_visualise_distributions
             src/examples/exam_visualise_distributions.cpp
         )
         target_link_libraries(muse_amcl_exam_visualise_distributions
@@ -110,71 +111,20 @@ if(${${PROJECT_NAME}_BUILD_VISUAL_EXAMPLES})
             ${OpenCV_LIBRARIES}
         )
 
-        add_executable(muse_amcl_exam_particle_set
-            src/examples/exam_particle_set.cpp
-        )
-        target_link_libraries(muse_amcl_exam_particle_set
-            muse_amcl_particle_filter
-        )
-
     else()
         message("Cannot build visual examples, OpenCV is missing!")
     endif()
 
+    add_executable(${PROJECT_NAME}_exam_bounding_boxes
+        src/examples/exam_bounding_boxes.cpp
+    )
+    target_link_libraries(${PROJECT_NAME}_exam_bounding_boxes
+        ${catkin_LIBRARIES}
+    )
+
+
 endif()
 
-#if(${CSLIBS_BOOST_GEOMETRY_BUILD_TESTS})
-#    include_directories(${GTEST_INCLUDE_DIRS})
-
-#    add_unit_test(${PROJECT_NAME}_test_intersection
-#                  src/tests/test_intersection.cpp
-#                  ${PROJECT_NAME})
-
-#    add_unit_test(${PROJECT_NAME}_test_nearest_intersection
-#                  src/tests/test_nearest_intersection.cpp
-#                  ${PROJECT_NAME})
-
-#    add_unit_test(${PROJECT_NAME}_test_nearest_intersection_batch
-#                  src/tests/test_nearest_intersection_batch.cpp
-#                  ${PROJECT_NAME})
-
-#    add_unit_test(${PROJECT_NAME}_test_translation
-#                  src/tests/test_translation.cpp
-#                  ${PROJECT_NAME})
-
-#    add_unit_test(${PROJECT_NAME}_test_polar_line_set
-#                  src/tests/test_polar_line_set.cpp
-#                  ${PROJECT_NAME})
-
-#    add_unit_test(${PROJECT_NAME}_test_polygons
-#                  src/tests/test_polygons.cpp
-#                  ${PROJECT_NAME})
-
-#    add_unit_test(${PROJECT_NAME}_test_nearest_intersection_dist
-#                  src/tests/test_nearest_intersection_dist.cpp
-#                  ${PROJECT_NAME})
-
-#    add_unit_test(${PROJECT_NAME}_test_nearest_intersection_dist_batch
-#                  src/tests/test_nearest_intersection_dist_batch.cpp
-#                  ${PROJECT_NAME})
-
-#    add_unit_test(${PROJECT_NAME}_test_distance
-#                  src/tests/test_distance.cpp
-#                  ${PROJECT_NAME})
-
-#    add_unit_test(${PROJECT_NAME}_test_equality
-#                  src/tests/test_equality.cpp
-#                  ${PROJECT_NAME})
-
-#    add_unit_test(${PROJECT_NAME}_test_rotation
-#                  src/tests/test_rotation.cpp
-#                  ${PROJECT_NAME})
-
-#    add_unit_test(${PROJECT_NAME}_test_line_angles
-#                  src/tests/test_line_angles.cpp
-#                  ${PROJECT_NAME})
-
-#endif()
 
 install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})

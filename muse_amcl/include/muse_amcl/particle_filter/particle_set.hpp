@@ -77,6 +77,7 @@ public:
     using Particles = std::vector<Particle>;
 
     ParticleSet(const std::size_t size) :
+        max_weight_(0.0),
         samples_(size),
         minimum_size_(size),
         maximum_size_(size)
@@ -87,6 +88,7 @@ public:
     ParticleSet(const std::size_t size,
                 const std::size_t minimum_size,
                 const std::size_t maximum_size) :
+        max_weight_(0.0),
         samples_(size),
         minimum_size_(minimum_size),
         maximum_size_(maximum_size)
@@ -108,19 +110,41 @@ public:
         return samples_;
     }
 
-    void resize(const std::size_t _sample_size)
+    void resize(const std::size_t sample_size)
     {
-        samples_.resize(_sample_size);
+        minimum_size_ = sample_size;
+        maximum_size_ = sample_size;
+        samples_.resize(sample_size);
     }
 
-    void reserve(const std::size_t _sample_size)
+    void resize(const std::size_t sample_size,
+                const std::size_t minimum_size,
+                const std::size_t maximum_size)
     {
-        samples_.reserve(_sample_size);
+        samples_.resize(sample_size);
+        minimum_size_ = minimum_size;
+        maximum_size_ = maximum_size;
     }
 
-    void emplace_back(const Particle &_sample)
+    void reserve(const std::size_t sample_size)
     {
-        samples_.emplace_back(_sample);
+        minimum_size_ = sample_size;
+        maximum_size_ = sample_size;
+        samples_.reserve(sample_size);
+    }
+
+    void reserve(const std::size_t sample_size,
+                 const std::size_t minimum_size,
+                 const std::size_t maximum_size)
+    {
+        samples_.reserve(sample_size);
+        minimum_size_ = minimum_size;
+        maximum_size_ = maximum_size;
+    }
+
+    void emplace_back(const Particle &sample)
+    {
+         samples_.emplace_back(sample);
     }
 
     std::size_t minimumSize() const
@@ -138,7 +162,7 @@ public:
         return samples_.size();
     }
 
-    double maxWeight() const
+    double maximumWeight() const
     {
         return max_weight_;
     }
