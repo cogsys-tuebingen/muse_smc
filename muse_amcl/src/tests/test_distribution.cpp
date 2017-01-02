@@ -232,10 +232,10 @@ TEST(test_distribution, test_eigen_vectors)
 
     eigen_vectors = distribution.getEigenVectors();
 
-    exp_a = {Distribution500::eigen_vectors[0],
-             Distribution500::eigen_vectors[2]};
-    exp_b = {Distribution500::eigen_vectors[1],
-             Distribution500::eigen_vectors[3]};
+    exp_a = {Distribution5000::eigen_vectors[0],
+             Distribution5000::eigen_vectors[2]};
+    exp_b = {Distribution5000::eigen_vectors[1],
+             Distribution5000::eigen_vectors[3]};
 
     rec_a = eigen_vectors.col(0);
     rec_b = eigen_vectors.col(1);
