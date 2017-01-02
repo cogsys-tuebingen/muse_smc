@@ -185,7 +185,6 @@ public:
 
     void normalize(const double W)
     {
-
         max_weight_ = std::numeric_limits<double>::lowest();
         for(auto &p : samples_) {
             p.weight_ /= W;

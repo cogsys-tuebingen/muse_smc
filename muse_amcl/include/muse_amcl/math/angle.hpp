@@ -14,7 +14,7 @@ const double _R2A = M_1_PI * 180.0;
 
 inline double normalize(const double _angle)
 {
-    return _angle - _2_M_PI * floor( _angle / _2_M_PI );
+    return atan2(sin(_angle),cos(_angle));
 }
 
 inline double difference(double _a, double _b)

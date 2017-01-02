@@ -87,11 +87,32 @@ if(${${PROJECT_NAME}_BUILD_TESTS})
         ${PROJECT_NAME}_particle_filter
     )
 
+    add_unit_test(${PROJECT_NAME}_test_distribution
+        src/tests/test_distribution.cpp
+        ${PROJECT_NAME}_particle_filter
+    )
+
+    add_unit_test(${PROJECT_NAME}_test_random
+        src/tests/test_random.cpp
+        ${PROJECT_NAME}_particle_filter
+    )
+
+    add_unit_test(${PROJECT_NAME}_test_angle
+        src/tests/test_angle.cpp
+        ${PROJECT_NAME}_particle_filter
+    )
+
+    ## optional tests that evaluate runtimes and such which
+    ## do not have to fulfil unit tests
     add_executable(${PROJECT_NAME}_eval_particle_set_access_times
         src/examples/eval_particle_set_access_times.cpp
     )
     target_link_libraries(${PROJECT_NAME}_eval_particle_set_access_times
         muse_amcl_particle_filter
+    )
+
+    add_executable(${PROJECT_NAME}_eval_angle_normalization_times
+        src/examples/eval_angle_normalization.cpp
     )
 
 endif()
