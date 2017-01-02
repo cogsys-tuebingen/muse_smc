@@ -55,8 +55,6 @@ TEST(test_angles, test_to_deg)
 
 int main(int argc, char *argv[])
 {
-
-
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
