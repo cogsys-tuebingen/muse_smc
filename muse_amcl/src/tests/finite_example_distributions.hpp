@@ -3,11 +3,26 @@
 
 #include <array>
 #include <vector>
+#include <fstream>
 
 /**
  * Example distributions generated via matlab to test the distribution class.
  */
 namespace example_distributions {
+void write(const std::vector<double> &values,
+           const std::string &path)
+{
+    std::ofstream out(path);
+    bool newline = false;
+    for(auto v : values) {
+        out << v << ",";
+        if(newline)
+            out << std::endl;
+        newline = !newline;
+    }
+    out.close();
+}
+
 struct Distribution200 {
     const static std::vector<double>   data;
     const static std::array<double, 2> mean;

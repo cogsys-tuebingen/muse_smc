@@ -128,7 +128,7 @@ public:
         }
     }
 
-    inline MatrixType getInverseCovariance() const
+    inline MatrixType getInformationMatrix() const
     {
         if(n_1 >= 2) {
             if(dirty)
@@ -138,7 +138,7 @@ public:
         return MatrixType::Zero();
     }
 
-    inline void getInverseCovariance(MatrixType &_inverse_covariance) const
+    inline void getInformationMatrix(MatrixType &_inverse_covariance) const
     {
         if(n_1 >= 2) {
             if(dirty)
