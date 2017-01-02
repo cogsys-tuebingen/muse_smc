@@ -302,7 +302,6 @@ TEST(test_distribution, test_distribution_addition)
 
 int main(int argc, char *argv[])
 {
-
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
