@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 
     {
         std::default_random_engine e(0);
-        std::uniform_real_distribution<double> uniform_dist(-100.0 * M_PI, +100.0 * M_PI);
+        std::uniform_real_distribution<double> uniform_dist(-4.0 * M_PI, +4.0 * M_PI);
 
         auto start = std::chrono::high_resolution_clock::now();
         for(std::size_t i = 0 ; i < iterations ; ++i) {
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     }
     {
         std::default_random_engine e(0);
-        std::uniform_real_distribution<double> uniform_dist(-100.0 * M_PI, +100.0 * M_PI);
+        std::uniform_real_distribution<double> uniform_dist(-4.0 * M_PI, +4.0 * M_PI);
 
         auto start = std::chrono::high_resolution_clock::now();
         for(std::size_t i = 0 ; i < iterations ; ++i) {
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     }
     {
         std::default_random_engine e(0);
-        std::uniform_real_distribution<double> uniform_dist(-100.0 * M_PI, +100.0 * M_PI);
+        std::uniform_real_distribution<double> uniform_dist(-4.0 * M_PI, +4.0 * M_PI);
 
         auto start = std::chrono::high_resolution_clock::now();
         for(std::size_t i = 0 ; i < iterations ; ++i) {

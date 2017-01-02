@@ -7,6 +7,7 @@ namespace muse_amcl {
 namespace math {
 namespace angle {
 const double _2_M_PI = 2.0 * M_PI;
+const double _1_2_M_PI = 1.0 / _2_M_PI;
 const double _1_180  = 1.0 / 180.0;
 const double _A2R = _1_180 * M_PI;
 const double _R2A = M_1_PI * 180.0;
@@ -14,7 +15,7 @@ const double _R2A = M_1_PI * 180.0;
 
 inline double normalize(const double _angle)
 {
-    return atan2(sin(_angle),cos(_angle));
+    return _angle - _2_M_PI * floor( _angle * _1_2_M_PI );
 }
 
 inline double difference(double _a, double _b)

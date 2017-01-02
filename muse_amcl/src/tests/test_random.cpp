@@ -4,8 +4,7 @@
 
 TEST(test_random, test_uniform1D)
 {
-
-    const std::size_t N = 10000;
+    const std::size_t N = 1e6;
     muse_amcl::math::random::Uniform<1> u1D(-10.0, 10.0, 0);
 
     double mu = 0.0;
@@ -38,21 +37,86 @@ TEST(test_random, test_uniform1D)
 
 TEST(test_random, test_normal1D)
 {
-    const std::size_t N = 5000;
+    const std::size_t N = 1e6;
     muse_amcl::math::random::Normal<1> n1D(0.0, 1.0, 0);
+
+    /// checking the interval values should be in relies on statistical propereties of
+    /// gaussian distributions. we can assume that most of our generated values should be
+    /// contained within boundard given by 200 sigma ;)
+
+    double mu = 0.0;
+    std::vector<double> vs;
+    for(std::size_t i = 0 ; i < N ; ++i) {
+        double v = n1D.get();
+        EXPECT_LE(-100.0, v);
+        EXPECT_GE( 100.0, v);
+        mu += v;
+        vs.emplace_back(v);
+    }
+
+    mu /= N;
+    EXPECT_NEAR(mu, 0.0, 1e-2);
+
+    double sigma = 0;
+    for(auto v : vs) {
+        sigma += (mu - v) * (mu - v);
+    }
+    sigma /= N;
+    sigma = sqrt(sigma);
+
+    /// sigma should be reconstructable from the given sigma.
+
+    EXPECT_NEAR(sigma, 1.0, 1e-2);
 }
 
 TEST(test_random, test_uniform2D)
 {
-    const std::size_t N = 5000;
+    const std::size_t N = 1e7;
+    muse_amcl::math::random::Uniform<2> u2D({-10.,-10.},
+                                            {10., 10.},
+                                             0);
+    muse_amcl::math::statistic::Distribution<2> distribution;
+    for(std::size_t i = 0 ; i < N ; ++i) {
+        auto v = u2D.get();
+        distribution.add(Eigen::Vector2d(v[0],v[1]));
+        EXPECT_LE(-10.0, v[0]);
+        EXPECT_GE( 10.0, v[0]);
+        EXPECT_LE(-10.0, v[1]);
+        EXPECT_GE( 10.0, v[1]);
+    }
+    Eigen::Vector2d mu = distribution.getMean();
+    EXPECT_NEAR(mu(0), 0.0, 1e-2);
+    EXPECT_NEAR(mu(1), 0.0, 1e-2);
 
+    Eigen::Matrix2d sigma = distribution.getCovariance();
+    EXPECT_NEAR(sqrt(sigma(0,0)), 5.77, 1e-2);
+    EXPECT_NEAR(sqrt(sigma(1,1)), 5.77, 1e-2);
 }
 
 TEST(test_random, test_normal2D)
 {
-    const std::size_t N = 5000;
+//    const std::size_t N = 1e7;
 
 
+//    muse_amcl::math::random::Normal<2> u2D({0.,0.},
+//                                           {1.,0.,0.,1.},
+//                                             0);
+//    muse_amcl::math::statistic::Distribution<2> distribution;
+//    for(std::size_t i = 0 ; i < N ; ++i) {
+//        auto v = u2D.get();
+//        distribution.add(Eigen::Vector2d(v[0],v[1]));
+//        EXPECT_LE(-10.0, v[0]);
+//        EXPECT_GE( 10.0, v[0]);
+//        EXPECT_LE(-10.0, v[1]);
+//        EXPECT_GE( 10.0, v[1]);
+//    }
+//    Eigen::Vector2d mu = distribution.getMean();
+//    EXPECT_NEAR(mu(0), 0.0, 1e-2);
+//    EXPECT_NEAR(mu(1), 0.0, 1e-2);
+
+//    Eigen::Matrix2d sigma = distribution.getCovariance();
+//    EXPECT_NEAR(sqrt(sigma(0,0)), 5.77, 1e-2);
+//    EXPECT_NEAR(sqrt(sigma(1,1)), 5.77, 1e-2);
 }
 
 int main(int argc, char *argv[])
