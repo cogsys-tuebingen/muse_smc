@@ -9,7 +9,7 @@ namespace math {
 class BoundingRectangle {
 public:
     using Edge   = std::array<Point,2>;
-    using Edges  = std::array<Edge,4>;
+    using Edges  = std::array<Edge, 4>;
     using Points = std::array<Point,4>;
 
     BoundingRectangle(const Point &min,

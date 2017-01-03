@@ -13,7 +13,7 @@ TEST(test_covariance, default_constructor)
     EXPECT_EQ(cov.eigen3D() , Matrix3d::Zero());
 }
 
-TEST(test_covariance, assignment_3d)
+TEST(test_covariance, constructor_3d)
 {
     auto makeIt6D = [](const Matrix3d &mat)
     {
@@ -37,7 +37,7 @@ TEST(test_covariance, assignment_3d)
     EXPECT_EQ(cov.eigen3D() , data3D);
 }
 
-TEST(test_covariance, assignment6d)
+TEST(test_covariance, constructor_6d)
 {
     auto makeIt3D = [](const Matrix6d &mat) {
         Matrix3d mat_3d = Matrix3d::Zero();
@@ -60,7 +60,7 @@ TEST(test_covariance, assignment6d)
     EXPECT_EQ(cov.eigen3D() , data3D);
 }
 
-TEST(test_covariance, assignment_3d_by_std)
+TEST(test_covariance, constructor_std_3d)
 {
     auto makeIt6D = [](const Matrix3d &mat)
     {
@@ -90,7 +90,7 @@ TEST(test_covariance, assignment_3d_by_std)
     EXPECT_EQ(cov.eigen3D() , data3D);
 }
 
-TEST(test_covariance, assignment6d_by_std)
+TEST(test_covariance, constructor_std_6d)
 {
     auto makeIt3D = [](const Matrix6d &mat) {
         Matrix3d mat_3d = Matrix3d::Zero();
