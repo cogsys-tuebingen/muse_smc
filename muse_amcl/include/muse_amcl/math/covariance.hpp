@@ -87,7 +87,7 @@ public:
             }
             break;
         default:
-            throw std::runtime_error("[Covariance] :  data must have size 3 or 6.");
+            throw std::runtime_error("[Covariance] : matrix represented by data must have dimension 3 or 6.");
         }
     }
 
