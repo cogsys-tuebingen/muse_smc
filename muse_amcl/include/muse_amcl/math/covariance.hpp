@@ -16,6 +16,10 @@ public:
     using Matrix3d = Eigen::Matrix3d;
 
     /** Covariance content 6D.
+     * psi   = yaw
+     * theta = pitch
+     * phi   = roll
+     *
      (x     x)(x     y)(x     z)(x     phi)(x     theta)(x     psi)
      (y     x)(y     y)(y     z)(y     phi)(y     theta)(y     psi)
      (z     x)(z     y)(z     z)(z     phi)(z     theta)(z     psi)
@@ -26,6 +30,7 @@ public:
 
     /** Covariance content 3D in compact representation.
      *  Data is stored that unused elements are set to zero.
+     * psi = yaw
      (x     x)(x     y)(x     z)(x     psi)
      (y     x)(y     y)(y     z)(y     psi)
      (psi   x)(psi   y)(psi   z)(psi   psi)
@@ -35,7 +40,7 @@ public:
      * @brief Covariance constructor for the full 3D covariance.
      * @param data - the covariance data
      */
-    Covariance(const Matrix6d &data) :
+    Covariance(const Matrix6d &data = Matrix6d::Zero()) :
         data_(data)
     {
     }
@@ -48,11 +53,11 @@ public:
         data_(Matrix6d::Zero())
     {
         data_.block<2,2>(0,0) = data.block<2,2>(0,0);
-        data_(5,1) = data(2,0);
-        data_(5,2) = data(2,1);
+        data_(5,0) = data(2,0);
+        data_(5,1) = data(2,1);
         data_(0,5) = data(0,2);
         data_(1,5) = data(1,2);
-        data_(2,5) = data(2,2);
+        data_(5,5) = data(2,2);
     }
 
     /**
@@ -72,12 +77,14 @@ public:
             data_(0,0) = get(0,0,3);
             data_(1,0) = get(1,0,3);
             data_(5,0) = get(2,0,3);
+
             data_(0,1) = get(0,1,3);
             data_(1,1) = get(1,1,3);
-            data_(5,1) = get(0,2,3);
-            data_(0,5) = get(0,1,3);
-            data_(1,5) = get(1,1,3);
-            data_(5,5) = get(0,2,3);
+            data_(5,1) = get(2,1,3);
+
+            data_(0,5) = get(0,2,3);
+            data_(1,5) = get(1,2,3);
+            data_(5,5) = get(2,2,3);
             break;
         case 36:
             for(std::size_t r = 0 ; r < 6 ; ++r) {
@@ -128,11 +135,11 @@ public:
     {
         Matrix3d m;
         m.block<2,2>(0,0) = data_.block<2,2>(0,0);
-        m(2,0) = data_(5,1);
-        m(2,1) = data_(5,2);
+        m(2,0) = data_(5,0);
+        m(2,1) = data_(5,1);
         m(0,2) = data_(0,5);
         m(1,2) = data_(1,5);
-        m(2,2) = data_(2,5);
+        m(2,2) = data_(5,5);
         return m;
     }
 

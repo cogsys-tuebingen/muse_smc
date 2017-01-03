@@ -102,6 +102,22 @@ if(${${PROJECT_NAME}_BUILD_TESTS})
         ${PROJECT_NAME}_particle_filter
     )
 
+    add_unit_test(${PROJECT_NAME}_test_covariance
+        src/tests/test_covariance.cpp
+        ${PROJECT_NAME}_particle_filter
+    )
+
+    add_unit_test(${PROJECT_NAME}_test_bounding_box
+        src/tests/test_bounding_box.cpp
+        ${PROJECT_NAME}_particle_filter
+    )
+
+    add_unit_test(${PROJECT_NAME}_test_bounding_rectangle
+        src/tests/test_bounding_rectangle.cpp
+        ${PROJECT_NAME}_particle_filter
+    )
+
+
     ## optional tests that evaluate runtimes and such which
     ## do not have to fulfil unit tests
     add_executable(${PROJECT_NAME}_eval_particle_set_access_times
