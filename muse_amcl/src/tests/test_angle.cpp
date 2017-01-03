@@ -26,11 +26,6 @@ TEST(test_angles, test_normalization)
     }
 }
 
-//TEST(test_angles, test_difference)
-//{
-//
-//}
-
 TEST(test_angles, test_to_rad)
 {
     // expclicit

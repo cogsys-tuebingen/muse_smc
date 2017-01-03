@@ -73,8 +73,8 @@ TEST(test_random, test_uniform2D)
 {
     const std::size_t N = 1e7;
     muse_amcl::math::random::Uniform<2> u2D({-10.,-10.},
-                                            {10., 10.},
-                                             0);
+    {10., 10.},
+                                            0);
     muse_amcl::math::statistic::Distribution<2> distribution;
     for(std::size_t i = 0 ; i < N ; ++i) {
         auto v = u2D.get();
@@ -95,28 +95,117 @@ TEST(test_random, test_uniform2D)
 
 TEST(test_random, test_normal2D)
 {
-//    const std::size_t N = 1e7;
+    auto createMatrix = [](std::array<double,4> values)
+    {
+        Eigen::Matrix2d m;
+        m(0,0) = values[0];
+        m(0,1) = values[1];
+        m(1,0) = values[2];
+        m(1,1) = values[3];
+        return m;
+    };
 
 
-//    muse_amcl::math::random::Normal<2> u2D({0.,0.},
-//                                           {1.,0.,0.,1.},
-//                                             0);
-//    muse_amcl::math::statistic::Distribution<2> distribution;
-//    for(std::size_t i = 0 ; i < N ; ++i) {
-//        auto v = u2D.get();
-//        distribution.add(Eigen::Vector2d(v[0],v[1]));
-//        EXPECT_LE(-10.0, v[0]);
-//        EXPECT_GE( 10.0, v[0]);
-//        EXPECT_LE(-10.0, v[1]);
-//        EXPECT_GE( 10.0, v[1]);
-//    }
-//    Eigen::Vector2d mu = distribution.getMean();
-//    EXPECT_NEAR(mu(0), 0.0, 1e-2);
-//    EXPECT_NEAR(mu(1), 0.0, 1e-2);
+    const std::size_t N = 1e7;
+    {
+        muse_amcl::math::statistic::Distribution<2> distribution;
 
-//    Eigen::Matrix2d sigma = distribution.getCovariance();
-//    EXPECT_NEAR(sqrt(sigma(0,0)), 5.77, 1e-2);
-//    EXPECT_NEAR(sqrt(sigma(1,1)), 5.77, 1e-2);
+        const Eigen::Vector2d mu = Eigen::Vector2d(0.0, 0.0);
+        const Eigen::Matrix2d sigma = createMatrix({1.0, 0.0, 0.0, 1.0});
+
+        muse_amcl::math::random::Normal<2> u2D(mu, sigma, 0);
+        for(std::size_t i = 0 ; i < N ; ++i) {
+            auto v = u2D.get();
+            distribution.add(Eigen::Vector2d(v[0],v[1]));
+            /// this test can be easily conducted for a symmetric and uncorrelated
+            /// covariance
+            EXPECT_LE(-100.0, v[0]);
+            EXPECT_GE( 100.0, v[0]);
+            EXPECT_LE(-100.0, v[1]);
+            EXPECT_GE( 100.0, v[1]);
+        }
+        Eigen::Vector2d mu_est = distribution.getMean();
+        Eigen::Matrix2d sigma_est = distribution.getCovariance();
+
+        EXPECT_NEAR(mu(0), mu_est(0), 1e-2);
+        EXPECT_NEAR(mu(1), mu_est(1), 1e-2);
+        EXPECT_NEAR(sigma(0,0), sigma_est(0,0), 1e-2);
+        EXPECT_NEAR(sigma(0,1), sigma_est(0,1), 1e-2);
+        EXPECT_NEAR(sigma(1,0), sigma_est(1,0), 1e-2);
+        EXPECT_NEAR(sigma(1,1), sigma_est(1,1), 1e-2);
+    }
+
+    {
+        muse_amcl::math::statistic::Distribution<2> distribution;
+
+        const Eigen::Vector2d mu = Eigen::Vector2d(0.0, 0.0);
+        const Eigen::Matrix2d sigma = createMatrix({1.0, 0.5, 0.5, 0.5});
+
+        /// here we only check for resulting moments of the distribution
+        muse_amcl::math::random::Normal<2> u2D(mu, sigma, 0);
+        for(std::size_t i = 0 ; i < N ; ++i) {
+            auto v = u2D.get();
+            distribution.add(Eigen::Vector2d(v[0],v[1]));
+        }
+        Eigen::Vector2d mu_est = distribution.getMean();
+        Eigen::Matrix2d sigma_est = distribution.getCovariance();
+
+        EXPECT_NEAR(mu(0), mu_est(0), 1e-2);
+        EXPECT_NEAR(mu(1), mu_est(1), 1e-2);
+        EXPECT_NEAR(sigma(0,0), sigma_est(0,0), 1e-2);
+        EXPECT_NEAR(sigma(0,1), sigma_est(0,1), 1e-2);
+        EXPECT_NEAR(sigma(1,0), sigma_est(1,0), 1e-2);
+        EXPECT_NEAR(sigma(1,1), sigma_est(1,1), 1e-2);
+    }
+
+    {
+        muse_amcl::math::statistic::Distribution<2> distribution;
+
+        const Eigen::Vector2d mu = Eigen::Vector2d(0.0, 0.0);
+        const Eigen::Matrix2d sigma = createMatrix({1.0, -0.5, -0.5, 0.5});
+
+        /// here we only check for resulting moments of the distribution
+        muse_amcl::math::random::Normal<2> u2D(mu, sigma, 0);
+        for(std::size_t i = 0 ; i < N ; ++i) {
+            auto v = u2D.get();
+            distribution.add(Eigen::Vector2d(v[0],v[1]));
+        }
+        Eigen::Vector2d mu_est = distribution.getMean();
+        Eigen::Matrix2d sigma_est = distribution.getCovariance();
+
+        EXPECT_NEAR(mu(0), mu_est(0), 1e-2);
+        EXPECT_NEAR(mu(1), mu_est(1), 1e-2);
+        EXPECT_NEAR(sigma(0,0), sigma_est(0,0), 1e-2);
+        EXPECT_NEAR(sigma(0,1), sigma_est(0,1), 1e-2);
+        EXPECT_NEAR(sigma(1,0), sigma_est(1,0), 1e-2);
+        EXPECT_NEAR(sigma(1,1), sigma_est(1,1), 1e-2);
+    }
+
+
+    {
+        muse_amcl::math::statistic::Distribution<2> distribution;
+
+        const Eigen::Vector2d mu = Eigen::Vector2d(1.0, 2.0);
+        const Eigen::Matrix2d sigma = createMatrix({1.0, -0.5, -0.5, 0.5});
+
+        /// here we only check for resulting moments of the distribution
+        muse_amcl::math::random::Normal<2> u2D(mu, sigma, 0);
+        for(std::size_t i = 0 ; i < N ; ++i) {
+            auto v = u2D.get();
+            distribution.add(Eigen::Vector2d(v[0],v[1]));
+        }
+        Eigen::Vector2d mu_est = distribution.getMean();
+        Eigen::Matrix2d sigma_est = distribution.getCovariance();
+
+        EXPECT_NEAR(mu(0), mu_est(0), 1e-2);
+        EXPECT_NEAR(mu(1), mu_est(1), 1e-2);
+        EXPECT_NEAR(sigma(0,0), sigma_est(0,0), 1e-2);
+        EXPECT_NEAR(sigma(0,1), sigma_est(0,1), 1e-2);
+        EXPECT_NEAR(sigma(1,0), sigma_est(1,0), 1e-2);
+        EXPECT_NEAR(sigma(1,1), sigma_est(1,1), 1e-2);
+    }
+
+
 }
 
 int main(int argc, char *argv[])
