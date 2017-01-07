@@ -5,20 +5,50 @@ CLASS_LOADER_REGISTER_CLASS(muse_amcl::Normal2D, muse_amcl::NormalPoseGeneration
 
 #include <muse_amcl/pose_generators/normal.hpp>
 
+#include <ros/time.h>
+
 using namespace muse_amcl;
 
-using M   = muse_amcl::pose_generation::Metric;
-using R   = muse_amcl::pose_generation::Radian;
-using RNG = muse_amcl::pose_generation::Normal<M, M, R>;
+using Metric              = muse_amcl::pose_generation::Metric;
+using Radian              = muse_amcl::pose_generation::Radian;
+using RandomPoseGenerator = muse_amcl::pose_generation::Normal<Metric, Metric, Radian>;
 
 void Normal2D::apply(const math::Pose       &pose,
                      const math::Covariance &covariance,
                      ParticleSet            &particle_set)
 {
+    std::vector<Map::ConstPtr> maps;
+    for(auto &m : maps_providers_) {
+        maps.emplace_back(m->map());
+    }
 
+    // @TODO: remove random seed = 0
+    RandomPoseGenerator  rng(pose.eigen3D(), covariance.eigen3D(), 0);
+    particle_set.resize(sample_size_);
+
+    ParticleSet::Particles &particles = particle_set.getParticles();
+
+    double sum_weight = 0.0;
+    for(auto &particle : particles) {
+        ros::Time sampling_start = ros::Time::now();
+        bool valid = false;
+        while(!valid) {
+            ros::Time now = ros::Time::now();
+            if(sampling_start + sampling_timeout_ < now)
+                break;
+
+            sampling_start = now;
+            particle.pose_ = rng();
+            sum_weight += particle.weight_;
+            valid = true;
+            for(const auto &m : maps) {
+                valid &= m->valid(particle.pose_);
+            }
+        }
+    }
+    particle_set.normalize(sum_weight);
 }
 
 void Normal2D::doSetup(ros::NodeHandle &nh_private)
 {
-
 }

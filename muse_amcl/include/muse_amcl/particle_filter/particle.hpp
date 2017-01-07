@@ -11,7 +11,7 @@ struct Particle {
     Particle() :
        pose_(tf::createQuaternionFromRPY(0,0,0),
             tf::Vector3(0,0,0)),
-       weight_(0.0)
+       weight_(1.0)
     {
     }
 

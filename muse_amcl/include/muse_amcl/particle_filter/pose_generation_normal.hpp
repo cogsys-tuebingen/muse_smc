@@ -8,6 +8,7 @@
 
 #include <muse_amcl/particle_filter/particle_set.hpp>
 #include <muse_amcl/data_sources/map_provider.hpp>
+#include <muse_amcl/data_sources/tf_provider.hpp>
 #include <muse_amcl/math/covariance.hpp>
 
 namespace muse_amcl {
@@ -33,13 +34,22 @@ public:
         return name_;
     }
 
+    void setTF(const TFProvider::Ptr &tf)
+    {
+        tf_ = tf;
+    }
+
     void setup(const std::string &name,
                ros::NodeHandle &nh_private)
     {
+        double sampling_timeout;
+
         name_              = name;
         frame_id_          = nh_private.param<std::string>("particle_filter/frame_id", "/world");
-        sample_size_       = nh_private.param("particle_filter/pose_generation/sample_size", 500);
+        sample_size_       = nh_private.param("particle_filter/normal_pose_generation/sample_size", 500);
+        sampling_timeout  = nh_private.param("particle_filter/normal_pose_generation/timeout", 10.0);
         nh_private.getParam("maps", map_provider_ids_);
+        sampling_timeout_ = ros::Duration(sampling_timeout);
         doSetup(nh_private);
     }
 
@@ -70,6 +80,8 @@ protected:
     std::size_t                   sample_size_;
     std::vector<std::string>      map_provider_ids_;
     std::vector<MapProvider::Ptr> maps_providers_;
+    ros::Duration                 sampling_timeout_;
+    TFProvider::Ptr               tf_;
 
     std::string param (const std::string &name)
     {

@@ -34,11 +34,8 @@ add_library(${PROJECT_NAME} SHARED
     src/odometry/omni_drive.cpp
 
     src/pose_generation/normal_2d.cpp
-    src/pose_generation/normal_3d.cpp
     src/pose_generation/uniform_enclosing_aa_2d.cpp
-    src/pose_generation/uniform_enclosing_aa_3d.cpp
     src/pose_generation/uniform_mm_aa_2d.cpp
-    src/pose_generation/uniform_mm_aa_3d.cpp
 
     src/resampling/wheel_of_fortune.cpp
     src/resampling/multinomial.cpp
