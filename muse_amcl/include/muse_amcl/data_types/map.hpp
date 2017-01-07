@@ -12,16 +12,16 @@ public:
     typedef std::shared_ptr<Map> Ptr;
     typedef std::shared_ptr<Map const> ConstPtr;
 
-    Map(const std::string &_frame) :
-        frame_(_frame),
-        stamp_(std::chrono::system_clock::now())
+    Map(const std::string &frame) :
+        frame_(frame),
+        stamp_(ros::Time::now())
     {
     }
 
-    Map(const std::string &_frame,
-        const std::chrono::time_point<std::chrono::system_clock> &_stamp) :
-        frame_(_frame),
-        stamp_(_stamp)
+    Map(const std::string &frame,
+        const ros::Time &stamp) :
+        frame_(frame),
+        stamp_(stamp)
     {
     }
 
@@ -53,12 +53,12 @@ public:
         return true;
     }
 
-    inline std::string frame() const
+    inline std::string getFrame() const
     {
         return frame_;
     }
 
-    inline std::chrono::time_point<std::chrono::system_clock> stamp() const
+    inline ros::Time getStamp() const
     {
         return stamp_;
     }
@@ -80,7 +80,7 @@ protected:
     Map() = delete;
 
     std::string frame_;
-    std::chrono::time_point<std::chrono::system_clock> stamp_;
+    ros::Time   stamp_;
 };
 }
 

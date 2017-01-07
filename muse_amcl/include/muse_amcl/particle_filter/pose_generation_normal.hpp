@@ -29,28 +29,31 @@ public:
         return "muse_amcl::NormalPoseGeneration";
     }
 
-    inline std::string name() const
+    inline std::string getName() const
     {
         return name_;
-    }
-
-    void setTF(const TFProvider::Ptr &tf)
-    {
-        tf_ = tf;
     }
 
     void setup(const std::string &name,
                ros::NodeHandle &nh_private)
     {
         double sampling_timeout;
-
+        double tf_timeout;
         name_              = name;
-        frame_id_          = nh_private.param<std::string>("particle_filter/frame_id", "/world");
         sample_size_       = nh_private.param("particle_filter/normal_pose_generation/sample_size", 500);
-        sampling_timeout  = nh_private.param("particle_filter/normal_pose_generation/timeout", 10.0);
-        nh_private.getParam("maps", map_provider_ids_);
+        sampling_timeout   = nh_private.param("particle_filter/normal_pose_generation/timeout", 10.0);
+        tf_timeout         = nh_private.param("particle_filter/uniform_pose_genreation/tf_timeout", 0.1);
+        nh_private.getParam("particle_filter/normal_pose_generation/maps", map_provider_ids_);
+
         sampling_timeout_ = ros::Duration(sampling_timeout);
+        tf_timeout_       = ros::Duration(tf_timeout);
+
         doSetup(nh_private);
+    }
+
+    void setTF(const TFProvider::Ptr &tf)
+    {
+        tf_ = tf;
     }
 
     void setMapProviders(const std::map<std::string, MapProvider::Ptr> &map_providers)
@@ -76,11 +79,11 @@ protected:
 
     virtual void doSetup(ros::NodeHandle &nh_private) = 0;
 
-    std::string                   frame_id_;
     std::size_t                   sample_size_;
     std::vector<std::string>      map_provider_ids_;
     std::vector<MapProvider::Ptr> maps_providers_;
     ros::Duration                 sampling_timeout_;
+    ros::Duration                 tf_timeout_;
     TFProvider::Ptr               tf_;
 
     std::string param (const std::string &name)

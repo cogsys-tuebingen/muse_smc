@@ -26,7 +26,7 @@ public:
     void bind(const std::map<std::string, DataProvider::Ptr> &data_providers,
               ros::NodeHandle &nh_private)
     {
-        const std::string data_provider_param = propagation_function_->name() + "/data_provider";
+        const std::string data_provider_param = propagation_function_->getName() + "/data_provider";
         const std::string data_provider_name = nh_private.param<std::string>(data_provider_param, "");
 
         const DataProvider::Ptr &data_provider = data_providers.at(data_provider_name);

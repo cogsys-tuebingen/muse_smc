@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
     }
 
     /// test resampling
-    muse_amcl::ParticleSet ps(10);
+    muse_amcl::ParticleSet ps("frame", 10);
     auto &particles = ps.getParticles();
     {
         /// random weights for the particles

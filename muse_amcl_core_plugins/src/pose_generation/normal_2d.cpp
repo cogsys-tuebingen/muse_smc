@@ -17,10 +17,19 @@ void Normal2D::apply(const math::Pose       &pose,
                      const math::Covariance &covariance,
                      ParticleSet            &particle_set)
 {
-    std::vector<Map::ConstPtr> maps;
+    std::vector<Map::ConstPtr>        maps;
+    std::vector<tf::StampedTransform> map_transforms;
+    const ros::Time   now = ros::Time::now();
+    const std::string frame = particle_set.getFrame();
     for(auto &m : maps_providers_) {
-        maps.emplace_back(m->map());
+        tf::StampedTransform map_transform;
+        Map::ConstPtr map = m->getMap();
+        if(tf_->lookupTransform(map->getFrame(), frame, now, map_transform, tf_timeout_)) {
+            maps.emplace_back(map);
+            map_transforms.emplace_back(map_transform);
+        }
     }
+
 
     // @TODO: remove random seed = 0
     RandomPoseGenerator  rng(pose.eigen3D(), covariance.eigen3D(), 0);
@@ -28,16 +37,15 @@ void Normal2D::apply(const math::Pose       &pose,
 
     ParticleSet::Particles &particles = particle_set.getParticles();
 
+    const ros::Time sampling_start = ros::Time::now();
     double sum_weight = 0.0;
     for(auto &particle : particles) {
-        ros::Time sampling_start = ros::Time::now();
         bool valid = false;
         while(!valid) {
             ros::Time now = ros::Time::now();
             if(sampling_start + sampling_timeout_ < now)
                 break;
 
-            sampling_start = now;
             particle.pose_ = rng();
             sum_weight += particle.weight_;
             valid = true;

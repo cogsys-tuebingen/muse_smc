@@ -12,7 +12,7 @@ void WheelOfFortune::apply(ParticleSet &particle_set)
 {
     ParticleSet::Particles &p_old = particle_set.getParticles();
     const std::size_t size        = p_old.size();
-    const double      w_max       = particle_set.maximumWeight();
+    const double      w_max       = particle_set.getMaximumWeight();
     ParticleSet::Particles  p_new(size);
 
     math::random::Uniform<1> rng(0.0, 1.0);

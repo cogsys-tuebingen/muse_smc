@@ -42,7 +42,7 @@ public:
 
             auto callback = [this, update_function, map_provider] (const Data::ConstPtr &data) {
                 auto f = [update_function, map_provider, data] (ParticleSet::WeightIterator set) {
-                    return update_function->apply(data, map_provider->map(), set);
+                    return update_function->apply(data, map_provider->getMap(), set);
                 };
 
                 UpdateLambda u(f, data->stamp());

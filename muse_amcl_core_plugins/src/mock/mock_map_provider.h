@@ -12,7 +12,7 @@ class MockMapProvider : public MapProvider
 public:
     MockMapProvider();
 
-    virtual Map::ConstPtr map() const override;
+    virtual Map::ConstPtr getMap() const override;
 
 protected:
     virtual void doSetup(ros::NodeHandle &nh_private) override;

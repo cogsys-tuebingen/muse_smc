@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 
     const std::size_t iterations = 50;
 
-    muse_amcl::ParticleSet particles(500000);
+    muse_amcl::ParticleSet particles("frame", 500000);
 
     {
         auto start = std::chrono::high_resolution_clock::now();

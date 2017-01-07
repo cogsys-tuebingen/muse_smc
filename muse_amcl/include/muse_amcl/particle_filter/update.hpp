@@ -29,7 +29,7 @@ public:
         return "muse_amcl::Update";
     }
 
-    inline std::string name() const
+    inline std::string getName() const
     {
         return name_;
     }

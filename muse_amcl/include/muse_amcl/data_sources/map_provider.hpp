@@ -19,7 +19,7 @@ public:
         return "muse_amcl::MapProvider";
     }
 
-    inline std::string name() const
+    inline std::string getName() const
     {
         return name_;
     }
@@ -31,7 +31,7 @@ public:
             doSetup(nh_private);
     }
 
-    virtual Map::ConstPtr map() const = 0;
+    virtual Map::ConstPtr getMap() const = 0;
 
 protected:
     std::string  name_;

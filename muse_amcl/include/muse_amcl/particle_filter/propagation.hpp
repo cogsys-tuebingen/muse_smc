@@ -27,7 +27,7 @@ public:
         return "muse_amcl::Propagation";
     }
 
-    inline std::string name() const
+    inline std::string getName() const
     {
         return name_;
     }

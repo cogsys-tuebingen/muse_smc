@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
                                               "MOU");
     muse_amcl::Propagation::Ptr p = pf.create("muse_amcl::MockPropagation",
                                               "MOP");
-    muse_amcl::ParticleSet set(1);
+    muse_amcl::ParticleSet set("frame", 1);
 
     muse_amcl::Map::ConstPtr map;
     muse_amcl::Data::ConstPtr data;

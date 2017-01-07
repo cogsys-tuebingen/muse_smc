@@ -12,7 +12,7 @@ MockMapProvider::MockMapProvider()
 
 }
 
-Map::ConstPtr MockMapProvider::map() const
+Map::ConstPtr MockMapProvider::getMap() const
 {
     return nullptr;
 }

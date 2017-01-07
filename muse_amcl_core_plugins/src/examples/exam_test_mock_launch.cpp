@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 
     muse_amcl::Data::ConstPtr data;
     muse_amcl::Map::ConstPtr map;
-    muse_amcl::ParticleSet set(1);
+    muse_amcl::ParticleSet set("frame", 1);
     std::cout << "updates first" << std::endl;
     for(auto &u : updates) {
         u.second->apply(data, map, set.getWeights());
