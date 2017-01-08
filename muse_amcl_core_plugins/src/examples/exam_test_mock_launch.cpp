@@ -1,6 +1,7 @@
 #include <muse_amcl/plugins/plugin_factory.hpp>
 #include <muse_amcl/data_sources/map_provider.hpp>
 #include <muse_amcl/data_sources/data_provider.hpp>
+#include <muse_amcl/data_sources/tf_provider.hpp>
 
 #include <muse_amcl/particle_filter/update.hpp>
 #include <muse_amcl/particle_filter/update_manager.hpp>
@@ -44,7 +45,7 @@ int main(int argc, char *argv[])
     std::cout << "propagation " << std::endl;
     std::cout << propagation_class_base << " :: " << propagation_class << std::endl;
 
-
+    muse_amcl::TFProvider::Ptr tf(new muse_amcl::TFProvider);
 
     /// iteration
     std::map<std::string, muse_amcl::Update::Ptr> updates;
@@ -59,8 +60,12 @@ int main(int argc, char *argv[])
     propagation = muse_amcl::PluginLoader<muse_amcl::Propagation>::load(nh);
     muse_amcl::PluginLoader<muse_amcl::MapProvider>::load(nh, maps);
     muse_amcl::PluginLoader<muse_amcl::DataProvider>::load(nh, datas);
-    uniform_pose_generation = muse_amcl::PluginLoader<muse_amcl::UniformSampling>::load(nh);
-    normal_pose_generation = muse_amcl::PluginLoader<muse_amcl::NormalSampling>::load(nh);
+
+    using MapProviders = std::map<std::string, muse_amcl::MapProvider::Ptr>;
+    using TFProvider = muse_amcl::TFProvider::Ptr;
+
+    uniform_pose_generation = muse_amcl::PluginLoader<muse_amcl::UniformSampling, MapProviders, TFProvider>::load(nh, maps, tf);
+    normal_pose_generation = muse_amcl::PluginLoader<muse_amcl::NormalSampling, MapProviders, TFProvider>::load(nh, maps, tf);
     resampling = muse_amcl::PluginLoader<muse_amcl::Resampling>::load(nh);
 
     std::cout << "updates      " << updates.size() << std::endl;
@@ -70,10 +75,6 @@ int main(int argc, char *argv[])
     std::cout << "uniform pose " << (uniform_pose_generation ? 1 : 0) << std::endl;
     std::cout << "normal pose  " << (normal_pose_generation ? 1 : 0) << std::endl;
     std::cout << "resampling   " << (resampling ? 1 : 0) << std::endl;
-
-    uniform_pose_generation->setMapProviders(maps);
-    normal_pose_generation->setMapProviders(maps);
-
 
     muse_amcl::Data::ConstPtr data;
     muse_amcl::Map::ConstPtr map;

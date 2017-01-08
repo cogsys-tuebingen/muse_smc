@@ -34,8 +34,10 @@ public:
         return name_;
     }
 
-    void setup(const std::string &name,
-               ros::NodeHandle &nh_private)
+    void setup(const std::string                             &name,
+               ros::NodeHandle                               &nh_private,
+               const std::map<std::string, MapProvider::Ptr> &map_providers,
+               const TFProvider::Ptr                         &tf_provider)
     {
         double sampling_timeout;
         double tf_timeout;
@@ -43,24 +45,13 @@ public:
         sample_size_       = nh_private.param(parameter("sample_size"), 500);
         sampling_timeout   = nh_private.param(parameter("timeout"), 10.0);
         tf_timeout         = nh_private.param(parameter("tf_timeout"), 0.1);
-        nh_private.getParam(parameter("/maps"), map_provider_ids_);
 
         sampling_timeout_ = ros::Duration(sampling_timeout);
         tf_timeout_       = ros::Duration(tf_timeout);
+        tf_provider_       = tf_provider;
 
         doSetup(nh_private);
-    }
-
-    void setTF(const TFProvider::Ptr &tf)
-    {
-        tf_ = tf;
-    }
-
-    void setMapProviders(const std::map<std::string, MapProvider::Ptr> &map_providers)
-    {
-        for(auto m : map_provider_ids_) {
-            maps_providers_.emplace_back(map_providers.at(m));
-        }
+        doSetupMapProviders(nh_private, map_providers);
     }
 
     /**
@@ -75,18 +66,26 @@ public:
                        ParticleSet            &particle_set) = 0;
 
 protected:
-    std::string name_;
-
-    virtual void doSetup(ros::NodeHandle &nh_private) = 0;
-
+    std::string                   name_;
     std::size_t                   sample_size_;
-    std::vector<std::string>      map_provider_ids_;
-    std::vector<MapProvider::Ptr> maps_providers_;
+    std::vector<MapProvider::Ptr> map_providers_;
     ros::Duration                 sampling_timeout_;
     ros::Duration                 tf_timeout_;
-    TFProvider::Ptr               tf_;
+    TFProvider::Ptr               tf_provider_;
 
-    std::string parameter (const std::string &name)
+    virtual void doSetup(ros::NodeHandle &nh_private) = 0;
+    virtual void doSetupMapProviders(ros::NodeHandle &nh_private,
+                                     const std::map<std::string, MapProvider::Ptr> &map_providers)
+    {
+        std::vector<std::string> map_provider_ids;
+        nh_private.getParam(parameter("/maps"), map_provider_ids);
+
+        for(auto m : map_provider_ids) {
+            map_providers_.emplace_back(map_providers.at(m));
+        }
+    }
+
+    inline std::string parameter (const std::string &name)
     {
         return name_ + "/" + name;
     }

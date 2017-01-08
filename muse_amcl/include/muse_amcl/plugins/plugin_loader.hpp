@@ -7,7 +7,7 @@
 #include <boost/regex.hpp>
 
 namespace muse_amcl {
-template<typename PluginType>
+template<typename PluginType, typename ... Arguments>
 struct PluginLoader
 {
     struct LaunchEntry {
@@ -38,7 +38,8 @@ struct PluginLoader
     }
 
     inline static bool load(ros::NodeHandle &nh_private,
-                            std::map<std::string, typename PluginType::Ptr> &plugins)
+                            std::map<std::string, typename PluginType::Ptr> &plugins,
+                            const Arguments&... arguments)
     {
         plugins.clear();
 
@@ -47,31 +48,32 @@ struct PluginLoader
 
         /// all in the launch file entered plugins have been retrieved now
         /// now we load the ones related to this ProviderManager
-        static PluginFactory<PluginType> factory; /// @TODO: make sure plugin manager stays alive!
+        static PluginFactory<PluginType, Arguments...> factory; /// @TODO: make sure plugin manager stays alive!
         for(const auto &entry : plugins_found) {
             const std::string &name = entry.first;
             const std::string &base_class_name = entry.second.base_class_name;
             const std::string &class_name = entry.second.class_name;
             if(base_class_name == PluginType::Type()) {
-                plugins[name] = factory.create(class_name, name);
+                plugins[name] = factory.create(class_name, name, arguments...);
             }
         }
 
         return plugins.size() > 0;
     }
 
-    static typename PluginType::Ptr load(ros::NodeHandle &nh_private)
+    static typename PluginType::Ptr load(ros::NodeHandle &nh_private,
+                                         const Arguments&... arguments)
     {
         std::map<std::string, LaunchEntry> plugins_found;
         parseLaunchFile(nh_private, plugins_found);
 
-        static PluginFactory<PluginType> factory;   /// @TODO: make sure plugin manager stays alive!
+        static PluginFactory<PluginType, Arguments...> factory;   /// @TODO: make sure plugin manager stays alive!
         for(const auto &entry : plugins_found) {
             const std::string &name = entry.first;
             const std::string &base_class_name = entry.second.base_class_name;
             const std::string &class_name = entry.second.class_name;
             if(base_class_name == PluginType::Type()) {
-                return factory.create(class_name, name);
+                return factory.create(class_name, name, arguments...);
             }
         }
 
