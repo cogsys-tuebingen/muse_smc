@@ -7,7 +7,7 @@ namespace muse_amcl {
 class Normal2D : public NormalPoseGeneration
 {
 public:
-    Normal2D() = default;
+    Normal2D();
 
     virtual void apply(const math::Pose       &pose,
                        const math::Covariance &covariance,

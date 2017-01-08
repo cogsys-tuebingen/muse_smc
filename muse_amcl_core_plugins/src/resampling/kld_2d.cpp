@@ -14,10 +14,10 @@ void KLD2D::apply(ParticleSet &particle_set)
 
 void KLD2D::doSetup(ros::NodeHandle &nh_private)
 {
-    resolution_linear_ = nh_private.param("resolution_linear", 0.05);
-    resolution_radial_ = nh_private.param("resolution_radial", M_PI / 18.0);
+    resolution_linear_ = nh_private.param(parameter("resolution_linear"), 0.05);
+    resolution_radial_ = nh_private.param(parameter("resolution_radial"), M_PI / 18.0);
 
-    if(nh_private.param(param("voxel_grid"), false)) {
+    if(nh_private.param(parameter("voxel_grid"), false)) {
         voxel_grid_size_ = nh_private.param("voxel_grid_size", 5.0);
         /// allocate voxel grid
     }

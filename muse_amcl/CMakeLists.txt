@@ -5,7 +5,7 @@ project(muse_amcl)
 ## set c++11 compiler options active
 include(cmake/c++11.cmake)
 ## arithmetic compiler flags
-include(cmake/muse_amcl-extras.cmake)
+# include(cmake/muse_amcl-extras.cmake)
 ## get openmp for parallel processing
 set(OpenMP true)
 include(cmake/open_mp.cmake)

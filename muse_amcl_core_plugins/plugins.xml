@@ -37,29 +37,17 @@
    <class type="muse_amcl::Normal3D" base_class_type="muse_amcl::NormalPoseGeneration">
      <description>3D normal distributed pose generation for pose initialation by the user.</description>
    </class>
-   <class type="muse_amcl::UniformEnclosingAA2D" base_class_type="muse_amcl::UniformPoseGeneration">
+   <class type="muse_amcl::UniformAllMaps2D" base_class_type="muse_amcl::UniformPoseGeneration">
      <description>
         2D uniform pose generation for global initialization with an axis aligned
         bounding rectangle containing all given maps.
      </description>
    </class>
-   <class type="muse_amcl::UniformEnclosingAA3D" base_class_type="muse_amcl::UniformPoseGeneration">
-     <description>Omnidirectional drive propagation model.</description>
-     <description>
-        3D uniform pose generation for global initialization with an axis aligned
-        bounding box containing all given maps.
-     </description>
-   </class>
-   <class type="muse_amcl::UniformMainMapAA2D" base_class_type="muse_amcl::UniformPoseGeneration">
+
+   <class type="muse_amcl::UniformMainMap2D" base_class_type="muse_amcl::UniformPoseGeneration">
      <description>
         2D uniform pose generation for global initialization with an axis aligned
         bounding rectangle of the main map. All other maps are used for validation.
-     </description>
-   </class>
-   <class type="muse_amcl::UniformMainMapAA3D" base_class_type="muse_amcl::UniformPoseGeneration">
-     <description>
-        3D uniform pose generation for global initialization with an axis aligned
-        bounding box of the main map. All other maps are used for validation.
      </description>
    </class>
    <!-- Resampling -->

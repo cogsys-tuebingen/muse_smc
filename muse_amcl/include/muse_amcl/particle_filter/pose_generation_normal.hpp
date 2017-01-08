@@ -40,10 +40,10 @@ public:
         double sampling_timeout;
         double tf_timeout;
         name_              = name;
-        sample_size_       = nh_private.param("particle_filter/normal_pose_generation/sample_size", 500);
-        sampling_timeout   = nh_private.param("particle_filter/normal_pose_generation/timeout", 10.0);
-        tf_timeout         = nh_private.param("particle_filter/uniform_pose_genreation/tf_timeout", 0.1);
-        nh_private.getParam("particle_filter/normal_pose_generation/maps", map_provider_ids_);
+        sample_size_       = nh_private.param(parameter("sample_size"), 500);
+        sampling_timeout   = nh_private.param(parameter("timeout"), 10.0);
+        tf_timeout         = nh_private.param(parameter("tf_timeout"), 0.1);
+        nh_private.getParam(parameter("/maps"), map_provider_ids_);
 
         sampling_timeout_ = ros::Duration(sampling_timeout);
         tf_timeout_       = ros::Duration(tf_timeout);
@@ -86,7 +86,7 @@ protected:
     ros::Duration                 tf_timeout_;
     TFProvider::Ptr               tf_;
 
-    std::string param (const std::string &name)
+    std::string parameter (const std::string &name)
     {
         return name_ + "/" + name;
     }

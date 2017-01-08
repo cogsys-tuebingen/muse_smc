@@ -24,6 +24,6 @@ double MockUpdate::apply(const Data::ConstPtr &data,
 
 void MockUpdate::doSetup(ros::NodeHandle &nh_private)
 {
-    first_parameter  = nh_private.param(param("first"), 0.5);
-    second_parameter = nh_private.param(param("second"),1);
+    first_parameter  = nh_private.param(parameter("first"), 0.5);
+    second_parameter = nh_private.param(parameter("second"),1);
 }

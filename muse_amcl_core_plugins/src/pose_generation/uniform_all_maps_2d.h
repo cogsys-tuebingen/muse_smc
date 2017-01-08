@@ -1,13 +1,13 @@
-#ifndef MAJORMAPAA2D_H
-#define MAJORMAPAA2D_H
+#ifndef ENCLOSINGAA2D_H
+#define ENCLOSINGAA2D_H
 
 #include <muse_amcl/particle_filter/pose_generation_uniform.hpp>
 
 namespace muse_amcl {
-class UniformMainMapAA2D : public UniformPoseGeneration
+class UniformAllMaps2D : public UniformPoseGeneration
 {
 public:
-    UniformMainMapAA2D() = default;
+    UniformAllMaps2D();
 
     virtual void apply(ParticleSet &particle_set) override;
 
@@ -18,4 +18,4 @@ protected:
 };
 }
 
-#endif // MAJORMAPAA2D_H
+#endif // ENCLOSINGAA2D_H

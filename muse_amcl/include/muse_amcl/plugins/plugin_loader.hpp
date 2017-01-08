@@ -47,7 +47,7 @@ struct PluginLoader
 
         /// all in the launch file entered plugins have been retrieved now
         /// now we load the ones related to this ProviderManager
-        PluginFactory<PluginType> factory;
+        static PluginFactory<PluginType> factory; /// @TODO: make sure plugin manager stays alive!
         for(const auto &entry : plugins_found) {
             const std::string &name = entry.first;
             const std::string &base_class_name = entry.second.base_class_name;
@@ -65,7 +65,7 @@ struct PluginLoader
         std::map<std::string, LaunchEntry> plugins_found;
         parseLaunchFile(nh_private, plugins_found);
 
-        PluginFactory<PluginType> factory;
+        static PluginFactory<PluginType> factory;   /// @TODO: make sure plugin manager stays alive!
         for(const auto &entry : plugins_found) {
             const std::string &name = entry.first;
             const std::string &base_class_name = entry.second.base_class_name;

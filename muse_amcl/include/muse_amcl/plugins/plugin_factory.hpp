@@ -45,5 +45,4 @@ protected:
 
 };
 }
-
 #endif /* PLUGIN_FACTORY_HPP */

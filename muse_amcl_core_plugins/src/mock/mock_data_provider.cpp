@@ -17,7 +17,7 @@ MockDataProvider::MockDataProvider()
 void MockDataProvider::doSetup(ros::NodeHandle &nh_private)
 {
     ros::NodeHandle nh;
-    topic = nh_private.param<std::string>(param("topic"), "/mock");
+    topic = nh_private.param<std::string>(parameter("topic"), "/mock");
 
     std::cout << "My name is MockDataProvider and I listen to topic: " << topic << std::endl;;
 

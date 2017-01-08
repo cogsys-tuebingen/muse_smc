@@ -13,6 +13,10 @@ using Metric              = muse_amcl::pose_generation::Metric;
 using Radian              = muse_amcl::pose_generation::Radian;
 using RandomPoseGenerator = muse_amcl::pose_generation::Normal<Metric, Metric, Radian>;
 
+Normal2D::Normal2D()
+{
+}
+
 void Normal2D::apply(const math::Pose       &pose,
                      const math::Covariance &covariance,
                      ParticleSet            &particle_set)
