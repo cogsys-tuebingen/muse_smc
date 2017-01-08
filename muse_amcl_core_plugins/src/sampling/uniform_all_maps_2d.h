@@ -1,10 +1,10 @@
 #ifndef ENCLOSINGAA2D_H
 #define ENCLOSINGAA2D_H
 
-#include <muse_amcl/particle_filter/pose_generation_uniform.hpp>
+#include <muse_amcl/particle_filter/sampling_uniform.hpp>
 
 namespace muse_amcl {
-class UniformAllMaps2D : public UniformPoseGeneration
+class UniformAllMaps2D : public UniformSampling
 {
 public:
     UniformAllMaps2D();

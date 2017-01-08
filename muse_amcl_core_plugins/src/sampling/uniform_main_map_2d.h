@@ -1,10 +1,10 @@
 #ifndef MAJORMAPAA2D_H
 #define MAJORMAPAA2D_H
 
-#include <muse_amcl/particle_filter/pose_generation_uniform.hpp>
+#include <muse_amcl/particle_filter/sampling_uniform.hpp>
 
 namespace muse_amcl {
-class UniformMainMap2D : public UniformPoseGeneration
+class UniformMainMap2D : public UniformSampling
 {
 public:
     UniformMainMap2D() = default;

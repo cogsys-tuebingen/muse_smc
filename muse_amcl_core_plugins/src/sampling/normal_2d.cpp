@@ -1,7 +1,7 @@
 #include "normal_2d.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_amcl::Normal2D, muse_amcl::NormalPoseGeneration)
+CLASS_LOADER_REGISTER_CLASS(muse_amcl::Normal2D, muse_amcl::NormalSampling)
 
 #include <muse_amcl/pose_generators/normal.hpp>
 

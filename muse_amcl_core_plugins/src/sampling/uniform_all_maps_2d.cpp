@@ -1,7 +1,7 @@
 #include "uniform_all_maps_2d.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_amcl::UniformAllMaps2D, muse_amcl::UniformPoseGeneration)
+CLASS_LOADER_REGISTER_CLASS(muse_amcl::UniformAllMaps2D, muse_amcl::UniformSampling)
 
 #include <muse_amcl/pose_generators/uniform.hpp>
 

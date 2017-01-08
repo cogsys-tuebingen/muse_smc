@@ -1,10 +1,10 @@
 #ifndef NORMAL2D_H
 #define NORMAL2D_H
 
-#include <muse_amcl/particle_filter/pose_generation_normal.hpp>
+#include <muse_amcl/particle_filter/sampling_normal.hpp>
 
 namespace muse_amcl {
-class Normal2D : public NormalPoseGeneration
+class Normal2D : public NormalSampling
 {
 public:
     Normal2D();

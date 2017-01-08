@@ -1,5 +1,5 @@
-#ifndef POSE_GENERATION_UNIFORM_HPP
-#define POSE_GENERATION_UNIFORM_HPP
+#ifndef POSE_GENERATION_NORMAL_HPP
+#define POSE_GENERATION_NORMAL_HPP
 
 #include <memory>
 #include <vector>
@@ -12,21 +12,21 @@
 #include <muse_amcl/math/covariance.hpp>
 
 namespace muse_amcl {
-class UniformPoseGeneration {
+class NormalSampling {
 public:
-    typedef std::shared_ptr<UniformPoseGeneration> Ptr;
+    typedef std::shared_ptr<NormalSampling> Ptr;
 
-    UniformPoseGeneration()
+    NormalSampling()
     {
     }
 
-    virtual ~UniformPoseGeneration()
+    virtual ~NormalSampling()
     {
     }
 
     inline const static std::string Type()
     {
-        return "muse_amcl::UniformPoseGeneration";
+        return "muse_amcl::NormalPoseGeneration";
     }
 
     inline std::string getName() const
@@ -44,12 +44,12 @@ public:
         sampling_timeout   = nh_private.param(parameter("timeout"), 10.0);
         tf_timeout         = nh_private.param(parameter("tf_timeout"), 0.1);
         nh_private.getParam(parameter("/maps"), map_provider_ids_);
-        sampling_timeout_  = ros::Duration(sampling_timeout);
-        tf_timeout_        = ros::Duration(tf_timeout);
+
+        sampling_timeout_ = ros::Duration(sampling_timeout);
+        tf_timeout_       = ros::Duration(tf_timeout);
 
         doSetup(nh_private);
     }
-
 
     void setTF(const TFProvider::Ptr &tf)
     {
@@ -63,15 +63,22 @@ public:
         }
     }
 
-
     /**
-     * @brief Build a uniformely distributed particle set using maps that should
-     *        be used for pose generation.
+     * @brief Generate a multivariate Gaussian distributed particle set with
+     *        a mean given by a desired initialization pose and the covariance
+     *        matrix.
+     * @param pose          - 6 dimensional pose vector (x,y,z,roll,pitch,yaw)
+     * @param covariance    - 6 dimensnioal covariance matrix
      */
-    virtual void apply(ParticleSet &particle_set) = 0;
+    virtual void apply(const math::Pose       &pose,
+                       const math::Covariance &covariance,
+                       ParticleSet            &particle_set) = 0;
 
 protected:
-    std::string                   name_;
+    std::string name_;
+
+    virtual void doSetup(ros::NodeHandle &nh_private) = 0;
+
     std::size_t                   sample_size_;
     std::vector<std::string>      map_provider_ids_;
     std::vector<MapProvider::Ptr> maps_providers_;
@@ -79,15 +86,11 @@ protected:
     ros::Duration                 tf_timeout_;
     TFProvider::Ptr               tf_;
 
-    virtual void doSetup(ros::NodeHandle &nh_private) = 0;
-
     std::string parameter (const std::string &name)
     {
         return name_ + "/" + name;
     }
+
 };
 }
-
-
-
-#endif // POSE_GENERATION_UNIFORM_HPP
+#endif // POSE_GENERATION_NORMAL_HPP
