@@ -33,9 +33,9 @@ add_library(${PROJECT_NAME} SHARED
     src/odometry/differential_drive.cpp
     src/odometry/omni_drive.cpp
 
-    src/pose_generation/normal_2d.cpp
-    src/pose_generation/uniform_all_maps_2d.cpp
-    src/pose_generation/uniform_main_map_2d.cpp
+    src/sampling/normal_2d.cpp
+    src/sampling/uniform_all_maps_2d.cpp
+    src/sampling/uniform_main_map_2d.cpp
 
     src/resampling/wheel_of_fortune.cpp
     src/resampling/multinomial.cpp

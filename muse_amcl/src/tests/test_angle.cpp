@@ -31,7 +31,7 @@ TEST(test_angles, test_to_rad)
     // expclicit
     auto to_rad = [](double a){return a / 180.0 * M_PI;};
     for(int i = -360 ; i <= 360 ; ++i) {
-        EXPECT_EQ(to_rad(i), mm::angle::toRad(i));
+        EXPECT_NEAR(to_rad(i), mm::angle::toRad(i), 1e-6);
     }
 }
 
@@ -42,7 +42,7 @@ TEST(test_angles, test_to_deg)
     auto to_rad = [](double a){return a / 180.0 * M_PI;};
     for(int i = -360 ; i <= 360 ; ++i) {
         double a = to_rad(i);
-        EXPECT_EQ(to_deg(a), mm::angle::fromRad(a));
+        EXPECT_NEAR(to_deg(a), mm::angle::fromRad(a), 1e-6);
     }
 
 }

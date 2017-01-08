@@ -13,8 +13,8 @@ using RandomPoseGenerator = muse_amcl::pose_generation::Uniform<Metric, Metric, 
 
 void UniformMainMap2D::apply(ParticleSet &particle_set)
 {
-//    std::vector<Map::ConstPtr>        maps;
-//    std::vector<tf::StampedTransform> map_transforms;
+    std::vector<Map::ConstPtr>        maps;
+    std::vector<tf::StampedTransform> map_transforms;
 //    const ros::Time   now = ros::Time::now();
 //    const std::string frame = particle_set.getFrame();
 //    for(auto &m : maps_providers_) {

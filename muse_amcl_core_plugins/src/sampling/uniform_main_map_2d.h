@@ -12,7 +12,7 @@ public:
     virtual void apply(ParticleSet &particle_set) override;
 
 protected:
-//    std::string     main_map_;
+    std::string     main_map_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) override;
 
