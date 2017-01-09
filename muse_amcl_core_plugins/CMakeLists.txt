@@ -22,8 +22,6 @@ set(${PROJECT_NAME}_RUN_TESTS True)
 ## Build ##
 ###########
 
-include(cmake/show_headers.cmake)
-
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
@@ -66,24 +64,19 @@ target_link_libraries(muse_amcl_maps
 
 
 if(${${PROJECT_NAME}_BUILD_TESTS})
-    include_directories(${GTEST_INCLUDE_DIRS})
-
-    add_unit_test(${PROJECT_NAME}_test_sampling_normal_2d
+    add_unit_test_gtest(${PROJECT_NAME}_test_sampling_normal_2d
         src/test/test_sampling_normal_2d.cpp
         ${PROJECT_NAME}
-        ${${PROJECT_NAME}_RUN_TESTS}
     )
 
-    add_unit_test(${PROJECT_NAME}_test_sampling_uniform_all_maps_2d
+    add_unit_test_gtest(${PROJECT_NAME}_test_sampling_uniform_all_maps_2d
         src/test/test_sampling_uniform_all_maps_2d.cpp
         ${PROJECT_NAME}
-        ${${PROJECT_NAME}_RUN_TESTS}
     )
 
-    add_unit_test(${PROJECT_NAME}_test_sampling_uniform_primary_map_2d
+    add_unit_test_gtest(${PROJECT_NAME}_test_sampling_uniform_primary_map_2d
         src/test/test_sampling_uniform_primary_map_2d.cpp
         ${PROJECT_NAME}
-        ${${PROJECT_NAME}_RUN_TESTS}
     )
 endif()
 

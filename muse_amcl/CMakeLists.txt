@@ -3,16 +3,16 @@ project(muse_amcl)
 
 ## Additional cmake modules and configurations
 ## set c++11 compiler options active
-include(cmake/c++11.cmake)
+include(cmake/muse_amcl_enable_c++11.cmake)
 ## arithmetic compiler flags
 # include(cmake/muse_amcl-extras.cmake)
 ## get openmp for parallel processing
 set(OpenMP true)
-include(cmake/open_mp.cmake)
+include(cmake/muse_amcl_open_mp.cmake)
 ## show all header files included in this project
-include(cmake/show_headers.cmake)
+include(cmake/muse_amcl_show_headers.cmake)
 ## macros for unit tests
-include(cmake/add_unit_test.cmake)
+include(cmake/muse_amcl_add_unit_test_gtest.cmake)
 
 ## add cmake modules
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -34,6 +34,7 @@ find_package(catkin REQUIRED COMPONENTS
 # http://wiki.ros.org/rostest/Writing
 
 ## activate tests while building
+message("+++ ${catkin_search_path}")
 set(${PROJECT_NAME}_BUILD_TESTS True) # ${CATKIN_ENABLE_TESTING}
 set(${PROJECT_NAME}_RUN_TESTS True)
 set(${PROJECT_NAME}_BUILD_VISUAL_EXAMPLES True)
@@ -42,7 +43,10 @@ set(${PROJECT_NAME}_BUILD_VISUAL_EXAMPLES True)
 catkin_package(
     INCLUDE_DIRS    include
     LIBRARIES       muse_amcl_particle_filter
-    CFG_EXTRAS      muse_amcl-extras.cmake c++11.cmake add_unit_test.cmake
+    CFG_EXTRAS      muse_amcl_extras.cmake
+                    muse_amcl_add_unit_test_gtest.cmake
+                    muse_amcl_enable_c++11.cmake
+                    muse_amcl_show_headers.cmake
 )
 
 ## directories to be included for mandatory sources
@@ -81,48 +85,40 @@ target_link_libraries(${PROJECT_NAME}_node
 if(${${PROJECT_NAME}_BUILD_TESTS})
     include_directories(${GTEST_INCLUDE_DIRS})
 
-    add_unit_test(${PROJECT_NAME}_test_signals
-        src/test/test_signals.cpp
+    add_unit_test_gtest(${PROJECT_NAME}_test_signals
+        test/test_signals.cpp
         ${PROJECT_NAME}_particle_filter
-        ${${PROJECT_NAME}_RUN_TESTS}
     )
 
-    add_unit_test(${PROJECT_NAME}_test_particle_set
-        src/test/test_particle_set.cpp
+    add_unit_test_gtest(${PROJECT_NAME}_test_particle_set
+        test/test_particle_set.cpp
         ${PROJECT_NAME}_particle_filter
-        ${${PROJECT_NAME}_RUN_TESTS}
     )
 
-    add_unit_test(${PROJECT_NAME}_test_distribution
-        src/test/test_distribution.cpp
+    add_unit_test_gtest(${PROJECT_NAME}_test_distribution
+        test/test_distribution.cpp
         ${PROJECT_NAME}_particle_filter
-        ${${PROJECT_NAME}_RUN_TESTS}
     )
 
-    add_unit_test(${PROJECT_NAME}_test_random
-        src/test/test_random.cpp
+    add_unit_test_gtest(${PROJECT_NAME}_test_random
+        test/test_random.cpp
         ${PROJECT_NAME}_particle_filter
-        ${${PROJECT_NAME}_RUN_TESTS}
     )
 
-    add_unit_test(${PROJECT_NAME}_test_angle
-        src/test/test_angle.cpp
+    add_unit_test_gtest(${PROJECT_NAME}_test_angle
+        test/test_angle.cpp
         ${PROJECT_NAME}_particle_filter
-        ${${PROJECT_NAME}_RUN_TESTS}
     )
 
-    add_unit_test(${PROJECT_NAME}_test_covariance
-        src/test/test_covariance.cpp
+    add_unit_test_gtest(${PROJECT_NAME}_test_covariance
+        test/test_covariance.cpp
         ${PROJECT_NAME}_particle_filter
-        ${${PROJECT_NAME}_RUN_TESTS}
     )
 
-    add_unit_test(${PROJECT_NAME}_test_bounding_rectangle
-        src/test/test_bounding_rectangle.cpp
+    add_unit_test_gtest(${PROJECT_NAME}_test_bounding_rectangle
+        test/test_bounding_rectangle.cpp
         ${PROJECT_NAME}_particle_filter
-        ${${PROJECT_NAME}_RUN_TESTS}
     )
-
 
     ## optional tests that evaluate runtimes and such which
     ## do not have to fulfil unit tests
