@@ -6,14 +6,14 @@ using Matrix6d = Eigen::Matrix<double, 6, 6>;
 using Matrix3d = Eigen::Matrix<double, 3, 3>;
 using Covariance = muse_amcl::math::Covariance;
 
-TEST(test_covariance, default_constructor)
+TEST(covariance, defaultConstructor)
 {
     Covariance cov;
     EXPECT_EQ(cov.data() , Matrix6d::Zero());
     EXPECT_EQ(cov.eigen3D() , Matrix3d::Zero());
 }
 
-TEST(test_covariance, constructor_3d)
+TEST(covariance, constructor_3d)
 {
     auto makeIt6D = [](const Matrix3d &mat)
     {
@@ -37,7 +37,7 @@ TEST(test_covariance, constructor_3d)
     EXPECT_EQ(cov.eigen3D() , data3D);
 }
 
-TEST(test_covariance, constructor_6d)
+TEST(covariance, constructor6d)
 {
     auto makeIt3D = [](const Matrix6d &mat) {
         Matrix3d mat_3d = Matrix3d::Zero();
@@ -60,7 +60,7 @@ TEST(test_covariance, constructor_6d)
     EXPECT_EQ(cov.eigen3D() , data3D);
 }
 
-TEST(test_covariance, constructor_std_3d)
+TEST(covariance, constructorStd3d)
 {
     auto makeIt6D = [](const Matrix3d &mat)
     {
@@ -90,7 +90,7 @@ TEST(test_covariance, constructor_std_3d)
     EXPECT_EQ(cov.eigen3D() , data3D);
 }
 
-TEST(test_covariance, constructor_std_6d)
+TEST(covariance, constructorStd6d)
 {
     auto makeIt3D = [](const Matrix6d &mat) {
         Matrix3d mat_3d = Matrix3d::Zero();

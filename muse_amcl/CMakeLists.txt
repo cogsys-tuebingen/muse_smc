@@ -107,11 +107,6 @@ if(${${PROJECT_NAME}_BUILD_TESTS})
         ${PROJECT_NAME}_particle_filter
     )
 
-    add_unit_test(${PROJECT_NAME}_test_bounding_box
-        src/tests/test_bounding_box.cpp
-        ${PROJECT_NAME}_particle_filter
-    )
-
     add_unit_test(${PROJECT_NAME}_test_bounding_rectangle
         src/tests/test_bounding_rectangle.cpp
         ${PROJECT_NAME}_particle_filter

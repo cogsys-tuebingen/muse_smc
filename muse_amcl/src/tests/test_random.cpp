@@ -2,7 +2,7 @@
 #include <muse_amcl/math/random.hpp>
 #include <gtest/gtest.h>
 
-TEST(test_random, test_uniform1D)
+TEST(random, uniform1D)
 {
     const std::size_t N = 1e6;
     muse_amcl::math::random::Uniform<1> u1D(-10.0, 10.0, 0);
@@ -35,7 +35,7 @@ TEST(test_random, test_uniform1D)
 }
 
 
-TEST(test_random, test_normal1D)
+TEST(random, normal1D)
 {
     const std::size_t N = 1e6;
     muse_amcl::math::random::Normal<1> n1D(0.0, 1.0, 0);
@@ -69,7 +69,7 @@ TEST(test_random, test_normal1D)
     EXPECT_NEAR(sigma, 1.0, 1e-2);
 }
 
-TEST(test_random, test_uniform2D)
+TEST(random, uniform2D)
 {
     const std::size_t N = 1e7;
     muse_amcl::math::random::Uniform<2> u2D({-10.,-10.},
@@ -93,7 +93,7 @@ TEST(test_random, test_uniform2D)
     EXPECT_NEAR(sqrt(sigma(1,1)), 5.77, 1e-2);
 }
 
-TEST(test_random, test_normal2D)
+TEST(random, testNormal2D)
 {
     auto createMatrix = [](std::array<double,4> values)
     {

@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package()
 
 set(BUILD_EXAMPLES True)
+set(${PROJECT_NAME}_BUILD_TESTS True)
 
 ###########
 ## Build ##
@@ -60,6 +61,25 @@ target_link_libraries(muse_amcl_maps
     ${catkin_LIBRARIES}
 )
 
+
+if(${${PROJECT_NAME}_BUILD_TESTS})
+    include_directories(${GTEST_INCLUDE_DIRS})
+
+    add_unit_test(${PROJECT_NAME}_test_sampling_normal_2d
+        src/tests/test_sampling_normal_2d.cpp
+        ${PROJECT_NAME}
+    )
+
+    add_unit_test(${PROJECT_NAME}_test_sampling_uniform_all_maps_2d
+        src/tests/test_sampling_uniform_all_maps_2d.cpp
+        ${PROJECT_NAME}
+    )
+
+    add_unit_test(${PROJECT_NAME}_test_sampling_uniform_primary_map_2d
+        src/tests/test_sampling_uniform_primary_map_2d.cpp
+        ${PROJECT_NAME}
+    )
+endif()
 
 if(${BUILD_EXAMPLES})
     add_library(muse_amcl_mock_plugins

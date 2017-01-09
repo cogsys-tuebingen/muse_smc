@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-TEST(test_signals, connect_void_callback)
+TEST(signalsConnection, connectionCallback)
 {
     using TestCallback = std::function<void(int,int)>;
     using TestSignal = muse_amcl::Signal<TestCallback>;
@@ -13,7 +13,7 @@ TEST(test_signals, connect_void_callback)
     EXPECT_FALSE(!connection);
 }
 
-TEST(test_signals, connect_non_void)
+TEST(signalsConnection, connectionCallbackNonVoid)
 {
     using TestCallback = std::function<int(int,int)>;
     using TestSignal = muse_amcl::Signal<TestCallback>;
@@ -24,7 +24,7 @@ TEST(test_signals, connect_non_void)
     EXPECT_FALSE(!connection);
 }
 
-TEST(test_signals, test_enabling)
+TEST(signalsConnection, enabling)
 {
     using TestCallback = std::function<void()>;
     using TestSignal = muse_amcl::Signal<TestCallback>;
@@ -40,7 +40,7 @@ TEST(test_signals, test_enabling)
     EXPECT_FALSE(signal.isEnabled());
 }
 
-TEST(test_signals, test_callback_execution)
+TEST(signalsConnection, callbackExecution)
 {
     int result = 0;
     using TestCallback = std::function<void(int)>;
@@ -62,7 +62,7 @@ TEST(test_signals, test_callback_execution)
     }
 }
 
-TEST(test_signals, test_enable_disable)
+TEST(signalsConnection, enableDisable)
 {
     int result = 0;
     using TestCallback = std::function<void(int)>;
@@ -92,7 +92,7 @@ TEST(test_signals, test_enable_disable)
     }
 }
 
-TEST(test_signals, test_disconnect_via_handle_reset)
+TEST(signalsConnection, disconnectViaHandleReset)
 {
     int result = 0;
     using TestCallback = std::function<void(int)>;
@@ -120,7 +120,7 @@ TEST(test_signals, test_disconnect_via_handle_reset)
     }
 }
 
-TEST(test_signals, test_disconnect_via_signal)
+TEST(signalsConnection, disconnectViaMethod)
 {
     int result = 0;
     using TestCallback = std::function<void(int)>;

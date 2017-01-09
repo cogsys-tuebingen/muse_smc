@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 
-TEST(test_boundning_box, test)
+#include "test_map.hpp"
+
+TEST(samplingUniformPrimaryMap, sampling)
 {
 
 }

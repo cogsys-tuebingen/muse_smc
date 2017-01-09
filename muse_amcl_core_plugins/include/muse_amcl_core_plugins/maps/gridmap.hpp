@@ -48,14 +48,14 @@ public:
         }
     }
 
-    virtual inline math::Point getMin() const
+    virtual inline math::Point getMin() const override
     {
         Position p;
         fromIndex({0,0},p);
         return math::Point(p[0], p[1], 0.0);
     }
 
-    virtual inline math::Point getMax() const
+    virtual inline math::Point getMax() const override
     {
         Position p;
         fromIndex({(int)width_-1,(int)height_-1},p);

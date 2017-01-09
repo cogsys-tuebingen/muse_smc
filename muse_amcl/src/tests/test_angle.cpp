@@ -4,7 +4,7 @@
 
 namespace mm = muse_amcl::math;
 
-TEST(test_angles, test_normalization)
+TEST(angle, testNormalization)
 {
     for(std::size_t i = -10 ; i < 10 ; ++i) {
         double a = mm::angle::normalize(2 * M_PI * i);
@@ -26,7 +26,7 @@ TEST(test_angles, test_normalization)
     }
 }
 
-TEST(test_angles, test_to_rad)
+TEST(angle, testToRad)
 {
     // expclicit
     auto to_rad = [](double a){return a / 180.0 * M_PI;};
@@ -35,7 +35,7 @@ TEST(test_angles, test_to_rad)
     }
 }
 
-TEST(test_angles, test_to_deg)
+TEST(angle, testToDeg)
 {
     // expclicit
     auto to_deg = [](double a){return a / M_PI * 180.0;};
