@@ -1,8 +1,8 @@
 ## use with gtest
-function(add_unit_test UNIT_TEST_NAME UNIT_TEST_SRCS UNIT_TEST_LIBS)
+function(add_unit_test UNIT_TEST_NAME UNIT_TEST_SRCS UNIT_TEST_LIBS RUN_TEST)
     enable_testing()
 
-    add_executable(${UNIT_TEST_NAME}
+    catkin_add_gtest(${UNIT_TEST_NAME}
         ${UNIT_TEST_SRCS}
     )
 
@@ -10,6 +10,7 @@ function(add_unit_test UNIT_TEST_NAME UNIT_TEST_SRCS UNIT_TEST_LIBS)
         ${UNIT_TEST_LIBS}
         ${GTEST_LIBRARIES}
     )
+
 
     add_custom_command(TARGET ${UNIT_TEST_NAME}
                        COMMENT "Run ${UNIT_TEST_NAME} ..."

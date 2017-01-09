@@ -30,8 +30,12 @@ find_package(catkin REQUIRED COMPONENTS
     pluginlib
 )
 
+# http://wiki.ros.org/gtest
+# http://wiki.ros.org/rostest/Writing
+
 ## activate tests while building
-set(${PROJECT_NAME}_BUILD_TESTS True)
+set(${PROJECT_NAME}_BUILD_TESTS True) # ${CATKIN_ENABLE_TESTING}
+set(${PROJECT_NAME}_RUN_TESTS True)
 set(${PROJECT_NAME}_BUILD_VISUAL_EXAMPLES True)
 
 ## the catkin package definition
@@ -80,36 +84,43 @@ if(${${PROJECT_NAME}_BUILD_TESTS})
     add_unit_test(${PROJECT_NAME}_test_signals
         src/test/test_signals.cpp
         ${PROJECT_NAME}_particle_filter
+        ${${PROJECT_NAME}_RUN_TESTS}
     )
 
     add_unit_test(${PROJECT_NAME}_test_particle_set
         src/test/test_particle_set.cpp
         ${PROJECT_NAME}_particle_filter
+        ${${PROJECT_NAME}_RUN_TESTS}
     )
 
     add_unit_test(${PROJECT_NAME}_test_distribution
         src/test/test_distribution.cpp
         ${PROJECT_NAME}_particle_filter
+        ${${PROJECT_NAME}_RUN_TESTS}
     )
 
     add_unit_test(${PROJECT_NAME}_test_random
         src/test/test_random.cpp
         ${PROJECT_NAME}_particle_filter
+        ${${PROJECT_NAME}_RUN_TESTS}
     )
 
     add_unit_test(${PROJECT_NAME}_test_angle
         src/test/test_angle.cpp
         ${PROJECT_NAME}_particle_filter
+        ${${PROJECT_NAME}_RUN_TESTS}
     )
 
     add_unit_test(${PROJECT_NAME}_test_covariance
         src/test/test_covariance.cpp
         ${PROJECT_NAME}_particle_filter
+        ${${PROJECT_NAME}_RUN_TESTS}
     )
 
     add_unit_test(${PROJECT_NAME}_test_bounding_rectangle
         src/test/test_bounding_rectangle.cpp
         ${PROJECT_NAME}_particle_filter
+        ${${PROJECT_NAME}_RUN_TESTS}
     )
 
 

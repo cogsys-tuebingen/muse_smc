@@ -14,7 +14,9 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package()
 
 set(BUILD_EXAMPLES True)
-set(${PROJECT_NAME}_BUILD_TESTS True)
+set(${PROJECT_NAME}_BUILD_TESTS ${CATKIN_ENABLE_TESTING})
+set(${PROJECT_NAME}_RUN_TESTS True)
+
 
 ###########
 ## Build ##
@@ -69,16 +71,19 @@ if(${${PROJECT_NAME}_BUILD_TESTS})
     add_unit_test(${PROJECT_NAME}_test_sampling_normal_2d
         src/test/test_sampling_normal_2d.cpp
         ${PROJECT_NAME}
+        ${${PROJECT_NAME}_RUN_TESTS}
     )
 
     add_unit_test(${PROJECT_NAME}_test_sampling_uniform_all_maps_2d
         src/test/test_sampling_uniform_all_maps_2d.cpp
         ${PROJECT_NAME}
+        ${${PROJECT_NAME}_RUN_TESTS}
     )
 
     add_unit_test(${PROJECT_NAME}_test_sampling_uniform_primary_map_2d
         src/test/test_sampling_uniform_primary_map_2d.cpp
         ${PROJECT_NAME}
+        ${${PROJECT_NAME}_RUN_TESTS}
     )
 endif()
 
