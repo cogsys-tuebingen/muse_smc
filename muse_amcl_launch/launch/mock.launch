@@ -70,6 +70,7 @@
             <group ns="uniform_pose_generation">
               <param name="class" value="muse_amcl::UniformAllMaps2D" />
               <param name="base_class" value="muse_amcl::UniformPrimaryMap2D" />
+              <param name="seed" value="2" />
 
               <rosparam param="secondary_maps">
                 ["map1"]
@@ -88,7 +89,7 @@
               <param name="sample_size" value="500" />
               <param name="class" value="muse_amcl::Normal2D" />
               <param name="base_class" value="muse_amcl::NormalPoseGeneration" />
-
+              <parma name="seed" value="0" />
 
             </group>
 

@@ -60,17 +60,17 @@ target_link_libraries(muse_amcl_maps
 
 if(${CATKIN_ENABLE_TESTING})
     add_unit_test_gtest(${PROJECT_NAME}_test_sampling_normal_2d
-        src/test/test_sampling_normal_2d.cpp
+        test/test_sampling_normal_2d.cpp
         ${PROJECT_NAME}
     )
 
     add_unit_test_gtest(${PROJECT_NAME}_test_sampling_uniform_all_maps_2d
-        src/test/test_sampling_uniform_all_maps_2d.cpp
+        test/test_sampling_uniform_all_maps_2d.cpp
         ${PROJECT_NAME}
     )
 
     add_unit_test_gtest(${PROJECT_NAME}_test_sampling_uniform_primary_map_2d
-        src/test/test_sampling_uniform_primary_map_2d.cpp
+        test/test_sampling_uniform_primary_map_2d.cpp
         ${PROJECT_NAME}
     )
 endif()
