@@ -6,6 +6,7 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   pluginlib
   roscpp
+  rostest
   sensor_msgs
   cslibs_kdtree
 )
@@ -66,17 +67,17 @@ if(${${PROJECT_NAME}_BUILD_TESTS})
     include_directories(${GTEST_INCLUDE_DIRS})
 
     add_unit_test(${PROJECT_NAME}_test_sampling_normal_2d
-        src/tests/test_sampling_normal_2d.cpp
+        src/test/test_sampling_normal_2d.cpp
         ${PROJECT_NAME}
     )
 
     add_unit_test(${PROJECT_NAME}_test_sampling_uniform_all_maps_2d
-        src/tests/test_sampling_uniform_all_maps_2d.cpp
+        src/test/test_sampling_uniform_all_maps_2d.cpp
         ${PROJECT_NAME}
     )
 
     add_unit_test(${PROJECT_NAME}_test_sampling_uniform_primary_map_2d
-        src/tests/test_sampling_uniform_primary_map_2d.cpp
+        src/test/test_sampling_uniform_primary_map_2d.cpp
         ${PROJECT_NAME}
     )
 endif()

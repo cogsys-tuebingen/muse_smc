@@ -78,37 +78,37 @@ if(${${PROJECT_NAME}_BUILD_TESTS})
     include_directories(${GTEST_INCLUDE_DIRS})
 
     add_unit_test(${PROJECT_NAME}_test_signals
-        src/tests/test_signals.cpp
+        src/test/test_signals.cpp
         ${PROJECT_NAME}_particle_filter
     )
 
     add_unit_test(${PROJECT_NAME}_test_particle_set
-        src/tests/test_particle_set.cpp
+        src/test/test_particle_set.cpp
         ${PROJECT_NAME}_particle_filter
     )
 
     add_unit_test(${PROJECT_NAME}_test_distribution
-        src/tests/test_distribution.cpp
+        src/test/test_distribution.cpp
         ${PROJECT_NAME}_particle_filter
     )
 
     add_unit_test(${PROJECT_NAME}_test_random
-        src/tests/test_random.cpp
+        src/test/test_random.cpp
         ${PROJECT_NAME}_particle_filter
     )
 
     add_unit_test(${PROJECT_NAME}_test_angle
-        src/tests/test_angle.cpp
+        src/test/test_angle.cpp
         ${PROJECT_NAME}_particle_filter
     )
 
     add_unit_test(${PROJECT_NAME}_test_covariance
-        src/tests/test_covariance.cpp
+        src/test/test_covariance.cpp
         ${PROJECT_NAME}_particle_filter
     )
 
     add_unit_test(${PROJECT_NAME}_test_bounding_rectangle
-        src/tests/test_bounding_rectangle.cpp
+        src/test/test_bounding_rectangle.cpp
         ${PROJECT_NAME}_particle_filter
     )
 
