@@ -19,6 +19,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 ## get required dependencies
 find_package(Eigen3  REQUIRED)
+find_package(Boost   REQUIRED)
 find_package(TinyXML REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
     geometry_msgs
@@ -159,6 +160,13 @@ if(${${PROJECT_NAME}_BUILD_VISUAL_EXAMPLES})
         ${catkin_LIBRARIES}
     )
 
+    add_executable(${PROJECT_NAME}_exam_polygons
+        src/examples/exam_polygons.cpp
+    )
+    target_link_libraries(${PROJECT_NAME}_exam_polygons
+        ${catkin_LIBRARIES}
+        ${Boost_LIBRARIES}
+    )
 
 endif()
 
