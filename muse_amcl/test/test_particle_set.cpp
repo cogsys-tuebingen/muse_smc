@@ -3,7 +3,7 @@
 
 #include <gtest/gtest.h>
 
-TEST(particleSet, initialization)
+TEST(TestMuseAMCL, testParticleSetInitialization)
 {
     const std::size_t N = 500000;
     const std::size_t MIN = 10;
@@ -24,7 +24,7 @@ TEST(particleSet, initialization)
     EXPECT_EQ(particles.getMaximumWeight(), 0.0);
 }
 
-TEST(particleSet, resize)
+TEST(TestMuseAMCL, testParticleSetResize)
 {
     const std::size_t N = 500000;
     const std::size_t NN = 500;
@@ -49,7 +49,7 @@ TEST(particleSet, resize)
     EXPECT_EQ(particles.getMaximumWeight(), 0.0);
 }
 
-TEST(particleSet, reserve)
+TEST(TestMuseAMCL, testParticleSetReserve)
 {
     const std::size_t N = 500000;
     const std::size_t NN = 500;

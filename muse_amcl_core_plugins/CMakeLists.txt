@@ -13,11 +13,6 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package()
 
-set(BUILD_EXAMPLES True)
-set(${PROJECT_NAME}_BUILD_TESTS ${CATKIN_ENABLE_TESTING})
-set(${PROJECT_NAME}_RUN_TESTS True)
-
-
 ###########
 ## Build ##
 ###########
@@ -63,7 +58,7 @@ target_link_libraries(muse_amcl_maps
 )
 
 
-if(${${PROJECT_NAME}_BUILD_TESTS})
+if(${CATKIN_ENABLE_TESTING})
     add_unit_test_gtest(${PROJECT_NAME}_test_sampling_normal_2d
         src/test/test_sampling_normal_2d.cpp
         ${PROJECT_NAME}

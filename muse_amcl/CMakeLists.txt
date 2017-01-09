@@ -33,12 +33,6 @@ find_package(catkin REQUIRED COMPONENTS
 # http://wiki.ros.org/gtest
 # http://wiki.ros.org/rostest/Writing
 
-## activate tests while building
-message("+++ ${catkin_search_path}")
-set(${PROJECT_NAME}_BUILD_TESTS True) # ${CATKIN_ENABLE_TESTING}
-set(${PROJECT_NAME}_RUN_TESTS True)
-set(${PROJECT_NAME}_BUILD_VISUAL_EXAMPLES True)
-
 ## the catkin package definition
 catkin_package(
     INCLUDE_DIRS    include
@@ -82,9 +76,7 @@ target_link_libraries(${PROJECT_NAME}_node
 )
 
 
-if(${${PROJECT_NAME}_BUILD_TESTS})
-    include_directories(${GTEST_INCLUDE_DIRS})
-
+if(${CATKIN_ENABLE_TESTING})
     add_unit_test_gtest(${PROJECT_NAME}_test_signals
         test/test_signals.cpp
         ${PROJECT_NAME}_particle_filter

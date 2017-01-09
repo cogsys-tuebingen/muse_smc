@@ -10,7 +10,7 @@ using Edges  = std::array<Edge, 4>;
 using BoundingRectangle = muse_amcl::math::BoundingRectangle;
 
 
-TEST(boundingRectangle, constructorMinMax)
+TEST(TestMuseAMCL, testBoundingRectangleConstructorMinMax)
 {
     Point min;
     Point max = Point(1,1);
@@ -34,7 +34,7 @@ TEST(boundingRectangle, constructorMinMax)
     }
 }
 
-TEST(boundingRectangle, constructorMinAxis)
+TEST(TestMuseAMCL, testBoundingRectangleConstructorMinAxis)
 {
     {
         Point min;
@@ -88,7 +88,7 @@ TEST(boundingRectangle, constructorMinAxis)
     }
 }
 
-TEST(boundingRectangle, edges)
+TEST(TestMuseAMCL, testBoundingRectangleEdges)
 {
     {
         Point min;
@@ -155,7 +155,7 @@ TEST(boundingRectangle, edges)
     }
 }
 
-TEST(boundingRectangle, transform)
+TEST(TestMuseAMCL, testBoundingRectangleTransform)
 {
     Point min;
 
@@ -367,7 +367,7 @@ TEST(boundingRectangle, transform)
     }
 }
 
-TEST(boundingRectangle, axisAlignedBounding)
+TEST(TestMuseAMCL, testBoundingRectangleAxisAlignedBounding)
 {
     Point min;
 

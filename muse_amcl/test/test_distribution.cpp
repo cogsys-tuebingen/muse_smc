@@ -13,7 +13,7 @@ using Distribution200 = example_distributions::Distribution200;
 using Distribution500 = example_distributions::Distribution500;
 using Distribution5000 = example_distributions::Distribution5000;
 
-TEST(distribution, insertion)
+TEST(TestMuseAMCL, testDistributionInsertion)
 {
     mms::Distribution<2> distribution;
     EXPECT_EQ(0, distribution.getN());
@@ -44,7 +44,7 @@ TEST(distribution, insertion)
 
 }
 
-TEST(distribution, mean)
+TEST(TestMuseAMCL, testDistributionMean)
 {
     const double tolerance = 1e-3;
 
@@ -81,7 +81,7 @@ TEST(distribution, mean)
     EXPECT_NEAR(Distribution5000::mean[1], mean(1), tolerance);
 }
 
-TEST(distribution, covariance)
+TEST(TestMuseAMCL, testDistributionCovariance)
 {
     const double tolerance = 1e-3;
 
@@ -124,7 +124,7 @@ TEST(distribution, covariance)
     EXPECT_NEAR(Distribution5000::cov[3], cov(1,1), tolerance);
 }
 
-TEST(distribution, eigenValues)
+TEST(TestMuseAMCL, testDistributionEigenValues)
 {
     const double tolerance = 1e-3;
 
@@ -161,7 +161,7 @@ TEST(distribution, eigenValues)
     EXPECT_NEAR(Distribution5000::eigen_values[1], eigen_values(1), tolerance);
 }
 
-TEST(distribution, eigenVectors)
+TEST(TestMuseAMCL, testDistributionEigenVectors)
 {
     auto equals = [] (const Eigen::Vector2d &a,
                       const Eigen::Vector2d &b,
@@ -247,7 +247,7 @@ TEST(distribution, eigenVectors)
 
 }
 
-TEST(distribution, copy)
+TEST(TestMuseAMCL, testDistributionCopy)
 {
     mms::Distribution<2> distribution_a;
     mms::Distribution<2> distribution_b;
@@ -269,7 +269,7 @@ TEST(distribution, copy)
 }
 
 
-TEST(distribution, addition)
+TEST(TestMuseAMCL, testDistributionAddition)
 {
     const double tolerance = 1e-6;
 
