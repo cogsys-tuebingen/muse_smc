@@ -22,15 +22,19 @@ void Normal2D::apply(const math::Pose       &pose,
                      ParticleSet            &particle_set)
 {
     std::vector<Map::ConstPtr>        maps;
-    std::vector<tf::StampedTransform> map_transforms;
+    std::vector<tf::StampedTransform> maps_T_w;
     const ros::Time   now = ros::Time::now();
-    const std::string frame = particle_set.getFrame();
+    const std::string world_frame = particle_set.getFrame();
     for(auto &m : map_providers_) {
-        tf::StampedTransform map_transform;
+        tf::StampedTransform map_T_w;
         Map::ConstPtr map = m->getMap();
-        if(tf_provider_->lookupTransform(map->getFrame(), frame, now, map_transform, tf_timeout_)) {
+        if(tf_provider_->lookupTransform(map->getFrame(), world_frame, now, map_T_w, tf_timeout_)) {
             maps.emplace_back(map);
-            map_transforms.emplace_back(map_transform);
+            maps_T_w.emplace_back(map_T_w);
+        } else {
+            std::cerr << "[Normal2D]: Could not lookup transform '"
+                      << world_frame << " -> " << map->getFrame()
+                      << std::endl;
         }
     }
 

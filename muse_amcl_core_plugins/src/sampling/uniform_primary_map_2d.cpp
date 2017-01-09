@@ -15,32 +15,33 @@ using RandomPoseGenerator = muse_amcl::pose_generation::Uniform<Metric, Metric, 
 void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
 {
     const ros::Time   now = ros::Time::now();
-    const std::string frame = particle_set.getFrame();
+    const std::string world_frame = particle_set.getFrame();
 
     Map::ConstPtr              primary_map;
     std::vector<Map::ConstPtr> secondary_maps;
     tf::Transform              w_T_primary;
     tf::Transform              primary_T_o(primary_map->getOrigin().tf());
-    std::vector<tf::Transform> secondary_map_transforms;
+    std::vector<tf::Transform> secondary_maps_T_w;
 
-    if(!tf_provider_->lookupTransform(frame, primary_map->getFrame(), now, w_T_primary, tf_timeout_)) {
+    if(!tf_provider_->lookupTransform(world_frame, primary_map->getFrame(), now, w_T_primary, tf_timeout_)) {
         throw std::runtime_error("[UniformPrimaryMap2D]: Could not get primary map transform!");
     }
 
     for(auto &m : map_providers_) {
-        tf::StampedTransform map_transform;
+        tf::StampedTransform map_T_w;
         Map::ConstPtr map = m->getMap();
-        if(tf_provider_->lookupTransform(map->getFrame(), frame, now, map_transform, tf_timeout_)) {
+        if(tf_provider_->lookupTransform(map->getFrame(), world_frame, now, map_T_w, tf_timeout_)) {
             secondary_maps.emplace_back(map);
-            secondary_map_transforms.emplace_back(map_transform);
+            secondary_maps_T_w.emplace_back(map_T_w);
+        } else {
+            std::cerr << "[UniformPrimaryMap2D]: Could not lookup transform '"
+                      << world_frame << " -> " << map->getFrame()
+                      << std::endl;
         }
     }
 
-
-    //    // @TODO: remove random seed = 0
     /// particles are generated in the primary map frame, since formulation has
     /// to be axis-aligned, relative to the map origin
-
     math::Point min = primary_map->getMin();
     math::Point max = primary_map->getMax();
     {
@@ -48,6 +49,8 @@ void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
         min = primary_map->getOrigin().tf().inverse() * min;
         max = primary_map->getOrigin().tf().inverse() * max;
     }
+
+    /// @todo : remove random seed 0
     RandomPoseGenerator  rng({min.x(), min.y(), 0.0}, {max.x(), max.y(), 2 * M_PI}, 0);
     particle_set.resize(sample_size_);
 
