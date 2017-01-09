@@ -211,10 +211,45 @@ public:
         pose_.getBasis().getRPY(roll,pitch,yaw);
     }
 
+    Pose transformed(const tf::Transform &transform) const
+    {
+        return Pose(transform * pose_);
+    }
+
+    Pose transformed(const tf::StampedTransform &transform) const
+    {
+        return Pose(transform * pose_);
+    }
+
+
+    void transform(const tf::Transform &transform)
+    {
+        pose_ = transform * pose_;
+    }
+
+    void transform(const tf::StampedTransform &transform)
+    {
+        pose_ = transform * pose_;
+    }
+
+
+
 private:
     tf::Pose pose_;
 };
 }
+}
+
+inline muse_amcl::math::Pose operator * (const tf::Transform &transform,
+                                         const muse_amcl::math::Pose &pose)
+{
+    return pose.transformed(transform);
+}
+
+inline muse_amcl::math::Pose operator * (const tf::StampedTransform &transform,
+                                         const muse_amcl::math::Pose &pose)
+{
+    return pose.transformed(transform);
 }
 
 #endif /* POSE_HPP */
