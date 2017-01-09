@@ -34,18 +34,27 @@ public:
         return true;
     }
 
-    virtual inline math::Point min() const
+    virtual inline math::Point getMin() const
     {
         return math::Point(std::numeric_limits<double>::lowest(),
                            std::numeric_limits<double>::lowest(),
                            std::numeric_limits<double>::lowest());
     }
 
-    virtual inline math::Point max() const
+    virtual inline math::Point getMax() const
     {
         return math::Point(std::numeric_limits<double>::max(),
                            std::numeric_limits<double>::max(),
                            std::numeric_limits<double>::max());
+    }
+
+    /**
+     * @brief getOrigin return the map origin withi the maps frame.
+     * @return
+     */
+    virtual inline math::Pose getOrigin() const
+    {
+        return math::Pose(tf::Pose::getIdentity());
     }
 
     virtual inline bool isLoaded() const

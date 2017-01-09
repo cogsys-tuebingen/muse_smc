@@ -16,6 +16,8 @@ class UniformSampling {
 public:
     typedef std::shared_ptr<UniformSampling> Ptr;
 
+    using MapProviders = std::map<std::string, MapProvider::Ptr>;
+
     UniformSampling()
     {
     }
@@ -69,10 +71,10 @@ protected:
 
     virtual void doSetup(ros::NodeHandle &nh_private) = 0;
     virtual void doSetupMapProviders(ros::NodeHandle &nh_private,
-                                     const std::map<std::string, MapProvider::Ptr> &map_providers)
+                                     const MapProviders &map_providers)
     {
         std::vector<std::string> map_provider_ids;
-        nh_private.getParam(parameter("/maps"), map_provider_ids);
+        nh_private.getParam(parameter("maps"), map_provider_ids);
 
         for(auto m : map_provider_ids) {
             map_providers_.emplace_back(map_providers.at(m));

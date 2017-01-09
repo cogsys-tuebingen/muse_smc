@@ -27,7 +27,7 @@ DistanceGridMap::DistanceGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupa
 
 void DistanceGridMap::convert(const nav_msgs::OccupancyGrid &occupancy_grid, const double threshold)
 {
-    std::size_t size = height * width;
+    const std::size_t size = height_ * width_;
     const int8_t *occupancy_grid_ptr = occupancy_grid.data.data();
     std::vector<double> buffer(size);
     double * buffer_ptr = buffer.data();
@@ -43,6 +43,6 @@ void DistanceGridMap::convert(const nav_msgs::OccupancyGrid &occupancy_grid, con
         }
     }
 
-    distance_transform::Borgefors<double> bf(height, width, resolution, threshold, 5);
-    bf.apply(buffer, data);
+    distance_transform::Borgefors<double> bf(height_, width_, resolution_, threshold, 5);
+    bf.apply(buffer, data_);
 }

@@ -69,14 +69,15 @@
 	        </group>
             <group ns="uniform_pose_generation">
               <param name="class" value="muse_amcl::UniformAllMaps2D" />
-              <param name="base_class" value="muse_amcl::UniformPoseGeneration" />
+              <param name="base_class" value="muse_amcl::UniformPrimaryMap2D" />
 
-              <rosparam param="maps">
-                ["map0", "map1"]
+              <rosparam param="secondary_maps">
+                ["map1"]
               </rosparam>
               <param name="timeout" value="10.0" />
               <param name="tf_timeout" value="0.1" />
               <param name="sample_size" value="500" />
+              <param name="primary_map" value="map0" />
             </group>
             <group ns="normal_pose_generation">
               <rosparam param="maps">

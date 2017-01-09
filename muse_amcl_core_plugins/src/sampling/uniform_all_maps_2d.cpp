@@ -17,10 +17,10 @@ UniformAllMaps2D::UniformAllMaps2D()
 
 void UniformAllMaps2D::apply(ParticleSet &particle_set)
 {
-    std::cout << "test 123" << std::endl;
+
 }
 
 void UniformAllMaps2D::doSetup(ros::NodeHandle &nh_private)
 {
-    std::cout << "test 123" << std::endl;
+
 }

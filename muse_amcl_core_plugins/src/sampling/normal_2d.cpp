@@ -47,8 +47,10 @@ void Normal2D::apply(const math::Pose       &pose,
         bool valid = false;
         while(!valid) {
             ros::Time now = ros::Time::now();
-            if(sampling_start + sampling_timeout_ < now)
+            if(sampling_start + sampling_timeout_ < now) {
+                std::cerr << "[Normal2D]: Sampling timed out!" << std::endl;
                 break;
+            }
 
             particle.pose_ = rng();
             sum_weight += particle.weight_;

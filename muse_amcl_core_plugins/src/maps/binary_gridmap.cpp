@@ -27,7 +27,7 @@ BinaryGridMap::BinaryGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupancy_
 void BinaryGridMap::convert(const nav_msgs::OccupancyGrid &occupancy_grid,
                             const double threshold)
 {
-    std::size_t size = height * width;
+    const std::size_t size = height_ * width_;
     const int8_t *occupancy_grid_ptr = occupancy_grid.data.data();
     for(std::size_t i = 0 ; i < size ; ++i) {
         int8_t occupancy = occupancy_grid_ptr[i];
@@ -39,6 +39,6 @@ void BinaryGridMap::convert(const nav_msgs::OccupancyGrid &occupancy_grid,
         } else {
             probability = occupancy / 100.0;
         }
-        data_ptr[i] = probability >= threshold ? 1 : 0;
+        data_ptr_[i] = probability >= threshold ? 1 : 0;
     }
 }

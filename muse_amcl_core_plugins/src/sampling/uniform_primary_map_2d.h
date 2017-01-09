@@ -4,17 +4,19 @@
 #include <muse_amcl/particle_filter/sampling_uniform.hpp>
 
 namespace muse_amcl {
-class UniformMainMap2D : public UniformSampling
+class UniformPrimaryMap2D : public UniformSampling
 {
 public:
-    UniformMainMap2D() = default;
+    UniformPrimaryMap2D() = default;
 
     virtual void apply(ParticleSet &particle_set) override;
 
 protected:
-    std::string     main_map_;
+    MapProvider::Ptr primary_map_provider_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) override;
+    virtual void doSetupMapProviders(ros::NodeHandle &nh_private,
+                                     const MapProviders &map_providers) override;
 
 };
 }

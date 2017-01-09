@@ -20,130 +20,173 @@ public:
     typedef std::array<int, 2>          Index;
     typedef std::array<double, 2>       Position;
 
-    GridMap(const double _origin_x,
-            const double _origin_y,
-            const double _origin_phi,
-            const double _resolution,
-            const std::size_t _height,
-            const std::size_t _width,
-            const std::string _frame) :
-        Map(_frame),
-        resolution(_resolution),
-        height(_height),
-        width(_width),
-        max_index({(int)(_width)-1,(int)(_height)-1}),
-        origin_x(_origin_x),
-        origin_y(_origin_y),
-        origin_phi(_origin_phi),
-        cos_phi(cos(_origin_phi)),
-        sin_phi(sin(_origin_phi)),
-        tx(origin_x),
-        ty(origin_y)
+    GridMap(const double origin_x,
+            const double origin_y,
+            const double origin_phi,
+            const double resolution,
+            const std::size_t height,
+            const std::size_t width,
+            const std::string frame) :
+        Map(frame),
+        resolution_(resolution),
+        height_(height),
+        width_(width),
+        max_index_({(int)(width)-1,(int)(height)-1}),
+        origin_x_(origin_x),
+        origin_y_(origin_y),
+        origin_phi_(origin_phi),
+        cos_phi_(cos(origin_phi)),
+        sin_phi_(sin(origin_phi)),
+        tx_(origin_x_),
+        ty_(origin_y_)
     {
-        if(origin_phi != 0.0) {
-            tx =  cos_phi * _origin_x +
-                    sin_phi * _origin_y;
-            ty = -sin_phi * _origin_x +
-                    cos_phi * _origin_y;
+        if(origin_phi_ != 0.0) {
+            tx_ =  cos_phi_ * origin_x +
+                    sin_phi_ * origin_y;
+            ty_ = -sin_phi_ * origin_x +
+                    cos_phi_ * origin_y;
         }
     }
 
-    inline bool toIndex(const Position &_p,
-                        Index &_i)
+    virtual inline math::Point getMin() const
     {
-        double _x = _p[0];
-        double _y = _p[1];
+        Position p;
+        fromIndex({0,0},p);
+        return math::Point(p[0], p[1], 0.0);
+    }
+
+    virtual inline math::Point getMax() const
+    {
+        Position p;
+        fromIndex({(int)width_-1,(int)height_-1},p);
+        return math::Point(p[0], p[1], 0.0);
+    }
+
+    virtual inline math::Pose getOrigin() const
+    {
+        math::Pose::Vector3d origin(origin_x_, origin_y_, origin_phi_);
+        return math::Pose(origin);
+    }
+
+    inline bool toIndex(const Position &p,
+                        Index &i) const
+    {
+        double _x = p[0];
+        double _y = p[1];
         double x = _x;
         double y = _y;
 
-        if(origin_phi != 0.0) {
-            x =  cos_phi * _x +
-                    sin_phi * _y;
-            y = -sin_phi * _x +
-                    cos_phi * _y;
+        if(origin_phi_ != 0.0) {
+            x =  cos_phi_ * _x +
+                    sin_phi_ * _y;
+            y = -sin_phi_ * _x +
+                    cos_phi_ * _y;
         }
 
-        _i[0] = (x - tx) / resolution;
-        _i[1] = (y - ty) / resolution;
+        i[0] = (x - tx_) / resolution_;
+        i[1] = (y - ty_) / resolution_;
 
         return x < 0.0 || y < 0.0;
     }
 
-    inline void fromIndex(const Index &_i,
-                          Position &_p)
+    inline void fromIndex(const Index &i,
+                          Position &p) const
     {
-        double &_x = _p[0];
-        double &_y = _p[1];
-        _x = _i[0] * resolution;
-        _y = _i[1] * resolution;
-        if(origin_phi != 0.0)  {
-            double x = cos_phi * _x -
-                    sin_phi * _y;
-            double y = sin_phi * _x +
-                    cos_phi * _y;
+        double &_x = p[0];
+        double &_y = p[1];
+        _x = i[0] * resolution_;
+        _y = i[1] * resolution_;
+        if(origin_phi_ != 0.0)  {
+            double x = cos_phi_ * _x -
+                    sin_phi_ * _y;
+            double y = sin_phi_ * _x +
+                    cos_phi_ * _y;
             _x = x;
             _y = y;
         }
-        _x += origin_x;
-        _y += origin_y;
+        _x += origin_x_;
+        _y += origin_y_;
     }
 
-    inline T& at(const std::size_t _idx,
-                 const std::size_t _idy)
+    inline T& at(const std::size_t idx,
+                 const std::size_t idy)
     {
-        return data_ptr[width * _idy + _idx];
+        return data_ptr_[width_ * idy + idx];
     }
 
-    inline const T& at(const std::size_t _idx,
-                       const std::size_t _idy) const
+    inline const T& at(const std::size_t idx,
+                       const std::size_t idy) const
     {
-        return data_ptr[width * _idy + _idx];
+        return data_ptr_[width_ * idy + idx];
     }
 
-    LineIterator getLineIterator(const Index &_start,
-                                 const Index &_end) const
+    inline LineIterator getLineIterator(const Index &start,
+                                        const Index &_end) const
     {
-        return LineIterator(cap(_start), cap(_end), width, data_ptr);
+        return LineIterator(cap(start), cap(_end), width_, data_ptr_);
     }
 
-    LineIterator getLineIterator(const Position &_start,
-                                 const Position &_end) const
+    inline LineIterator getLineIterator(const Position &start,
+                                        const Position &end) const
     {
-        Index start;
-        Index end;
-        toIndex(_start, start);
-        toIndex(_end, end);
-        return LineIterator(cap(start), cap(end), width, data_ptr);
+        Index start_index;
+        Index end_index;
+        toIndex(start, start_index);
+        toIndex(end, end_index);
+        return LineIterator(cap(start_index), cap(end_index), width_, data_ptr_);
     }
-    const double      resolution;
-    const std::size_t height;
-    const std::size_t width;
-    const Index       max_index;
+
+    inline double getResolution() const
+    {
+        return resolution_;
+    }
+
+    inline std::size_t getHeight() const
+    {
+        return height_;
+    }
+
+    inline std::size_t getWidth() const
+    {
+        return width_;
+    }
+
+    inline std::size_t getMaxIndex() const
+    {
+        return max_index_;
+    }
+
 
 protected:
+    const double      resolution_;
+    const std::size_t height_;
+    const std::size_t width_;
+    const Index       max_index_;
+
+    std::vector<T>  data_;
+    T*              data_ptr_;
+
+    double      origin_x_;
+    double      origin_y_;
+    double      origin_phi_;
+
+    double      cos_phi_;
+    double      sin_phi_;
+    double      tx_;
+    double      ty_;
+
     inline Index cap(const Index &_i)
     {
-        return {(_i[0] < 0 ? 0 : (_i[0] > max_index[0] ? max_index[0] : _i[0])),
-                (_i[1] < 0 ? 0 : (_i[1] > max_index[1] ? max_index[1] : _i[1]))};
+        return {(_i[0] < 0 ? 0 : (_i[0] > max_index_[0] ? max_index_[0] : _i[0])),
+                (_i[1] < 0 ? 0 : (_i[1] > max_index_[1] ? max_index_[1] : _i[1]))};
     }
 
     inline bool invalid(const Index &_i)
     {
         return _i[0] < 0 || _i[1] < 0 ||
-               _i[0] > max_index[0] || _i[1] > max_index[1];
+               _i[0] > max_index_[0] || _i[1] > max_index_[1];
     }
 
-    std::vector<T> data;
-    T*             data_ptr;
-
-    double      origin_x;
-    double      origin_y;
-    double      origin_phi;
-
-    double      cos_phi;
-    double      sin_phi;
-    double      tx;
-    double      ty;
 
 
     };
