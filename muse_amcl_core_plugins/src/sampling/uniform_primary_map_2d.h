@@ -13,6 +13,7 @@ public:
 
 protected:
     MapProvider::Ptr primary_map_provider_;
+    int              random_seed_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) override;
     virtual void doSetupMapProviders(ros::NodeHandle &nh_private,

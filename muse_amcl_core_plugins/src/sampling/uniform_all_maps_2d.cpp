@@ -3,7 +3,7 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_amcl::UniformAllMaps2D, muse_amcl::UniformSampling)
 
-#include <muse_amcl/pose_generators/uniform.hpp>
+#include <muse_amcl/pose_samplers/uniform.hpp>
 #include <tf/tf.h>
 #include <eigen3/Eigen/Core>
 
@@ -47,8 +47,11 @@ void UniformAllMaps2D::apply(ParticleSet &particle_set)
         }
     }
 
-    ///
-    RandomPoseGenerator  rng({min.x(), min.y(), 0.0}, {max.x(), max.y(), 2 * M_PI}, 0);
+    RandomPoseGenerator::Ptr  rng(new RandomPoseGenerator({min.x(), min.y(), 0.0}, {max.x(), max.y(), 2 * M_PI}));
+    if(random_seed_ >= 0) {
+        rng.reset(new RandomPoseGenerator({min.x(), min.y(), 0.0}, {max.x(), max.y(), 2 * M_PI}, 0));
+    }
+
     particle_set.resize(sample_size_);
 
     ParticleSet::Particles &particles = particle_set.getParticles();
@@ -64,7 +67,7 @@ void UniformAllMaps2D::apply(ParticleSet &particle_set)
                 break;
             }
 
-            particle.pose_ = rng();
+            particle.pose_ = rng->get();
             sum_weight += particle.weight_;
             valid = true;
             for(const auto &m : maps) {
@@ -77,5 +80,5 @@ void UniformAllMaps2D::apply(ParticleSet &particle_set)
 
 void UniformAllMaps2D::doSetup(ros::NodeHandle &nh_private)
 {
-
+    random_seed_ = nh_private.param(parameter("seed"), -1);
 }

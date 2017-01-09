@@ -1,7 +1,7 @@
 #include <muse_amcl/math/bounding_box.hpp>
 #include <muse_amcl/math/bounding_rectangle.hpp>
 #include <muse_amcl/math/angle.hpp>
-#include <muse_amcl/pose_generators/uniform.hpp>
+#include <muse_amcl/pose_samplers/uniform.hpp>
 
 #include <geometry_msgs/PoseArray.h>
 #include <visualization_msgs/Marker.h>
@@ -273,7 +273,7 @@ int main(int argc, char *argv[])
             geometry_msgs::Pose p;
             RNG::Vector v;
             do {
-                v = rng();
+                v = rng.get();
             } while(!bb_transformed.contains(muse_amcl::math::Point(v(0),v(1),v(2))));
             p.position.x = v(0);
             p.position.y = v(1);

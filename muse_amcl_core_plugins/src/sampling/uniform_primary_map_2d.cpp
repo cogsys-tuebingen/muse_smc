@@ -3,7 +3,7 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_amcl::UniformPrimaryMap2D, muse_amcl::UniformSampling)
 
-#include <muse_amcl/pose_generators/uniform.hpp>
+#include <muse_amcl/pose_samplers/uniform.hpp>
 #include <tf/tf.h>
 
 using namespace muse_amcl;
@@ -50,10 +50,12 @@ void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
         max = primary_map->getOrigin().tf().inverse() * max;
     }
 
-    /// @todo : remove random seed 0
-    RandomPoseGenerator  rng({min.x(), min.y(), 0.0}, {max.x(), max.y(), 2 * M_PI}, 0);
-    particle_set.resize(sample_size_);
+    RandomPoseGenerator::Ptr  rng(new RandomPoseGenerator({min.x(), min.y(), 0.0}, {max.x(), max.y(), 2 * M_PI}));
+    if(random_seed_ >= 0) {
+        rng.reset(new RandomPoseGenerator({min.x(), min.y(), 0.0}, {max.x(), max.y(), 2 * M_PI}, random_seed_));
+    }
 
+    particle_set.resize(sample_size_);
     ParticleSet::Particles &particles = particle_set.getParticles();
 
     const ros::Time sampling_start = ros::Time::now();
@@ -67,7 +69,7 @@ void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
                 break;
             }
 
-            math::Pose pose = primary_T_o * math::Pose(rng());
+            math::Pose pose = primary_T_o * math::Pose(rng->get());
             particle.pose_  = w_T_primary * pose;
 
             sum_weight += particle.weight_;
@@ -84,6 +86,7 @@ void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
 
 void UniformPrimaryMap2D::doSetup(ros::NodeHandle &nh_private)
 {
+    random_seed_ = nh_private.param(parameter("seed"), -1);
 }
 
 void UniformPrimaryMap2D::doSetupMapProviders(ros::NodeHandle &nh_private,

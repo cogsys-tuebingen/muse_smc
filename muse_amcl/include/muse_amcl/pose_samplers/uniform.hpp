@@ -1,6 +1,8 @@
 #ifndef UNIFORM_HPP
 #define UNIFORM_HPP
 
+#include <memory>
+
 #include <muse_amcl/math/random.hpp>
 #include "arguments.hpp"
 
@@ -9,6 +11,8 @@ namespace pose_generation {
 template<typename... Types>
 class Uniform {
 public:
+    typedef std::shared_ptr<Uniform> Ptr;
+
     static_assert(sizeof...(Types) > 0, "Constraint : Dimension > 0");
     static_assert(is_valid_type<Types...>::value, "Parameter list contains forbidden type!");
 
@@ -27,7 +31,7 @@ public:
     {
     }
 
-    inline Vector operator() ()
+    inline Vector get()
     {
         Vector sample = rng_.get();
         Arguments<Dimension, Vector, Types...>::normalize(sample);

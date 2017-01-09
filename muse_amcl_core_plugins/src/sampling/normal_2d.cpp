@@ -3,7 +3,7 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_amcl::Normal2D, muse_amcl::NormalSampling)
 
-#include <muse_amcl/pose_generators/normal.hpp>
+#include <muse_amcl/pose_samplers/normal.hpp>
 
 #include <ros/time.h>
 
@@ -38,10 +38,10 @@ void Normal2D::apply(const math::Pose       &pose,
         }
     }
 
-
-    // @TODO: remove random seed = 0
-    RandomPoseGenerator  rng(pose.eigen3D(), covariance.eigen3D(), 0);
-    particle_set.resize(sample_size_);
+    RandomPoseGenerator::Ptr  rng(new RandomPoseGenerator(pose.eigen3D(), covariance.eigen3D()));
+    if(random_seed_ >= 0) {
+        rng.reset(new RandomPoseGenerator(pose.eigen3D(), covariance.eigen3D(), random_seed_));
+    }
 
     ParticleSet::Particles &particles = particle_set.getParticles();
 
@@ -56,7 +56,7 @@ void Normal2D::apply(const math::Pose       &pose,
                 break;
             }
 
-            particle.pose_ = rng();
+            particle.pose_ = rng->get();
             sum_weight += particle.weight_;
             valid = true;
             for(const auto &m : maps) {
@@ -69,4 +69,5 @@ void Normal2D::apply(const math::Pose       &pose,
 
 void Normal2D::doSetup(ros::NodeHandle &nh_private)
 {
+    random_seed_ = nh_private.param(parameter("seed"), -1);
 }

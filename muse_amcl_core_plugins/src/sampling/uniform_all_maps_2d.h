@@ -12,6 +12,7 @@ public:
     virtual void apply(ParticleSet &particle_set) override;
 
 protected:
+    int random_seed_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) override;
 

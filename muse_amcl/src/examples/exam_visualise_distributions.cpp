@@ -1,7 +1,7 @@
 #include <muse_amcl/math/math.hpp>
 #include <opencv2/opencv.hpp>
 
-#include "../../include/muse_amcl/pose_generators/normal.hpp"
+#include "../../include/muse_amcl/pose_samplers/normal.hpp"
 #include "../../include/muse_amcl/utils/eigen.hpp"
 #include "../../include/muse_amcl/math/pose.hpp"
 
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
     muse_amcl::pose_generation::Normal<Metric,Metric,Radian> n2Dp(n3d_mean, n3d_cov);
 
     for(std::size_t i = 0 ; i < sample_count ; ++i) {
-        Eigen::Vector3d sample = n2Dp();
+        Eigen::Vector3d sample = n2Dp.get();
         cv::Point pos(sample(0) * canvas.cols,
                       sample(1) * canvas.rows);
         cv::line(canvas, pos - dx, pos + dx, cv::Scalar(255));
