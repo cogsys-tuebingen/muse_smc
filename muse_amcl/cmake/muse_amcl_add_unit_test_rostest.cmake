@@ -1,8 +1,10 @@
 ## use with gtest
-function(add_unit_test_gtest UNIT_TEST_NAME UNIT_TEST_SRCS UNIT_TEST_LIBS)
+find_package(rostest REQUIRED)
+function(add_unit_test_rostest UNIT_TEST_NAME UNIT_TEST_SRCS UNIT_TEST_LIBS)
     enable_testing()
 
-    catkin_add_gtest(${UNIT_TEST_NAME}
+    add_rostest_gtest(${UNIT_TEST_NAME}
+        test/${UNIT_TEST_NAME}.test
         ${UNIT_TEST_SRCS}
     )
 

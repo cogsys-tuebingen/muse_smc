@@ -13,6 +13,7 @@ include(cmake/muse_amcl_open_mp.cmake)
 include(cmake/muse_amcl_show_headers.cmake)
 ## macros for unit tests
 include(cmake/muse_amcl_add_unit_test_gtest.cmake)
+include(cmake/muse_amcl_add_unit_test_rostest.cmake)
 
 ## add cmake modules
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
