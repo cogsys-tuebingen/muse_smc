@@ -25,7 +25,7 @@ public:
     }
 
     inline void setup(const std::string &name,
-               ros::NodeHandle   &nh_private)
+                      ros::NodeHandle   &nh_private)
     {
             name_ = name;
             doSetup(nh_private);

@@ -4,8 +4,9 @@
 #include <muse_amcl/data_types/map.hpp>
 
 namespace muse_amcl {
-struct TestMap : public muse_amcl::Map
+class TestMap : public muse_amcl::Map
 {
+public:
     TestMap(const std::string &frame,
             const math::Point &min,
             const math::Point &max) :
@@ -26,7 +27,6 @@ struct TestMap : public muse_amcl::Map
                            std::numeric_limits<double>::max(),
                            std::numeric_limits<double>::max());
     }
-
 
     const math::Point min;
     const math::Point max;

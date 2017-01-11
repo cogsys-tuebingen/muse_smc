@@ -2,10 +2,6 @@
 
 #include "test_map.hpp"
 
-TEST(samplingUniformPrimaryMap, sampling)
-{
-
-}
 
 int main(int argc, char *argv[])
 {

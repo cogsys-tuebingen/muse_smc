@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   rostest
   sensor_msgs
   cslibs_kdtree
+  rostest
 )
 
 catkin_package()
@@ -59,23 +60,33 @@ target_link_libraries(muse_amcl_maps
 
 
 if(${CATKIN_ENABLE_TESTING})
-    add_unit_test_gtest(${PROJECT_NAME}_test_sampling_normal_2d
-        test/test_sampling_normal_2d.cpp
-        ${PROJECT_NAME}
+    add_unit_test_rostest(${PROJECT_NAME}_test_node_sampling_normal_2d
+        test/sampling_normal_2d.test
+        test/test_node_sampling_normal_2d.cpp
+        "${catkin_LIBRARIES} ${PROJECT_NAME}"
     )
 
-    add_unit_test_gtest(${PROJECT_NAME}_test_sampling_uniform_all_maps_2d
-        test/test_sampling_uniform_all_maps_2d.cpp
+    add_executable(tmp
+        test/test_node_sampling_normal_2d.cpp
+    )
+    target_link_libraries(tmp
+        ${catkin_LIBRARIES}
         ${PROJECT_NAME}
+        ${GTEST_LIBRARIES}
     )
 
-    add_unit_test_gtest(${PROJECT_NAME}_test_sampling_uniform_primary_map_2d
-        test/test_sampling_uniform_primary_map_2d.cpp
-        ${PROJECT_NAME}
-    )
+#    add_unit_test_gtest(${PROJECT_NAME}_test_sampling_uniform_all_maps_2d
+#        test/test_node_sampling_uniform_all_maps_2d.cpp
+#        ${PROJECT_NAME}
+#    )
+
+#    add_unit_test_gtest(${PROJECT_NAME}_test_sampling_uniform_primary_map_2d
+#        test/test_node_sampling_uniform_primary_map_2d.cpp
+#        ${PROJECT_NAME}
+#    )
 endif()
 
-if(${BUILD_EXAMPLES})
+if(True)
     add_library(muse_amcl_mock_plugins
         src/mock/mock_update.cpp
         src/mock/mock_data_provider.cpp
