@@ -28,9 +28,7 @@ void Normal2D::apply(const math::Pose       &pose,
             maps.emplace_back(map);
             maps_T_w.emplace_back(map_T_w);
         } else {
-            std::cerr << "[Normal2D]: Could not lookup transform '"
-                      << world_frame << " -> " << map->getFrame()
-                      << std::endl;
+            throw std::runtime_error("[Normal2D]: Could not lookup transform '" + world_frame + " -> " + map->getFrame() + "'!");
         }
     }
 

@@ -12,9 +12,6 @@ public:
 
     TFProvider()
     {
-                                    /// woraround
-        ros::Duration(5).sleep();   /// check if problem with tf listener initialization persits.
-                                    /// 602 in tf.cpp
     }
 
     inline bool lookupTransform(const std::string    &target_frame,

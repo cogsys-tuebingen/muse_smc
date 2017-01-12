@@ -17,10 +17,16 @@ using namespace muse_amcl;
 
 TEST(TestMuseAMCLCorePlugins, testSampling)
 {
+    TFProvider::Ptr tf_provider(new TFProvider);
+
+                                /// 602 in tf.cpp
+    ros::Duration(5).sleep();   /// check if problem with tf listener initialization persits.
+                                /// woraround
+
+
     /// setup the sampler
     ros::NodeHandle nh_private("~");
     TestNormal2D  normal2d;
-    TFProvider::Ptr tf_provider(new TFProvider);
     std::map<std::string, muse_amcl::MapProvider::Ptr> map_providers;
 
     /// prepare the maps
@@ -87,6 +93,7 @@ TEST(TestMuseAMCLCorePlugins, testSampling)
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "muse_amcl_core_plugins_test_node_sampling_normal_2d");   /// It's essential to set the right name here !
+    ros::Time::init();
 
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
