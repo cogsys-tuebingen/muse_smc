@@ -8,12 +8,12 @@ TEST(TestMuseAMCL, testAngleNormalization)
 {
     for(std::size_t i = -10 ; i < 10 ; ++i) {
         double a = mm::angle::normalize(2 * M_PI * i);
-        EXPECT_EQ(0.0, a);
+        EXPECT_EQ(-M_PI, a);
     }
 
     for(std::size_t i = -10 ; i < 10 ; ++i) {
         double a = mm::angle::normalize(2 * M_PI * i + M_PI);
-        EXPECT_EQ(M_PI, a);
+        EXPECT_EQ(-M_PI, a);
     }
 
     for(std::size_t i = -10 ; i < 10 ; ++i) {
@@ -24,6 +24,10 @@ TEST(TestMuseAMCL, testAngleNormalization)
         else
             EXPECT_LT(fabs(na), 2 * M_PI);
     }
+
+    EXPECT_NEAR(-M_PI, mm::angle::normalize( M_PI), 1e-6);
+    EXPECT_NEAR(-3.04, -3.04, 1e-6);
+    EXPECT_NEAR(0.0, mm::angle::normalize( 2 * M_PI), 1e-6);
 }
 
 TEST(TestMuseAMCL, testToRadianConversion)

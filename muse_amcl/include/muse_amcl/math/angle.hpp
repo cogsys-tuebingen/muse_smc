@@ -9,21 +9,41 @@ namespace angle {
 const double _2_M_PI = 2.0 * M_PI;
 const double _1_2_M_PI = 1.0 / _2_M_PI;
 const double _1_180  = 1.0 / 180.0;
-const double _A2R = _1_180 * M_PI;
-const double _R2A = M_1_PI * 180.0;
+const double R_T_A = _1_180 * M_PI;       /// DEG to RAD
+const double A_T_R = M_1_PI * 180.0;      /// RAD ot DEG
 
-
-inline double normalize(const double _angle)
+/**
+ * @brief normalize and between -pi and pi
+ * @param angle
+ * @return
+ */
+inline double normalize(const double angle)
 {
-    return _angle - _2_M_PI * floor( _angle * _1_2_M_PI );
+    return angle - _2_M_PI * floor((angle + M_PI) * _1_2_M_PI);
 }
 
-inline double difference(double _a, double _b)
+/**
+ * @brief normalize2Pi normalizes angles within interval from [0.0, 2 * PI)
+ * @param angle - angle to normalize
+ * @return
+ */
+inline double normalize2Pi(const double angle)
+{
+    return angle - _2_M_PI * floor( angle * _1_2_M_PI );
+}
+
+/**
+ * @brief difference calculates the normalized angle difference.
+ * @param a - first angle in term
+ * @param b - second angle in term
+ * @return
+ */
+inline double difference(double a, double b)
 {
     double d1, d2;
-    _a = normalize(_a);
-    _b = normalize(_b);
-    d1 = _a-_b;
+    a = normalize(a);
+    b = normalize(b);
+    d1 = a-b;
     d2 = 2*M_PI - fabs(d1);
     if(d1 > 0)
         d2 *= -1.0;
@@ -33,14 +53,24 @@ inline double difference(double _a, double _b)
         return normalize(d2);
 }
 
-inline double toRad(const double _deg)
+/**
+ * @brief toRad converts angles given in degree to radien.
+ * @param deg   - the angle to convert
+ * @return      - angle in radian
+ */
+inline double toRad(const double deg)
 {
-    return _deg * _A2R;
+    return deg * R_T_A;
 }
 
-inline double fromRad(const double _rad)
+/**
+ * @brief fromRad converts angle from radien to degree.
+ * @param rad   - the angle in radian
+ * @return      - the angle in degree
+ */
+inline double fromRad(const double rad)
 {
-    return _rad * _R2A;
+    return rad * A_T_R;
 }
 }
 }

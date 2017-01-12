@@ -7,8 +7,6 @@ namespace muse_amcl {
 class Normal2D : public NormalSampling
 {
 public:
-    Normal2D();
-
     virtual void apply(const math::Pose       &pose,
                        const math::Covariance &covariance,
                        ParticleSet            &particle_set) override;

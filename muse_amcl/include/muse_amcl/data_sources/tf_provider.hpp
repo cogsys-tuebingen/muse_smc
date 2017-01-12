@@ -10,7 +10,12 @@ class TFProvider {
 public:
     typedef std::shared_ptr<TFProvider> Ptr;
 
-    TFProvider() = default;
+    TFProvider()
+    {
+                                    /// woraround
+        ros::Duration(5).sleep();   /// check if problem with tf listener initialization persits.
+                                    /// 602 in tf.cpp
+    }
 
     inline bool lookupTransform(const std::string    &target_frame,
                                 const std::string    &source_frame,
@@ -67,10 +72,13 @@ public:
     {
         std::unique_lock<std::mutex> l(mutex_);
         tf::StampedTransform stamped;
-        if(tf_.waitForTransform(target_frame, source_frame, time, timeout)) {
+        std::string error;
+        if(tf_.waitForTransform(target_frame, source_frame, time, timeout, ros::Duration(0.01), &error)) {
             tf_.lookupTransform(target_frame, source_frame, time, stamped);
             transform = stamped;
             return true;
+        } else {
+            std::cerr << error << std::endl;
         }
         return false;
     }

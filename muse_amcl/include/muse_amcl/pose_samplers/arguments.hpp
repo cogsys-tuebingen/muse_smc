@@ -27,8 +27,9 @@ struct Radian {
      */
     static inline void normalize(double &rad)
     {
-       rad = math::angle::normalize(rad);
+        rad = math::angle::normalize(rad);
     }
+
 };
 
 /**

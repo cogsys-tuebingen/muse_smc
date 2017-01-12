@@ -98,6 +98,11 @@ if(${CATKIN_ENABLE_TESTING})
         ${PROJECT_NAME}_particle_filter
     )
 
+    add_unit_test_gtest(${PROJECT_NAME}_test_pose_generators
+        test/test_pose_generators.cpp
+        ${PROJECT_NAME}_particle_filter
+    )
+
     add_unit_test_gtest(${PROJECT_NAME}_test_angle
         test/test_angle.cpp
         ${PROJECT_NAME}_particle_filter
@@ -111,6 +116,12 @@ if(${CATKIN_ENABLE_TESTING})
     add_unit_test_gtest(${PROJECT_NAME}_test_bounding_rectangle
         test/test_bounding_rectangle.cpp
         ${PROJECT_NAME}_particle_filter
+    )
+
+    add_unit_test_rostest(${PROJECT_NAME}_test_node_tf_provider
+        test/test_tf_provider.test
+        test/test_node_tf_provider.cpp
+        "${catkin_LIBRARIES}"
     )
 
     ## optional tests that evaluate runtimes and such which

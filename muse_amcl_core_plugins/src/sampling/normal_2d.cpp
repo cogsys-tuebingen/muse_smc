@@ -13,10 +13,6 @@ using Metric              = muse_amcl::pose_generation::Metric;
 using Radian              = muse_amcl::pose_generation::Radian;
 using RandomPoseGenerator = muse_amcl::pose_generation::Normal<Metric, Metric, Radian>;
 
-Normal2D::Normal2D()
-{
-}
-
 void Normal2D::apply(const math::Pose       &pose,
                      const math::Covariance &covariance,
                      ParticleSet            &particle_set)
@@ -44,6 +40,7 @@ void Normal2D::apply(const math::Pose       &pose,
     }
 
     ParticleSet::Particles &particles = particle_set.getParticles();
+    particles.resize(sample_size_);
 
     const ros::Time sampling_start = ros::Time::now();
     double sum_weight = 0.0;
