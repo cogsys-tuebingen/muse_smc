@@ -7,6 +7,7 @@
 TEST(TestMuseAMCL, testTFProviderSingleThreaded)
 {
     muse_amcl::TFProvider tf_provider;
+    ros::Duration(5).sleep();
     const std::string world_frame = "world";
     const std::string frame0 = "map0";
 
@@ -24,6 +25,7 @@ TEST(TestMuseAMCL, testTFProviderSingleThreaded)
 TEST(TestMuseAMCL, testTFProviderMultiThreaded)
 {
     muse_amcl::TFProvider tf_provider;
+    ros::Duration(5).sleep();
 
     const std::string world_frame = "world";
     const std::string frame0 = "map0";

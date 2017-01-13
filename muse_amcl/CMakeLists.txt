@@ -90,7 +90,7 @@ if(${CATKIN_ENABLE_TESTING})
 
     add_unit_test_gtest(${PROJECT_NAME}_test_distribution
         test/test_distribution.cpp
-        ${PROJECT_NAME}_particle_filter
+        "${catkin_LIBRARIES};yaml-cpp"
     )
 
     add_unit_test_gtest(${PROJECT_NAME}_test_random

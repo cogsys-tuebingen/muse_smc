@@ -5,6 +5,8 @@
 #include <gtest/gtest.h>
 
 #include <fstream>
+#include <yaml-cpp/yaml.h>
+
 
 namespace mms = muse_amcl::math::statistic;
 
@@ -302,6 +304,8 @@ TEST(TestMuseAMCL, testDistributionAddition)
 
 int main(int argc, char *argv[])
 {
+    YAML::Node document = YAML::LoadFile("Path");
+
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

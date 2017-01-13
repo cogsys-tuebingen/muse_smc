@@ -68,8 +68,6 @@ TEST(TestMuseAMCL, testPoseSamplingUniform2D)
 
 }
 
-
-
 int main(int argc, char *argv[])
 {
     testing::InitGoogleTest(&argc, argv);
