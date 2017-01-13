@@ -88,10 +88,6 @@ if(${CATKIN_ENABLE_TESTING})
         ${PROJECT_NAME}_particle_filter
     )
 
-    add_unit_test_gtest(${PROJECT_NAME}_test_distribution
-        test/test_distribution.cpp
-        "${catkin_LIBRARIES};yaml-cpp"
-    )
 
     add_unit_test_gtest(${PROJECT_NAME}_test_random
         test/test_random.cpp
@@ -116,6 +112,12 @@ if(${CATKIN_ENABLE_TESTING})
     add_unit_test_gtest(${PROJECT_NAME}_test_bounding_rectangle
         test/test_bounding_rectangle.cpp
         ${PROJECT_NAME}_particle_filter
+    )
+
+    add_unit_test_rostest(${PROJECT_NAME}_test_node_distribution
+        test/test_distribution.test
+        test/test_node_distribution.cpp
+        "${catkin_LIBRARIES};yaml-cpp"
     )
 
     add_unit_test_rostest(${PROJECT_NAME}_test_node_tf_provider
