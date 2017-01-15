@@ -37,8 +37,8 @@ void UniformAllMaps2D::apply(ParticleSet &particle_set)
             maps_T_w.emplace_back(map_T_w);
 
             tf::Transform w_T_map = map_T_w.inverse();
-            min.cwiseMin(w_T_map * map->getMax());
-            max.cwiseMax(w_T_map * map->getMin());
+            min = min.cwiseMin(w_T_map * map->getMin());
+            max = max.cwiseMax(w_T_map * map->getMax());
 
         } else {
             std::cerr << "[UniformAllMaps2D]: Could not lookup transform '"
@@ -47,16 +47,16 @@ void UniformAllMaps2D::apply(ParticleSet &particle_set)
         }
     }
 
-    RandomPoseGenerator::Ptr  rng(new RandomPoseGenerator({min.x(), min.y(), 0.0}, {max.x(), max.y(), 2 * M_PI}));
+    RandomPoseGenerator::Ptr rng(new RandomPoseGenerator({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}));
     if(random_seed_ >= 0) {
-        rng.reset(new RandomPoseGenerator({min.x(), min.y(), 0.0}, {max.x(), max.y(), 2 * M_PI}, 0));
+        rng.reset(new RandomPoseGenerator({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}, 0));
     }
 
     particle_set.resize(sample_size_);
 
     ParticleSet::Particles &particles = particle_set.getParticles();
-
     const ros::Time sampling_start = ros::Time::now();
+    const std::size_t map_count = maps.size();
     double sum_weight = 0.0;
     for(auto &particle : particles) {
         bool valid = false;
@@ -70,8 +70,8 @@ void UniformAllMaps2D::apply(ParticleSet &particle_set)
             particle.pose_ = rng->get();
             sum_weight += particle.weight_;
             valid = true;
-            for(const auto &m : maps) {
-                valid &= m->valid(particle.pose_);
+            for(std::size_t i = 0 ; i < map_count ; ++i) {
+                valid &= maps[i]->validate(maps_T_w[i] * particle.pose_);
             }
         }
     }

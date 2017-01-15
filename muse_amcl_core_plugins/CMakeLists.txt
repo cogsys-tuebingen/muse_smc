@@ -69,10 +69,11 @@ if(${CATKIN_ENABLE_TESTING})
         "${PROJECT_NAME}"
     )
 
-#    add_unit_test_gtest(${PROJECT_NAME}_test_sampling_uniform_all_maps_2d
-#        test/test_node_sampling_uniform_all_maps_2d.cpp
-#        ${PROJECT_NAME}
-#    )
+    add_unit_test_rostest(${PROJECT_NAME}_test_node_sampling_uniform_all_maps_2d
+        test/sampling_uniform_all_maps_2d.test
+        test/test_node_sampling_uniform_all_maps_2d.cpp
+       "${PROJECT_NAME}"
+    )
 
     add_unit_test_rostest(${PROJECT_NAME}_test_node_sampling_uniform_primary_map_2d
         test/sampling_uniform_primary_map_2d.test

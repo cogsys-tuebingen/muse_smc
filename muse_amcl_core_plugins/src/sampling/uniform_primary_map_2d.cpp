@@ -51,7 +51,7 @@ void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
     }
     RandomPoseGenerator::Ptr  rng(new RandomPoseGenerator({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}));
     if(random_seed_ >= 0) {
-        rng.reset(new RandomPoseGenerator({min.x(), min.y(), 0.0}, {max.x(), max.y(), 2 * M_PI}, random_seed_));
+        rng.reset(new RandomPoseGenerator({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}, random_seed_));
     }
 
     particle_set.resize(sample_size_);
@@ -71,11 +71,11 @@ void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
 
             math::Pose pose = primary_T_o * math::Pose(rng->get());
             sum_weight += particle.weight_;
-            valid = primary_map->valid(pose);
+            valid = primary_map->validate(pose);
             if(valid) {
                 particle.pose_  = w_T_primary * pose;
                 for(std::size_t i = 0 ; i < secondary_maps_count ; ++i) {
-                    valid &= secondary_maps[i]->valid(secondary_maps_T_w[i] * particle.pose_);
+                    valid &= secondary_maps[i]->validate(secondary_maps_T_w[i] * particle.pose_);
                 }
             }
         }

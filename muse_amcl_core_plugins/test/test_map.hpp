@@ -26,7 +26,7 @@ public:
         return max_;
     }
 
-    virtual inline bool valid(const math::Pose &p) const override
+    virtual inline bool validate(const math::Pose &p) const override
     {
         bool dim_x = p.x() >= min_.x() && p.x() <= max_.x();
         bool dim_y = p.y() >= min_.y() && p.y() <= max_.y();

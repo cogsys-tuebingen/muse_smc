@@ -55,7 +55,7 @@ void Normal2D::apply(const math::Pose       &pose,
             sum_weight += particle.weight_;
             valid = true;
             for(const auto &m : maps) {
-                valid &= m->valid(particle.pose_);
+                valid &= m->validate(particle.pose_);
             }
         }
     }
