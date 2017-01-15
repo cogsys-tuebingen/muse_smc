@@ -63,6 +63,15 @@ target_link_libraries(muse_amcl_maps
 
 
 if(${CATKIN_ENABLE_TESTING})
+    add_custom_target(show_test_headers
+        SOURCES
+        test/test_map.hpp
+        test/test_map_provider.hpp
+        test/test_normal_2d.hpp
+        test/test_uniform_primary_map_2d.hpp
+        test/test_uniform_all_maps_2d.hpp
+    )
+
     add_unit_test_rostest(${PROJECT_NAME}_test_node_sampling_normal_2d
         test/sampling_normal_2d.test
         test/test_node_sampling_normal_2d.cpp

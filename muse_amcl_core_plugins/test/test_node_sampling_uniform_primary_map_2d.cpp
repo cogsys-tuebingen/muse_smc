@@ -3,14 +3,10 @@
 #include <tf/tf.h>
 
 #include <muse_amcl/math/distribution.hpp>
-#include <fstream>
 
 #include "test_map.hpp"
 #include "test_map_provider.hpp"
 #include "test_uniform_primary_map_2d.hpp"
-
-#include "../src/sampling/uniform_primary_map_2d.h"
-
 
 using namespace muse_amcl;
 
@@ -63,13 +59,10 @@ TEST(TestMuseAMCLCorePlugins, testSamplingUniformPrimary2D)
 
     math::statistic::Distribution<3> distribution;
     ParticleSet::Particles &particles = particle_set.getParticles();
-    std::ofstream out("/tmp/points.txt");
     for(auto &particle : particles) {
         Eigen::Vector3d pose = particle.pose_.eigen3D();
-        out << pose(0) << "," << pose(1) << "," << pose(2) << std::endl;
         distribution.add(pose);
     }
-    out.close();
 
     Eigen::Vector3d mu(0.5, 0.5, 0.0);
     Eigen::Vector3d mu_est = distribution.getMean();
