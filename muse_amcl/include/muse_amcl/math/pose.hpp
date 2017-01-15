@@ -134,36 +134,60 @@ public:
         return e;
     }
 
+    /**
+     * @brief x returns the x component of the pose by const reference.
+     * @return the x component
+     */
     inline const double &x() const
     {
         return pose_.getOrigin().x();
     }
 
+    /**
+     * @brief y returns the y component of the pose by const reference.
+     * @return the y component
+     */
     inline const double &y() const
     {
         return pose_.getOrigin().y();
     }
 
+    /**
+     * @brief z returns the z component of the pose by const reference.
+     * @return the z component
+     */
     inline const double &z() const
     {
         return pose_.getOrigin().z();
     }
 
+    /**
+     * @brief x returns the x component of the pose by reference.
+     * @return the x component
+     */
     inline double &x()
     {
         return pose_.getOrigin().m_floats[0];
     }
 
+    /**
+     * @brief y returns the y component of the pose by reference.
+     * @return the y component
+     */
     inline double &y()
     {
         return pose_.getOrigin().m_floats[1];
     }
 
+
+    /**
+     * @brief z returns the z component of the pose by reference.
+     * @return the z component
+     */
     inline double &z()
     {
         return pose_.getOrigin().m_floats[2];
     }
-
 
     /**
      * @brief roll returns the roll angle.
@@ -211,28 +235,55 @@ public:
         pose_.getBasis().getRPY(roll,pitch,yaw);
     }
 
+    /**
+     * @brief transformed returns a copy of a pose to which a transformation was applied.
+     * @param transform - the transformation to be applied.
+     * @return the transformed pose
+     */
     Pose transformed(const tf::Transform &transform) const
     {
         return Pose(transform * pose_);
     }
 
+    /**
+     * @brief transformed returns a copy of a pose to which a transformation was applied.
+     * @param transform - the transformation to be applied.
+     * @return the transformed pose
+     */
     Pose transformed(const tf::StampedTransform &transform) const
     {
         return Pose(transform * pose_);
     }
 
-
+    /**
+     * @brief Transforms the current pose imperatively.
+     * @param transform - the transformation to be applied.
+     */
     void transform(const tf::Transform &transform)
     {
         pose_ = transform * pose_;
     }
 
+    /**
+     * @brief Transforms the current pose imperatively.
+     * @param transform - the transformation to be applied.
+     */
     void transform(const tf::StampedTransform &transform)
     {
         pose_ = transform * pose_;
     }
 
-
+    /**
+     * @brief toString returns a formated string with the point contents.
+     * @return  the formatted string with point data
+     */
+    inline std::string toString() const
+    {
+        std::stringstream ss;
+        ss << "[[" << x() << ", " << y() << ", " << z() << "]," << std::endl;
+        ss << "[" <<  yaw() << ", " << pitch() << ", " << roll() << "]]" << std::endl;
+        return ss.str();
+    }
 
 private:
     tf::Pose pose_;

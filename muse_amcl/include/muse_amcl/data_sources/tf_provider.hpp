@@ -80,6 +80,21 @@ public:
         return false;
     }
 
+    inline bool canTransform(const std::string &target_frame,
+                             const std::string &source_frame,
+                             const ros::Time   &time)
+    {
+        std::unique_lock<std::mutex> l(mutex_);
+        return tf_.canTransform(target_frame, source_frame, time);
+    }
+
+    inline void getFrameStrings(std::vector<std::string> &frames)
+    {
+        std::unique_lock<std::mutex> l(mutex_);
+        tf_.getFrameStrings(frames);
+    }
+
+
 private:
     std::mutex mutex_;
     tf::TransformListener tf_;

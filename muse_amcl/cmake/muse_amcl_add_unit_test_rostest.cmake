@@ -1,5 +1,4 @@
 ## use with gtest
-enable_testing()
 find_package(rostest REQUIRED)
 # add_unit_test_rostest is a wrapper function for add_rostest_gtest
 #   UNIT_TEST_NAME   : is the name for the test

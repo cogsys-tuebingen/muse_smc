@@ -10,26 +10,32 @@ public:
     TestMap(const std::string &frame,
             const math::Point &min,
             const math::Point &max) :
-        Map(frame)
+        Map(frame),
+        min_(min),
+        max_(max)
     {
     }
 
     virtual inline math::Point getMin() const override
     {
-        return math::Point(std::numeric_limits<double>::lowest(),
-                           std::numeric_limits<double>::lowest(),
-                           std::numeric_limits<double>::lowest());
+        return min_;
     }
 
     virtual inline math::Point getMax() const override
     {
-        return math::Point(std::numeric_limits<double>::max(),
-                           std::numeric_limits<double>::max(),
-                           std::numeric_limits<double>::max());
+        return max_;
     }
 
-    const math::Point min;
-    const math::Point max;
+    virtual inline bool valid(const math::Pose &p) const override
+    {
+        bool dim_x = p.x() >= min_.x() && p.x() <= max_.x();
+        bool dim_y = p.y() >= min_.y() && p.y() <= max_.y();
+        return dim_x && dim_y;
+    }
+
+
+    const math::Point min_;
+    const math::Point max_;
 };
 }
 

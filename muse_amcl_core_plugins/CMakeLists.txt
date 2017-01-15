@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(muse_amcl_core_plugins)
 
+set(CATKIN_ENABLE_TESTING ON)
+set(CATKIN_SKIP_TESTING OFF)
+
 find_package(catkin REQUIRED COMPONENTS
   muse_amcl
   nav_msgs
@@ -71,10 +74,11 @@ if(${CATKIN_ENABLE_TESTING})
 #        ${PROJECT_NAME}
 #    )
 
-#    add_unit_test_gtest(${PROJECT_NAME}_test_sampling_uniform_primary_map_2d
-#        test/test_node_sampling_uniform_primary_map_2d.cpp
-#        ${PROJECT_NAME}
-#    )
+    add_unit_test_rostest(${PROJECT_NAME}_test_node_sampling_uniform_primary_map_2d
+        test/sampling_uniform_primary_map_2d.test
+        test/test_node_sampling_uniform_primary_map_2d.cpp
+       "${PROJECT_NAME}"
+    )
 endif()
 
 if(True)

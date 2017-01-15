@@ -17,12 +17,11 @@ void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
     const ros::Time   now = ros::Time::now();
     const std::string world_frame = particle_set.getFrame();
 
-    Map::ConstPtr              primary_map;
+    Map::ConstPtr              primary_map = primary_map_provider_->getMap();
     std::vector<Map::ConstPtr> secondary_maps;
     tf::Transform              w_T_primary;
     tf::Transform              primary_T_o(primary_map->getOrigin().tf());
     std::vector<tf::Transform> secondary_maps_T_w;
-
     if(!tf_provider_->lookupTransform(world_frame, primary_map->getFrame(), now, w_T_primary, tf_timeout_)) {
         throw std::runtime_error("[UniformPrimaryMap2D]: Could not get primary map transform!");
     }
@@ -39,18 +38,18 @@ void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
                       << std::endl;
         }
     }
-
     /// particles are generated in the primary map frame, since formulation has
     /// to be axis-aligned, relative to the map origin
+    /// but internal frames are already within calculation
+
     math::Point min = primary_map->getMin();
     math::Point max = primary_map->getMax();
     {
-        w_T_primary = w_T_primary * primary_T_o;
-        min = primary_map->getOrigin().tf().inverse() * min;
-        max = primary_map->getOrigin().tf().inverse() * max;
+        auto o_T_primary = primary_T_o.inverse();
+        min = o_T_primary * min;
+        max = o_T_primary * max;
     }
-
-    RandomPoseGenerator::Ptr  rng(new RandomPoseGenerator({min.x(), min.y(), 0.0}, {max.x(), max.y(), 2 * M_PI}));
+    RandomPoseGenerator::Ptr  rng(new RandomPoseGenerator({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}));
     if(random_seed_ >= 0) {
         rng.reset(new RandomPoseGenerator({min.x(), min.y(), 0.0}, {max.x(), max.y(), 2 * M_PI}, random_seed_));
     }
@@ -58,6 +57,7 @@ void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
     particle_set.resize(sample_size_);
     ParticleSet::Particles &particles = particle_set.getParticles();
 
+    const std::size_t          secondary_maps_count = secondary_maps.size();
     const ros::Time sampling_start = ros::Time::now();
     double sum_weight = 0.0;
     for(auto &particle : particles) {
@@ -70,13 +70,12 @@ void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
             }
 
             math::Pose pose = primary_T_o * math::Pose(rng->get());
-            particle.pose_  = w_T_primary * pose;
-
             sum_weight += particle.weight_;
             valid = primary_map->valid(pose);
             if(valid) {
-                for(const auto &m : secondary_maps) {
-                    valid &= m->valid(particle.pose_);
+                particle.pose_  = w_T_primary * pose;
+                for(std::size_t i = 0 ; i < secondary_maps_count ; ++i) {
+                    valid &= secondary_maps[i]->valid(secondary_maps_T_w[i] * particle.pose_);
                 }
             }
         }

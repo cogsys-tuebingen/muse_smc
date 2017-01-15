@@ -1,5 +1,4 @@
 ## use with gtest
-enable_testing()
 # add_unit_test_gtest is a wrapper function for catkin_add_gtest
 #   UNIT_TEST_NAME : is the name for the test
 #   UNIT_TEST_SRCS : a list of sources - make sure to wrap into quotes

@@ -14,6 +14,8 @@ include(cmake/muse_amcl_show_headers.cmake)
 ## macros for unit tests
 include(cmake/muse_amcl_add_unit_test_gtest.cmake)
 include(cmake/muse_amcl_add_unit_test_rostest.cmake)
+set(CATKIN_ENABLE_TESTING ON)
+set(CATKIN_SKIP_TESTING OFF)
 
 ## add cmake modules
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)

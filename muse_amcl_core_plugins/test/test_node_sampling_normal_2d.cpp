@@ -15,14 +15,15 @@ using namespace muse_amcl;
 
 
 
-TEST(TestMuseAMCLCorePlugins, testSampling)
+TEST(TestMuseAMCLCorePlugins, testNormalSampling2D)
 {
     TFProvider::Ptr tf_provider(new TFProvider);
 
-                                /// 602 in tf.cpp
-    ros::Duration(5).sleep();   /// check if problem with tf listener initialization persits.
-                                /// woraround
-
+    std::vector<std::string> frames;
+    while(frames.size() != 3) {
+        ros::Duration(0.5).sleep();
+        tf_provider->getFrameStrings(frames);
+    }
 
     /// setup the sampler
     ros::NodeHandle nh_private("~");

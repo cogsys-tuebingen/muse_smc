@@ -178,6 +178,17 @@ public:
                      m_floats[1] - other.m_floats[1],
                      m_floats[2] - other.m_floats[2]);
     }
+
+    /**
+     * @brief toString returns a formated string with the point contents.
+     * @return  the formatted string with point data
+     */
+    inline std::string toString() const
+    {
+        std::stringstream ss;
+        ss << "[" << x() << ", " << y() << ", " << z() << "]" << std::endl;
+        return ss.str();
+    }
 };
 }
 }
