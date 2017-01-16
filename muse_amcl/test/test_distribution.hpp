@@ -6,18 +6,18 @@
 #include <yaml-cpp/yaml.h>
 
 namespace muse_amcl {
+template<std::size_t Dim>
 struct TestDistribution {
-
     void write(const std::string &path)
     {
         std::ofstream out(path);
         YAML::Emitter yaml;
         yaml << YAML::BeginMap;
-        write<2,2>("covariance", covariance, yaml);
-        write<2,1>("mean", mean, yaml);
-        write<2,1>("eigen_values", eigen_values, yaml);
-        write<2,2>("eigen_vectors", eigen_vectors, yaml);
-        write<2,1>("data", data, yaml);
+        write<Dim,Dim>("covariance", covariance, yaml);
+        write<Dim,1>("mean", mean, yaml);
+        write<Dim,1>("eigen_values", eigen_values, yaml);
+        write<Dim,Dim>("eigen_vectors", eigen_vectors, yaml);
+        write<Dim,1>("data", data, yaml);
         yaml << YAML::EndMap;
 
         out << yaml.c_str();
@@ -68,11 +68,11 @@ struct TestDistribution {
     {
         YAML::Node yaml = YAML::LoadFile(path);
         assert(yaml.Type() == YAML::NodeType::Map);
-        read<2,2>(yaml["covariance"], covariance);
-        read<2,1>(yaml["mean"], mean);
-        read<2,1>(yaml["eigen_values"], eigen_values);
-        read<2,2>(yaml["eigen_vectors"], eigen_vectors);
-        read<2,1>(yaml["data"], data);
+        read<Dim,Dim>(yaml["covariance"], covariance);
+        read<Dim,1>(yaml["mean"], mean);
+        read<Dim,1>(yaml["eigen_values"], eigen_values);
+        read<Dim,Dim>(yaml["eigen_vectors"], eigen_vectors);
+        read<Dim,1>(yaml["data"], data);
     }
 
     template<std::size_t rows, std::size_t cols>
@@ -99,12 +99,12 @@ struct TestDistribution {
         }
     }
 
+    Eigen::Matrix<double, Dim, Dim>            covariance;
+    Eigen::Matrix<double, Dim,   1>            mean;
+    Eigen::Matrix<double, Dim,   1>            eigen_values;
+    Eigen::Matrix<double, Dim, Dim>            eigen_vectors;
+    std::vector<Eigen::Matrix<double, Dim, 1>> data;
 
-    Eigen::Matrix2d covariance;
-    Eigen::Vector2d mean;
-    Eigen::Vector2d eigen_values;
-    Eigen::Matrix2d eigen_vectors;
-    std::vector<Eigen::Vector2d> data;
 };
 }
 
