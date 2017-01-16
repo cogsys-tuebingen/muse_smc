@@ -10,6 +10,13 @@ muse_amcl::TestDistribution<3> test_distribution_b;
 
 namespace mms = muse_amcl::math::statistic;
 
+
+TEST(TestMuseAMCL, testLoadedValues)
+{
+    EXPECT_EQ(1000, test_distribution_a.data.size());
+    EXPECT_EQ(1000, test_distribution_b.data.size());
+}
+
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "muse_amcl_test_node_clustering");
