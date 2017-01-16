@@ -15,6 +15,27 @@ TEST(TestMuseAMCL, testLoadedValues)
 {
     EXPECT_EQ(1000, test_distribution_a.data.size());
     EXPECT_EQ(1000, test_distribution_b.data.size());
+
+    const std::vector<double> exp_sigma_a = {0.002568661558998087, -0.00011524049587638333, 0.00031798922495299695, -0.00011524049587638333,
+                                             0.002478226554103719, 0.0004279908301365344, 0.00031798922495299695, 0.0004279908301365344,
+                                             0.1296106703632887};
+    const std::vector<double> exp_mu_a    = {-0.0006855518443336871, -0.001996609940083168, 0.7867056040542918};
+    const std::vector<double> exp_sigma_b = {0.0025956395944793207, 6.80699933604188e-05, -0.0012600465807219591, 6.80699933604188e-05,
+                                             0.002464316990121675, -0.0016997486445437064, -0.0012600465807219591, -0.0016997486445437064,
+                                             0.11690125413810105};
+    const std::vector<double> exp_mu_b    = {5.000238242637764, 4.999439346820392, -0.784468535793019};
+    std::size_t it = 0;
+    for(std::size_t i = 0 ; i < 3 ; ++i) {
+        EXPECT_EQ((exp_mu_a[i]), (test_distribution_a.mean(i)));
+        EXPECT_EQ((exp_mu_b[i]), (test_distribution_b.mean(i)));
+        for(std::size_t j = 0 ; j < 3 ; ++j, ++it) {
+            EXPECT_EQ((exp_sigma_a[it]), (test_distribution_a.covariance(i,j)));
+            EXPECT_EQ((exp_sigma_b[it]), (test_distribution_b.covariance(i,j)));
+        }
+    }
+
+
+
 }
 
 int main(int argc, char *argv[])
