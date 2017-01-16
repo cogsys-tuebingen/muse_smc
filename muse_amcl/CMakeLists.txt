@@ -120,6 +120,12 @@ if(${CATKIN_ENABLE_TESTING})
         "${catkin_LIBRARIES};yaml-cpp"
     )
 
+    add_unit_test_rostest(${PROJECT_NAME}_test_node_clustering
+        test/test_clustering.test
+        test/test_node_clustering.cpp
+        "${catkin_LIBRARIES};yaml-cpp"
+    )
+
     add_unit_test_rostest(${PROJECT_NAME}_test_node_tf_provider
         test/test_tf_provider.test
         test/test_node_tf_provider.cpp

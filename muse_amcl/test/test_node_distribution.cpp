@@ -5,10 +5,9 @@
 
 #include "test_distribution.hpp"
 
-muse_amcl::TestDistribution<2> test_distribution_200;
-muse_amcl::TestDistribution<2> test_distribution_500;
+muse_amcl::TestDistribution<2> test_distribution_a;
+muse_amcl::TestDistribution<2> test_distribution_b;
 muse_amcl::TestDistribution<2> test_distribution_5000;
-
 
 namespace mms = muse_amcl::math::statistic;
 
@@ -16,19 +15,19 @@ TEST(TestMuseAMCL, testDistributionInsertion)
 {
     mms::Distribution<2> distribution;
     EXPECT_EQ(0, distribution.getN());
-    for(std::size_t i = 0 ; i < test_distribution_200.data.size() ; ++i) {
+    for(std::size_t i = 0 ; i < test_distribution_a.data.size() ; ++i) {
         EXPECT_EQ(i, distribution.getN());
-        distribution.add(test_distribution_200.data[i]);
+        distribution.add(test_distribution_a.data[i]);
     }
-    EXPECT_EQ(test_distribution_200.data.size(), distribution.getN());
+    EXPECT_EQ(test_distribution_a.data.size(), distribution.getN());
 
     distribution.reset();
     EXPECT_EQ(0, distribution.getN());
-    for(std::size_t i = 0 ; i < test_distribution_500.data.size() ; ++i) {
+    for(std::size_t i = 0 ; i < test_distribution_b.data.size() ; ++i) {
         EXPECT_EQ(i, distribution.getN());
-        distribution.add(test_distribution_500.data[i]);
+        distribution.add(test_distribution_b.data[i]);
     }
-    EXPECT_EQ(test_distribution_500.data.size(), distribution.getN());
+    EXPECT_EQ(test_distribution_b.data.size(), distribution.getN());
 
     distribution.reset();
     EXPECT_EQ(0, distribution.getN());
@@ -46,23 +45,23 @@ TEST(TestMuseAMCL, testDistributionMean)
 
     mms::Distribution<2> distribution;
     Eigen::Vector2d mean;
-    for(std::size_t i = 0 ; i < test_distribution_200.data.size() ; ++i) {
-        distribution.add(test_distribution_200.data[i]);
+    for(std::size_t i = 0 ; i < test_distribution_a.data.size() ; ++i) {
+        distribution.add(test_distribution_a.data[i]);
     }
 
     mean = distribution.getMean();
 
-    EXPECT_NEAR(test_distribution_200.mean(0), mean(0), tolerance);
-    EXPECT_NEAR(test_distribution_200.mean(1), mean(1), tolerance);
+    EXPECT_NEAR(test_distribution_a.mean(0), mean(0), tolerance);
+    EXPECT_NEAR(test_distribution_a.mean(1), mean(1), tolerance);
 
     distribution.reset();
-    for(std::size_t i = 0 ; i < test_distribution_500.data.size() ; ++i) {
-        distribution.add(test_distribution_500.data[i]);
+    for(std::size_t i = 0 ; i < test_distribution_b.data.size() ; ++i) {
+        distribution.add(test_distribution_b.data[i]);
     }
 
     mean = distribution.getMean();
-    EXPECT_NEAR(test_distribution_500.mean(0), mean(0), tolerance);
-    EXPECT_NEAR(test_distribution_500.mean(1), mean(1), tolerance);
+    EXPECT_NEAR(test_distribution_b.mean(0), mean(0), tolerance);
+    EXPECT_NEAR(test_distribution_b.mean(1), mean(1), tolerance);
 
     distribution.reset();
     for(std::size_t i = 0 ; i < test_distribution_5000.data.size() ; ++i) {
@@ -80,27 +79,27 @@ TEST(TestMuseAMCL, testDistributionCovariance)
 
     mms::Distribution<2> distribution;
     Eigen::Matrix2d cov;
-    for(std::size_t i = 0 ; i < test_distribution_200.data.size() ; ++i) {
-        distribution.add(test_distribution_200.data[i]);
+    for(std::size_t i = 0 ; i < test_distribution_a.data.size() ; ++i) {
+        distribution.add(test_distribution_a.data[i]);
     }
 
     cov = distribution.getCovariance();
 
-    EXPECT_NEAR(test_distribution_200.covariance(0,0), cov(0,0), tolerance);
-    EXPECT_NEAR(test_distribution_200.covariance(0,1), cov(0,1), tolerance);
-    EXPECT_NEAR(test_distribution_200.covariance(1,0), cov(1,0), tolerance);
-    EXPECT_NEAR(test_distribution_200.covariance(1,1), cov(1,1), tolerance);
+    EXPECT_NEAR(test_distribution_a.covariance(0,0), cov(0,0), tolerance);
+    EXPECT_NEAR(test_distribution_a.covariance(0,1), cov(0,1), tolerance);
+    EXPECT_NEAR(test_distribution_a.covariance(1,0), cov(1,0), tolerance);
+    EXPECT_NEAR(test_distribution_a.covariance(1,1), cov(1,1), tolerance);
 
     distribution.reset();
-    for(std::size_t i = 0 ; i < test_distribution_500.data.size() ; ++i) {
-        distribution.add(test_distribution_500.data[i]);
+    for(std::size_t i = 0 ; i < test_distribution_b.data.size() ; ++i) {
+        distribution.add(test_distribution_b.data[i]);
     }
 
     cov = distribution.getCovariance();
-    EXPECT_NEAR(test_distribution_500.covariance(0,0), cov(0,0), tolerance);
-    EXPECT_NEAR(test_distribution_500.covariance(0,1), cov(0,1), tolerance);
-    EXPECT_NEAR(test_distribution_500.covariance(1,0), cov(1,0), tolerance);
-    EXPECT_NEAR(test_distribution_500.covariance(1,1), cov(1,1), tolerance);
+    EXPECT_NEAR(test_distribution_b.covariance(0,0), cov(0,0), tolerance);
+    EXPECT_NEAR(test_distribution_b.covariance(0,1), cov(0,1), tolerance);
+    EXPECT_NEAR(test_distribution_b.covariance(1,0), cov(1,0), tolerance);
+    EXPECT_NEAR(test_distribution_b.covariance(1,1), cov(1,1), tolerance);
 
     distribution.reset();
     for(std::size_t i = 0 ; i < test_distribution_5000.data.size() ; ++i) {
@@ -120,23 +119,23 @@ TEST(TestMuseAMCL, testDistributionEigenValues)
 
     mms::Distribution<2> distribution;
     Eigen::Vector2d eigen_values;
-    for(std::size_t i = 0 ; i < test_distribution_200.data.size() ; ++i) {
-        distribution.add(test_distribution_200.data[i]);
+    for(std::size_t i = 0 ; i < test_distribution_a.data.size() ; ++i) {
+        distribution.add(test_distribution_a.data[i]);
     }
 
     eigen_values = distribution.getEigenValues();
 
-    EXPECT_NEAR(test_distribution_200.eigen_values(0), eigen_values(0), tolerance);
-    EXPECT_NEAR(test_distribution_200.eigen_values(1), eigen_values(1), tolerance);
+    EXPECT_NEAR(test_distribution_a.eigen_values(0), eigen_values(0), tolerance);
+    EXPECT_NEAR(test_distribution_a.eigen_values(1), eigen_values(1), tolerance);
 
     distribution.reset();
-    for(std::size_t i = 0 ; i < test_distribution_500.data.size() ; ++i) {
-        distribution.add(test_distribution_500.data[i]);
+    for(std::size_t i = 0 ; i < test_distribution_b.data.size() ; ++i) {
+        distribution.add(test_distribution_b.data[i]);
     }
 
     eigen_values = distribution.getEigenValues();
-    EXPECT_NEAR(test_distribution_500.eigen_values(0), eigen_values(1), tolerance);
-    EXPECT_NEAR(test_distribution_500.eigen_values(1), eigen_values(0), tolerance);
+    EXPECT_NEAR(test_distribution_b.eigen_values(0), eigen_values(1), tolerance);
+    EXPECT_NEAR(test_distribution_b.eigen_values(1), eigen_values(0), tolerance);
 
     distribution.reset();
     for(std::size_t i = 0 ; i < test_distribution_5000.data.size() ; ++i) {
@@ -166,14 +165,14 @@ TEST(TestMuseAMCL, testDistributionEigenVectors)
 
     mms::Distribution<2> distribution;
     Eigen::Matrix2d eigen_vectors;
-    for(std::size_t i = 0 ; i < test_distribution_200.data.size() ; ++i) {
-        distribution.add(test_distribution_200.data[i]);
+    for(std::size_t i = 0 ; i < test_distribution_a.data.size() ; ++i) {
+        distribution.add(test_distribution_a.data[i]);
     }
 
     eigen_vectors = distribution.getEigenVectors();
 
-    Eigen::Vector2d exp_a = test_distribution_200.eigen_vectors.col(0);
-    Eigen::Vector2d exp_b = test_distribution_200.eigen_vectors.col(1);
+    Eigen::Vector2d exp_a = test_distribution_a.eigen_vectors.col(0);
+    Eigen::Vector2d exp_b = test_distribution_a.eigen_vectors.col(1);
 
     Eigen::Vector2d rec_a = eigen_vectors.col(0);
     Eigen::Vector2d rec_b = eigen_vectors.col(1);
@@ -185,14 +184,14 @@ TEST(TestMuseAMCL, testDistributionEigenVectors)
 
     /// 500
     distribution.reset();
-    for(std::size_t i = 0 ; i < test_distribution_500.data.size() ; ++i) {
-        distribution.add(test_distribution_500.data[i]);
+    for(std::size_t i = 0 ; i < test_distribution_b.data.size() ; ++i) {
+        distribution.add(test_distribution_b.data[i]);
     }
 
     eigen_vectors = distribution.getEigenVectors();
 
-    exp_a = test_distribution_500.eigen_vectors.col(0);
-    exp_b = test_distribution_500.eigen_vectors.col(1);
+    exp_a = test_distribution_b.eigen_vectors.col(0);
+    exp_b = test_distribution_b.eigen_vectors.col(1);
 
     rec_a = eigen_vectors.col(0);
     rec_b = eigen_vectors.col(1);
@@ -229,8 +228,8 @@ TEST(TestMuseAMCL, testDistributionCopy)
 {
     mms::Distribution<2> distribution_a;
     mms::Distribution<2> distribution_b;
-    for(std::size_t i = 0 ; i < test_distribution_200.data.size() ; ++i) {
-        distribution_a.add(test_distribution_200.data[i]);
+    for(std::size_t i = 0 ; i < test_distribution_a.data.size() ; ++i) {
+        distribution_a.add(test_distribution_a.data[i]);
     }
 
     distribution_b = distribution_a;
@@ -252,15 +251,15 @@ TEST(TestMuseAMCL, testDistributionAddition)
 
     mms::Distribution<2> distribution_a;
     mms::Distribution<2> distribution_b;
-    for(std::size_t i = 0 ; i < test_distribution_200.data.size() ; ++i) {
-        distribution_a.add(test_distribution_200.data[i]);
+    for(std::size_t i = 0 ; i < test_distribution_a.data.size() ; ++i) {
+        distribution_a.add(test_distribution_a.data[i]);
     }
 
     distribution_b  = distribution_a;
     distribution_b += distribution_a;
 
-    for(std::size_t i = 0 ; i < test_distribution_200.data.size() ; ++i) {
-        distribution_a.add(test_distribution_200.data[i]);
+    for(std::size_t i = 0 ; i < test_distribution_a.data.size() ; ++i) {
+        distribution_a.add(test_distribution_a.data[i]);
     }
 
     std::cout << (distribution_a.getMean() - distribution_b.getMean()).norm() << std::endl;
@@ -297,8 +296,8 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    test_distribution_200.read(test_distribution_200_path);
-    test_distribution_500.read(test_distribution_500_path);
+    test_distribution_a.read(test_distribution_200_path);
+    test_distribution_b.read(test_distribution_500_path);
     test_distribution_5000.read(test_distribution_5000_path);
 
 
