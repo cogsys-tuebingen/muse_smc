@@ -1,4 +1,4 @@
-#include "wheel_of_fortune.h"
+#include "wof.h"
 
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_amcl::WheelOfFortune, muse_amcl::Resampling)

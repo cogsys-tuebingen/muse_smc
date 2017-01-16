@@ -5,7 +5,7 @@
 #include "../resampling/multinomial.h"
 #include "../resampling/stratified.h"
 #include "../resampling/systematic.h"
-#include "../resampling/wheel_of_fortune.h"
+#include "../resampling/wof.h"
 #include "../resampling/residual.h"
 
 int main(int argc, char *argv[])

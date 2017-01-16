@@ -38,7 +38,7 @@ add_library(${PROJECT_NAME} SHARED
     src/sampling/uniform_all_maps_2d.cpp
     src/sampling/uniform_primary_map_2d.cpp
 
-    src/resampling/wheel_of_fortune.cpp
+    src/resampling/wof.cpp
     src/resampling/multinomial.cpp
     src/resampling/residual.cpp
     src/resampling/stratified.cpp

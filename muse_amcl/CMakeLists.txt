@@ -31,10 +31,8 @@ find_package(catkin REQUIRED COMPONENTS
     roscpp
     visualization_msgs
     pluginlib
+    cslibs_indexed_storage
 )
-
-# http://wiki.ros.org/gtest
-# http://wiki.ros.org/rostest/Writing
 
 ## the catkin package definition
 catkin_package(
@@ -130,6 +128,14 @@ if(${CATKIN_ENABLE_TESTING})
 
     ## optional tests that evaluate runtimes and such which
     ## do not have to fulfil unit tests
+    add_executable(${PROJECT_NAME}_eval_particle_clustering
+        src/examples/eval_particle_clustering.cpp
+    )
+    target_link_libraries(${PROJECT_NAME}_eval_particle_clustering
+        muse_amcl_particle_filter
+    )
+
+
     add_executable(${PROJECT_NAME}_eval_particle_set_access_times
         src/examples/eval_particle_set_access_times.cpp
     )
