@@ -25,6 +25,7 @@ before_script:
   # clone dependencies here:
   - cd src
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_kdtree.git cslibs_kdtree
+  - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_indexed_storage.git cslibs_indexed_storage
   - cd ..
 
 
