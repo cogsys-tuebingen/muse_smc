@@ -14,10 +14,10 @@ namespace clustering {
 namespace cis = cslibs_indexed_storage;
 
 template<typename Storage>
-void create(const Indexation &indexation,
-            const std::vector<Particle> &particles)
+inline void create(const Indexation &indexation,
+                   const std::vector<Particle> &particles,
+                   Storage &store)
 {
-    Storage store;
     for(const auto &sample : particles)
     {
         store.insert(indexation.create(sample), Data(sample));
@@ -25,15 +25,9 @@ void create(const Indexation &indexation,
 }
 
 template<typename Storage>
-void cluster(const Indexation &indexation,
-             const std::vector<Particle> &particles)
+void cluster(const Storage &store,
+             ClusterinOperation clusters)
 {
-    Storage store;
-    for(const auto &sample : particles) {
-        store.insert(indexation.create(sample));
-    }
-
-    ClusterinOperation clusters;
     cis::operations::clustering::Clustering<Storage> co(store);
     co.cluster(clusters);
 }

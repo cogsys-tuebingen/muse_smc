@@ -1,4 +1,5 @@
 #include <muse_amcl/math/distribution.hpp>
+#include <muse_amcl/particle_filter/clustering.hpp>
 
 #include <gtest/gtest.h>
 #include <ros/ros.h>
@@ -7,11 +8,16 @@
 
 muse_amcl::TestDistribution<3> test_distribution_a;
 muse_amcl::TestDistribution<3> test_distribution_b;
+std::vector<muse_amcl::Particle> test_distribution_a_samples;
+std::vector<muse_amcl::Particle> test_distribution_b_samples;
+
+muse_amcl::clustering::KDTree  kdtree_a;
+muse_amcl::clustering::KDTree  kdtree_b;
 
 namespace mms = muse_amcl::math::statistic;
 
 
-TEST(TestMuseAMCL, testLoadedValues)
+TEST(TestMuseAMCL, testTestDistributionRead)
 {
     EXPECT_EQ(1000, test_distribution_a.data.size());
     EXPECT_EQ(1000, test_distribution_b.data.size());
@@ -34,8 +40,20 @@ TEST(TestMuseAMCL, testLoadedValues)
         }
     }
 
+    const double weight_a = 1.0 / 1000.0;
+    for(auto &s : test_distribution_a.data) {
+        muse_amcl::Particle p(s, weight_a);
+        test_distribution_a_samples.emplace_back(p);
+    }
+    const double weight_b = 1.0 / 1000.0;
+    for(auto &s : test_distribution_b.data) {
+        muse_amcl::Particle p(s, weight_b);
+        test_distribution_b_samples.emplace_back(p);
+    }
+}
 
-
+TEST(TestMuseAMCL, createStorage)
+{
 }
 
 int main(int argc, char *argv[])
