@@ -3,6 +3,7 @@
 
 #include <cslibs_indexed_storage/storage.hpp>
 #include <cslibs_indexed_storage/backend/kdtree/kdtree.hpp>
+#include <cslibs_indexed_storage/backend/kdtree/kdtree_buffered.hpp>
 #include <cslibs_indexed_storage/backend/array/array.hpp>
 
 #include "clustering_operation.hpp"
@@ -33,6 +34,7 @@ void cluster(Storage    &store,
     co.cluster(clusters);
 }
 
+using KDTreeBuffered = cis::Storage<Data, Indexation::Index, cis::backend::kdtree::KDTreeBuffered>;
 using KDTree = cis::Storage<Data, Indexation::Index, cis::backend::kdtree::KDTree>;
 using Array  = cis::Storage<Data, Indexation::Index, cis::backend::array::Array>;
 

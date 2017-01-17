@@ -11,7 +11,6 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rostest
   sensor_msgs
-  cslibs_kdtree
   rostest
 )
 
@@ -44,7 +43,6 @@ add_library(${PROJECT_NAME} SHARED
     src/resampling/stratified.cpp
     src/resampling/systematic.cpp
     src/resampling/kld_2d.cpp
-    src/resampling/kld_3d.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
