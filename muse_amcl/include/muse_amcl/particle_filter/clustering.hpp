@@ -8,10 +8,11 @@
 #include "clustering_operation.hpp"
 #include "particle.hpp"
 
+namespace cis = cslibs_indexed_storage;
+
 namespace muse_amcl {
 namespace clustering {
 
-namespace cis = cslibs_indexed_storage;
 
 template<typename Storage>
 inline void create(const Indexation &indexation,
@@ -25,8 +26,8 @@ inline void create(const Indexation &indexation,
 }
 
 template<typename Storage>
-void cluster(const Storage &store,
-             ClusterinOperation clusters)
+void cluster(Storage    &store,
+             Clustering &clusters)
 {
     cis::operations::clustering::Clustering<Storage> co(store);
     co.cluster(clusters);

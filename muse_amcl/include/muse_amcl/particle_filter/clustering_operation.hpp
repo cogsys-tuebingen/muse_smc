@@ -12,15 +12,16 @@ namespace cis = cslibs_indexed_storage;
 
 namespace muse_amcl {
 namespace clustering {
-struct ClusterinOperation {
+struct Clustering {
     using Index = Indexation::Index;
 
     //! used neighborhood, look at direct neighbors only
-    using Neighborhood = cis::operations::clustering::GridNeighborhoodStatic<std::tuple_size<Index>::value, 3>;
-    using VisitorIndex = Neighborhood::offset_t;   //!< currently needed by the clustering API
+    /// REQUIRED DEFINTIONS !!!
+    using neighborhood_t  = cis::operations::clustering::GridNeighborhoodStatic<std::tuple_size<Index>::value, 3>;
+    using visitor_index_t = neighborhood_t::offset_t;   //!< currently needed by the clustering API
 
     //! called when a new cluster should be started
-    bool start(const Index &, Data &data)
+    bool start(const Index &, Data& data)
     {
         if(data.cluster_ != -1)
             return false;
@@ -48,14 +49,14 @@ struct ClusterinOperation {
 
     //! vistor implementation for neighbors
     template<typename visitor_t>
-    void visit_neighbours(const Index&, const visitor_t& visitior)
+    void visit_neighbours(const Index&, const visitor_t& visitor)
     {
-        static constexpr auto neighborhood = Neighborhood{};
-        neighborhood.visit(visitior);
+        static constexpr auto neighborhood = neighborhood_t{};
+        neighborhood.visit(visitor);
     }
 
     int current_cluster_ = -1;
-    std::unordered_map<int, Data::Particles> clusters_;
+    std::unordered_map<int, Data::ParticlePtrs> clusters_;
 
 };
 }

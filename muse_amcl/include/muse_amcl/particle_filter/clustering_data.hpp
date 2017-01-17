@@ -7,27 +7,27 @@
 namespace muse_amcl {
 namespace clustering {
 struct Data {
-    using Particles = std::vector<const Particle*>;
+    using ParticlePtrs = std::vector<const Particle*>;
 
-    int cluster_ = -1;
-    Particles samples_;
-    double weight;
+    int       cluster_ = -1;
+    ParticlePtrs samples_;
+    double    weight_;
 
     Data() :
-        weight(0.0)
+        weight_(0.0)
     {
     }
 
     Data(const Particle &sample)
     {
         samples_.emplace_back(&sample);
-        weight = sample.weight_;
+        weight_ = sample.weight_;
     }
 
     inline void merge(const Data &other)
     {
         samples_.insert(samples_.end(), other.samples_.begin(), other.samples_.end());
-        weight += other.weight;
+        weight_ += other.weight_;
     }
 };
 }
