@@ -84,7 +84,6 @@ public:
         minimum_size_(size),
         maximum_size_(size)
     {
-
     }
 
     ParticleSet(const std::string &frame,

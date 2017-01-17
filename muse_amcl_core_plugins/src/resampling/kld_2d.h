@@ -2,6 +2,7 @@
 #define KLD2D_H
 
 #include <muse_amcl/particle_filter/resampling.hpp>
+#include <muse_amcl/particle_filter/clustering.hpp>
 
 namespace muse_amcl {
 class KLD2D : public Resampling

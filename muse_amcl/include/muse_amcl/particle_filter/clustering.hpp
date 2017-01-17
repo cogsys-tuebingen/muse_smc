@@ -14,7 +14,6 @@ namespace cis = cslibs_indexed_storage;
 namespace muse_amcl {
 namespace clustering {
 
-
 template<typename Storage>
 inline void create(const Indexation &indexation,
                    const std::vector<Particle> &particles,

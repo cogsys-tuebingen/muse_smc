@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   rostest
   sensor_msgs
   rostest
+  cslibs_indexed_storage
 )
 
 catkin_package()
