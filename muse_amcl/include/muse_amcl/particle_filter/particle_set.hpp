@@ -2,6 +2,7 @@
 #define PARTICLE_SET_HPP
 
 #include "particle.hpp"
+#include "../math/index.hpp"
 
 #include <assert.h>
 #include <memory>
@@ -201,6 +202,17 @@ public:
     }
 
 private:
+    math::Index<3> min_index;
+    math::Index<3> max_index;
+
+    /// discretization index
+    /// kdtree
+    /// array
+    /// min max index
+    /// update function
+
+
+
     std::string frame_;
     double      max_weight_;
     Particles   samples_;

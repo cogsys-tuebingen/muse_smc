@@ -114,6 +114,16 @@ if(${CATKIN_ENABLE_TESTING})
         ${PROJECT_NAME}_particle_filter
     )
 
+    add_unit_test_gtest(${PROJECT_NAME}_test_index
+        test/test_index.cpp
+        ${PROJECT_NAME}_particle_filter
+    )
+
+    add_unit_test_gtest(${PROJECT_NAME}_test_indexation
+        test/test_indexation.cpp
+        ${PROJECT_NAME}_particle_filter
+    )
+
     add_unit_test_rostest(${PROJECT_NAME}_test_node_distribution
         test/test_distribution.test
         test/test_node_distribution.cpp

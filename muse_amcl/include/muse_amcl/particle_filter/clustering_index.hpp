@@ -17,8 +17,8 @@ struct Indexation {
     typedef std::shared_ptr<Indexation> Ptr;
 
     using Resolution = std::array<double, 3>;
-    using Index = std::array<int, 3>;
-    using Size  = std::array<std::size_t, 3>;
+    using Index      = std::array<int, 3>;
+    using Size       = std::array<std::size_t, 3>;
 
     Indexation(const Resolution &resolution) :
         resolution(resolution)
