@@ -17,12 +17,11 @@ protected:
 
     virtual void doSetup(ros::NodeHandle &nh_private) override;
 
-    double resolution_linear_;
-    double resolution_radial_;
+    clustering::KDTreeBufferedPtr  kdtree_;
+    clustering::ArrayPtr           array_;
+    clustering::Indexation::Size   array_size_;
+    clustering::IndexationPtr      index_;
 
-    double voxel_grid_size_;
-    /// enter voxelgrid ptr here
-    /// will also serve as a bool
 };
 }
 

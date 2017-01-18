@@ -37,6 +37,11 @@ using KDTreeBuffered = cis::Storage<Data, Indexation::Index, cis::backend::kdtre
 using KDTree = cis::Storage<Data, Indexation::Index, cis::backend::kdtree::KDTree>;
 using Array  = cis::Storage<Data, Indexation::Index, cis::backend::array::Array>;
 
+using KDTreeBufferedPtr = std::shared_ptr<KDTreeBuffered>;
+using KDTreePtr = std::shared_ptr<KDTree>;
+using ArrayPtr = std::shared_ptr<Array>;
+using IndexationPtr = Indexation::Ptr;
+
 }
 }
 

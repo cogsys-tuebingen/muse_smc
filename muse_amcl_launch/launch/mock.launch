@@ -55,7 +55,7 @@
         </group>
         <group ns="particle_filter">
             <param name="frame_id" value="world" />
-            <param name="sample_size"     value="" /> <!-- serves as initialization value -->
+            <param name="sample_size"     value="" /> <!-- same as maximum size, but maximum size is primary -->
             <param name="sample_size_min" value="" /> <!-- if not defined min and max sample sizes are set to sample_size -->
             <param name="sample_size_max" value="" /> <!-- if not defined min and max sample sizes are set to sample_size -->
 
@@ -67,8 +67,8 @@
               <param name="resolution_linear" value="0.05" />
               <param name="resolution_radial" value="0.0314256"/>
 
-              <param name="voxel_grid" value="true" />
-              <param name="voxel_grid_size" value="10.0" /> <!-- maximum extend of voxel grid (limit cache size) -->
+              <param name="use_array" value="true" />         <!-- resampling will use array for clustering near range -->
+              <param name="array_size" value="10.0" /> <!-- linear size of the array -->
             </group>
             <group ns="uniform_pose_generation">
               <param name="class" value="muse_amcl::UniformAllMaps2D" />

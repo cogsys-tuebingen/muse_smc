@@ -87,12 +87,11 @@ public:
     }
 
     ParticleSet(const std::string &frame,
-                const std::size_t size,
                 const std::size_t minimum_size,
                 const std::size_t maximum_size) :
         frame_(frame),
         max_weight_(0.0),
-        samples_(size),
+        samples_(maximum_size),
         minimum_size_(minimum_size),
         maximum_size_(maximum_size)
     {
@@ -126,11 +125,10 @@ public:
         samples_.resize(sample_size);
     }
 
-    void resize(const std::size_t sample_size,
-                const std::size_t minimum_size,
+    void resize(const std::size_t minimum_size,
                 const std::size_t maximum_size)
     {
-        samples_.resize(sample_size);
+        samples_.resize(maximum_size);
         minimum_size_ = minimum_size;
         maximum_size_ = maximum_size;
     }
@@ -142,11 +140,10 @@ public:
         samples_.reserve(sample_size);
     }
 
-    void reserve(const std::size_t sample_size,
-                 const std::size_t minimum_size,
+    void reserve(const std::size_t minimum_size,
                  const std::size_t maximum_size)
     {
-        samples_.reserve(sample_size);
+        samples_.reserve(maximum_size);
         minimum_size_ = minimum_size;
         maximum_size_ = maximum_size;
     }

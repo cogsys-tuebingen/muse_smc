@@ -6,12 +6,15 @@
 #include <assert.h>
 #include <array>
 #include <algorithm>
+#include <memory>
 
 namespace muse_amcl {
 namespace clustering {
 struct Indexation {
     // @todo: Abstract to arbitrary dimensions
     // !currently only 2D !
+
+    typedef std::shared_ptr<Indexation> Ptr;
 
     using Resolution = std::array<double, 3>;
     using Index = std::array<int, 3>;
@@ -20,9 +23,6 @@ struct Indexation {
     Indexation(const Resolution &resolution) :
         resolution(resolution)
     {
-        assert(resolution[0] > 0.0);
-        assert(resolution[1] > 0.0);
-        assert(resolution[2] > 0.0);
     }
 
     inline Index create(const Particle &sample) const
@@ -61,6 +61,11 @@ struct Indexation {
         return {imax[0] - imin[0] + 1ul,
                 imax[1] - imin[1] + 1ul,
                 imax[2] - imin[2] + 1ul};
+    }
+
+    inline Size size(const std::array<double, 3> &span)
+    {
+        return size({0.0,0.0,0.0}, span);
     }
 
     const Resolution resolution;
