@@ -6,6 +6,7 @@
 #include <cslibs_indexed_storage/backend/kdtree/kdtree_buffered.hpp>
 #include <cslibs_indexed_storage/backend/array/array.hpp>
 
+#include "indexation.hpp"
 #include "clustering_operation.hpp"
 #include "particle.hpp"
 
@@ -33,14 +34,13 @@ void cluster(Storage    &store,
     co.cluster(clusters);
 }
 
-using KDTreeBuffered = cis::Storage<Data, Indexation::Index, cis::backend::kdtree::KDTreeBuffered>;
-using KDTree = cis::Storage<Data, Indexation::Index, cis::backend::kdtree::KDTree>;
-using Array  = cis::Storage<Data, Indexation::Index, cis::backend::array::Array>;
+using KDTreeBuffered = cis::Storage<Data, Indexation::IndexType, cis::backend::kdtree::KDTreeBuffered>;
+using KDTree = cis::Storage<Data, Indexation::IndexType, cis::backend::kdtree::KDTree>;
+using Array  = cis::Storage<Data, Indexation::IndexType, cis::backend::array::Array>;
 
 using KDTreeBufferedPtr = std::shared_ptr<KDTreeBuffered>;
 using KDTreePtr = std::shared_ptr<KDTree>;
 using ArrayPtr = std::shared_ptr<Array>;
-using IndexationPtr = Indexation::Ptr;
 
 }
 }

@@ -3,7 +3,7 @@
 
 #include <cslibs_indexed_storage/operations/clustering.hpp>
 
-#include "clustering_index.hpp"
+#include "indexation.hpp"
 #include "clustering_data.hpp"
 
 #include <unordered_map>
@@ -13,11 +13,11 @@ namespace cis = cslibs_indexed_storage;
 namespace muse_amcl {
 namespace clustering {
 struct Clustering {
-    using Index = Indexation::Index;
+    using Index = Indexation::IndexType;
 
     //! used neighborhood, look at direct neighbors only
     /// REQUIRED DEFINTIONS !!!
-    using neighborhood_t  = cis::operations::clustering::GridNeighborhoodStatic<std::tuple_size<Index>::value, 3>;
+    using neighborhood_t  = cis::operations::clustering::GridNeighborhoodStatic<std::tuple_size<Index::Base>::value, 3>;
     using visitor_index_t = neighborhood_t::offset_t;   //!< currently needed by the clustering API
 
     //! called when a new cluster should be started

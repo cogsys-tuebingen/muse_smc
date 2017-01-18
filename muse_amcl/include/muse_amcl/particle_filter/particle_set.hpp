@@ -85,6 +85,8 @@ public:
         minimum_size_(size),
         maximum_size_(size)
     {
+        min_index.fill(std::numeric_limits<double>::max());
+        max_index.fill(std::numeric_limits<double>::min());
     }
 
     ParticleSet(const std::string &frame,
@@ -96,6 +98,8 @@ public:
         minimum_size_(minimum_size),
         maximum_size_(maximum_size)
     {
+        min_index.fill(std::numeric_limits<double>::max());
+        max_index.fill(std::numeric_limits<double>::min());
     }
 
     PoseIterator getPoses()
@@ -174,6 +178,10 @@ public:
         return max_weight_;
     }
 
+
+    /**
+     * @brief Normalize the particle weights.
+     */
     void normalize()
     {
         double W = 0.0;
@@ -190,6 +198,10 @@ public:
         }
     }
 
+    /**
+     * @brief Normalize the particle weights given a factor W.
+     * @param W - the sum of weights
+     */
     void normalize(const double W)
     {
         max_weight_ = std::numeric_limits<double>::lowest();

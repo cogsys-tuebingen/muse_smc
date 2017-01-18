@@ -19,9 +19,6 @@ protected:
 
     clustering::KDTreeBufferedPtr  kdtree_;
     clustering::ArrayPtr           array_;
-    clustering::Indexation::Size   array_size_;
-    clustering::IndexationPtr      index_;
-
 };
 }
 
