@@ -34,9 +34,9 @@ void cluster(Storage    &store,
     co.cluster(clusters);
 }
 
-using KDTreeBuffered = cis::Storage<Data, Indexation::IndexType, cis::backend::kdtree::KDTreeBuffered>;
-using KDTree = cis::Storage<Data, Indexation::IndexType, cis::backend::kdtree::KDTree>;
-using Array  = cis::Storage<Data, Indexation::IndexType, cis::backend::array::Array>;
+using KDTreeBuffered = cis::Storage<Data, Indexation::IndexType::Base, cis::backend::kdtree::KDTreeBuffered>;
+using KDTree = cis::Storage<Data, Indexation::IndexType::Base, cis::backend::kdtree::KDTree>;
+using Array  = cis::Storage<Data, Indexation::IndexType::Base, cis::backend::array::Array>;
 
 using KDTreeBufferedPtr = std::shared_ptr<KDTreeBuffered>;
 using KDTreePtr = std::shared_ptr<KDTree>;

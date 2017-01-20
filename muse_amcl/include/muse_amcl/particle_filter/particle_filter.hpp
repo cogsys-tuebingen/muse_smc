@@ -43,7 +43,7 @@ public:
             throw std::runtime_error("[ParticleFilter]: 'frame_id' must be defined!");
         }
 
-        particle_set_.reset(new ParticleSet(frame_id, sample_size_min, sample_size));
+        particle_set_.reset(new ParticleSet(frame_id, sample_size, sample_size_min, sample_size));
     }
 
 

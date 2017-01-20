@@ -14,7 +14,7 @@ namespace math {
  *        functions as addition and subtration.
  */
 template<std::size_t _Nm>
-struct Index : std::array<int, _Nm>
+struct Index : public std::array<int, _Nm>
 {
     using Base = std::array<int, _Nm>;
 

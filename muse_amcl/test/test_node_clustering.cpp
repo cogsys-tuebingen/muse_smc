@@ -75,19 +75,19 @@ TEST(TestMuseAMCL, createStorage)
 {
     /// bins of 10 by 10 cm and and angular resolution of 10 degrees
     /// unbuffered kdtree implementation
-    muse_amcl::clustering::Indexation index({0.1, 0.1, 1. / 18. * M_PI});
+    muse_amcl::Indexation index({0.1, 0.1, 1. / 18. * M_PI});
 
-    using Index = muse_amcl::clustering::Indexation::Index;
+    using Index = muse_amcl::Indexation::IndexType;
     using Size  = std::array<std::size_t, 3>;
 
-    Index exp_min_index      = {-2, -3, -11};
-    Index exp_max_index      = {51, 52,  11};
-    Size  exp_size           = {54, 56, 23};
+    Index exp_min_index      = {{-2, -3, -11}};
+    Index exp_max_index      = {{51, 52,  11}};
+    Size  exp_size           = {{54, 56, 23}};
 
     Index min_index = index.create({min(0), min(1), min(2)});
     Index max_index = index.create({max(0), max(1), max(2)});
-    Size  size = index.size({min(0), min(1), min(2)},
-    {max(0), max(1), max(2)});
+    Size  size = index.size({{min_index[0], min_index[1], min_index[2]}},
+                            {{max_index[0], max_index[1], max_index[2]}});
 
     EXPECT_EQ(exp_min_index[0], min_index[0]);
     EXPECT_EQ(exp_max_index[0], max_index[0]);

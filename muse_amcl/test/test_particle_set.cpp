@@ -67,7 +67,7 @@ TEST(TestMuseAMCL, testParticleSetReserve)
     particles =
             muse_amcl::ParticleSet("frame", 0);
 
-    particles.reserve(NN, MIN, MAX);
+    particles.reserve(MIN, MAX);
     EXPECT_EQ(particles.getSize(), 0);
     EXPECT_EQ(particles.getMinimumSize(), MIN);
     EXPECT_EQ(particles.getMaximumSize(), MAX);
