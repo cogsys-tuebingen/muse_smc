@@ -2,9 +2,9 @@
 #define CLUSTERING_HPP
 
 #include <cslibs_indexed_storage/storage.hpp>
-#include <cslibs_indexed_storage/backend/kdtree/kdtree.hpp>
 #include <cslibs_indexed_storage/backend/kdtree/kdtree_buffered.hpp>
 #include <cslibs_indexed_storage/backend/array/array.hpp>
+#include <cslibs_indexed_storage/backend/kdtree/kdtree.hpp>
 
 #include "indexation.hpp"
 #include "clustering_operation.hpp"

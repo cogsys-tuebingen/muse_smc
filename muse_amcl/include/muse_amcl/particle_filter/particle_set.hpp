@@ -2,7 +2,7 @@
 #define PARTICLE_SET_HPP
 
 #include "particle.hpp"
-#include "../math/index.hpp"
+#include "indexation_storage.hpp"
 
 #include <assert.h>
 #include <memory>
@@ -85,8 +85,6 @@ public:
         minimum_size_(size),
         maximum_size_(size)
     {
-        min_index.fill(std::numeric_limits<double>::max());
-        max_index.fill(std::numeric_limits<double>::min());
     }
 
     ParticleSet(const std::string &frame,
@@ -101,9 +99,6 @@ public:
     {
         assert(size <= maximum_size);
         assert(size >= minimum_size);
-
-        min_index.fill(std::numeric_limits<double>::max());
-        max_index.fill(std::numeric_limits<double>::min());
     }
 
     PoseIterator getPoses()
@@ -185,7 +180,6 @@ public:
         return max_weight_;
     }
 
-
     /**
      * @brief Normalize the particle weights.
      */
@@ -220,10 +214,14 @@ public:
         }
     }
 
-private:
-    math::Index<3> min_index;
-    math::Index<3> max_index;
+    void updateIndexation() const
+    {
 
+    }
+
+
+
+private:
     /// discretization index
     /// kdtree
     /// array

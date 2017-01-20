@@ -20,10 +20,11 @@ struct Index : public std::array<int, _Nm>
 
     /**
      * @brief Index default constructor.
+     * @param i - constant value for each field in the array.
      */
-    Index()
+    Index(const int i = 0)
     {
-        Base::fill(0);
+        Base::fill(i);
     }
 
     /**
