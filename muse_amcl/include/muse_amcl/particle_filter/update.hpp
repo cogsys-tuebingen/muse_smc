@@ -43,7 +43,7 @@ public:
 
     virtual double apply(const Data::ConstPtr &data,
                          const Map::ConstPtr &map,
-                         ParticleSet::WeightIterator set) = 0;
+                         ParticleSet::Weights set) = 0;
 
 protected:
     std::string name_;

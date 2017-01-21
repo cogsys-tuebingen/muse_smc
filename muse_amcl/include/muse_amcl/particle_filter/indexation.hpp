@@ -71,6 +71,23 @@ public:
     }
 
     /**
+     * @brief create returns the discrete index for a sample's pose.
+     * @param sample - the sample pose to get the index for
+     * @return       - the descrite index of the sample
+     */
+    inline IndexType create(const Particle::PoseType &sample) const
+    {
+        assert(resolution_[0] > 0);
+        assert(resolution_[1] > 0);
+        assert(resolution_[2] > 0);
+        return IndexType({
+                             static_cast<int>(std::floor(sample.x()   / resolution_[0])),
+                             static_cast<int>(std::floor(sample.y()   / resolution_[1])),
+                             static_cast<int>(std::floor(sample.yaw() / resolution_[2])),
+                         });
+    }
+
+    /**
      * @brief create returns the discrete index for a sample given as an std array.
      * @param sample - the sample to get the index for
      * @return       - the descrite index of the sample

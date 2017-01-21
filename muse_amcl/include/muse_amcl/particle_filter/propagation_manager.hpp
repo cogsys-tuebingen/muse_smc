@@ -32,7 +32,7 @@ public:
         const DataProvider::Ptr &data_provider = data_providers.at(data_provider_name);
 
         auto callback = [this] (const Data::ConstPtr &data) {
-            auto f = [this, data] (ParticleSet::PoseIterator set) {
+            auto f = [this, data] (ParticleSet::Poses set) {
                 propagation_function_->apply(data, set);
             };
             PropagationLambda p(f, data->stamp());

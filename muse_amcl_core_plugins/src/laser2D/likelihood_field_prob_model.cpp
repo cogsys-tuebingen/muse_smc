@@ -13,7 +13,7 @@ LikelihoodFieldProbModel::LikelihoodFieldProbModel()
 
 double LikelihoodFieldProbModel::apply(const Data::ConstPtr &data,
                                        const Map::ConstPtr &map,
-                                       ParticleSet::WeightIterator set)
+                                       ParticleSet::Weights set)
 {
     return 0.0;
 }

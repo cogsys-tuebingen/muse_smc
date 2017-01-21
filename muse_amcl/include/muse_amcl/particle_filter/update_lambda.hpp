@@ -19,14 +19,14 @@ public:
         }
     };
 
-    UpdateLambda(std::function<double (ParticleSet::WeightIterator set)> lambda,
+    UpdateLambda(std::function<double (ParticleSet::Weights set)> lambda,
                  const ros::Time & stamp) :
         lambda_(lambda),
         stamp_(stamp)
     {
     }
 
-    inline double operator ()(ParticleSet::WeightIterator set)
+    inline double operator ()(ParticleSet::Weights set)
     {
         return lambda_(set);
     }
@@ -37,7 +37,7 @@ public:
     }
 
 private:
-    std::function<double (ParticleSet::WeightIterator set)>  lambda_;
+    std::function<double (ParticleSet::Weights set)>  lambda_;
     ros::Time                                                stamp_;
 
 };

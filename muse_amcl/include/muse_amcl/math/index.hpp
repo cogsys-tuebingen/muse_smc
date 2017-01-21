@@ -36,6 +36,11 @@ struct Index : public std::array<int, _Nm>
     {
     }
 
+    void operator = (const int i)
+    {
+        Base::fill(i);
+    }
+
     void operator = (const Base &other)
     {
         for(std::size_t __n = 0 ; __n < _Nm ; ++__n) {

@@ -40,10 +40,10 @@ public:
     }
 
     virtual void apply(const Data::ConstPtr &data,
-                       ParticleSet::PoseIterator set) = 0;
+                       ParticleSet::Poses set) = 0;
 
     virtual void predict(const std::time_t until,
-                         ParticleSet::PoseIterator set)
+                         ParticleSet::Poses set)
     {
     }
 

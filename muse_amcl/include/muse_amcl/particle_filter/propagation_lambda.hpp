@@ -19,14 +19,14 @@ public:
         }
     };
 
-    PropagationLambda(std::function<void (ParticleSet::PoseIterator set)> lambda,
+    PropagationLambda(std::function<void (ParticleSet::Poses set)> lambda,
                       const ros::Time &stamp) :
         lambda_(lambda),
         stamp_(stamp)
     {
     }
 
-    inline void operator ()(ParticleSet::PoseIterator set)
+    inline void operator ()(ParticleSet::Poses set)
     {
         lambda_(set);
     }
@@ -37,7 +37,7 @@ public:
     }
 
 private:
-    std::function<void (ParticleSet::PoseIterator set)>  lambda_;
+    std::function<void (ParticleSet::Poses set)>  lambda_;
     ros::Time                                            stamp_;
 
 };

@@ -83,12 +83,6 @@ if(${CATKIN_ENABLE_TESTING})
         ${PROJECT_NAME}_particle_filter
     )
 
-    add_unit_test_gtest(${PROJECT_NAME}_test_particle_set
-        test/test_particle_set.cpp
-        ${PROJECT_NAME}_particle_filter
-    )
-
-
     add_unit_test_gtest(${PROJECT_NAME}_test_random
         test/test_random.cpp
         ${PROJECT_NAME}_particle_filter
@@ -133,6 +127,12 @@ if(${CATKIN_ENABLE_TESTING})
     add_unit_test_rostest(${PROJECT_NAME}_test_node_clustering
         test/test_clustering.test
         test/test_node_clustering.cpp
+        "${catkin_LIBRARIES};yaml-cpp"
+    )
+
+    add_unit_test_rostest(${PROJECT_NAME}_test_node_particle_set
+        test/test_particle_set.test
+        test/test_node_particle_set.cpp
         "${catkin_LIBRARIES};yaml-cpp"
     )
 

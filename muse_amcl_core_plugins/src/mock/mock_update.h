@@ -13,7 +13,7 @@ public:
 
     virtual double apply(const Data::ConstPtr &data,
                          const Map::ConstPtr &map,
-                         ParticleSet::WeightIterator set) override;
+                         ParticleSet::Weights set) override;
 
     double  first_parameter;
     int     second_parameter;

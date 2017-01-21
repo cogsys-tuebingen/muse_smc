@@ -10,7 +10,7 @@ public:
     DifferentialDrive();
 
     virtual void apply(const Data::ConstPtr &data,
-                       ParticleSet::PoseIterator set) override;
+                       ParticleSet::Poses set) override;
 
 protected:
     virtual void doSetup(ros::NodeHandle &nh) override;

@@ -3,115 +3,236 @@
 
 #include "particle.hpp"
 #include "indexation_storage.hpp"
+#include "iterator.hpp"
 
 #include <assert.h>
 #include <memory>
 #include <vector>
 #include <limits>
+#include <functional>
 
 namespace muse_amcl {
-template<typename T, T Particle::*Member>
-class ParticleMemberIterator : public std::iterator<std::random_access_iterator_tag, T>
-{
-    Particle *data;
 
-    using parent = std::iterator<std::random_access_iterator_tag, T>;
-    using iterator = typename parent::iterator;
-    using reference = typename parent::reference;
-
-public:
-    explicit ParticleMemberIterator(Particle *_begin) :
-        data(_begin)
-    {
-    }
-
-    iterator& operator++()
-    {
-        ++data;
-        return *this;
-    }
-
-    bool operator ==(const ParticleMemberIterator<T, Member> &_other) const
-    {
-        return data == _other.data;
-    }
-
-    bool operator !=(const ParticleMemberIterator<T, Member> &_other) const
-    {
-        return !(*this == _other);
-    }
-
-    reference operator *() const
-    {
-        return (data->*Member);
-    }
-};
 
 class ParticleSet
 {
 public:
-    typedef std::shared_ptr<ParticleSet> Ptr;
-    typedef std::shared_ptr<ParticleSet const> ConstPtr;
-
+    /**
+     * @brief The ParticleMemberIterator class grants access to either pose or weight of the
+     *        particles.
+     *        With the related member field, boundaries and sum of weights are updated.
+     */
     template<typename T, T Particle::*Member>
-    class ParticleDecorator {
+    class ParticleMemberIterator : public std::iterator<std::random_access_iterator_tag, T>
+    {
+        using parent    = std::iterator<std::random_access_iterator_tag, T>;
+        using iterator  = typename parent::iterator;
+        using reference = typename parent::reference;
+
+        Particle    *data_;
+        ParticleSet &set_;
+
     public:
-        ParticleDecorator(ParticleSet &_set) :
-            set(_set)
+        explicit ParticleMemberIterator(Particle    *begin,
+                                        ParticleSet &set) :
+            data_(begin),
+            set_(set)
+        {
+        }
+
+        iterator& operator++()
+        {
+            set_.update(data_->*Member);
+            ++data_;
+            return *this;
+        }
+
+        bool operator ==(const ParticleMemberIterator<T, Member> &_other) const
+        {
+            return data_ == _other.data_;
+        }
+
+        bool operator !=(const ParticleMemberIterator<T, Member> &_other) const
+        {
+            return !(*this == _other);
+        }
+
+        reference operator *() const
+        {
+            return (data_->*Member);
+        }
+    };
+
+    /// particle decorator for iteration
+    template<typename T, T Particle::*Member>
+    class ParticleMemberDecorator {
+    public:
+        ParticleMemberDecorator(ParticleSet &set) :
+            set_(set)
         {
         }
 
         ParticleMemberIterator<T, Member> begin()
         {
-            return ParticleMemberIterator<T, Member>(&set.samples_.front());
+            return ParticleMemberIterator<T, Member>(&set_.samples_.front(), set_);
         }
 
         ParticleMemberIterator<T, Member> end() {
-            return ParticleMemberIterator<T, Member>(&set.samples_.back());
+            return ParticleMemberIterator<T, Member>(&set_.samples_.back(),  set_);
         }
     private:
-        ParticleSet& set;
+        ParticleSet& set_;
     };
 
-    using PoseIterator = ParticleDecorator<Particle::PoseType, &Particle::pose_>;
-    using WeightIterator = ParticleDecorator<Particle::WeightType, &Particle::weight_>;
-    using Particles = std::vector<Particle>;
+    class Particles {
+    public:
 
+        using optional  = typename std::function<void(Particle&)>;
+
+        Particles(ParticleSet &set) :
+            set_(set)
+        {
+        }
+
+        ParticleIterator begin()
+        {
+            return ParticleIterator(&set_.samples_.front());
+        }
+
+        ParticleIterator end() {
+            return ParticleIterator(&set_.samples_.back());
+        }
+    private:
+        ParticleSet& set_;
+        optional     opt_;
+    };
+
+
+    /**
+     * @brief The ParticleIterator class grants write access to the particles.
+     *        In addition to that, this iterator adds particles to the indexation data
+     *        storage.
+     */
+    class ParticleIterator : public std::iterator<std::random_access_iterator_tag, Particle>
+    {
+        using parent    = std::iterator<std::random_access_iterator_tag, Particle>;
+        using iterator  = typename parent::iterator;
+        using reference = typename parent::reference;
+        using optional  = typename std::function<void(Particle&)>;
+
+        Particle *data_;
+
+     public:
+        explicit ParticleIterator(Particle *begin) :
+            data_(begin)
+        {
+             /// enter the data strcture
+        }
+
+        iterator& operator++()
+        {
+            ++data_;
+            return *this;
+        }
+
+        bool operator ==(const ParticleIterator &_other) const
+        {
+            return data_ == _other.data_;
+        }
+
+        bool operator !=(const ParticleIterator &_other) const
+        {
+            return !(*this == _other);
+        }
+
+        reference operator *() const
+        {
+            return *data_;
+        }
+    };
+
+
+    /// type defs
+    using Ptr                = std::shared_ptr<ParticleSet>;
+    using ConstPtr           = std::shared_ptr<ParticleSet const>;
+    using Poses              = ParticleMemberDecorator<Particle::PoseType,         &Particle::pose_>;
+    using Weights            = ParticleMemberDecorator<Particle::WeightType,       &Particle::weight_>;
+    using ConstParticles     = std::vector<Particle> const;
+
+    /**
+     * @brief ParticleSet
+     * @param frame
+     * @param size
+     */
     ParticleSet(const std::string &frame,
-                const std::size_t size) :
+                const std::size_t  size,
+                const Indexation  &indexation) :
+        minimum_index_(std::numeric_limits<int>::max()),
+        maximum_index_(std::numeric_limits<int>::min()),
+        sum_of_weights_(0.0),
+        maximum_weight_(0.0),
+        indexation_(indexation),
         frame_(frame),
-        max_weight_(0.0),
         samples_(size),
         minimum_size_(size),
         maximum_size_(size)
     {
+        assert(size > 0);
     }
 
     ParticleSet(const std::string &frame,
                 const std::size_t size,
                 const std::size_t minimum_size,
-                const std::size_t maximum_size) :
+                const std::size_t maximum_size,
+                const Indexation  &indexation) :
+        minimum_index_(std::numeric_limits<int>::max()),
+        maximum_index_(std::numeric_limits<int>::min()),
+        sum_of_weights_(0.0),
+        maximum_weight_(0.0),
+        indexation_(indexation),
         frame_(frame),
-        max_weight_(0.0),
         samples_(size),
         minimum_size_(minimum_size),
         maximum_size_(maximum_size)
     {
         assert(size <= maximum_size);
         assert(size >= minimum_size);
+        samples_.reserve(maximum_size);
     }
 
-    PoseIterator getPoses()
+
+    ParticleSet(const ParticleSet &other,
+                const bool deep_copy = false) :
+        ParticleSet(other.frame_, other.minimum_size_, other.minimum_size_, other.maximum_size_, other.indexation_)
     {
-        return PoseIterator(*this);
+        if(deep_copy) {
+            samples_ = other.samples_;
+            minimum_index_ = other.minimum_index_;
+            maximum_index_ = other.maximum_index_;
+            maximum_weight_ = other.maximum_weight_;
+            sum_of_weights_ = other.sum_of_weights_;
+        }
     }
 
-    WeightIterator getWeights()
+
+    Poses getPoses()
     {
-        return WeightIterator(*this);
+        resetParameterTracking();
+        return Poses(*this);
     }
 
-    Particles & getParticles()
+    Weights getWeights()
+    {
+        resetParameterTracking();
+        return Weights(*this);
+    }
+
+    Particles getParticles()
+    {
+        return Particles(*this);
+    }
+
+    std::vector<Particle> const & getConstParticles()
     {
         return samples_;
     }
@@ -121,27 +242,39 @@ public:
         return frame_;
     }
 
-
-    void resize(const std::size_t sample_size)
+    void clear()
     {
-        minimum_size_ = sample_size;
-        maximum_size_ = sample_size;
-        samples_.resize(sample_size);
+        samples_.clear();
+        resetParameterTracking();
     }
 
-    void resize(const std::size_t sample_size,
+
+    void resize(const std::size_t size)
+    {
+        resetParameterTracking();
+
+        minimum_size_ = size;
+        maximum_size_ = size;
+        samples_.resize(size);
+    }
+
+    void resize(const std::size_t size,
                 const std::size_t minimum_size,
                 const std::size_t maximum_size)
     {
-        assert(sample_size <= maximum_size);
-        assert(sample_size >= minimum_size);
-        samples_.resize(sample_size);
+        resetParameterTracking();
+
+        assert(size <= maximum_size);
+        assert(size >= minimum_size);
+        samples_.resize(size);
         minimum_size_ = minimum_size;
         maximum_size_ = maximum_size;
     }
 
     void reserve(const std::size_t sample_size)
     {
+        resetParameterTracking();
+
         minimum_size_ = sample_size;
         maximum_size_ = sample_size;
         samples_.reserve(sample_size);
@@ -150,6 +283,8 @@ public:
     void reserve(const std::size_t minimum_size,
                  const std::size_t maximum_size)
     {
+        resetParameterTracking();
+
         samples_.reserve(maximum_size);
         minimum_size_ = minimum_size;
         maximum_size_ = maximum_size;
@@ -177,7 +312,27 @@ public:
 
     double getMaximumWeight() const
     {
-        return max_weight_;
+        return maximum_weight_;
+    }
+
+    double getSumOfWeights() const
+    {
+        return sum_of_weights_;
+    }
+
+    Indexation::IndexType getMinimumIndex() const
+    {
+        return minimum_index_;
+    }
+
+    Indexation::IndexType getMaximumIndex() const
+    {
+        return maximum_index_;
+    }
+
+    Indexation getIndexation() const
+    {
+        return indexation_;
     }
 
     /**
@@ -185,43 +340,40 @@ public:
      */
     void normalize()
     {
-        double W = 0.0;
-        for(auto &p : samples_) {
-            W += p.weight_;
+        if(sum_of_weights_ == 0.0) {
+            for(auto &p : samples_) {
+                sum_of_weights_ += p.weight_;
+            }
         }
 
-        max_weight_ = std::numeric_limits<double>::lowest();
+        maximum_weight_ = std::numeric_limits<double>::lowest();
         for(auto &p : samples_) {
-            p.weight_ /= W;
-
-            if(p.weight_ > max_weight_)
-                max_weight_ = p.weight_;
+            p.weight_ /= sum_of_weights_;
+            if(p.weight_ > maximum_weight_)
+                maximum_weight_ = p.weight_;
         }
     }
-
-    /**
-     * @brief Normalize the particle weights given a factor W.
-     * @param W - the sum of weights
-     */
-    void normalize(const double W)
-    {
-        max_weight_ = std::numeric_limits<double>::lowest();
-        for(auto &p : samples_) {
-            p.weight_ /= W;
-
-            if(p.weight_ > max_weight_)
-                max_weight_ = p.weight_;
-        }
-    }
-
-    void updateIndexation() const
-    {
-
-    }
-
-
 
 private:
+    void update(const Particle::PoseType &particle)
+    {
+        const Indexation::IndexType i = indexation_.create(particle);
+        minimum_index_.min(i);
+        maximum_index_.max(i);
+    }
+
+    void update(const Particle::WeightType &weight)
+    {
+        sum_of_weights_ += weight;
+    }
+
+
+    Indexation::IndexType minimum_index_;
+    Indexation::IndexType maximum_index_;
+    double                sum_of_weights_;
+    double                maximum_weight_;
+    Indexation            indexation_;
+
     /// discretization index
     /// kdtree
     /// array
@@ -230,11 +382,18 @@ private:
 
 
 
-    std::string frame_;
-    double      max_weight_;
-    Particles   samples_;
-    std::size_t minimum_size_;
-    std::size_t maximum_size_;
+    std::string             frame_;
+    std::vector<Particle>   samples_;
+    std::size_t             minimum_size_;
+    std::size_t             maximum_size_;
+
+    inline void resetParameterTracking()
+    {
+        minimum_index_  = std::numeric_limits<int>::max();
+        maximum_index_  = std::numeric_limits<int>::min();
+        sum_of_weights_ = 0.0;
+        maximum_weight_ = 0.0;
+    }
 
 };
 }

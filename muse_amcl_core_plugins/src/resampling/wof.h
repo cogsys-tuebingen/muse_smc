@@ -9,7 +9,7 @@ class WheelOfFortune : public Resampling
 public:
     WheelOfFortune() = default;
 
-    virtual void apply(ParticleSet &particle_set) override;
+    virtual void apply(ParticleSet &p_t_1) override;
 
 protected:
 
