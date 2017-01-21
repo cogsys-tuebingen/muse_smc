@@ -173,7 +173,7 @@ TEST(TestMuseAMCL, testParticleSetReserve)
     muse_amcl::ParticleSet particle_set("frame", 1, indexation);
     particle_set.reserve(NN);
 
-    EXPECT_EQ(particle_set.getSize(), 1);
+    EXPECT_EQ(particle_set.getSize(), 0);
     EXPECT_EQ(particle_set.getMinimumSize(), NN);
     EXPECT_EQ(particle_set.getMaximumSize(), NN);
     EXPECT_EQ(particle_set.getMaximumWeight(), 0.0);
@@ -186,7 +186,7 @@ TEST(TestMuseAMCL, testParticleSetReserve)
             muse_amcl::ParticleSet("frame", 1, indexation);
 
     particle_set.reserve(MIN, MAX);
-    EXPECT_EQ(particle_set.getSize(), 1);
+    EXPECT_EQ(particle_set.getSize(), 0);
     EXPECT_EQ(particle_set.getMinimumSize(), MIN);
     EXPECT_EQ(particle_set.getMaximumSize(), MAX);
     EXPECT_EQ(particle_set.getMaximumWeight(), 0.0);
@@ -197,301 +197,133 @@ TEST(TestMuseAMCL, testParticleSetReserve)
 
 }
 
-TEST(TestMuseAMCL, fillParticleSet)
+TEST(TestMuseAMCL, fillParticleSetA)
 {
-    test_samples;
+    using Index = muse_amcl::Indexation::IndexType;
+    using Size  = std::array<std::size_t, 3>;
 
+    muse_amcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
+    muse_amcl::ParticleSet particle_set("world", test_samples.size(), 10, 2 * test_samples.size(), indexation);
+    muse_amcl::ParticleSet::ParticleIterator iterator = particle_set.getParticles().begin();
+    for(auto &s : test_samples) {
+        *iterator = s;
+        ++iterator;
+    }
+
+    Index exp_min_index      = {{-2, -3, -11}};
+    Index exp_max_index      = {{51, 52,  11}};
+    Size  exp_size           = {{54, 56, 23}};
+
+    Index max_index = particle_set.getMaximumIndex();
+    Index min_index = particle_set.getMinimumIndex();
+    Size  size = indexation.size({{min_index[0], min_index[1], min_index[2]}},
+                                 {{max_index[0], max_index[1], max_index[2]}});
+
+    EXPECT_EQ(exp_min_index[0], min_index[0]);
+    EXPECT_EQ(exp_max_index[0], max_index[0]);
+    EXPECT_EQ(exp_min_index[1], min_index[1]);
+    EXPECT_EQ(exp_max_index[1], max_index[1]);
+    EXPECT_EQ(exp_min_index[2], min_index[2]);
+    EXPECT_EQ(exp_max_index[2], max_index[2]);
+    EXPECT_EQ(exp_size[0], size[0]);
+    EXPECT_EQ(exp_size[1], size[1]);
+    EXPECT_EQ(exp_size[2], size[2]);
+    EXPECT_EQ(test_samples.size(), particle_set.getSize());
 }
 
-//TEST(TestMuseAMCL, createStorage)
-//{
-//    /// bins of 10 by 10 cm and and angular resolution of 10 degrees
-//    /// unbuffered kdtree implementation
-//    muse_amcl::Indexation index({0.1, 0.1, 1. / 18. * M_PI});
+TEST(TestMuseAMCL, fillParticleSetB)
+{
+    using Index = muse_amcl::Indexation::IndexType;
+    using Size  = std::array<std::size_t, 3>;
 
-//    using Index = muse_amcl::Indexation::IndexType;
-//    using Size  = std::array<std::size_t, 3>;
+    muse_amcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
+    muse_amcl::ParticleSet particle_set("world", test_samples.size(), 0, 2 * test_samples.size(), indexation);
+    muse_amcl::Particle const *prev = nullptr;
+    for(auto &s : test_samples) {
+        particle_set.emplace_back(s);
+        if(prev) {
+            auto particles = particle_set.getConstParticles();
+            EXPECT_EQ(prev, &(particles.at(particles.size() - 2)));
+        }
+        prev = &(particle_set.getConstParticles().back());
+    }
 
-//    Index exp_min_index      = {{-2, -3, -11}};
-//    Index exp_max_index      = {{51, 52,  11}};
-//    Size  exp_size           = {{54, 56, 23}};
+    Index exp_min_index      = {{-2, -3, -11}};
+    Index exp_max_index      = {{51, 52,  11}};
+    Size  exp_size           = {{54, 56, 23}};
 
-//    Index min_index = index.create({min(0), min(1), min(2)});
-//    Index max_index = index.create({max(0), max(1), max(2)});
-//    Size  size = index.size({{min_index[0], min_index[1], min_index[2]}},
-//                            {{max_index[0], max_index[1], max_index[2]}});
+    Index max_index = particle_set.getMaximumIndex();
+    Index min_index = particle_set.getMinimumIndex();
+    Size  size = indexation.size({{min_index[0], min_index[1], min_index[2]}},
+                                 {{max_index[0], max_index[1], max_index[2]}});
 
-//    EXPECT_EQ(exp_min_index[0], min_index[0]);
-//    EXPECT_EQ(exp_max_index[0], max_index[0]);
-//    EXPECT_EQ(exp_min_index[1], min_index[1]);
-//    EXPECT_EQ(exp_max_index[1], max_index[1]);
-//    EXPECT_EQ(exp_min_index[2], min_index[2]);
-//    EXPECT_EQ(exp_max_index[2], max_index[2]);
-//    EXPECT_EQ(exp_size[0], size[0]);
-//    EXPECT_EQ(exp_size[1], size[1]);
-//    EXPECT_EQ(exp_size[2], size[2]);
+    EXPECT_EQ(exp_min_index[0], min_index[0]);
+    EXPECT_EQ(exp_max_index[0], max_index[0]);
+    EXPECT_EQ(exp_min_index[1], min_index[1]);
+    EXPECT_EQ(exp_max_index[1], max_index[1]);
+    EXPECT_EQ(exp_min_index[2], min_index[2]);
+    EXPECT_EQ(exp_max_index[2], max_index[2]);
+    EXPECT_EQ(exp_size[0], size[0]);
+    EXPECT_EQ(exp_size[1], size[1]);
+    EXPECT_EQ(exp_size[2], size[2]);
+    EXPECT_EQ(test_samples.size(), particle_set.getSize());
+}
 
-//    /// in active use, the array does not have to be reinitialized, only the
-//    /// origin
-//    EXPECT_NO_FATAL_FAILURE(array.set<cis::option::tags::array_size>(size[0], size[1], size[2]));
-//    array.set<cis::option::tags::array_offset>(min_index[0], min_index[1], min_index[2]);
-//    kdtree_buffered.set<cis::option::tags::node_allocator_chunk_size>(2 * test_samples.size() + 1);
-//    EXPECT_NO_FATAL_FAILURE(muse_amcl::clustering::create(index, test_samples, kdtree_buffered));
-//    EXPECT_NO_FATAL_FAILURE(muse_amcl::clustering::create(index, test_samples, kdtree));
-//    EXPECT_NO_FATAL_FAILURE(muse_amcl::clustering::create(index, test_samples, array));
-//}
+TEST(TestMuseAMCL, testWeightIterator)
+{
+    using Index = muse_amcl::Indexation::IndexType;
+    using Size  = std::array<std::size_t, 3>;
 
-//TEST(TestMuseAMCL, testClustering)
-//{
-//    muse_amcl::clustering::Clustering clusters_kdtree_buffered;
-//    muse_amcl::clustering::Clustering clusters_kdtree;
-//    muse_amcl::clustering::Clustering clusters_array;
-//    EXPECT_NO_FATAL_FAILURE(muse_amcl::clustering::cluster(kdtree_buffered, clusters_kdtree_buffered));
-//    EXPECT_NO_FATAL_FAILURE(muse_amcl::clustering::cluster(kdtree, clusters_kdtree));
-//    EXPECT_NO_FATAL_FAILURE(muse_amcl::clustering::cluster(array,  clusters_array));
+    muse_amcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
+    muse_amcl::ParticleSet particle_set("world", 0, 0, 2 * test_samples.size(), indexation);
+    for(auto &s : test_samples) {
+        particle_set.emplace_back(s);
+    }
 
-//    EXPECT_EQ(2, clusters_kdtree_buffered.clusters_.size());
-//    EXPECT_EQ(2, clusters_kdtree.clusters_.size());
-//    EXPECT_EQ(2, clusters_array.clusters_.size());
-//    EXPECT_EQ(1, clusters_kdtree_buffered.current_cluster_);
-//    EXPECT_EQ(1, clusters_kdtree.current_cluster_);
-//    EXPECT_EQ(1, clusters_array.current_cluster_);
+    double s = 0.0;
+    for(auto &w : particle_set.getWeights()) {
+        w = 1.0;
+        s += 1.0;
+    }
 
-//    /// kdtree buffered :
-//    {
-//        mms::Distribution<3> distribution_kdtree_buffered_a;
-//        for(const muse_amcl::Particle *p : clusters_kdtree_buffered.clusters_[0]) {
-//            distribution_kdtree_buffered_a.add(p->pose_.eigen3D());
-//        }
-//        mms::Distribution<3> distribution_kdtree_buffered_b;
-//        for(const muse_amcl::Particle *p : clusters_kdtree_buffered.clusters_[1]) {
-//            distribution_kdtree_buffered_b.add(p->pose_.eigen3D());
-//        }
+    EXPECT_EQ(s, particle_set.getSumOfWeights());
+}
 
-//        Eigen::Vector3d mean_a = distribution_kdtree_buffered_a.getMean();
-//        Eigen::Matrix3d covariance_a = distribution_kdtree_buffered_a.getCovariance();
-//        Eigen::Vector3d mean_b = distribution_kdtree_buffered_b.getMean();
-//        Eigen::Matrix3d covariance_b = distribution_kdtree_buffered_b.getCovariance();
+TEST(TestMuseAMCL, testPoseIterator)
+{
+    using Index = muse_amcl::Indexation::IndexType;
+    using Size  = std::array<std::size_t, 3>;
 
-//        if(std::abs(mean_a(0) - test_distribution_a.mean(0)) < 1e-3 &&
-//                std::abs(mean_a(1) - test_distribution_a.mean(1)  < 1e-3))
-//        {
-//            EXPECT_NEAR(test_distribution_a.mean(0), mean_a(0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.mean(1), mean_a(1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.mean(2), mean_a(2), 1e-6);
+    muse_amcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
+    muse_amcl::ParticleSet particle_set("world", test_samples.size(), 0, 2 * test_samples.size(), indexation);
+    auto it = particle_set.getPoses().begin();
+    for(auto &s : test_samples) {
+        *it = s.pose_;
+        ++it;
+    }
 
-//            EXPECT_NEAR(test_distribution_b.mean(0), mean_b(0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.mean(1), mean_b(1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.mean(2), mean_b(2), 1e-6);
+    Index exp_min_index      = {{-2, -3, -11}};
+    Index exp_max_index      = {{51, 52,  11}};
+    Size  exp_size           = {{54, 56, 23}};
 
-//            EXPECT_NEAR(test_distribution_a.covariance(0,0), covariance_a(0,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(0,1), covariance_a(0,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(0,2), covariance_a(0,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(1,0), covariance_a(1,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(1,1), covariance_a(1,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(1,2), covariance_a(1,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(2,0), covariance_a(2,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(2,1), covariance_a(2,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(2,2), covariance_a(2,2), 1e-6);
+    Index max_index = particle_set.getMaximumIndex();
+    Index min_index = particle_set.getMinimumIndex();
+    Size  size = indexation.size({{min_index[0], min_index[1], min_index[2]}},
+                                 {{max_index[0], max_index[1], max_index[2]}});
 
-//            EXPECT_NEAR(test_distribution_b.covariance(0,0), covariance_b(0,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(0,1), covariance_b(0,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(0,2), covariance_b(0,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(1,0), covariance_b(1,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(1,1), covariance_b(1,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(1,2), covariance_b(1,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(2,0), covariance_b(2,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(2,1), covariance_b(2,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(2,2), covariance_b(2,2), 1e-6);
+    EXPECT_EQ(exp_min_index[0], min_index[0]);
+    EXPECT_EQ(exp_max_index[0], max_index[0]);
+    EXPECT_EQ(exp_min_index[1], min_index[1]);
+    EXPECT_EQ(exp_max_index[1], max_index[1]);
+    EXPECT_EQ(exp_min_index[2], min_index[2]);
+    EXPECT_EQ(exp_max_index[2], max_index[2]);
+    EXPECT_EQ(exp_size[0], size[0]);
+    EXPECT_EQ(exp_size[1], size[1]);
+    EXPECT_EQ(exp_size[2], size[2]);
+    EXPECT_EQ(test_samples.size(), particle_set.getSize());
+}
 
 
-//        } else {
-//            EXPECT_NEAR(test_distribution_a.mean(0), mean_b(0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.mean(1), mean_b(1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.mean(2), mean_b(2), 1e-6);
-
-//            EXPECT_NEAR(test_distribution_b.mean(0), mean_a(0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.mean(1), mean_a(1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.mean(2), mean_a(2), 1e-6);
-
-//            EXPECT_NEAR(test_distribution_a.covariance(0,0), covariance_b(0,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(0,1), covariance_b(0,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(0,2), covariance_b(0,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(1,0), covariance_b(1,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(1,1), covariance_b(1,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(1,2), covariance_b(1,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(2,0), covariance_b(2,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(2,1), covariance_b(2,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(2,2), covariance_b(2,2), 1e-6);
-
-//            EXPECT_NEAR(test_distribution_b.covariance(0,0), covariance_a(0,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(0,1), covariance_a(0,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(0,2), covariance_a(0,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(1,0), covariance_a(1,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(1,1), covariance_a(1,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(1,2), covariance_a(1,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(2,0), covariance_a(2,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(2,1), covariance_a(2,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(2,2), covariance_a(2,2), 1e-6);
-//        }
-//    }
-//    /// kdtree :
-//    {
-//        mms::Distribution<3> distribution_kdtree_a;
-//        for(const muse_amcl::Particle *p : clusters_kdtree.clusters_[0]) {
-//            distribution_kdtree_a.add(p->pose_.eigen3D());
-//        }
-//        mms::Distribution<3> distribution_kdtree_b;
-//        for(const muse_amcl::Particle *p : clusters_kdtree.clusters_[1]) {
-//            distribution_kdtree_b.add(p->pose_.eigen3D());
-//        }
-
-//        Eigen::Vector3d mean_a = distribution_kdtree_a.getMean();
-//        Eigen::Matrix3d covariance_a = distribution_kdtree_a.getCovariance();
-//        Eigen::Vector3d mean_b = distribution_kdtree_b.getMean();
-//        Eigen::Matrix3d covariance_b = distribution_kdtree_b.getCovariance();
-
-//        if(std::abs(mean_a(0) - test_distribution_a.mean(0)) < 1e-3 &&
-//                std::abs(mean_a(1) - test_distribution_a.mean(1)  < 1e-3))
-//        {
-//            EXPECT_NEAR(test_distribution_a.mean(0), mean_a(0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.mean(1), mean_a(1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.mean(2), mean_a(2), 1e-6);
-
-//            EXPECT_NEAR(test_distribution_b.mean(0), mean_b(0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.mean(1), mean_b(1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.mean(2), mean_b(2), 1e-6);
-
-//            EXPECT_NEAR(test_distribution_a.covariance(0,0), covariance_a(0,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(0,1), covariance_a(0,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(0,2), covariance_a(0,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(1,0), covariance_a(1,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(1,1), covariance_a(1,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(1,2), covariance_a(1,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(2,0), covariance_a(2,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(2,1), covariance_a(2,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(2,2), covariance_a(2,2), 1e-6);
-
-//            EXPECT_NEAR(test_distribution_b.covariance(0,0), covariance_b(0,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(0,1), covariance_b(0,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(0,2), covariance_b(0,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(1,0), covariance_b(1,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(1,1), covariance_b(1,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(1,2), covariance_b(1,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(2,0), covariance_b(2,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(2,1), covariance_b(2,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(2,2), covariance_b(2,2), 1e-6);
-
-
-//        } else {
-//            EXPECT_NEAR(test_distribution_a.mean(0), mean_b(0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.mean(1), mean_b(1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.mean(2), mean_b(2), 1e-6);
-
-//            EXPECT_NEAR(test_distribution_b.mean(0), mean_a(0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.mean(1), mean_a(1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.mean(2), mean_a(2), 1e-6);
-
-//            EXPECT_NEAR(test_distribution_a.covariance(0,0), covariance_b(0,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(0,1), covariance_b(0,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(0,2), covariance_b(0,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(1,0), covariance_b(1,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(1,1), covariance_b(1,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(1,2), covariance_b(1,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(2,0), covariance_b(2,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(2,1), covariance_b(2,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(2,2), covariance_b(2,2), 1e-6);
-
-//            EXPECT_NEAR(test_distribution_b.covariance(0,0), covariance_a(0,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(0,1), covariance_a(0,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(0,2), covariance_a(0,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(1,0), covariance_a(1,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(1,1), covariance_a(1,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(1,2), covariance_a(1,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(2,0), covariance_a(2,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(2,1), covariance_a(2,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(2,2), covariance_a(2,2), 1e-6);
-//        }
-//    }
-//    /// array :
-//    {
-//        mms::Distribution<3> distribution_array_a;
-//        for(const muse_amcl::Particle *p : clusters_array.clusters_[0]) {
-//            distribution_array_a.add(p->pose_.eigen3D());
-//        }
-//        mms::Distribution<3> distribution_array_b;
-//        for(const muse_amcl::Particle *p : clusters_array.clusters_[1]) {
-//            distribution_array_b.add(p->pose_.eigen3D());
-//        }
-
-//        Eigen::Vector3d mean_a = distribution_array_a.getMean();
-//        Eigen::Matrix3d covariance_a = distribution_array_a.getCovariance();
-//        Eigen::Vector3d mean_b = distribution_array_b.getMean();
-//        Eigen::Matrix3d covariance_b = distribution_array_b.getCovariance();
-
-//        if(std::abs(mean_a(0) - test_distribution_a.mean(0)) < 1e-3 &&
-//                std::abs(mean_a(1) - test_distribution_a.mean(1)  < 1e-3))
-//        {
-//            EXPECT_NEAR(test_distribution_a.mean(0), mean_a(0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.mean(1), mean_a(1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.mean(2), mean_a(2), 1e-6);
-
-//            EXPECT_NEAR(test_distribution_b.mean(0), mean_b(0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.mean(1), mean_b(1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.mean(2), mean_b(2), 1e-6);
-
-//            EXPECT_NEAR(test_distribution_a.covariance(0,0), covariance_a(0,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(0,1), covariance_a(0,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(0,2), covariance_a(0,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(1,0), covariance_a(1,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(1,1), covariance_a(1,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(1,2), covariance_a(1,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(2,0), covariance_a(2,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(2,1), covariance_a(2,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(2,2), covariance_a(2,2), 1e-6);
-
-//            EXPECT_NEAR(test_distribution_b.covariance(0,0), covariance_b(0,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(0,1), covariance_b(0,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(0,2), covariance_b(0,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(1,0), covariance_b(1,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(1,1), covariance_b(1,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(1,2), covariance_b(1,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(2,0), covariance_b(2,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(2,1), covariance_b(2,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(2,2), covariance_b(2,2), 1e-6);
-
-
-//        } else {
-//            EXPECT_NEAR(test_distribution_a.mean(0), mean_b(0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.mean(1), mean_b(1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.mean(2), mean_b(2), 1e-6);
-
-//            EXPECT_NEAR(test_distribution_b.mean(0), mean_a(0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.mean(1), mean_a(1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.mean(2), mean_a(2), 1e-6);
-
-//            EXPECT_NEAR(test_distribution_a.covariance(0,0), covariance_b(0,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(0,1), covariance_b(0,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(0,2), covariance_b(0,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(1,0), covariance_b(1,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(1,1), covariance_b(1,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(1,2), covariance_b(1,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(2,0), covariance_b(2,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(2,1), covariance_b(2,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_a.covariance(2,2), covariance_b(2,2), 1e-6);
-
-//            EXPECT_NEAR(test_distribution_b.covariance(0,0), covariance_a(0,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(0,1), covariance_a(0,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(0,2), covariance_a(0,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(1,0), covariance_a(1,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(1,1), covariance_a(1,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(1,2), covariance_a(1,2), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(2,0), covariance_a(2,0), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(2,1), covariance_a(2,1), 1e-6);
-//            EXPECT_NEAR(test_distribution_b.covariance(2,2), covariance_a(2,2), 1e-6);
-//        }
-//    }
-//}
 
 int main(int argc, char *argv[])
 {

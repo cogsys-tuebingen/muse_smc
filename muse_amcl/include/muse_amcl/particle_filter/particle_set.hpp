@@ -40,24 +40,24 @@ public:
         {
         }
 
-        iterator& operator++()
+        inline iterator& operator++()
         {
             set_.update(data_->*Member);
             ++data_;
             return *this;
         }
 
-        bool operator ==(const ParticleMemberIterator<T, Member> &_other) const
+        inline bool operator ==(const ParticleMemberIterator<T, Member> &_other) const
         {
             return data_ == _other.data_;
         }
 
-        bool operator !=(const ParticleMemberIterator<T, Member> &_other) const
+        inline bool operator !=(const ParticleMemberIterator<T, Member> &_other) const
         {
             return !(*this == _other);
         }
 
-        reference operator *() const
+        inline reference operator *() const
         {
             return (data_->*Member);
         }
@@ -72,12 +72,12 @@ public:
         {
         }
 
-        ParticleMemberIterator<T, Member> begin()
+        inline ParticleMemberIterator<T, Member> begin()
         {
             return ParticleMemberIterator<T, Member>(&set_.samples_.front(), set_);
         }
 
-        ParticleMemberIterator<T, Member> end() {
+        inline ParticleMemberIterator<T, Member> end() {
             return ParticleMemberIterator<T, Member>(&set_.samples_.back(),  set_);
         }
     private:
@@ -87,8 +87,8 @@ public:
 
     /**
      * @brief The ParticleIterator class grants write access to the particles.
-     *        In addition to that, this iterator adds particles to the indexation data
-     *        storage.
+     *        As the pose and the weight iterator, it update minimum, maximum index and
+     *        the weight sum.
      */
     class ParticleIterator : public std::iterator<std::random_access_iterator_tag, Particle>
     {
@@ -97,34 +97,46 @@ public:
         using reference = typename parent::reference;
         using optional  = typename std::function<void(Particle&)>;
 
-        Particle *data_;
+        Particle   *data_;
+        ParticleSet &set_;
 
      public:
-        explicit ParticleIterator(Particle *begin) :
-            data_(begin)
+        explicit ParticleIterator(Particle *begin,
+                                  ParticleSet &set) :
+            data_(begin),
+            set_(set)
         {
              /// enter the data strcture
         }
 
-        iterator& operator++()
+        inline iterator& operator++()
         {
+            set_.update(*data_);
             ++data_;
             return *this;
         }
 
-        bool operator ==(const ParticleIterator &_other) const
+        inline bool operator ==(const ParticleIterator &_other) const
         {
             return data_ == _other.data_;
         }
 
-        bool operator !=(const ParticleIterator &_other) const
+        inline bool operator !=(const ParticleIterator &_other) const
         {
             return !(*this == _other);
         }
 
-        reference operator *() const
+        inline reference operator *() const
         {
             return *data_;
+        }
+
+        /*
+         * Should only be used if bounaries are known up front.
+         */
+        inline void insertIntoDensityEstimation()
+        {
+            ////
         }
     };
 
@@ -135,13 +147,13 @@ public:
         {
         }
 
-        ParticleIterator begin()
+        inline ParticleIterator begin()
         {
-            return ParticleIterator(&set_.samples_.front());
+            return ParticleIterator(&set_.samples_.front(), set_);
         }
 
-        ParticleIterator end() {
-            return ParticleIterator(&set_.samples_.back());
+        inline ParticleIterator end() {
+            return ParticleIterator(&set_.samples_.back(), set_);
         }
     private:
         ParticleSet& set_;
@@ -193,7 +205,6 @@ public:
         maximum_size_(maximum_size)
     {
         assert(size <= maximum_size);
-        assert(size >= minimum_size);
         samples_.reserve(maximum_size);
     }
 
@@ -212,28 +223,53 @@ public:
     }
 
 
+    /**
+     * @brief  Return the pose iterator with write access.
+     *         Using this iterator will update the descritized bounds
+     * @return the pose iterator
+     */
     Poses getPoses()
     {
-        resetParameterTracking();
+        minimum_index_  = std::numeric_limits<int>::max();
+        maximum_index_  = std::numeric_limits<int>::min();
         return Poses(*this);
     }
 
+    /**
+     * @brief   Return the weight iterator with write access to weights.
+     *          Iterating particles with this iterator will automatically update the
+     *          sum of weights for normalization.
+     * @return  the weight iterator
+     */
     Weights getWeights()
     {
-        resetParameterTracking();
+        sum_of_weights_ = 0.0;
         return Weights(*this);
     }
 
+    /**
+     * @brief   Return the particle iterator with write access to weight and position.
+     *          This iterator keeps track of the weight sum and the desretized extent of the
+     *          particle set.
+     * @return  the particle iterator
+     */
     Particles getParticles()
     {
         return Particles(*this);
     }
 
+    /**
+     * @brief   Return the const particle iterator will leave all set statistics unaltered.
+     * @return  With this iterator it is simply possible to check the current state of the set.
+     */
     std::vector<Particle> const & getConstParticles()
     {
         return samples_;
     }
-
+    /**
+     * @brief  Return the frame name in which the particle set is defined.
+     * @return  the frame name
+     */
     std::string getFrame() const
     {
         return frame_;
@@ -260,9 +296,6 @@ public:
                 const std::size_t maximum_size)
     {
         resetParameterTracking();
-
-        assert(size <= maximum_size);
-        assert(size >= minimum_size);
         samples_.resize(size);
         minimum_size_ = minimum_size;
         maximum_size_ = maximum_size;
@@ -274,6 +307,7 @@ public:
 
         minimum_size_ = sample_size;
         maximum_size_ = sample_size;
+        samples_.clear();
         samples_.reserve(sample_size);
     }
 
@@ -282,14 +316,17 @@ public:
     {
         resetParameterTracking();
 
-        samples_.reserve(maximum_size);
         minimum_size_ = minimum_size;
         maximum_size_ = maximum_size;
+
+        samples_.clear();
+        samples_.reserve(maximum_size);
     }
 
     void emplace_back(const Particle &sample)
     {
-         samples_.emplace_back(sample);
+        update(sample);
+        samples_.emplace_back(sample);
     }
 
     std::size_t getMinimumSize() const
@@ -334,6 +371,7 @@ public:
 
     /**
      * @brief Normalize the particle weights.
+     *        Maybe pack in to particle weight iterator destructor
      */
     void normalize()
     {
@@ -351,19 +389,33 @@ public:
         }
     }
 
-private:
-    void update(const Particle::PoseType &particle)
+    void updateDensityEstimation()
     {
-        const Indexation::IndexType i = indexation_.create(particle);
+        /// clear data storages
+        /// loop
+        /// and put in samples
+    }
+
+private:
+    inline void update(const Particle::PoseType &pose)
+    {
+        const Indexation::IndexType i = indexation_.create(pose);
         minimum_index_.min(i);
         maximum_index_.max(i);
     }
 
-    void update(const Particle::WeightType &weight)
+    inline void update(const Particle::WeightType &weight)
     {
         sum_of_weights_ += weight;
     }
 
+    inline void update(const Particle &particle)
+    {
+        const Indexation::IndexType i = indexation_.create(particle.pose_);
+        minimum_index_.min(i);
+        maximum_index_.max(i);
+        sum_of_weights_ += particle.weight_;
+    }
 
     Indexation::IndexType minimum_index_;
     Indexation::IndexType maximum_index_;
