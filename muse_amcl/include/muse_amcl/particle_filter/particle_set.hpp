@@ -84,29 +84,6 @@ public:
         ParticleSet& set_;
     };
 
-    class Particles {
-    public:
-
-        using optional  = typename std::function<void(Particle&)>;
-
-        Particles(ParticleSet &set) :
-            set_(set)
-        {
-        }
-
-        ParticleIterator begin()
-        {
-            return ParticleIterator(&set_.samples_.front());
-        }
-
-        ParticleIterator end() {
-            return ParticleIterator(&set_.samples_.back());
-        }
-    private:
-        ParticleSet& set_;
-        optional     opt_;
-    };
-
 
     /**
      * @brief The ParticleIterator class grants write access to the particles.
@@ -150,6 +127,26 @@ public:
             return *data_;
         }
     };
+
+    class Particles {
+    public:
+        Particles(ParticleSet &set) :
+            set_(set)
+        {
+        }
+
+        ParticleIterator begin()
+        {
+            return ParticleIterator(&set_.samples_.front());
+        }
+
+        ParticleIterator end() {
+            return ParticleIterator(&set_.samples_.back());
+        }
+    private:
+        ParticleSet& set_;
+    };
+
 
 
     /// type defs
