@@ -53,7 +53,10 @@ public:
     }
 
 
-
+    /// define pose iterator
+    /// weight iterator
+    /// resampling iterator /// inserts into index structure
+    /// default set iterator
 
 
 
