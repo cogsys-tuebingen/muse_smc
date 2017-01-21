@@ -131,6 +131,26 @@ public:
     }
 
     /**
+     * @brief Iterator pointing towards the end. One element past the
+     *        last one.
+     * @return the end iterator.
+     */
+    inline iterator limit()
+    {
+        return data_.end();
+    }
+
+    /**
+     * @brief Return the const_iterator pointing towards the end.
+     * @return the end const_iterator
+     */
+    inline const_iterator limit() const
+    {
+        return data_.end();
+    }
+
+
+    /**
      * @brief Return the maximum capacity of the buffered vector.
      * @return  the capacity
      */
