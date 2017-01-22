@@ -1,4 +1,4 @@
-#include <muse_amcl/particle_filter/v2/particle_set.hpp>
+#include <muse_amcl/particle_filter/particle_set.hpp>
 #include <chrono>
 #include <iostream>
 
@@ -20,8 +20,12 @@ void weights(muse_amcl::ParticleSet &set)
 
 void particle(muse_amcl::ParticleSet &set)
 {
+    double x = std::numeric_limits<double>::lowest();
     for(auto &p : set.getSamples()) {
-
+        const double w = p.weight_;
+        const auto pose = p.pose_;
+        if(pose.x() > x)
+            x = pose.x();
     }
 }
 

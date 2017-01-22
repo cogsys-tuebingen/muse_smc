@@ -1,7 +1,7 @@
 #ifndef INSERTION_HPP
 #define INSERTION_HPP
 
-#include "../particle.hpp"
+#include "particle.hpp"
 #include "buffered_vector.hpp"
 
 namespace muse_amcl {

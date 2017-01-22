@@ -82,119 +82,24 @@ TEST(TestMuseAMCL, testParticleSetConstructors)
     const muse_amcl::Indexation::IndexType minimum_index(std::numeric_limits<int>::max());
     const muse_amcl::Indexation::IndexType maximum_index(std::numeric_limits<int>::min());
 
-    EXPECT_EQ(particle_set_a.getSize(), N);
-    EXPECT_EQ(particle_set_a.getMinimumSize(), N);
-    EXPECT_EQ(particle_set_a.getMaximumSize(), N);
-    EXPECT_EQ(particle_set_a.getMaximumWeight(),0.0);
-    EXPECT_EQ(particle_set_a.getSumOfWeights(), 0.0);
-    EXPECT_EQ(particle_set_a.getMinimumIndex() ,minimum_index);
-    EXPECT_EQ(particle_set_a.getMaximumIndex(), maximum_index);
+    EXPECT_EQ(particle_set_a.getSampleSize(), N);
+    EXPECT_EQ(particle_set_a.getSampleSizeMinimum(), N);
+    EXPECT_EQ(particle_set_a.getSampleSizeMaximum(), N);
+    EXPECT_EQ(particle_set_a.getSampleWeightMaximum(),0.0);
+    EXPECT_EQ(particle_set_a.getSampleWeightSum(), 0.0);
+    EXPECT_EQ(particle_set_a.getSampleIndexMinimum() ,minimum_index);
+    EXPECT_EQ(particle_set_a.getSampleIndexMaximum(), maximum_index);
 
     particle_set_a =
             muse_amcl::ParticleSet("frame", N, MIN, MAX, indexation);
 
-    EXPECT_EQ(particle_set_a.getSize(), N);
-    EXPECT_EQ(particle_set_a.getMinimumSize(), MIN);
-    EXPECT_EQ(particle_set_a.getMaximumSize(), MAX);
-    EXPECT_EQ(particle_set_a.getMaximumWeight(), 0.0);
-    EXPECT_EQ(particle_set_a.getSumOfWeights(), 0.0);
-    EXPECT_EQ(particle_set_a.getMinimumIndex() ,minimum_index);
-    EXPECT_EQ(particle_set_a.getMaximumIndex(), maximum_index);
-
-
-    muse_amcl::ParticleSet particle_set_b(particle_set_a);
-    EXPECT_EQ(particle_set_b.getSize(), MIN);
-    EXPECT_EQ(particle_set_b.getMinimumSize(),   MIN);
-    EXPECT_EQ(particle_set_b.getMaximumSize(),   MAX);
-    EXPECT_EQ(particle_set_b.getMaximumWeight(), 0.0);
-    EXPECT_EQ(particle_set_b.getSumOfWeights(),  0.0);
-    EXPECT_EQ(particle_set_b.getMinimumIndex(), minimum_index);
-    EXPECT_EQ(particle_set_b.getMaximumIndex(), maximum_index);
-
-
-    muse_amcl::ParticleSet particle_set_c(particle_set_a, true);
-    EXPECT_EQ(particle_set_c.getSize(), N);
-    EXPECT_EQ(particle_set_c.getMinimumSize(),   MIN);
-    EXPECT_EQ(particle_set_c.getMaximumSize(),   MAX);
-    EXPECT_EQ(particle_set_c.getMaximumWeight(), 0.0);
-    EXPECT_EQ(particle_set_c.getSumOfWeights(),  0.0);
-    EXPECT_EQ(particle_set_c.getMinimumIndex(), minimum_index);
-    EXPECT_EQ(particle_set_c.getMaximumIndex(), maximum_index);
-
-}
-
-TEST(TestMuseAMCL, testParticleSetResize)
-{
-    const std::size_t N = 500000;
-    const std::size_t NN = 500;
-    const std::size_t MIN = 10;
-    const std::size_t MAX = N;
-    const muse_amcl::Indexation::IndexType minimum_index(std::numeric_limits<int>::max());
-    const muse_amcl::Indexation::IndexType maximum_index(std::numeric_limits<int>::min());
-
-    muse_amcl::Indexation indexation ({0.1, 0.1, 1./18. * M_PI});
-    muse_amcl::ParticleSet particle_set("frame", N, indexation);
-    particle_set.resize(NN);
-
-    EXPECT_EQ(particle_set.getSize(), NN);
-    EXPECT_EQ(particle_set.getMinimumSize(), NN);
-    EXPECT_EQ(particle_set.getMaximumSize(), NN);
-    EXPECT_EQ(particle_set.getMaximumWeight(), 0.0);
-    EXPECT_EQ(particle_set.getMaximumSize(), NN);
-    EXPECT_EQ(particle_set.getMaximumWeight(), 0.0);
-    EXPECT_EQ(particle_set.getSumOfWeights(),  0.0);
-    EXPECT_EQ(particle_set.getMinimumIndex(), minimum_index);
-    EXPECT_EQ(particle_set.getMaximumIndex(), maximum_index);
-
-    particle_set =
-            muse_amcl::ParticleSet("frame", N, indexation);
-
-    particle_set.resize(NN, MIN, MAX);
-    EXPECT_EQ(particle_set.getSize(), NN);
-    EXPECT_EQ(particle_set.getMinimumSize(), MIN);
-    EXPECT_EQ(particle_set.getMaximumSize(), MAX);
-    EXPECT_EQ(particle_set.getMaximumWeight(), 0.0);
-    EXPECT_EQ(particle_set.getSumOfWeights(),  0.0);
-    EXPECT_EQ(particle_set.getMinimumIndex(), minimum_index);
-    EXPECT_EQ(particle_set.getMaximumIndex(), maximum_index);
-
-}
-
-TEST(TestMuseAMCL, testParticleSetReserve)
-{
-    const std::size_t N = 500000;
-    const std::size_t NN = 500;
-    const std::size_t MIN = 10;
-    const std::size_t MAX = N;
-    const muse_amcl::Indexation::IndexType minimum_index(std::numeric_limits<int>::max());
-    const muse_amcl::Indexation::IndexType maximum_index(std::numeric_limits<int>::min());
-
-    muse_amcl::Indexation indexation ({0.1, 0.1, 1./18. * M_PI});
-    muse_amcl::ParticleSet particle_set("frame", 1, indexation);
-    particle_set.reserve(NN);
-
-    EXPECT_EQ(particle_set.getSize(), 0);
-    EXPECT_EQ(particle_set.getMinimumSize(), NN);
-    EXPECT_EQ(particle_set.getMaximumSize(), NN);
-    EXPECT_EQ(particle_set.getMaximumWeight(), 0.0);
-    EXPECT_EQ(particle_set.getMaximumWeight(), 0.0);
-    EXPECT_EQ(particle_set.getSumOfWeights(),  0.0);
-    EXPECT_EQ(particle_set.getMinimumIndex(), minimum_index);
-    EXPECT_EQ(particle_set.getMaximumIndex(), maximum_index);
-
-    particle_set =
-            muse_amcl::ParticleSet("frame", 1, indexation);
-
-    particle_set.reserve(MIN, MAX);
-    EXPECT_EQ(particle_set.getSize(), 0);
-    EXPECT_EQ(particle_set.getMinimumSize(), MIN);
-    EXPECT_EQ(particle_set.getMaximumSize(), MAX);
-    EXPECT_EQ(particle_set.getMaximumWeight(), 0.0);
-    EXPECT_EQ(particle_set.getMaximumWeight(), 0.0);
-    EXPECT_EQ(particle_set.getSumOfWeights(),  0.0);
-    EXPECT_EQ(particle_set.getMinimumIndex(), minimum_index);
-    EXPECT_EQ(particle_set.getMaximumIndex(), maximum_index);
-
+    EXPECT_EQ(particle_set_a.getSampleSize(), N);
+    EXPECT_EQ(particle_set_a.getSampleSizeMinimum(), MIN);
+    EXPECT_EQ(particle_set_a.getSampleSizeMaximum(), MAX);
+    EXPECT_EQ(particle_set_a.getSampleWeightMaximum(), 0.0);
+    EXPECT_EQ(particle_set_a.getSampleWeightSum(), 0.0);
+    EXPECT_EQ(particle_set_a.getSampleIndexMinimum() ,minimum_index);
+    EXPECT_EQ(particle_set_a.getSampleIndexMaximum(), maximum_index);
 }
 
 TEST(TestMuseAMCL, fillParticleSetA)
@@ -214,8 +119,8 @@ TEST(TestMuseAMCL, fillParticleSetA)
     Index exp_max_index      = {{51, 52,  11}};
     Size  exp_size           = {{54, 56, 23}};
 
-    Index max_index = particle_set.getMaximumIndex();
-    Index min_index = particle_set.getMinimumIndex();
+    Index max_index = particle_set.getSampleIndexMaximum();
+    Index min_index = particle_set.getSampleIndexMinimum();
     Size  size = indexation.size({{min_index[0], min_index[1], min_index[2]}},
                                  {{max_index[0], max_index[1], max_index[2]}});
 
@@ -228,7 +133,7 @@ TEST(TestMuseAMCL, fillParticleSetA)
     EXPECT_EQ(exp_size[0], size[0]);
     EXPECT_EQ(exp_size[1], size[1]);
     EXPECT_EQ(exp_size[2], size[2]);
-    EXPECT_EQ(test_samples.size(), particle_set.getSize());
+    EXPECT_EQ(test_samples.size(), particle_set.getSampleSize());
 }
 
 TEST(TestMuseAMCL, fillParticleSetB)
@@ -252,8 +157,8 @@ TEST(TestMuseAMCL, fillParticleSetB)
     Index exp_max_index      = {{51, 52,  11}};
     Size  exp_size           = {{54, 56, 23}};
 
-    Index max_index = particle_set.getMaximumIndex();
-    Index min_index = particle_set.getMinimumIndex();
+    Index max_index = particle_set.getSampleIndexMaximum();
+    Index min_index = particle_set.getSampleIndexMinimum();
     Size  size = indexation.size({{min_index[0], min_index[1], min_index[2]}},
                                  {{max_index[0], max_index[1], max_index[2]}});
 
@@ -266,7 +171,7 @@ TEST(TestMuseAMCL, fillParticleSetB)
     EXPECT_EQ(exp_size[0], size[0]);
     EXPECT_EQ(exp_size[1], size[1]);
     EXPECT_EQ(exp_size[2], size[2]);
-    EXPECT_EQ(test_samples.size(), particle_set.getSize());
+    EXPECT_EQ(test_samples.size(), particle_set.getSampleSize());
 }
 
 TEST(TestMuseAMCL, testWeightIterator)
@@ -286,7 +191,7 @@ TEST(TestMuseAMCL, testWeightIterator)
         s += 1.0;
     }
 
-    EXPECT_EQ(s, particle_set.getSumOfWeights());
+    EXPECT_EQ(s, particle_set.getSampleWeightSum());
 }
 
 TEST(TestMuseAMCL, testPoseIterator)
@@ -306,8 +211,8 @@ TEST(TestMuseAMCL, testPoseIterator)
     Index exp_max_index      = {{51, 52,  11}};
     Size  exp_size           = {{54, 56, 23}};
 
-    Index max_index = particle_set.getMaximumIndex();
-    Index min_index = particle_set.getMinimumIndex();
+    Index max_index = particle_set.getSampleIndexMaximum();
+    Index min_index = particle_set.getSampleIndexMinimum();
     Size  size = indexation.size({{min_index[0], min_index[1], min_index[2]}},
                                  {{max_index[0], max_index[1], max_index[2]}});
 
@@ -320,7 +225,7 @@ TEST(TestMuseAMCL, testPoseIterator)
     EXPECT_EQ(exp_size[0], size[0]);
     EXPECT_EQ(exp_size[1], size[1]);
     EXPECT_EQ(exp_size[2], size[2]);
-    EXPECT_EQ(test_samples.size(), particle_set.getSize());
+    EXPECT_EQ(test_samples.size(), particle_set.getSampleSize());
 }
 
 
