@@ -1,4 +1,4 @@
-#include <muse_amcl/particle_filter/particle_set.hpp>
+#include <muse_amcl/particle_filter/v2/particle_set.hpp>
 #include <chrono>
 #include <iostream>
 
@@ -20,8 +20,8 @@ void weights(muse_amcl::ParticleSet &set)
 
 void particle(muse_amcl::ParticleSet &set)
 {
-    for(auto &p : set.getParticles()) {
-        p.weight_ = 0.0;
+    for(auto &p : set.getSamples()) {
+
     }
 }
 

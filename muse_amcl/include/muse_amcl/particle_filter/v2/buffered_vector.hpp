@@ -9,9 +9,9 @@ namespace std {
 template<typename T>
 class buffered_vector {
 public:
-    using Ptr = std::shared_ptr<buffered_vector>;
-    using iterator = std::vector<T>::iterator;
-    using const_iterator = std::vector<T>::const_iterator;
+    using Ptr            = std::shared_ptr<buffered_vector>;
+    using iterator       = typename std::vector<T>::iterator;
+    using const_iterator = typename std::vector<T>::const_iterator;
 
     buffered_vector() :
         size_(0),
@@ -91,6 +91,24 @@ public:
             throw std::runtime_error("Index out of bounds!");
         }
         return data_ptr_[i];
+    }
+
+    /**
+     * @brief Return the front of the buffered vector.
+     * @return the back
+     */
+    inline T& front()
+    {
+        return data_.front();
+    }
+
+    /**
+     * @brief Return the back of the buffered vector.
+     * @return the back
+     */
+    inline T& back()
+    {
+        return data_.at(size_ - 1);
     }
 
     /**
