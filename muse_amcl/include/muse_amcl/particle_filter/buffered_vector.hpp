@@ -223,6 +223,7 @@ public:
             throw std::runtime_error("Buffered vector reached the capacity limit!");
         }
         data_ptr_[size_] = std::move(value);
+        ++size_;
     }
 
     /**
@@ -230,7 +231,8 @@ public:
      */
     inline void clear()
     {
-        resize(0, data_.size());
+        size_ = 0;
+        std::fill(data_.begin(), data_.end(), T());
     }
 
 private:

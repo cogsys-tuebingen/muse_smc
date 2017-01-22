@@ -82,7 +82,8 @@ TEST(TestMuseAMCL, testParticleSetConstructors)
     const muse_amcl::Indexation::IndexType minimum_index(std::numeric_limits<int>::max());
     const muse_amcl::Indexation::IndexType maximum_index(std::numeric_limits<int>::min());
 
-    EXPECT_EQ(particle_set_a.getSampleSize(), N);
+
+    EXPECT_EQ(particle_set_a.getSampleSize(), 0);
     EXPECT_EQ(particle_set_a.getSampleSizeMinimum(), N);
     EXPECT_EQ(particle_set_a.getSampleSizeMaximum(), N);
     EXPECT_EQ(particle_set_a.getSampleWeightMaximum(),0.0);
@@ -91,9 +92,9 @@ TEST(TestMuseAMCL, testParticleSetConstructors)
     EXPECT_EQ(particle_set_a.getSampleIndexMaximum(), maximum_index);
 
     particle_set_a =
-            muse_amcl::ParticleSet("frame", N, MIN, MAX, indexation);
+            muse_amcl::ParticleSet("frame", MIN, MAX, indexation);
 
-    EXPECT_EQ(particle_set_a.getSampleSize(), N);
+    EXPECT_EQ(particle_set_a.getSampleSize(), 0);
     EXPECT_EQ(particle_set_a.getSampleSizeMinimum(), MIN);
     EXPECT_EQ(particle_set_a.getSampleSizeMaximum(), MAX);
     EXPECT_EQ(particle_set_a.getSampleWeightMaximum(), 0.0);
@@ -108,11 +109,10 @@ TEST(TestMuseAMCL, fillParticleSetA)
     using Size  = std::array<std::size_t, 3>;
 
     muse_amcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
-    muse_amcl::ParticleSet particle_set("world", test_samples.size(), 10, 2 * test_samples.size(), indexation);
-    muse_amcl::ParticleSet::ParticleIterator iterator = particle_set.getParticles().begin();
+    muse_amcl::ParticleSet particle_set("world", 10, 2 * test_samples.size(), indexation);
+    auto inserter = particle_set.getInsertion();
     for(auto &s : test_samples) {
-        *iterator = s;
-        ++iterator;
+        inserter.insert(s);
     }
 
     Index exp_min_index      = {{-2, -3, -11}};
@@ -122,7 +122,7 @@ TEST(TestMuseAMCL, fillParticleSetA)
     Index max_index = particle_set.getSampleIndexMaximum();
     Index min_index = particle_set.getSampleIndexMinimum();
     Size  size = indexation.size({{min_index[0], min_index[1], min_index[2]}},
-                                 {{max_index[0], max_index[1], max_index[2]}});
+    {{max_index[0], max_index[1], max_index[2]}});
 
     EXPECT_EQ(exp_min_index[0], min_index[0]);
     EXPECT_EQ(exp_max_index[0], max_index[0]);
@@ -133,7 +133,7 @@ TEST(TestMuseAMCL, fillParticleSetA)
     EXPECT_EQ(exp_size[0], size[0]);
     EXPECT_EQ(exp_size[1], size[1]);
     EXPECT_EQ(exp_size[2], size[2]);
-    EXPECT_EQ(test_samples.size(), particle_set.getSampleSize());
+    EXPECT_EQ(0, particle_set.getSampleSize());
 }
 
 TEST(TestMuseAMCL, fillParticleSetB)
@@ -142,15 +142,50 @@ TEST(TestMuseAMCL, fillParticleSetB)
     using Size  = std::array<std::size_t, 3>;
 
     muse_amcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
-    muse_amcl::ParticleSet particle_set("world", test_samples.size(), 0, 2 * test_samples.size(), indexation);
-    muse_amcl::Particle const *prev = nullptr;
-    for(auto &s : test_samples) {
-        particle_set.emplace_back(s);
-        if(prev) {
-            auto particles = particle_set.getConstParticles();
-            EXPECT_EQ(prev, &(particles.at(particles.size() - 2)));
+    muse_amcl::ParticleSet particle_set("world", 0, 2 * test_samples.size(), indexation);
+
+    {
+        auto i = particle_set.getInsertion();
+        for(auto &s : test_samples)  {
+            i.insert(s);
         }
-        prev = &(particle_set.getConstParticles().back());
+    }
+    std::vector<const muse_amcl::Particle*> particles_t_1;
+    for(auto &p : particle_set.getSamples()) {
+        particles_t_1.emplace_back(&p);
+    }
+
+    {
+        auto i = particle_set.getInsertion();
+        for(auto &s : test_samples)  {
+            i.insert(s);
+        }
+    }
+    std::vector<const muse_amcl::Particle*> particles_t;
+    for(auto &p : particle_set.getSamples()) {
+        particles_t.emplace_back(&p);
+    }
+
+    EXPECT_EQ(particles_t_1.size(), particles_t.size());
+    for(std::size_t i = 0 ; i < particles_t.size() ; ++i) {
+        EXPECT_TRUE(particles_t[i] != particles_t_1[i]);
+    }
+
+    {
+        auto i = particle_set.getInsertion();
+        for(auto &s : test_samples)  {
+            i.insert(s);
+        }
+    }
+
+    particles_t.clear();
+    for(auto &p : particle_set.getSamples()) {
+        particles_t.emplace_back(&p);
+    }
+
+    EXPECT_EQ(particles_t_1.size(), particles_t.size());
+    for(std::size_t i = 0 ; i < particles_t.size() ; ++i) {
+        EXPECT_TRUE(particles_t[i] == particles_t_1[i]);
     }
 
     Index exp_min_index      = {{-2, -3, -11}};
@@ -160,7 +195,7 @@ TEST(TestMuseAMCL, fillParticleSetB)
     Index max_index = particle_set.getSampleIndexMaximum();
     Index min_index = particle_set.getSampleIndexMinimum();
     Size  size = indexation.size({{min_index[0], min_index[1], min_index[2]}},
-                                 {{max_index[0], max_index[1], max_index[2]}});
+    {{max_index[0], max_index[1], max_index[2]}});
 
     EXPECT_EQ(exp_min_index[0], min_index[0]);
     EXPECT_EQ(exp_max_index[0], max_index[0]);
@@ -180,13 +215,18 @@ TEST(TestMuseAMCL, testWeightIterator)
     using Size  = std::array<std::size_t, 3>;
 
     muse_amcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
-    muse_amcl::ParticleSet particle_set("world", 0, 0, 2 * test_samples.size(), indexation);
+    muse_amcl::ParticleSet particle_set("world", 0, 2 * test_samples.size(), indexation);
+    auto i = particle_set.getInsertion();
     for(auto &s : test_samples) {
-        particle_set.emplace_back(s);
+        i.insert(s);
     }
+    i.close();
+
+    EXPECT_EQ(test_samples.size(), particle_set.getSampleSize());
 
     double s = 0.0;
-    for(auto &w : particle_set.getWeights()) {
+    auto weights = particle_set.getWeights();
+    for(auto &w : weights) {
         w = 1.0;
         s += 1.0;
     }
@@ -200,7 +240,13 @@ TEST(TestMuseAMCL, testPoseIterator)
     using Size  = std::array<std::size_t, 3>;
 
     muse_amcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
-    muse_amcl::ParticleSet particle_set("world", test_samples.size(), 0, 2 * test_samples.size(), indexation);
+    muse_amcl::ParticleSet particle_set("world", 0, 2 * test_samples.size(), indexation);
+    auto i = particle_set.getInsertion();
+    for(auto &s : test_samples) {
+        i.insert(s);
+    }
+    i.close();
+
     auto it = particle_set.getPoses().begin();
     for(auto &s : test_samples) {
         *it = s.pose_;
@@ -214,7 +260,7 @@ TEST(TestMuseAMCL, testPoseIterator)
     Index max_index = particle_set.getSampleIndexMaximum();
     Index min_index = particle_set.getSampleIndexMinimum();
     Size  size = indexation.size({{min_index[0], min_index[1], min_index[2]}},
-                                 {{max_index[0], max_index[1], max_index[2]}});
+    {{max_index[0], max_index[1], max_index[2]}});
 
     EXPECT_EQ(exp_min_index[0], min_index[0]);
     EXPECT_EQ(exp_max_index[0], max_index[0]);

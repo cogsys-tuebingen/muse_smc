@@ -33,8 +33,8 @@ public:
         frame_(frame),
         sample_size_minimum_(sample_size),
         sample_size_maximum_(sample_size),
-        p_t_1(new Particles(sample_size)),
-        p_t(new Particles(sample_size)),
+        p_t_1(new Particles(0, sample_size)),
+        p_t(new Particles(0, sample_size)),
         indexation_(indexation),
         sample_index_minimum_(std::numeric_limits<int>::max()),
         sample_index_maximum_(std::numeric_limits<int>::min()),
@@ -44,15 +44,14 @@ public:
     }
 
     ParticleSet(const std::string frame,
-                const std::size_t sample_size,
                 const std::size_t sample_size_minimum,
                 const std::size_t sample_size_maximum,
                 const Indexation &indexation) :
         frame_(frame),
         sample_size_minimum_(sample_size_minimum),
         sample_size_maximum_(sample_size_maximum),
-        p_t_1(new Particles(sample_size, sample_size_maximum)),
-        p_t(new Particles(sample_size, sample_size_maximum)),
+        p_t_1(new Particles(0, sample_size_maximum)),
+        p_t(new Particles(0, sample_size_maximum)),
         indexation_(indexation),
         sample_index_minimum_(std::numeric_limits<int>::max()),
         sample_index_maximum_(std::numeric_limits<int>::min()),
@@ -80,7 +79,7 @@ public:
         return *p_t_1;
     }
 
-    inline ParticleInsertion getResamplingInsertion()
+    inline ParticleInsertion getInsertion()
     {
         sample_index_minimum_  = std::numeric_limits<int>::max();
         sample_index_maximum_  = std::numeric_limits<int>::min();
@@ -122,7 +121,7 @@ public:
 
     inline Indexation::IndexType getSampleIndexMinimum() const
     {
-        return sample_index_maximum_;
+        return sample_index_minimum_;
     }
 
     inline Indexation::IndexType getSampleIndexMaximum() const
@@ -133,7 +132,7 @@ public:
 
     inline double getSampleWeightMaximum() const
     {
-        return sample_weight_maximum_ / sample_weight_sum_;
+        return sample_weight_sum_ ? sample_weight_maximum_ / sample_weight_sum_ : 0.0;
     }
 
     inline double getSampleWeightSum() const

@@ -17,6 +17,7 @@ public:
               notify_finished                 finshed) :
         data_(data),
         notifier_(notifier),
+        open_(true),
         update_(update),
         finished_(finshed)
     {
@@ -24,13 +25,25 @@ public:
 
     virtual ~Insertion()
     {
-        (notifier_.*finished_)();
+        if(open_) {
+            (notifier_.*finished_)();
+        }
     }
 
     inline void insert(const Particle &sample)
     {
         data_.emplace_back(sample);
         (notifier_.*update_)(sample);
+    }
+
+    inline void close()
+    {
+        if(open_) {
+            (notifier_.*finished_)();
+            open_ = false;
+        } else {
+            throw std::runtime_error("Insertion cannot be closed twice!");
+        }
     }
 
     std::buffered_vector<Particle> const & set()
@@ -42,6 +55,7 @@ private:
     std::buffered_vector<Particle> &data_;
     Notifier                       &notifier_;
 
+    bool                            open_;
     notify_update                   update_;
     notify_finished                 finished_;
 
