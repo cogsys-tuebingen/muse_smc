@@ -5,6 +5,8 @@
 
 #include "particle.hpp"
 #include "indexation.hpp"
+#include "clustering_data.hpp"
+#include "clustering.hpp"
 
 #include "iterator.hpp"
 #include "member_iterator.hpp"
@@ -13,6 +15,9 @@
 #include <memory>
 #include <string>
 
+#include <cslibs_indexed_storage/storage.hpp>
+#include <cslibs_indexed_storage/backend/kdtree/kdtree_buffered.hpp>
+#include <cslibs_indexed_storage/backend/array/array.hpp>
 
 namespace muse_amcl {
 class ParticleSet {
@@ -24,6 +29,8 @@ public:
     using Weights   = MemberDecorator<Particle, Particle::WeightType, &Particle::weight_, ParticleSet>;
     using Particles = std::buffered_vector<Particle>;
     using ParticleInsertion = Insertion<ParticleSet>;
+    using KDTreeBuffered = cis::Storage<clustering::Data, Indexation::IndexType::Base, cis::backend::kdtree::KDTreeBuffered>;
+    using Array          = cis::Storage<clustering::Data, Indexation::IndexType::Base, cis::backend::array::Array>;
 
     ParticleSet(const ParticleSet &other) = delete;
 
@@ -39,8 +46,10 @@ public:
         sample_index_minimum_(std::numeric_limits<int>::max()),
         sample_index_maximum_(std::numeric_limits<int>::min()),
         sample_weight_sum_(0.0),
-        sample_weight_maximum_(0.0)
+        sample_weight_maximum_(0.0),
+        kdtree_(new KDTreeBuffered)
     {
+        kdtree_->set<cis::option::tags::node_allocator_chunk_size>(2 * sample_size_maximum_ + 1);
     }
 
     ParticleSet(const std::string frame,
@@ -56,8 +65,10 @@ public:
         sample_index_minimum_(std::numeric_limits<int>::max()),
         sample_index_maximum_(std::numeric_limits<int>::min()),
         sample_weight_sum_(0.0),
-        sample_weight_maximum_(0.0)
+        sample_weight_maximum_(0.0),
+        kdtree_(new KDTreeBuffered)
     {
+        kdtree_->set<cis::option::tags::node_allocator_chunk_size>(2 * sample_size_maximum_ + 1);
     }
 
     inline Poses getPoses()
@@ -86,9 +97,13 @@ public:
         sample_weight_maximum_ = 0.0;
         sample_weight_sum_     = 0.0;
 
+        /// set up array here
+
         p_t->clear();
+        kdtree_->clear();
+
         return ParticleInsertion(*p_t, *this,
-                                 &ParticleSet::updateAll,
+                                 &ParticleSet::updateInsert,
                                  &ParticleSet::insertionFinished);
     }
 
@@ -149,6 +164,7 @@ private:
     std::size_t    sample_size_maximum_;
     Indexation     indexation_;
 
+
     Index          sample_index_minimum_;
     Index          sample_index_maximum_;
     double         sample_weight_sum_;
@@ -156,6 +172,9 @@ private:
 
     Particles::Ptr p_t_1;   /// set of the previous time step
     Particles::Ptr p_t;     /// set of the upcoming time step
+
+    std::shared_ptr<KDTreeBuffered> kdtree_;    /// wide range density estimation
+    std::shared_ptr<Array>          array_;     /// near range density estimation
 
     /// method to be called by the pose iterator
     inline void updateIndices(const Particle::PoseType &sample_pose)
@@ -174,8 +193,12 @@ private:
     }
 
     /// method to be called of resampling insertion
-    inline void updateAll(const Particle &sample)
+    inline void updateInsert(const Particle &sample)
     {
+        /// check here for the array
+
+        kdtree_->insert(indexation_.create(sample), clustering::Data(sample));
+
         updateIndices(sample.pose_);
         updateWeight(sample.weight_);
     }

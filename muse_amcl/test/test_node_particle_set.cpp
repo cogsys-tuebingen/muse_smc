@@ -274,7 +274,22 @@ TEST(TestMuseAMCL, testPoseIterator)
     EXPECT_EQ(test_samples.size(), particle_set.getSampleSize());
 }
 
+TEST(TestMuseAMCL, testIndexedStorage)
+{
+    muse_amcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
+    muse_amcl::ParticleSet particle_set("world", 0, 2 * test_samples.size(), indexation);
+    auto i = particle_set.getInsertion();
+    for(auto &s : test_samples) {
+        i.insert(s);
+    }
+    i.close();
 
+}
+
+TEST(TestMuseAMCL, testClustering)
+{
+
+}
 
 int main(int argc, char *argv[])
 {
