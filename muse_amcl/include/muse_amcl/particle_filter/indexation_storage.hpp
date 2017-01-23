@@ -43,7 +43,8 @@ public:
     }
 
     /**
-     * @brief resetLimits
+     * @brief resetLimits resets the limits in order find new limits
+     *        for the spatial extent of the particle set.
      */
     inline void resetLimits()
     {
@@ -52,8 +53,9 @@ public:
     }
 
     /**
-     * @brief updateLimits
-     * @param sample
+     * @brief updateLimits uses a single sample to update the current
+     *        limits.
+     * @param sample - the particle sample
      */
     inline void updateLimits(const Particle &sample)
     {
@@ -72,6 +74,10 @@ public:
             updateLimits(p);
     }
 
+    
+    
+    
+    
 private:
     IndexType  min_index_;
     IndexType  max_index_;

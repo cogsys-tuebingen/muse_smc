@@ -11,7 +11,7 @@ public:
 
     virtual double apply(const Data::ConstPtr &data,
                          const Map::ConstPtr &map,
-                         ParticleSet::WeightIterator set) override;
+                         ParticleSet::Weights set) override;
 
 protected:
     virtual void doSetup(ros::NodeHandle &nh) override;

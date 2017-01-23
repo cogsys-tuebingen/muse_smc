@@ -3,6 +3,8 @@
 
 #include <muse_amcl/math/pose.hpp>
 
+#include <vector>
+
 namespace muse_amcl {
 struct Particle {
     using PoseType   = math::Pose;

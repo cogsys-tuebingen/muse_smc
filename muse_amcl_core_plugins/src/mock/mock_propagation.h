@@ -13,7 +13,7 @@ public:
     MockPropagation();
 
     virtual void apply(const Data::ConstPtr &data,
-                       ParticleSet::PoseIterator set) override;
+                       ParticleSet::Poses set) override;
 
 
     double  first_parameter;

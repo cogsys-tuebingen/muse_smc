@@ -7,11 +7,12 @@ CLASS_LOADER_REGISTER_CLASS(muse_amcl::WheelOfFortune, muse_amcl::Resampling)
 
 using namespace muse_amcl;
 
-void WheelOfFortune::apply(ParticleSet &particle_set)
+void WheelOfFortune::apply(ParticleSet &p_t_1)
 {
-    ParticleSet::Particles &p_t_1 = particle_set.getParticles();
+
+    ParticleSet::Particles &p_t_1 = p_t_1.getParticles();
     ParticleSet::Particles  p_t;
-    resampling::impl::WOF::apply(p_t_1, p_t, particle_set.getMaximumWeight(), particle_set.getMaximumSize());
+    resampling::impl::WOF::apply(p_t_1, p_t, p_t_1.getMaximumWeight(), p_t_1.getMaximumSize());
     /// assign new content
     assert(p_t.size() == p_t_1.size());
     std::swap(p_t, p_t_1);

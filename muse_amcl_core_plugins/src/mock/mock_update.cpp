@@ -15,7 +15,7 @@ MockUpdate::MockUpdate()
 
 double MockUpdate::apply(const Data::ConstPtr &data,
                          const Map::ConstPtr &map,
-                         ParticleSet::WeightIterator set)
+                         ParticleSet::Weights set)
 {
     std::cout << "Hello, I am a mock update - Greetings Traveller!" << std::endl;
     std::cout <<  first_parameter << " " << second_parameter << std::endl;

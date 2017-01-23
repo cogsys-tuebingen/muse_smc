@@ -10,7 +10,7 @@ DifferentialDrive::DifferentialDrive()
 }
 
 void DifferentialDrive::apply(const Data::ConstPtr &data,
-                              ParticleSet::PoseIterator set)
+                              ParticleSet::Poses set)
 {
 
 }

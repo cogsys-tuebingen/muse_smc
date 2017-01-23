@@ -41,7 +41,7 @@ public:
             const MapProvider::Ptr  &map_provider    = map_providers.at(map_provider_name);
 
             auto callback = [this, update_function, map_provider] (const Data::ConstPtr &data) {
-                auto f = [update_function, map_provider, data] (ParticleSet::WeightIterator set) {
+                auto f = [update_function, map_provider, data] (ParticleSet::Weights set) {
                     return update_function->apply(data, map_provider->getMap(), set);
                 };
 

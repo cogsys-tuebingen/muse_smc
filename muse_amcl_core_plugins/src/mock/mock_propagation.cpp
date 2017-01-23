@@ -12,7 +12,7 @@ MockPropagation::MockPropagation()
 }
 
 void MockPropagation::apply(const Data::ConstPtr &data,
-                            ParticleSet::PoseIterator set)
+                            ParticleSet::Poses set)
 {
     std::cout << "Hello, I am a mock propagation - Greetings Traveller!" << std::endl;
     std::cout <<  first_parameter << " " << second_parameter << std::endl;
