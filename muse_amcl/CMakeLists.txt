@@ -142,16 +142,6 @@ if(${CATKIN_ENABLE_TESTING})
         "${catkin_LIBRARIES}"
     )
 
-    ## optional tests that evaluate runtimes and such which
-    ## do not have to fulfil unit tests
-    add_executable(${PROJECT_NAME}_eval_particle_clustering
-        src/examples/eval_particle_clustering.cpp
-    )
-    target_link_libraries(${PROJECT_NAME}_eval_particle_clustering
-        muse_amcl_particle_filter
-    )
-
-
     add_executable(${PROJECT_NAME}_eval_particle_set_access_times
         src/examples/eval_particle_set_access_times.cpp
     )
