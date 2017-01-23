@@ -116,7 +116,7 @@ TEST(TestMuseAMCL, fillParticleSetA)
     auto inserter = particle_set.getInsertion();
     for(auto &s : test_samples) {
         if(inserter.canInsert())
-            inserter.push_back(s);
+            inserter.insert(std::move(s));
     }
 
     inserter.close();
@@ -153,7 +153,7 @@ TEST(TestMuseAMCL, fillParticleSetB)
     {
         auto i = particle_set.getInsertion();
         for(auto &s : test_samples)  {
-            i.push_back(s);
+            i.insert(std::move(s));
         }
     }
     std::vector<const muse_amcl::Particle*> particles_t_1;
@@ -164,7 +164,7 @@ TEST(TestMuseAMCL, fillParticleSetB)
     {
         auto i = particle_set.getInsertion();
         for(auto &s : test_samples)  {
-            i.push_back(s);
+            i.insert(std::move(s));
         }
     }
     std::vector<const muse_amcl::Particle*> particles_t;
@@ -180,7 +180,7 @@ TEST(TestMuseAMCL, fillParticleSetB)
     {
         auto i = particle_set.getInsertion();
         for(auto &s : test_samples)  {
-            i.push_back(s);
+            i.insert(std::move(s));
         }
     }
 
@@ -224,7 +224,7 @@ TEST(TestMuseAMCL, testWeightIterator)
     muse_amcl::ParticleSet particle_set("world", 0, 2 * test_samples.size(), indexation);
     auto i = particle_set.getInsertion();
     for(auto &s : test_samples) {
-        i.push_back(s);
+        i.insert(std::move(s));
     }
     i.close();
 
@@ -249,7 +249,7 @@ TEST(TestMuseAMCL, testPoseIterator)
     muse_amcl::ParticleSet particle_set("world", 0, 2 * test_samples.size(), indexation);
     auto i = particle_set.getInsertion();
     for(auto &s : test_samples) {
-        i.push_back(s);
+        i.insert(std::move(s));
     }
     i.close();
 
@@ -289,7 +289,7 @@ TEST(TestMuseAMCL, testClustering)
     muse_amcl::ParticleSet particle_set("world", 0, 2 * test_samples.size(), indexation);
     auto i = particle_set.getInsertion();
     for(auto &s : test_samples) {
-        i.push_back(s);
+        i.insert(std::move(s));
     }
     i.close();
 

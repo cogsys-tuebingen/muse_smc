@@ -217,12 +217,12 @@ public:
      * @brief Emplace value at the end within the given capacity.
      * @param value - the value to be emplaced.
      */
-    inline void emplace_back(T& value)
+    inline void emplace_back(T&& value)
     {
         if(size_ == data_.size()) {
             throw std::runtime_error("Buffered vector reached the capacity limit!");
         }
-        data_ptr_[size_] = std::move(value);
+        data_ptr_[size_] = value;
         ++size_;
     }
 

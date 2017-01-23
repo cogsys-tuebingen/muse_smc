@@ -10,20 +10,20 @@ struct Particle {
     using PoseType   = math::Pose;
     using WeightType = double;
 
-    Particle() :
+    inline Particle() :
        pose_(tf::createQuaternionFromRPY(0,0,0),
              tf::Vector3(0,0,0)),
        weight_(1.0)
     {
     }
 
-    Particle(const Particle &other) :
+    inline Particle(const Particle &other) :
         pose_(other.pose_),
         weight_(other.weight_)
     {
     }
 
-    Particle(Particle &&other) :
+    inline Particle(Particle &&other) :
         pose_(std::move(other.pose_)),
         weight_(other.weight_)
     {
