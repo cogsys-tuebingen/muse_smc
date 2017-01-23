@@ -25,6 +25,8 @@ public:
     using Ptr      = std::shared_ptr<ParticleSet>;
     using ConstPtr = std::shared_ptr<ParticleSet const>;
 
+    using Index     = Indexation::IndexType;
+    using Size      = Indexation::SizeType;
     using Poses     = MemberDecorator<Particle, Particle::PoseType,   &Particle::pose_,   ParticleSet>;
     using Weights   = MemberDecorator<Particle, Particle::WeightType, &Particle::weight_, ParticleSet>;
     using Particles = std::buffered_vector<Particle>;
@@ -36,7 +38,8 @@ public:
 
     ParticleSet(const std::string frame,
                 const std::size_t sample_size,
-                const Indexation &indexation) :
+                const Indexation &indexation,
+                const double array_extent = 5.0) :
         frame_(frame),
         sample_size_minimum_(sample_size),
         sample_size_maximum_(sample_size),
@@ -47,15 +50,21 @@ public:
         sample_index_maximum_(std::numeric_limits<int>::min()),
         sample_weight_sum_(0.0),
         sample_weight_maximum_(0.0),
-        kdtree_(new KDTreeBuffered)
+        kdtree_(new KDTreeBuffered),
+        array_(new Array),
+        array_can_be_used_(false)
     {
         kdtree_->set<cis::option::tags::node_allocator_chunk_size>(2 * sample_size_maximum_ + 1);
+
+        array_size_ = indexation_.size({array_extent, array_extent, 2 * M_PI});
+        array_->set<cis::option::tags::array_size>(array_size_[0], array_size_[1], array_size_[2]);
     }
 
     ParticleSet(const std::string frame,
                 const std::size_t sample_size_minimum,
                 const std::size_t sample_size_maximum,
-                const Indexation &indexation) :
+                const Indexation &indexation,
+                const double      array_extent = 5.0) :
         frame_(frame),
         sample_size_minimum_(sample_size_minimum),
         sample_size_maximum_(sample_size_maximum),
@@ -66,9 +75,13 @@ public:
         sample_index_maximum_(std::numeric_limits<int>::min()),
         sample_weight_sum_(0.0),
         sample_weight_maximum_(0.0),
-        kdtree_(new KDTreeBuffered)
+        kdtree_(new KDTreeBuffered),
+        array_(new Array),
+        array_can_be_used_(false)
     {
         kdtree_->set<cis::option::tags::node_allocator_chunk_size>(2 * sample_size_maximum_ + 1);
+        array_size_ = indexation_.size({array_extent, array_extent, 2 * M_PI});
+        array_->set<cis::option::tags::array_size>(array_size_[0], array_size_[1], array_size_[2]);
     }
 
     inline Poses getPoses()
@@ -92,19 +105,32 @@ public:
 
     inline ParticleInsertion getInsertion()
     {
+
+        if(p_t_1->size() > 0) { /// this means that bounaries have to be update for time step t-1
+            const Size size = indexation_.size(sample_index_minimum_, sample_index_maximum_);
+            array_can_be_used_ = size[0] <= array_size_[0] && size[1] <= array_size_[1] && size[2] <= array_size_[2];
+            /// maybe the radian part can be exchanged by static value
+        }
+
         sample_index_minimum_  = std::numeric_limits<int>::max();
         sample_index_maximum_  = std::numeric_limits<int>::min();
         sample_weight_maximum_ = 0.0;
         sample_weight_sum_     = 0.0;
-
-        /// set up array here
-
         p_t->clear();
         kdtree_->clear();
 
-        return ParticleInsertion(*p_t, *this,
-                                 &ParticleSet::updateInsert,
-                                 &ParticleSet::insertionFinished);
+        if(array_can_be_used_) {
+            array_->set<cis::option::tags::array_offset>(sample_index_minimum_[0],
+                                                         sample_index_minimum_[1],
+                                                         sample_index_minimum_[2]);
+            return ParticleInsertion(*p_t, *this,
+                                     &ParticleSet::updateInsertArray,
+                                     &ParticleSet::insertionFinished);
+        } else {
+            return ParticleInsertion(*p_t, *this,
+                                     &ParticleSet::updateInsertKD,
+                                     &ParticleSet::insertionFinished);
+        }
     }
 
     inline void normalizeWeights()
@@ -115,6 +141,11 @@ public:
         sample_weight_maximum_ /= sample_weight_sum_;
         sample_weight_sum_ = 1.0;
 
+    }
+
+    inline void updateDensityEstimation()
+    {
+        /// run clustering
     }
 
 
@@ -132,7 +163,6 @@ public:
     {
         return p_t_1->size();
     }
-
 
     inline Indexation::IndexType getSampleIndexMinimum() const
     {
@@ -155,10 +185,7 @@ public:
         return sample_weight_sum_;
     }
 
-
 private:
-    using Index = Indexation::IndexType;
-
     std::string    frame_;
     std::size_t    sample_size_minimum_;
     std::size_t    sample_size_maximum_;
@@ -175,6 +202,8 @@ private:
 
     std::shared_ptr<KDTreeBuffered> kdtree_;    /// wide range density estimation
     std::shared_ptr<Array>          array_;     /// near range density estimation
+    bool                            array_can_be_used_;
+    Size                            array_size_;
 
     /// method to be called by the pose iterator
     inline void updateIndices(const Particle::PoseType &sample_pose)
@@ -193,15 +222,20 @@ private:
     }
 
     /// method to be called of resampling insertion
-    inline void updateInsert(const Particle &sample)
+    inline void updateInsertKD(const Particle &sample)
     {
-        /// check here for the array
-
         kdtree_->insert(indexation_.create(sample), clustering::Data(sample));
-
         updateIndices(sample.pose_);
         updateWeight(sample.weight_);
     }
+
+    inline void updateInsertArray(const Particle &sample)
+    {
+        array_->insert(indexation_.create(sample), clustering::Data(sample));
+        updateIndices(sample.pose_);
+        updateWeight(sample.weight_);
+    }
+
 
     inline void insertionFinished()
     {
