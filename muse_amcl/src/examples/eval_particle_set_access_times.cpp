@@ -2,10 +2,12 @@
 #include <chrono>
 #include <iostream>
 
+double sum_x = 0.0;
+
 void states(muse_amcl::ParticleSet& set)
 {
     for(auto &state : set.getPoses()) {
-        state.origin().m_floats[0] = 1.f;
+        state.x() = 1.f;
     }
 
 }
@@ -20,12 +22,14 @@ void weights(muse_amcl::ParticleSet &set)
 
 void particle(muse_amcl::ParticleSet &set)
 {
-    double x = std::numeric_limits<double>::lowest();
+    std::size_t pos = 0;
     for(auto &p : set.getSamples()) {
         const double w = p.weight_;
         const auto pose = p.pose_;
-        if(pose.x() > x)
-            x = pose.x();
+            if(pose.x() == 0)
+                std::cout << "was zero " << pos << std::endl;
+            sum_x += pose.x();
+            ++pos;
     }
 }
 
@@ -37,6 +41,11 @@ int main(int argc, char *argv[])
     muse_amcl::Indexation indexation ({0.1, 0.1, 1./18. * M_PI});
 
     muse_amcl::ParticleSet particles("frame", 500000, indexation);
+    auto in = particles.getInsertion();
+    while(in.canInsert()) {
+        in.insert(muse_amcl::Particle());
+    }
+    in.close();
 
     {
         auto start = std::chrono::high_resolution_clock::now();
@@ -69,6 +78,8 @@ int main(int argc, char *argv[])
         long length_micro_seconds = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
         std::cerr << "particle foreach: " << (length_micro_seconds / double(iterations)) * 1e-6 << "ms" << std::endl;
     }
+
+    std::cout << "a happy set of " << sum_x << " particles" << std::endl;
 
     return 0;
 }

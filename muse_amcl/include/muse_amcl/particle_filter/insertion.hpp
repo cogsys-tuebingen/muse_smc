@@ -36,6 +36,11 @@ public:
         (notifier_.*update_)(sample);
     }
 
+    inline bool canInsert() const
+    {
+        return data_.size() < data_.capacity();
+    }
+
     inline void close()
     {
         if(open_) {

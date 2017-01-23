@@ -71,7 +71,7 @@ public:
     }
 
     inline iterator end() {
-        return iterator(&data_.back(), notifier_, notification_);
+        return iterator(&data_.back() + 1, notifier_, notification_);   /// end has always to be set off by 1
     }
 private:
     std::buffered_vector<Data> &data_;

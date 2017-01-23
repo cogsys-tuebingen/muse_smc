@@ -112,8 +112,10 @@ TEST(TestMuseAMCL, fillParticleSetA)
     muse_amcl::ParticleSet particle_set("world", 10, 2 * test_samples.size(), indexation);
     auto inserter = particle_set.getInsertion();
     for(auto &s : test_samples) {
-        inserter.insert(s);
+        if(inserter.canInsert())
+            inserter.insert(s);
     }
+    inserter.close();
 
     Index exp_min_index      = {{-2, -3, -11}};
     Index exp_max_index      = {{51, 52,  11}};
@@ -133,7 +135,7 @@ TEST(TestMuseAMCL, fillParticleSetA)
     EXPECT_EQ(exp_size[0], size[0]);
     EXPECT_EQ(exp_size[1], size[1]);
     EXPECT_EQ(exp_size[2], size[2]);
-    EXPECT_EQ(0, particle_set.getSampleSize());
+    EXPECT_EQ(test_samples.size(), particle_set.getSampleSize());
 }
 
 TEST(TestMuseAMCL, fillParticleSetB)

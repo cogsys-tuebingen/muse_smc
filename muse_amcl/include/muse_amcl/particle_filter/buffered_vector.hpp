@@ -136,7 +136,7 @@ public:
      */
     inline iterator end()
     {
-        return data_.begin() + size_ + 1;
+        return data_.begin() + size_;
     }
 
     /**
@@ -145,7 +145,7 @@ public:
      */
     inline const_iterator end() const
     {
-        return data_.begin() + size_ + 1;
+        return data_.begin() + size_;
     }
 
     /**
