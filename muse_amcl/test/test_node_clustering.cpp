@@ -155,9 +155,9 @@ TEST(TestMuseAMCL, createStorage)
 
 TEST(TestMuseAMCL, testClustering)
 {
-    muse_amcl::clustering::Clustering clusters_kdtree_buffered;
-    muse_amcl::clustering::Clustering clusters_kdtree;
-    muse_amcl::clustering::Clustering clusters_array;
+    muse_amcl::clustering::ClusteringImpl clusters_kdtree_buffered;
+    muse_amcl::clustering::ClusteringImpl clusters_kdtree;
+    muse_amcl::clustering::ClusteringImpl clusters_array;
     EXPECT_NO_FATAL_FAILURE(muse_amcl::clustering::cluster(kdtree_buffered, clusters_kdtree_buffered));
     EXPECT_NO_FATAL_FAILURE(muse_amcl::clustering::cluster(kdtree, clusters_kdtree));
     EXPECT_NO_FATAL_FAILURE(muse_amcl::clustering::cluster(array,  clusters_array));
