@@ -25,7 +25,7 @@ public:
      */
     buffered_vector(const std::size_t size) :
         size_(size),
-        data_(size_),
+        data_(size_, T()),
         data_ptr_(data_.data())
     {
 
@@ -39,7 +39,7 @@ public:
     buffered_vector(const std::size_t size,
                     const std::size_t capacity) :
         size_(size),
-        data_(capacity),
+        data_(capacity, T()),
         data_ptr_(data_.data())
     {
         assert(size <= capacity);
@@ -194,7 +194,7 @@ public:
     inline void resize(const std::size_t size)
     {
         size_ = size;
-        data_.resize(size);
+        data_.resize(size, T());
         data_ptr_ = data_.data();
 
     }
@@ -217,12 +217,21 @@ public:
      * @brief Emplace value at the end within the given capacity.
      * @param value - the value to be emplaced.
      */
-    inline void emplace_back(const T& value)
+    inline void emplace_back(T& value)
     {
         if(size_ == data_.size()) {
             throw std::runtime_error("Buffered vector reached the capacity limit!");
         }
         data_ptr_[size_] = std::move(value);
+        ++size_;
+    }
+
+    inline void push_back(const T &value)
+    {
+        if(size_ == data_.size()) {
+            throw std::runtime_error("Buffered vector reached the capacity limit!");
+        }
+        data_ptr_[size_] = value;
         ++size_;
     }
 
@@ -232,7 +241,8 @@ public:
     inline void clear()
     {
         size_ = 0;
-        std::fill(data_.begin(), data_.end(), T());
+        // let's spare some time
+    //    std::fill(data_.begin(), data_.end(), T());
     }
 
 private:

@@ -12,8 +12,20 @@ struct Particle {
 
     Particle() :
        pose_(tf::createQuaternionFromRPY(0,0,0),
-            tf::Vector3(0,0,0)),
+             tf::Vector3(0,0,0)),
        weight_(1.0)
+    {
+    }
+
+    Particle(const Particle &other) :
+        pose_(other.pose_),
+        weight_(other.weight_)
+    {
+    }
+
+    Particle(Particle &&other) :
+        pose_(std::move(other.pose_)),
+        weight_(other.weight_)
     {
     }
 
@@ -44,6 +56,20 @@ struct Particle {
         pose_(p),
         weight_(w)
     {
+    }
+
+    Particle& operator = (const Particle &other)
+    {
+        pose_ = other.pose_;
+        weight_ = other.weight_;
+        return *this;
+    }
+
+    Particle& operator = (Particle &&other)
+    {
+        pose_ = std::move(other.pose_);
+        weight_ = other.weight_;
+        return *this;
     }
 
     PoseType   pose_;

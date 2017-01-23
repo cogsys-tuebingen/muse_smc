@@ -30,7 +30,14 @@ public:
         }
     }
 
-    inline void insert(const Particle &sample)
+
+    inline void push_back(const Particle &sample)
+    {
+        data_.push_back(sample);
+        (notifier_.*update_)(sample);
+    }
+
+    inline void emplace(Particle&& sample)
     {
         data_.emplace_back(sample);
         (notifier_.*update_)(sample);
