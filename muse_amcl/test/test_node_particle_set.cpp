@@ -1,6 +1,6 @@
 #include <muse_amcl/math/distribution.hpp>
 #include <muse_amcl/particle_filter/indexation.hpp>
-#include <muse_amcl/particle_filter/indexation_data.hpp>
+#include <muse_amcl/particle_filter/clustering_data.hpp>
 #include <muse_amcl/particle_filter/clustering_impl.hpp>
 #include <muse_amcl/particle_filter/particle.hpp>
 #include <muse_amcl/particle_filter/particle_set.hpp>
@@ -15,8 +15,8 @@ muse_amcl::TestDistribution<3> test_distribution_b;
 std::vector<muse_amcl::Particle> test_samples;
 
 using namespace muse_amcl;
-using KDTreeBuffered = cis::Storage<IndexationData, Indexation::IndexType::Base, cis::backend::kdtree::KDTreeBuffered>;
-using Array  = cis::Storage<IndexationData, Indexation::IndexType::Base, cis::backend::array::Array>;
+using KDTreeBuffered = cis::Storage<clustering::Data, Indexation::IndexType::Base, cis::backend::kdtree::KDTreeBuffered>;
+using Array  = cis::Storage<clustering::Data, Indexation::IndexType::Base, cis::backend::array::Array>;
 Eigen::Vector3d max = Eigen::Vector3d::Constant(std::numeric_limits<double>::min());
 Eigen::Vector3d min = Eigen::Vector3d::Constant(std::numeric_limits<double>::max());
 
