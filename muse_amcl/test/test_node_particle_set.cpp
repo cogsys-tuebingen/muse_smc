@@ -12,6 +12,8 @@ muse_amcl::TestDistribution<3> test_distribution_b;
 std::vector<muse_amcl::Particle> test_samples;
 
 
+namespace mms = muse_amcl::math::statistic;
+
 muse_amcl::clustering::KDTreeBuffered  kdtree_buffered;
 muse_amcl::clustering::KDTree          kdtree;
 muse_amcl::clustering::Array           array;
@@ -276,8 +278,11 @@ TEST(TestMuseAMCL, testPoseIterator)
     EXPECT_EQ(test_samples.size(), particle_set.getSampleSize());
 }
 
-TEST(TestMuseAMCL, testIndexedStorage)
+TEST(TestMuseAMCL, testClustering)
 {
+    using Index = muse_amcl::Indexation::IndexType;
+    using Size  = std::array<std::size_t, 3>;
+
     muse_amcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
     muse_amcl::ParticleSet particle_set("world", 0, 2 * test_samples.size(), indexation);
     auto i = particle_set.getInsertion();
@@ -286,11 +291,86 @@ TEST(TestMuseAMCL, testIndexedStorage)
     }
     i.close();
 
-}
+    EXPECT_NO_FATAL_FAILURE(particle_set.updateDensityEstimate());
+    auto clusters = particle_set.getClusters();
 
-TEST(TestMuseAMCL, testClustering)
-{
+    EXPECT_EQ(2, clusters.size());
 
+    mms::Distribution<3> distribution_a;
+    for(const muse_amcl::Particle *p : clusters[0]) {
+        distribution_a.add(p->pose_.eigen3D());
+    }
+    mms::Distribution<3> distribution_b;
+    for(const muse_amcl::Particle *p : clusters[1]) {
+        distribution_b.add(p->pose_.eigen3D());
+    }
+
+    Eigen::Vector3d mean_a = distribution_a.getMean();
+    Eigen::Matrix3d covariance_a = distribution_a.getCovariance();
+    Eigen::Vector3d mean_b = distribution_b.getMean();
+    Eigen::Matrix3d covariance_b = distribution_b.getCovariance();
+
+    if(std::abs(mean_a(0) - test_distribution_a.mean(0)) < 1e-3 &&
+            std::abs(mean_a(1) - test_distribution_a.mean(1)  < 1e-3))
+    {
+        EXPECT_NEAR(test_distribution_a.mean(0), mean_a(0), 1e-6);
+        EXPECT_NEAR(test_distribution_a.mean(1), mean_a(1), 1e-6);
+        EXPECT_NEAR(test_distribution_a.mean(2), mean_a(2), 1e-6);
+
+        EXPECT_NEAR(test_distribution_b.mean(0), mean_b(0), 1e-6);
+        EXPECT_NEAR(test_distribution_b.mean(1), mean_b(1), 1e-6);
+        EXPECT_NEAR(test_distribution_b.mean(2), mean_b(2), 1e-6);
+
+        EXPECT_NEAR(test_distribution_a.covariance(0,0), covariance_a(0,0), 1e-6);
+        EXPECT_NEAR(test_distribution_a.covariance(0,1), covariance_a(0,1), 1e-6);
+        EXPECT_NEAR(test_distribution_a.covariance(0,2), covariance_a(0,2), 1e-6);
+        EXPECT_NEAR(test_distribution_a.covariance(1,0), covariance_a(1,0), 1e-6);
+        EXPECT_NEAR(test_distribution_a.covariance(1,1), covariance_a(1,1), 1e-6);
+        EXPECT_NEAR(test_distribution_a.covariance(1,2), covariance_a(1,2), 1e-6);
+        EXPECT_NEAR(test_distribution_a.covariance(2,0), covariance_a(2,0), 1e-6);
+        EXPECT_NEAR(test_distribution_a.covariance(2,1), covariance_a(2,1), 1e-6);
+        EXPECT_NEAR(test_distribution_a.covariance(2,2), covariance_a(2,2), 1e-6);
+
+        EXPECT_NEAR(test_distribution_b.covariance(0,0), covariance_b(0,0), 1e-6);
+        EXPECT_NEAR(test_distribution_b.covariance(0,1), covariance_b(0,1), 1e-6);
+        EXPECT_NEAR(test_distribution_b.covariance(0,2), covariance_b(0,2), 1e-6);
+        EXPECT_NEAR(test_distribution_b.covariance(1,0), covariance_b(1,0), 1e-6);
+        EXPECT_NEAR(test_distribution_b.covariance(1,1), covariance_b(1,1), 1e-6);
+        EXPECT_NEAR(test_distribution_b.covariance(1,2), covariance_b(1,2), 1e-6);
+        EXPECT_NEAR(test_distribution_b.covariance(2,0), covariance_b(2,0), 1e-6);
+        EXPECT_NEAR(test_distribution_b.covariance(2,1), covariance_b(2,1), 1e-6);
+        EXPECT_NEAR(test_distribution_b.covariance(2,2), covariance_b(2,2), 1e-6);
+
+
+    } else {
+        EXPECT_NEAR(test_distribution_a.mean(0), mean_b(0), 1e-6);
+        EXPECT_NEAR(test_distribution_a.mean(1), mean_b(1), 1e-6);
+        EXPECT_NEAR(test_distribution_a.mean(2), mean_b(2), 1e-6);
+
+        EXPECT_NEAR(test_distribution_b.mean(0), mean_a(0), 1e-6);
+        EXPECT_NEAR(test_distribution_b.mean(1), mean_a(1), 1e-6);
+        EXPECT_NEAR(test_distribution_b.mean(2), mean_a(2), 1e-6);
+
+        EXPECT_NEAR(test_distribution_a.covariance(0,0), covariance_b(0,0), 1e-6);
+        EXPECT_NEAR(test_distribution_a.covariance(0,1), covariance_b(0,1), 1e-6);
+        EXPECT_NEAR(test_distribution_a.covariance(0,2), covariance_b(0,2), 1e-6);
+        EXPECT_NEAR(test_distribution_a.covariance(1,0), covariance_b(1,0), 1e-6);
+        EXPECT_NEAR(test_distribution_a.covariance(1,1), covariance_b(1,1), 1e-6);
+        EXPECT_NEAR(test_distribution_a.covariance(1,2), covariance_b(1,2), 1e-6);
+        EXPECT_NEAR(test_distribution_a.covariance(2,0), covariance_b(2,0), 1e-6);
+        EXPECT_NEAR(test_distribution_a.covariance(2,1), covariance_b(2,1), 1e-6);
+        EXPECT_NEAR(test_distribution_a.covariance(2,2), covariance_b(2,2), 1e-6);
+
+        EXPECT_NEAR(test_distribution_b.covariance(0,0), covariance_a(0,0), 1e-6);
+        EXPECT_NEAR(test_distribution_b.covariance(0,1), covariance_a(0,1), 1e-6);
+        EXPECT_NEAR(test_distribution_b.covariance(0,2), covariance_a(0,2), 1e-6);
+        EXPECT_NEAR(test_distribution_b.covariance(1,0), covariance_a(1,0), 1e-6);
+        EXPECT_NEAR(test_distribution_b.covariance(1,1), covariance_a(1,1), 1e-6);
+        EXPECT_NEAR(test_distribution_b.covariance(1,2), covariance_a(1,2), 1e-6);
+        EXPECT_NEAR(test_distribution_b.covariance(2,0), covariance_a(2,0), 1e-6);
+        EXPECT_NEAR(test_distribution_b.covariance(2,1), covariance_a(2,1), 1e-6);
+        EXPECT_NEAR(test_distribution_b.covariance(2,2), covariance_a(2,2), 1e-6);
+    }
 }
 
 int main(int argc, char *argv[])

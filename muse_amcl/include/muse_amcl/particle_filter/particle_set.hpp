@@ -6,11 +6,11 @@
 #include "particle.hpp"
 #include "indexation.hpp"
 #include "clustering_data.hpp"
-#include "clustering.hpp"
+#include "clustering_impl.hpp"
 
 #include "iterator.hpp"
-#include "member_iterator.hpp"
 #include "insertion.hpp"
+#include "member_iterator.hpp"
 
 #include <memory>
 #include <string>
@@ -31,9 +31,13 @@ public:
     using Poses     = MemberDecorator<Particle, Particle::PoseType,   &Particle::pose_,   ParticleSet>;
     using Weights   = MemberDecorator<Particle, Particle::WeightType, &Particle::weight_, ParticleSet>;
     using Particles = std::buffered_vector<Particle>;
+    using Clusters          = std::unordered_map<int, std::vector<const Particle*>>;
     using ParticleInsertion = Insertion<ParticleSet>;
-    using KDTreeBuffered = cis::Storage<clustering::Data, Indexation::IndexType::Base, cis::backend::kdtree::KDTreeBuffered>;
-    using Array          = cis::Storage<clustering::Data, Indexation::IndexType::Base, cis::backend::array::Array>;
+    using KDTreeBuffered  = cis::Storage<clustering::Data, Indexation::IndexType::Base, cis::backend::kdtree::KDTreeBuffered>;
+    using Array           = cis::Storage<clustering::Data, Indexation::IndexType::Base, cis::backend::array::Array>;
+    using KDClustering    = cis::operations::clustering::Clustering<KDTreeBuffered>;
+    using ArrayClustering = cis::operations::clustering::Clustering<Array>;
+    using ClusteringImpl  = clustering::ClusteringImpl;
 
     /// particle sets should not be copyable
     ParticleSet(const ParticleSet &other) = delete;
@@ -170,9 +174,23 @@ public:
 
     }
 
-    inline void updateDensityEstimation()
+    inline void updateDensityEstimate()
     {
         /// run clustering
+        ClusteringImpl impl;
+        if(array_to_be_used_) {
+            ArrayClustering clustering(*array_);
+            clustering.cluster(impl);
+        } else {
+            KDClustering clustering(*kdtree_);
+            clustering.cluster(impl);
+        }
+        p_t_1_clusters_ = std::move(impl.clusters_);
+    }
+
+    inline Clusters const & getClusters() const
+    {
+        return p_t_1_clusters_;
     }
 
     /**
@@ -280,6 +298,8 @@ private:
     bool                            array_to_be_used_;  /// determination is array can used for clustering
     Size                            array_size_;        /// the arrays size
 
+    Clusters                        p_t_1_clusters_;
+
     /**
      * @brief Histogram index boundaries update callback for pose iterator access.
      * @param sample_pose - the processed sample pose
@@ -328,6 +348,7 @@ private:
      */
     inline void insertionFinished()
     {
+        p_t_1_clusters_.clear();
         std::swap(p_t, p_t_1);
     }
 };

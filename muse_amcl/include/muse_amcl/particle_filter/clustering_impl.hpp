@@ -12,7 +12,7 @@ namespace cis = cslibs_indexed_storage;
 
 namespace muse_amcl {
 namespace clustering {
-struct Clustering {
+struct ClusteringImpl {
     using Index = Indexation::IndexType;
 
     //! used neighborhood, look at direct neighbors only

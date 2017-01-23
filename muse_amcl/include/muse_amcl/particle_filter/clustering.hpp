@@ -7,7 +7,7 @@
 #include <cslibs_indexed_storage/backend/kdtree/kdtree.hpp>
 
 #include "indexation.hpp"
-#include "clustering_operation.hpp"
+#include "clustering_impl.hpp"
 #include "particle.hpp"
 
 namespace cis = cslibs_indexed_storage;
@@ -28,7 +28,7 @@ inline void create(const Indexation &indexation,
 
 template<typename Storage>
 void cluster(Storage    &store,
-             Clustering &clusters)
+             ClusteringImpl &clusters)
 {
     cis::operations::clustering::Clustering<Storage> co(store);
     co.cluster(clusters);
