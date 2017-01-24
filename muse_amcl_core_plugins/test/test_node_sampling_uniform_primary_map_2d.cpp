@@ -53,12 +53,13 @@ TEST(TestMuseAMCLCorePlugins, testSamplingUniformPrimary2D)
     EXPECT_EQ("map1", uniform2d.getPrimaryMapProvider()->getName());
 
     /// fire up the tests
-    ParticleSet      particle_set("world", 400);
+    Indexation       indexation({0.1, 0.1, M_PI / 18.0});
+    ParticleSet      particle_set("world", 400, indexation);
     uniform2d.apply(particle_set);
 
 
     math::statistic::Distribution<3> distribution;
-    ParticleSet::Particles &particles = particle_set.getParticles();
+    const ParticleSet::Particles &particles = particle_set.getSamples();
     for(auto &particle : particles) {
         Eigen::Vector3d pose = particle.pose_.eigen3D();
         distribution.add(pose);

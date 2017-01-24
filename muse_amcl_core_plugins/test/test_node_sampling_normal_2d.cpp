@@ -67,11 +67,12 @@ TEST(TestMuseAMCLCorePlugins, testNormalSampling2D)
 
     math::Pose       mu(mu_vec);
     math::Covariance sigma(sigma_mat);
-    ParticleSet      particle_set("world", 400);
+    Indexation       indexation({0.1, 0.1, M_PI / 18.0});
+    ParticleSet      particle_set("world", 400, indexation);
 
     normal2d.apply(mu, sigma, particle_set);
     math::statistic::Distribution<3> distribution;
-    ParticleSet::Particles &particles = particle_set.getParticles();
+    const ParticleSet::Particles &particles = particle_set.getSamples();
     for(auto &particle : particles) {
         Eigen::Vector3d tmp = particle.pose_.eigen3D();
         distribution.add(tmp);
