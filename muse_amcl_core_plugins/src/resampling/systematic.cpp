@@ -5,13 +5,10 @@ CLASS_LOADER_REGISTER_CLASS(muse_amcl::Systematic, muse_amcl::Resampling)
 
 #include <muse_amcl/math/random.hpp>
 
-#include "impl/systematic.hpp"
-
 using namespace muse_amcl;
 
 void Systematic::apply(ParticleSet &particle_set)
 {
-    /// initalize particle new particle set
     const ParticleSet::Particles p_t_1 = particle_set.getSamples();
     ParticleInsertion i_p_t = particle_set.getInsertion();
 
@@ -26,9 +23,9 @@ void Systematic::apply(ParticleSet &particle_set)
     }
     /// draw samples
     {
-        auto src_it = p_t_1.begin();
+        auto p_t_1_it = p_t_1.begin();
         double cumsum_last = 0.0;
-        double cumsum = src_it->weight_;
+        double cumsum = p_t_1_it->weight_;
 
         auto in_range = [&cumsum, &cumsum_last] (double u)
         {
@@ -37,11 +34,11 @@ void Systematic::apply(ParticleSet &particle_set)
 
         for(auto &u_r : u) {
             while(!in_range(u_r)) {
-                ++src_it;
+                ++p_t_1_it;
                 cumsum_last = cumsum;
-                cumsum += src_it->weight_;
+                cumsum += p_t_1_it->weight_;
             }
-            i_p_t.insert(*src_it);
+            i_p_t.insert(*p_t_1_it);
         }
     }
 }
