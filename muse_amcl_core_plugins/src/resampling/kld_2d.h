@@ -15,6 +15,11 @@ public:
 protected:
 
     virtual void doSetup(ros::NodeHandle &nh_private) override;
+
+    double kld_error_;
+    double kld_z_;
+
+
 };
 }
 

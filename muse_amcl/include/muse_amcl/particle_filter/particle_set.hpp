@@ -55,6 +55,7 @@ public:
         sample_index_maximum_(std::numeric_limits<int>::min()),
         sample_weight_sum_(0.0),
         sample_weight_maximum_(0.0),
+        sample_weight_average_(0.0),
         p_t_1(new Particles(0, sample_size)),
         p_t(new Particles(0, sample_size)),
         kdtree_(new KDTreeBuffered),
@@ -283,17 +284,23 @@ public:
         return frame_;
     }
 
+    inline double getWeightAverage() const
+    {
+        return sample_weight_average_;
+    }
+
+
 private:
     std::string    frame_;                              /// the frame particles are defined in
     std::size_t    sample_size_minimum_;                /// minimum sample size of the particle set
     std::size_t    sample_size_maximum_;                /// maximum sample size of the particle set
     Indexation     indexation_;                         /// the discritezation
 
-
     Index          sample_index_minimum_;               /// current minimum histogram bin index
     Index          sample_index_maximum_;               /// current maximum histogram bin index
     double         sample_weight_sum_;                  /// current weight sum
     double         sample_weight_maximum_;              /// current sample weight maximum
+    double         sample_weight_average_;              /// current non-normalized sample weight average
 
     Particles::Ptr p_t_1;                               /// set of the previous time step
     Particles::Ptr p_t;                                 /// set of the upcoming time step
@@ -355,6 +362,9 @@ private:
     {
         p_t_1_clusters_.clear();
         std::swap(p_t, p_t_1);
+
+        /// just keep the non-normalized weight
+        sample_weight_average_ = sample_weight_sum_ / p_t_1->size();
         normalizeWeights();
     }
 };
