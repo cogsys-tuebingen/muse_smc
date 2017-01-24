@@ -7,7 +7,7 @@
 #include <tf/transform_listener.h>
 #include <ros/node_handle.h>
 
-#include <muse_amcl/particle_filter/particle_set.hpp>
+#include "particle_set.hpp"
 
 namespace muse_amcl {
 class Resampling {

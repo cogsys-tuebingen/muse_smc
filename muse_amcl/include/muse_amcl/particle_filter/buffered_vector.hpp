@@ -117,7 +117,7 @@ public:
      */
     inline iterator begin()
     {
-        data_.begin();
+        return data_.begin();
     }
 
     /**

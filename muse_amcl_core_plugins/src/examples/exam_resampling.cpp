@@ -37,7 +37,6 @@ int main(int argc, char *argv[])
     {
         std::cout << "stratified: " << std::endl;
         std::vector<double> u(size);
-        std::cout << std::endl;
         muse_amcl::math::random::Uniform<1> rng(0.0, 1.0);
         for(std::size_t i = 0 ; i < size ; ++i) {
             u[i] = (i + rng.get()) / size;
@@ -48,7 +47,6 @@ int main(int argc, char *argv[])
     {
         std::cout << "systematic: " << std::endl;
         std::vector<double> u(size);
-        std::cout << std::endl;
         muse_amcl::math::random::Uniform<1> rng(0.0, 1.0);
         double u_static = rng.get();
         for(std::size_t i = 0 ; i < size ; ++i) {
@@ -59,69 +57,84 @@ int main(int argc, char *argv[])
     }
 
     /// test resampling
-    muse_amcl::ParticleSet ps("frame", 10);
-    auto &particles = ps.getParticles();
+    muse_amcl::Indexation index({0.1, 0.1, 1./18. * M_PI});
+    muse_amcl::ParticleSet set("frame", 10, index);
     {
+        muse_amcl::ParticleSet::Insertion insert = set.getInsertion();
+        for(std::size_t i = 0 ; i < size ; ++i)
+            insert.insert(muse_amcl::Particle());
+        insert.close();
+
         /// random weights for the particles
         muse_amcl::math::random::Uniform<1> rng(0.0, 1.0);
-        double nw = 0.0;
+        for(auto &w : set.getWeights()) {
+            w = rng.get();
+        }
         std::size_t i = 0;
-        for(auto &p : particles) {
-            p.weight_ = rng.get();
-            nw += p.weight_;
-            p.pose_.origin().setX(i);
-            ++i;
-        }
-        for(auto &p : particles) {
-            p.weight_ /= nw;
-        }
-    }
-    {
-        std::cout << "original particle set" << std::endl;
-        for(auto &p : particles) {
-            std::cout << p.pose_.origin().x() << " " << p.weight_ << std::endl;
+        for(auto &p : set.getPoses()) {
+            p.x() = (++i);
         }
     }
     {
         /// multinomial
-        auto ps_copy = ps;
+        muse_amcl::ParticleSet ps_copy("frame", 10, index);
+        auto insertion = ps_copy.getInsertion();
+        for(const auto &p : set.getSamples())
+            insertion.insert(p);
+        insertion.close();
+
         muse_amcl::Multinomial m;
         m.apply(ps_copy);
         std::cout << "multinomial particle set" << std::endl;
-        for(auto &p : ps_copy.getParticles()) {
+        for(const auto &p : ps_copy.getSamples()) {
             std::cout << p.pose_.origin().x() << " " << p.weight_ << std::endl;
         }
         std::cout << "----------------" << std::endl;
     }
     {
         /// stratified
-        auto ps_copy = ps;
+        muse_amcl::ParticleSet ps_copy("frame", 10, index);
+        auto insertion = ps_copy.getInsertion();
+        for(const auto &p : set.getSamples())
+            insertion.insert(p);
+        insertion.close();
+
         muse_amcl::Stratified m;
         m.apply(ps_copy);
         std::cout << "stratified particle set" << std::endl;
-        for(auto &p : ps_copy.getParticles()) {
+        for(const auto &p : ps_copy.getSamples()) {
             std::cout << p.pose_.origin().x() << " " << p.weight_ << std::endl;
         }
         std::cout << "----------------" << std::endl;
     }
     {
         /// systematic
-        auto ps_copy = ps;
+        muse_amcl::ParticleSet ps_copy("frame", 10, index);
+        auto insertion = ps_copy.getInsertion();
+        for(const auto &p : set.getSamples())
+            insertion.insert(p);
+        insertion.close();
+
         muse_amcl::Systematic m;
         m.apply(ps_copy);
         std::cout << "systematic particle set" << std::endl;
-        for(auto &p : ps_copy.getParticles()) {
+        for(const auto &p : ps_copy.getSamples()) {
             std::cout << p.pose_.origin().x() << " " << p.weight_ << std::endl;
         }
         std::cout << "----------------" << std::endl;
     }
     {
         /// residual
-        auto ps_copy = ps;
+        muse_amcl::ParticleSet ps_copy("frame", 10, index);
+        auto insertion = ps_copy.getInsertion();
+        for(const auto &p : set.getSamples())
+            insertion.insert(p);
+        insertion.close();
+
         muse_amcl::Residual m;
         m.apply(ps_copy);
         std::cout << "residual particle set" << std::endl;
-        for(auto &p : ps_copy.getParticles()) {
+        for(const auto &p : ps_copy.getSamples()) {
             std::cout << p.pose_.origin().x() << " " << p.weight_ << std::endl;
         }
         std::cout << "----------------" << std::endl;
@@ -134,11 +147,17 @@ int main(int argc, char *argv[])
     }
     {
         /// wheel of fortune
-        auto ps_copy = ps;
+
+        muse_amcl::ParticleSet ps_copy("frame", 10, index);
+        auto insertion = ps_copy.getInsertion();
+        for(const auto &p : set.getSamples())
+            insertion.insert(p);
+        insertion.close();
+
         muse_amcl::WheelOfFortune m;
         m.apply(ps_copy);
         std::cout << "wheel of fortune particle set" << std::endl;
-        for(auto &p : ps_copy.getParticles()) {
+        for(const auto &p : ps_copy.getSamples()) {
             std::cout << p.pose_.origin().x() << " " << p.weight_ << std::endl;
         }
         std::cout << "----------------" << std::endl;

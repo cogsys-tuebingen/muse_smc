@@ -54,13 +54,16 @@ void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
         rng.reset(new RandomPoseGenerator({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}, random_seed_));
     }
 
-    particle_set.resize(sample_size_);
-    ParticleSet::Particles &particles = particle_set.getParticles();
+    if(sample_size_ < particle_set.getSampleSizeMinimum() &&
+            sample_size_ > particle_set.getSampleSizeMaximum()) {
+        throw std::runtime_error("Initialization sample size invalid!");
+    }
 
+    ParticleSet::Insertion insertion = particle_set.getInsertion();
     const std::size_t          secondary_maps_count = secondary_maps.size();
     const ros::Time sampling_start = ros::Time::now();
-    double sum_weight = 0.0;
-    for(auto &particle : particles) {
+    Particle particle;
+    for(std::size_t i = 0 ; i < sample_size_; ++i) {
         bool valid = false;
         while(!valid) {
             ros::Time now = ros::Time::now();
@@ -70,7 +73,6 @@ void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
             }
 
             math::Pose pose = primary_T_o * math::Pose(rng->get());
-            sum_weight += particle.weight_;
             valid = primary_map->validate(pose);
             if(valid) {
                 particle.pose_  = w_T_primary * pose;
@@ -79,8 +81,8 @@ void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
                 }
             }
         }
+        insertion.insert(particle);
     }
-    particle_set.normalize(sum_weight);
 }
 
 void UniformPrimaryMap2D::doSetup(ros::NodeHandle &nh_private)

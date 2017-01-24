@@ -9,10 +9,11 @@ using namespace muse_amcl;
 
 void Systematic::apply(ParticleSet &particle_set)
 {
-    const ParticleSet::Particles p_t_1 = particle_set.getSamples();
-    ParticleInsertion i_p_t = particle_set.getInsertion();
+    const ParticleSet::Particles &p_t_1 = particle_set.getSamples();
+    ParticleSet::Insertion i_p_t = particle_set.getInsertion();
 
     /// prepare ordered sequence of random numbers
+    const std::size_t size = p_t_1.size();
     std::vector<double> u(size);
     {
         math::random::Uniform<1> rng(0.0, 1.0);

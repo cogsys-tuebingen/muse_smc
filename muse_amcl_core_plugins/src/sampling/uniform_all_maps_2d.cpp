@@ -52,13 +52,16 @@ void UniformAllMaps2D::apply(ParticleSet &particle_set)
         rng.reset(new RandomPoseGenerator({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}, 0));
     }
 
-    particle_set.resize(sample_size_);
+    if(sample_size_ < particle_set.getSampleSizeMinimum() &&
+            sample_size_ > particle_set.getSampleSizeMaximum()) {
+        throw std::runtime_error("Initialization sample size invalid!");
+    }
 
-    ParticleSet::Particles &particles = particle_set.getParticles();
+    ParticleSet::Insertion insertion = particle_set.getInsertion();
     const ros::Time sampling_start = ros::Time::now();
     const std::size_t map_count = maps.size();
-    double sum_weight = 0.0;
-    for(auto &particle : particles) {
+    Particle particle;
+    for(std::size_t i = 0 ; i < sample_size_ ; ++i) {
         bool valid = false;
         while(!valid) {
             ros::Time now = ros::Time::now();
@@ -68,14 +71,13 @@ void UniformAllMaps2D::apply(ParticleSet &particle_set)
             }
 
             particle.pose_ = rng->get();
-            sum_weight += particle.weight_;
             valid = true;
             for(std::size_t i = 0 ; i < map_count ; ++i) {
                 valid &= maps[i]->validate(maps_T_w[i] * particle.pose_);
             }
         }
+        insertion.insert(particle);
     }
-    particle_set.normalize(sum_weight);
 }
 
 void UniformAllMaps2D::doSetup(ros::NodeHandle &nh_private)

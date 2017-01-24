@@ -31,8 +31,8 @@ public:
     using Poses     = MemberDecorator<Particle, Particle::PoseType,   &Particle::pose_,   ParticleSet>;
     using Weights   = MemberDecorator<Particle, Particle::WeightType, &Particle::weight_, ParticleSet>;
     using Particles = std::buffered_vector<Particle>;
-    using Clusters          = std::unordered_map<int, std::vector<const Particle*>>;
-    using ParticleInsertion = Insertion<ParticleSet>;
+    using Clusters        = std::unordered_map<int, std::vector<const Particle*>>;
+    using Insertion       = muse_amcl::Insertion<ParticleSet>;
     using KDTreeBuffered  = cis::Storage<clustering::Data, Indexation::IndexType::Base, cis::backend::kdtree::KDTreeBuffered>;
     using Array           = cis::Storage<clustering::Data, Indexation::IndexType::Base, cis::backend::array::Array>;
     using KDClustering    = cis::operations::clustering::Clustering<KDTreeBuffered>;
@@ -130,7 +130,7 @@ public:
      *         for resampling.
      * @return insertion handler
      */
-    inline ParticleInsertion getInsertion()
+    inline Insertion getInsertion()
     {
 
         if(p_t_1->size() > 0) {
@@ -151,11 +151,11 @@ public:
             array_->set<cis::option::tags::array_offset>(sample_index_minimum_[0],
                                                          sample_index_minimum_[1],
                                                          sample_index_minimum_[2]);
-            return ParticleInsertion(*p_t, *this,
+            return Insertion(*p_t, *this,
                                      &ParticleSet::updateInsertArray,
                                      &ParticleSet::insertionFinished);
         } else {
-            return ParticleInsertion(*p_t, *this,
+            return Insertion(*p_t, *this,
                                      &ParticleSet::updateInsertKD,
                                      &ParticleSet::insertionFinished);
         }

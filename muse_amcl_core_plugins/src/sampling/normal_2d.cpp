@@ -37,12 +37,16 @@ void Normal2D::apply(const math::Pose       &pose,
         rng.reset(new RandomPoseGenerator(pose.eigen3D(), covariance.eigen3D(), random_seed_));
     }
 
-    ParticleSet::Particles &particles = particle_set.getParticles();
-    particles.resize(sample_size_);
+    if(sample_size_ < particle_set.getSampleSizeMinimum() &&
+            sample_size_ > particle_set.getSampleSizeMaximum()) {
+        throw std::runtime_error("Initialization sample size invalid!");
+    }
+
+    ParticleSet::Insertion insertion = particle_set.getInsertion();
 
     const ros::Time sampling_start = ros::Time::now();
-    double sum_weight = 0.0;
-    for(auto &particle : particles) {
+    Particle particle;
+    for(std::size_t i = 0 ; i < sample_size_ ; ++i) {
         bool valid = false;
         while(!valid) {
             ros::Time now = ros::Time::now();
@@ -52,14 +56,13 @@ void Normal2D::apply(const math::Pose       &pose,
             }
 
             particle.pose_ = rng->get();
-            sum_weight += particle.weight_;
             valid = true;
             for(const auto &m : maps) {
                 valid &= m->validate(particle.pose_);
             }
         }
+        insertion.insert(particle);
     }
-    particle_set.normalize(sum_weight);
 }
 
 void Normal2D::doSetup(ros::NodeHandle &nh_private)

@@ -36,6 +36,12 @@ public:
         (notifier_.*update_)(sample);
     }
 
+    inline void insert(const Particle &sample)
+    {
+        data_.push_back(sample);
+        (notifier_.*update_)(sample);
+    }
+
     inline bool canInsert() const
     {
         return data_.size() < data_.capacity();
