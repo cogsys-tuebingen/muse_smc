@@ -50,13 +50,13 @@ public:
         frame_(frame),
         sample_size_minimum_(sample_size),
         sample_size_maximum_(sample_size),
-        p_t_1(new Particles(0, sample_size)),
-        p_t(new Particles(0, sample_size)),
         indexation_(indexation),
         sample_index_minimum_(std::numeric_limits<int>::max()),
         sample_index_maximum_(std::numeric_limits<int>::min()),
         sample_weight_sum_(0.0),
         sample_weight_maximum_(0.0),
+        p_t_1(new Particles(0, sample_size)),
+        p_t(new Particles(0, sample_size)),
         kdtree_(new KDTreeBuffered),
         array_(new Array),
         array_to_be_used_(false)
@@ -76,13 +76,13 @@ public:
         frame_(frame),
         sample_size_minimum_(sample_size_minimum),
         sample_size_maximum_(sample_size_maximum),
-        p_t_1(new Particles(0, sample_size_maximum)),
-        p_t(new Particles(0, sample_size_maximum)),
         indexation_(indexation),
         sample_index_minimum_(std::numeric_limits<int>::max()),
         sample_index_maximum_(std::numeric_limits<int>::min()),
         sample_weight_sum_(0.0),
         sample_weight_maximum_(0.0),
+        p_t_1(new Particles(0, sample_size_maximum)),
+        p_t(new Particles(0, sample_size_maximum)),
         kdtree_(new KDTreeBuffered),
         array_(new Array),
         array_to_be_used_(false)
@@ -278,6 +278,11 @@ public:
         return sample_weight_sum_ == 1.0;
     }
 
+    inline std::string getFrame() const
+    {
+        return frame_;
+    }
+
 private:
     std::string    frame_;                              /// the frame particles are defined in
     std::size_t    sample_size_minimum_;                /// minimum sample size of the particle set
@@ -350,6 +355,7 @@ private:
     {
         p_t_1_clusters_.clear();
         std::swap(p_t, p_t_1);
+        normalizeWeights();
     }
 };
 }
