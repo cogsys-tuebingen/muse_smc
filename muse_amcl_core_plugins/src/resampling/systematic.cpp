@@ -37,15 +37,13 @@ void Systematic::doApply(ParticleSet &particle_set)
             return u >= cumsum_last && u < cumsum;
         };
 
-        Particle particle;
         for(auto &u_r : u) {
             while(!in_range(u_r)) {
                 ++p_t_1_it;
                 cumsum_last = cumsum;
                 cumsum += p_t_1_it->weight_;
             }
-            particle.pose_ = p_t_1_it->pose_;
-            i_p_t.insert(particle);
+            i_p_t.insert(*p_t_1_it);
         }
     }
 }
@@ -86,12 +84,14 @@ void Systematic::doApplyRecovery(ParticleSet &particle_set)
                 cumsum_last = cumsum;
                 cumsum += p_t_1_it->weight_;
             }
-            if(rng_recovery.get() < recovery_random_pose_probability_) {
+            const double recovery_probability = rng_recovery.get();
+            if(recovery_probability < recovery_random_pose_probability_) {
                 uniform_pose_sampler_->apply(particle);
+                particle.weight_ = recovery_probability;
+                i_p_t.insert(particle);
             } else {
-                particle.pose_ = p_t_1_it->pose_;
+                i_p_t(*p_t_1_it);
             }
-            i_p_t.insert(particle);
         }
     }
 }

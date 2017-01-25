@@ -17,7 +17,6 @@ void KLD2D::doApply(ParticleSet &particle_set)
     double beta = 0.0;
     std::size_t index = (std::size_t(rng.get() * size)) % size;
 
-    Particle particle;
     const std::size_t sample_size_minimum = std::max(particle_set.getSampleSizeMinimum(), 2ul);
     const std::size_t sample_size_maximum = particle_set.getSampleSizeMaximum();
 
@@ -36,8 +35,7 @@ void KLD2D::doApply(ParticleSet &particle_set)
             beta -= p_t_1[index].weight_;
             index = (index + 1) % size;
         }
-        particle.pose_ = p_t_1[index].pose_;
-        i_p_t.insert(particle);
+        i_p_t.insert(p_t_1[index]);
 
         if(i > sample_size_minimum && kld(i)) {
             break;
@@ -69,7 +67,6 @@ void KLD2D::doApplyRecovery(ParticleSet &particle_set)
 
     };
 
-
     math::random::Uniform<1> rng_recovery(0.0, 1.0);
     for(std::size_t i = 1 ; i <= sample_size_maximum ; ++i) {
         beta += 2 * w_max * rng.get();
@@ -78,13 +75,13 @@ void KLD2D::doApplyRecovery(ParticleSet &particle_set)
             index = (index + 1) % size;
         }
 
-        if(rng_recovery.get() < recovery_random_pose_probability_) {
+        const double recovery_probability = rng_recovery.get();
+        if(recovery_probability < recovery_random_pose_probability_) {
             uniform_pose_sampler_->apply(particle);
+            i_p_t.insert(particle);
         } else {
-            particle.pose_ =  p_t_1[index].pose_;
+            i_p_t.insert(p_t_1[index]);
         }
-
-        i_p_t.insert(particle);
 
         if(i > sample_size_minimum && kld(i)) {
             break;

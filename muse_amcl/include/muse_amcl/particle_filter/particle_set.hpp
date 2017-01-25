@@ -176,7 +176,10 @@ public:
 
     }
 
-    inline void updateDensityEstimate()
+    /**
+     * @brief Cluster the particle set to generate a density estimate.
+     */
+    inline void cluster()
     {
         /// run clustering
         ClusteringImpl impl;
@@ -190,6 +193,10 @@ public:
         p_t_1_clusters_ = std::move(impl.clusters_);
     }
 
+    /**
+     * @brief Return the clusters, after clustering.
+     * @return
+     */
     inline Clusters const & getClusters() const
     {
         return p_t_1_clusters_;
@@ -280,17 +287,23 @@ public:
         return sample_weight_sum_ == 1.0;
     }
 
+    /**
+     * @brief Return the frame the particle set is defined in.
+     * @return
+     */
     inline std::string getFrame() const
     {
         return frame_;
     }
 
+    /**
+     * @brief Return the non-normalized weight average for recovery in the resampling step.
+     * @return the non-normalized weight average
+     */
     inline double getWeightAverage() const
     {
         return sample_weight_average_;
     }
-
-
 private:
     std::string    frame_;                              /// the frame particles are defined in
     std::size_t    sample_size_minimum_;                /// minimum sample size of the particle set

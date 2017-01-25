@@ -19,15 +19,13 @@ void WheelOfFortune::doApply(ParticleSet &particle_set)
     math::random::Uniform<1> rng(0.0, 1.0);
     double beta = 0.0;
     std::size_t index = (std::size_t(rng.get() * size)) % size;
-    Particle particle;
     for(std::size_t i = 0 ; i < size ; ++i) {
         beta += 2 * w_max * rng.get();
         while (beta > p_t_1[index].weight_) {
             beta -= p_t_1[index].weight_;
             index = (index + 1) % size;
         }
-        particle.pose_ = p_t_1[index].pose_;
-        i_p_t.insert(particle);
+        i_p_t.insert(p_t_1[index]);
     }
 }
 
@@ -52,12 +50,13 @@ void WheelOfFortune::doApplyRecovery(ParticleSet &particle_set)
             index = (index + 1) % size;
         }
 
-        if(rng_recovery.get() < recovery_random_pose_probability_) {
+        const double recovery_propability = rng_recovery.get();
+        if(recovery_propability < recovery_random_pose_probability_) {
             uniform_pose_sampler_->apply(particle);
+            particle.weight_ = recovery_propability;
         } else {
-            particle.pose_ = p_t_1[index].pose_;
+            i_p_t.insert(p_t_1[index]);
         }
-        i_p_t.insert(particle);
     }
 }
 

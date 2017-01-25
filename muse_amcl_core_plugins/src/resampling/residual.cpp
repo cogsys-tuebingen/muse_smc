@@ -51,7 +51,6 @@ void Residual::doApply(ParticleSet &particle_set)
             return u >= cumsum_last && u < cumsum;
         };
 
-        Particle particle;
         for(std::size_t i = i_p_t_size ; i < size ; ++i) {
             while(!in_range(*u_it)) {
                 ++p_t_1_it;
@@ -59,8 +58,7 @@ void Residual::doApply(ParticleSet &particle_set)
                 cumsum_last = cumsum;
                 cumsum += *w_it / n_w_residual;
             }
-            particle.pose_ = p_t_1_it->pose_;
-            i_p_t.insert(particle);
+            i_p_t.insert(*p_t_1_it);
             ++u_it;
         }
     }
@@ -94,13 +92,13 @@ void Residual::doApplyRecovery(ParticleSet &particle_set)
             Particle particle;
             for(std::size_t i = 0 ; i < copies && i_p_t_size < size ;
                 ++i ,++i_p_t_size) {
-                if(rng_recovery.get() < recovery_random_pose_probability_) {
+                const double recovery_probability = rng_recovery.get();
+                if(recovery_probability < recovery_random_pose_probability_) {
                     uniform_pose_sampler_->apply(particle);
+                    i_p_t.insert(particle);
                 } else {
-                    particle.pose_ = sample.pose_;
+                    i_p_t.insert(sample);
                 }
-                i_p_t.insert(particle);
-
             }
         }
     }
