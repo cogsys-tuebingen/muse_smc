@@ -9,10 +9,10 @@ class WheelOfFortune : public Resampling
 public:
     WheelOfFortune() = default;
 
-
 protected:
     virtual void doApply(ParticleSet &particle_set) override;
     virtual void doSetup(ros::NodeHandle &nh_private) override;
+    virtual void doApplyRecovery(ParticleSet &particle_set) override;
 };
 }
 

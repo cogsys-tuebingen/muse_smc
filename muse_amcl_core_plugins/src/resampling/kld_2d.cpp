@@ -22,9 +22,10 @@ void KLD2D::doApply(ParticleSet &particle_set)
     const ParticleSet::Particles &p_t_1 = particle_set.getSamples();
     const double weight_avergy = particle_set.getWeightAverage();
     ParticleSet::Insertion i_p_t = particle_set.getInsertion();
+}
 
-
-
+void KLD2D::doApplyRecovery(ParticleSet &particle_set)
+{
 
 }
 

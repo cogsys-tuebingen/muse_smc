@@ -13,8 +13,8 @@ void UniformPrimaryMap2D::update(const std::string &frame)
     const ros::Time   now = ros::Time::now();
 
     primary_map = primary_map_provider_->getMap();
-    primary_T_o = primary_map->getOrigin().tf();
-    if(!tf_provider_->lookupTransform(frame, primary_map->getFrame(), now, w_T_primary, tf_timeout_)) {
+    primary_T_o_ = primary_map->getOrigin().tf();
+    if(!tf_provider_->lookupTransform(frame, primary_map->getFrame(), now, w_T_primary_, tf_timeout_)) {
         throw std::runtime_error("[UniformPrimaryMap2D]: Could not get primary map transform!");
     }
 
@@ -37,7 +37,7 @@ void UniformPrimaryMap2D::update(const std::string &frame)
     math::Point min = primary_map->getMin();
     math::Point max = primary_map->getMax();
     {
-        auto o_T_primary = primary_T_o.inverse();
+        auto o_T_primary = primary_T_o_.inverse();
         min = o_T_primary * min;
         max = o_T_primary * max;
     }
@@ -67,10 +67,10 @@ void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
                 break;
             }
 
-            math::Pose pose = primary_T_o * math::Pose(rng_->get());
+            math::Pose pose = primary_T_o_ * math::Pose(rng_->get());
             valid = primary_map->validate(pose);
             if(valid) {
-                particle.pose_  = w_T_primary * pose;
+                particle.pose_  = w_T_primary_ * pose;
                 for(std::size_t i = 0 ; i < secondary_maps_count ; ++i) {
                     valid &= secondary_maps_[i]->validate(secondary_maps_T_w_[i] * particle.pose_);
                 }
@@ -92,10 +92,10 @@ void UniformPrimaryMap2D::apply(Particle &particle)
             break;
         }
 
-        math::Pose pose = primary_T_o * math::Pose(rng_->get());
+        math::Pose pose = primary_T_o_ * math::Pose(rng_->get());
         valid = primary_map->validate(pose);
         if(valid) {
-            particle.pose_  = w_T_primary * pose;
+            particle.pose_  = w_T_primary_ * pose;
             for(std::size_t i = 0 ; i < secondary_maps_count ; ++i) {
                 valid &= secondary_maps_[i]->validate(secondary_maps_T_w_[i] * particle.pose_);
             }
