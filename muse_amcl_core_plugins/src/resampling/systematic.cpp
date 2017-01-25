@@ -90,7 +90,7 @@ void Systematic::doApplyRecovery(ParticleSet &particle_set)
                 particle.weight_ = recovery_probability;
                 i_p_t.insert(particle);
             } else {
-                i_p_t(*p_t_1_it);
+                i_p_t.insert(*p_t_1_it);
             }
         }
     }
