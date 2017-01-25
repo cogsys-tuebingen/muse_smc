@@ -24,8 +24,9 @@ void Residual::doApply(ParticleSet &particle_set)
     {
         math::random::Uniform<1> rng(0.0, 1.0);
         double u_static = rng.get();
+        Particle sample;
         for(std::size_t i = 0 ; i < size ; ++i) {
-            const auto &sample = p_t_1[i];
+            sample.pose_ = p_t_1[i].pose_;
             u[i] = (i + u_static) / size;
             std::size_t copies = std::floor(sample.weight_ * size);
 
@@ -50,6 +51,7 @@ void Residual::doApply(ParticleSet &particle_set)
             return u >= cumsum_last && u < cumsum;
         };
 
+        Particle particle;
         for(std::size_t i = i_p_t_size ; i < size ; ++i) {
             while(!in_range(*u_it)) {
                 ++p_t_1_it;
@@ -57,7 +59,8 @@ void Residual::doApply(ParticleSet &particle_set)
                 cumsum_last = cumsum;
                 cumsum += *w_it / n_w_residual;
             }
-            i_p_t.insert(*p_t_1_it);
+            particle.pose_ = p_t_1_it->pose_;
+            i_p_t.insert(particle);
             ++u_it;
         }
     }

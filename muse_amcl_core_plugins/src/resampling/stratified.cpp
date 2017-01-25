@@ -38,13 +38,15 @@ void Stratified::doApply(ParticleSet &particle_set)
             return u >= cumsum_last && u < cumsum;
         };
 
+        Particle particle;
         for(auto &u_r : u) {
             while(!in_range(u_r)) {
                 ++p_t_1_it;
                 cumsum_last = cumsum;
                 cumsum += p_t_1_it->weight_;
             }
-            i_p_t.insert(*p_t_1_it);
+            particle.pose_ = p_t_1_it->pose_;
+            i_p_t.insert(particle);
         }
     }
 }

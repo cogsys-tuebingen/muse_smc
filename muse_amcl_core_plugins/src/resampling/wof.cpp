@@ -19,13 +19,15 @@ void WheelOfFortune::doApply(ParticleSet &particle_set)
     math::random::Uniform<1> rng(0.0, 1.0);
     double beta = 0.0;
     std::size_t index = (std::size_t(rng.get() * size)) % size;
+    Particle particle;
     for(std::size_t i = 0 ; i < size ; ++i) {
         beta += 2 * w_max * rng.get();
         while (beta > p_t_1[index].weight_) {
             beta -= p_t_1[index].weight_;
             index = (index + 1) % size;
         }
-        i_p_t.insert(p_t_1[index]);
+        particle.pose_ = p_t_1[index].pose_;
+        i_p_t.insert(particle);
     }
 }
 

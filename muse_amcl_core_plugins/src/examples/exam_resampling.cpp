@@ -7,6 +7,7 @@
 #include "../resampling/systematic.h"
 #include "../resampling/wof.h"
 #include "../resampling/residual.h"
+#include "../resampling/kld_2d.h"
 #include "../sampling/uniform_all_maps_2d.h"
 
 struct TestUniformAllMaps2D : public muse_amcl::UniformAllMaps2D
@@ -48,6 +49,15 @@ struct TestResidual : public muse_amcl::Residual
     {
         uniform_pose_sampler_.reset(new TestUniformAllMaps2D);
     }
+};
+
+struct TestKLD2D : public muse_amcl::KLD2D
+{
+    TestKLD2D()
+    {
+        uniform_pose_sampler_.reset(new TestUniformAllMaps2D);
+    }
+
 };
 
 int main(int argc, char *argv[])
@@ -183,6 +193,20 @@ int main(int argc, char *argv[])
     }
     {
         /// kld 2D
+        /// residual
+        muse_amcl::ParticleSet ps_copy("frame", 10, 20, index);
+        auto insertion = ps_copy.getInsertion();
+        for(const auto &p : set.getSamples())
+            insertion.insert(p);
+        insertion.close();
+
+        TestKLD2D k;
+        k.apply(ps_copy);
+        std::cout << "kld2d particle set" << std::endl;
+        for(const auto &p : ps_copy.getSamples()) {
+            std::cout << p.pose_.origin().x() << " " << p.weight_ << std::endl;
+        }
+        std::cout << "----------------" << std::endl;
     }
     {
         /// kld 3D
