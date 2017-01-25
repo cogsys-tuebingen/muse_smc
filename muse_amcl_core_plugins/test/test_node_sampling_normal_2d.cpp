@@ -68,7 +68,7 @@ TEST(TestMuseAMCLCorePlugins, testNormalSampling2D)
     math::Pose       mu(mu_vec);
     math::Covariance sigma(sigma_mat);
     Indexation       indexation({0.1, 0.1, M_PI / 18.0});
-    ParticleSet      particle_set("world", 400, indexation);
+    ParticleSet      particle_set("world", 10, 5000, indexation);
 
     normal2d.apply(mu, sigma, particle_set);
     math::statistic::Distribution<3> distribution;

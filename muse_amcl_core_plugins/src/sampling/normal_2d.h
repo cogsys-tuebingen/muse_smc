@@ -7,12 +7,17 @@ namespace muse_amcl {
 class Normal2D : public NormalSampling
 {
 public:
+    virtual void update(const std::string &frame) override;
+
     virtual void apply(const math::Pose       &pose,
                        const math::Covariance &covariance,
                        ParticleSet            &particle_set) override;
 
 protected:
+
     int random_seed_;
+    std::vector<Map::ConstPtr>        maps_;
+    std::vector<tf::StampedTransform> maps_T_w_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) override;
 

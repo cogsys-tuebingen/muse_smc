@@ -23,8 +23,8 @@ protected:
     int              random_seed_;
 
     RandomPoseGenerator::Ptr   rng_;
-    tf::Transform              w_T_primary;
-    tf::Transform              primary_T_o;
+    tf::Transform              w_T_primary_;
+    tf::Transform              primary_T_o_;
     Map::ConstPtr primary_map;
     std::vector<Map::ConstPtr> secondary_maps_;
     std::vector<tf::Transform> secondary_maps_T_w_;

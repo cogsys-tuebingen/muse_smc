@@ -56,6 +56,8 @@ public:
         doSetupMapProviders(nh_private, map_providers);
     }
 
+
+    virtual void update(const std::string &frame) = 0;
     /**
      * @brief Generate a multivariate Gaussian distributed particle set with
      *        a mean given by a desired initialization pose and the covariance
