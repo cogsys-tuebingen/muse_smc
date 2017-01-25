@@ -9,10 +9,8 @@ class Systematic : public Resampling
 public:
     Systematic() = default;
 
-    virtual void apply(ParticleSet &particle_set) override;
-
 protected:
-
+    virtual void doApply(ParticleSet &particle_set) override;
     virtual void doSetup(ros::NodeHandle &nh_private) override;
 
 };

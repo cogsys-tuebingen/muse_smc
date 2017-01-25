@@ -7,7 +7,7 @@ CLASS_LOADER_REGISTER_CLASS(muse_amcl::Stratified, muse_amcl::Resampling)
 
 using namespace muse_amcl;
 
-void Stratified::apply(ParticleSet &particle_set)
+void Stratified::doApply(ParticleSet &particle_set)
 {
     /// initalize particle new particle set
     const ParticleSet::Particles &p_t_1 = particle_set.getSamples();

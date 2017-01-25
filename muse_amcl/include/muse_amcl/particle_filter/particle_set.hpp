@@ -170,6 +170,7 @@ public:
         for(auto &s : *p_t_1) {
             s.weight_ /= sample_weight_sum_;
         }
+        sample_weight_average_  = sample_weight_sum_ / p_t_1->size();
         sample_weight_maximum_ /= sample_weight_sum_;
         sample_weight_sum_ = 1.0;
 
@@ -363,8 +364,6 @@ private:
         p_t_1_clusters_.clear();
         std::swap(p_t, p_t_1);
 
-        /// just keep the non-normalized weight
-        sample_weight_average_ = sample_weight_sum_ / p_t_1->size();
         normalizeWeights();
     }
 };

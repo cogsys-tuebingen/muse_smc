@@ -10,16 +10,14 @@ public:
     KLD2D() = default;
 
 
-    virtual void apply(ParticleSet &particle_set) override;
-
 protected:
-
+    virtual void doApply(ParticleSet &particle_set) override;
     virtual void doSetup(ros::NodeHandle &nh_private) override;
 
-    double kld_error_;
-    double kld_z_;
-
-
+    double kld_error_;              /// error between histgram based distribution and particle filter posterior
+    double kld_z_;                  /// upper standard normal quantile for (1-p) distributions
+    double recovery_alpha_slow_;    ///
+    double recovery_alpha_fast_;    ///
 };
 }
 

@@ -7,7 +7,7 @@ CLASS_LOADER_REGISTER_CLASS(muse_amcl::Systematic, muse_amcl::Resampling)
 
 using namespace muse_amcl;
 
-void Systematic::apply(ParticleSet &particle_set)
+void Systematic::doApply(ParticleSet &particle_set)
 {
     const ParticleSet::Particles &p_t_1 = particle_set.getSamples();
     ParticleSet::Insertion i_p_t = particle_set.getInsertion();

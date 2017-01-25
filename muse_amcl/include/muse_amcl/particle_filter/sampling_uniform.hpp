@@ -36,10 +36,10 @@ public:
         return name_;
     }
 
-    void setup(const std::string                             &name,
-               ros::NodeHandle                               &nh_private,
-               const std::map<std::string, MapProvider::Ptr> &map_providers,
-               const TFProvider::Ptr                         &tf_provider)
+    inline void setup(const std::string                             &name,
+                      ros::NodeHandle                               &nh_private,
+                      const std::map<std::string, MapProvider::Ptr> &map_providers,
+                      const TFProvider::Ptr                         &tf_provider)
     {
         double sampling_timeout;
         double tf_timeout;
@@ -56,10 +56,21 @@ public:
     }
 
     /**
+     * @brief Has to be called before generation to capture the worlds state
+     *        at the current time. Afterwards resampling may be called.
+     * @param frame - frame poses should be generated in
+     */
+    virtual inline void update(const std::string &frame) = 0;
+    /**
      * @brief Build a uniformely distributed particle set using maps that should
      *        be used for pose generation.
      */
     virtual void apply(ParticleSet &particle_set) = 0;
+    /**
+     * @brief Generate a single particle from current state.
+     * @param particle
+     */
+    virtual void apply(Particle &particle) = 0;
 
 protected:
     std::string                   name_;

@@ -6,7 +6,7 @@ CLASS_LOADER_REGISTER_CLASS(muse_amcl::KLD2D, muse_amcl::Resampling)
 
 using namespace muse_amcl;
 
-void KLD2D::apply(ParticleSet &particle_set)
+void KLD2D::doApply(ParticleSet &particle_set)
 {
 //    /**
 //     * @brief particles
@@ -20,7 +20,9 @@ void KLD2D::apply(ParticleSet &particle_set)
 //     */
 
     const ParticleSet::Particles &p_t_1 = particle_set.getSamples();
+    const double weight_avergy = particle_set.getWeightAverage();
     ParticleSet::Insertion i_p_t = particle_set.getInsertion();
+
 
 
 
@@ -30,8 +32,6 @@ void KLD2D::doSetup(ros::NodeHandle &nh_private)
 {
     kld_error_ = nh_private.param(parameter("kld_error"), 0.01);
     kld_z_     = nh_private.param(parameter("kld_z"), 0.99);
-
-
 //    Indexation::Resolution resolution;    /// the resolution for array and kdtree
 //    resolution[0] = nh_private.param(parameter("resolution_linear"), 0.1);
 //    resolution[1] = resolution[0];

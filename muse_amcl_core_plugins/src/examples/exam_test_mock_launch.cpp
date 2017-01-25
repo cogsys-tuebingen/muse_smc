@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 
     uniform_pose_generation = muse_amcl::PluginLoader<muse_amcl::UniformSampling, MapProviders, TFProvider>::load(nh, maps, tf);
     normal_pose_generation = muse_amcl::PluginLoader<muse_amcl::NormalSampling, MapProviders, TFProvider>::load(nh, maps, tf);
-    resampling = muse_amcl::PluginLoader<muse_amcl::Resampling>::load(nh);
+    resampling = muse_amcl::PluginLoader<muse_amcl::Resampling, muse_amcl::UniformSampling::Ptr>::load(nh, uniform_pose_generation);
 
     std::cout << "updates      " << updates.size() << std::endl;
     std::cout << "propagations " << (propagation ? 1 : 0) << std::endl;

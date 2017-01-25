@@ -8,8 +8,10 @@ namespace muse_amcl {
  * @brief The purpose TestUniformPrimary2D struct is to give constant
  *        access to member fields for testing.
  */
-struct TestUniformAllMaps2D : UniformAllMaps2D
+struct TestUniformAllMaps2D : public UniformAllMaps2D
 {
+    using Ptr = std::shared_ptr<TestUniformAllMaps2D>;
+
     int getRandomSeed() const
     {
         return random_seed_;

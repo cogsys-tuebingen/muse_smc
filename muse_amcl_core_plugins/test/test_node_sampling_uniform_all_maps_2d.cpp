@@ -23,7 +23,7 @@ TEST(TestMuseAMCLCorePlugins, testSamplingUniformAllMaps2D)
 
     /// setup the sampler
     ros::NodeHandle nh_private("~");
-    TestUniformAllMaps2D  uniform2d;
+    TestUniformAllMaps2D::Ptr  uniform2d(new TestUniformAllMaps2D);
     std::map<std::string, muse_amcl::MapProvider::Ptr> map_providers;
 
     /// prepare the maps
@@ -33,28 +33,29 @@ TEST(TestMuseAMCLCorePlugins, testSamplingUniformAllMaps2D)
     map_providers["map1"] = TestMapProvider::Ptr(new TestMapProvider("map1", map1));
 
     /// setup
-    uniform2d.setup("particle_filter/uniform_pose_generation",
-                    nh_private,
-                    map_providers,
-                    tf_provider);
+    uniform2d->setup("particle_filter/uniform_pose_generation",
+                      nh_private,
+                      map_providers,
+                      tf_provider);
 
-    EXPECT_EQ(42, uniform2d.getRandomSeed());
-    EXPECT_EQ("particle_filter/uniform_pose_generation", uniform2d.getName());
-    EXPECT_EQ(5335, uniform2d.getSampleSize());
-    EXPECT_EQ(ros::Duration(12.0), uniform2d.getSamplingTimeout());
-    EXPECT_EQ(ros::Duration(0.3),  uniform2d.getTFTimeout());
-    EXPECT_EQ(tf_provider,         uniform2d.getTFProvider());
+    EXPECT_EQ(42, uniform2d->getRandomSeed());
+    EXPECT_EQ("particle_filter/uniform_pose_generation", uniform2d->getName());
+    EXPECT_EQ(5335, uniform2d->getSampleSize());
+    EXPECT_EQ(ros::Duration(12.0), uniform2d->getSamplingTimeout());
+    EXPECT_EQ(ros::Duration(0.3),  uniform2d->getTFTimeout());
+    EXPECT_EQ(tf_provider,         uniform2d->getTFProvider());
 
 
-    std::vector<MapProvider::Ptr> maps = uniform2d.getMapProviders();
+    std::vector<MapProvider::Ptr> maps = uniform2d->getMapProviders();
     EXPECT_EQ(2, maps.size());
     EXPECT_EQ("map0", maps.front()->getName());
     EXPECT_EQ("map1", maps.back()->getName());
 
     /// fire up the tests
     Indexation       indexation({0.1, 0.1, M_PI / 18.0});
-    ParticleSet      particle_set("world", 400, indexation);
-    uniform2d.apply(particle_set);
+    ParticleSet      particle_set("world", 10, 6000, indexation);
+    uniform2d->update(particle_set.getFrame());
+    uniform2d->apply(particle_set);
 
 
     math::statistic::Distribution<3> distribution;

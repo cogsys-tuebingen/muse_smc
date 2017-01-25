@@ -7,6 +7,48 @@
 #include "../resampling/systematic.h"
 #include "../resampling/wof.h"
 #include "../resampling/residual.h"
+#include "../sampling/uniform_all_maps_2d.h"
+
+struct TestUniformAllMaps2D : public muse_amcl::UniformAllMaps2D
+{
+    virtual void apply(muse_amcl::Particle &particle) override
+    {
+
+    }
+};
+
+struct TestMultinomial : public muse_amcl::Multinomial
+{
+    TestMultinomial()
+    {
+        uniform_pose_sampler_.reset(new TestUniformAllMaps2D);
+    }
+
+};
+
+struct TestStratified : public muse_amcl::Stratified
+{
+    TestStratified()
+    {
+        uniform_pose_sampler_.reset(new TestUniformAllMaps2D);
+    }
+};
+
+struct TestSystematic : public muse_amcl::Systematic
+{
+    TestSystematic()
+    {
+        uniform_pose_sampler_.reset(new TestUniformAllMaps2D);
+    }
+};
+
+struct TestResidual : public muse_amcl::Residual
+{
+    TestResidual()
+    {
+        uniform_pose_sampler_.reset(new TestUniformAllMaps2D);
+    }
+};
 
 int main(int argc, char *argv[])
 {

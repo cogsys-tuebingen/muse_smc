@@ -7,7 +7,7 @@ CLASS_LOADER_REGISTER_CLASS(muse_amcl::WheelOfFortune, muse_amcl::Resampling)
 
 using namespace muse_amcl;
 
-void WheelOfFortune::apply(ParticleSet &particle_set)
+void WheelOfFortune::doApply(ParticleSet &particle_set)
 {
     const ParticleSet::Particles &p_t_1 = particle_set.getSamples();
     const double w_max = particle_set.getSampleWeightMaximum();

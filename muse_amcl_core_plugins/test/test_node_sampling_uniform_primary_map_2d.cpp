@@ -54,7 +54,8 @@ TEST(TestMuseAMCLCorePlugins, testSamplingUniformPrimary2D)
 
     /// fire up the tests
     Indexation       indexation({0.1, 0.1, M_PI / 18.0});
-    ParticleSet      particle_set("world", 400, indexation);
+    ParticleSet      particle_set("world", 10, 6000, indexation);
+    uniform2d.update(particle_set.getFrame());
     uniform2d.apply(particle_set);
 
 

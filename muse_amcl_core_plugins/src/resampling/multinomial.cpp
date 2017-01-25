@@ -7,7 +7,7 @@ CLASS_LOADER_REGISTER_CLASS(muse_amcl::Multinomial, muse_amcl::Resampling)
 
 using namespace muse_amcl;
 
-void Multinomial::apply(ParticleSet &particle_set)
+void Multinomial::doApply(ParticleSet &particle_set)
 {
     const ParticleSet::Particles &p_t_1 = particle_set.getSamples();
     ParticleSet::Insertion i_p_t = particle_set.getInsertion();

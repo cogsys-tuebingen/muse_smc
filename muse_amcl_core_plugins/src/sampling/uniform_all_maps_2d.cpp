@@ -3,26 +3,19 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_amcl::UniformAllMaps2D, muse_amcl::UniformSampling)
 
-#include <muse_amcl/pose_samplers/uniform.hpp>
+
 #include <tf/tf.h>
 #include <eigen3/Eigen/Core>
 
 using namespace muse_amcl;
 
-using Metric              = muse_amcl::pose_generation::Metric;
-using Radian              = muse_amcl::pose_generation::Radian;
-using RandomPoseGenerator = muse_amcl::pose_generation::Uniform<Metric, Metric, Radian>;
-
 UniformAllMaps2D::UniformAllMaps2D()
 {
 }
 
-void UniformAllMaps2D::apply(ParticleSet &particle_set)
+void UniformAllMaps2D::update(const std::string &frame)
 {
-    std::vector<Map::ConstPtr> maps;
-    std::vector<tf::Transform> maps_T_w;
     const ros::Time   now   = ros::Time::now();
-    const std::string world_frame = particle_set.getFrame();
 
     muse_amcl::math::Point min(std::numeric_limits<double>::max(),
                                std::numeric_limits<double>::max());
@@ -32,9 +25,9 @@ void UniformAllMaps2D::apply(ParticleSet &particle_set)
     for(auto &m : map_providers_) {
         tf::Transform map_T_w;
         Map::ConstPtr map = m->getMap();
-        if(tf_provider_->lookupTransform(map->getFrame(), world_frame, now, map_T_w, tf_timeout_)) {
-            maps.emplace_back(map);
-            maps_T_w.emplace_back(map_T_w);
+        if(tf_provider_->lookupTransform(map->getFrame(), frame, now, map_T_w, tf_timeout_)) {
+            maps_.emplace_back(map);
+            maps_T_w_.emplace_back(map_T_w);
 
             tf::Transform w_T_map = map_T_w.inverse();
             min = min.cwiseMin(w_T_map * map->getMin());
@@ -42,24 +35,28 @@ void UniformAllMaps2D::apply(ParticleSet &particle_set)
 
         } else {
             std::cerr << "[UniformAllMaps2D]: Could not lookup transform '"
-                      << world_frame << " -> " << map->getFrame()
+                      << frame << " -> " << map->getFrame()
                       << std::endl;
         }
     }
 
-    RandomPoseGenerator::Ptr rng(new RandomPoseGenerator({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}));
+    rng_.reset(new RandomPoseGenerator({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}));
     if(random_seed_ >= 0) {
-        rng.reset(new RandomPoseGenerator({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}, 0));
+        rng_.reset(new RandomPoseGenerator({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}, 0));
     }
 
-    if(sample_size_ < particle_set.getSampleSizeMinimum() &&
+}
+
+void UniformAllMaps2D::apply(ParticleSet &particle_set)
+{
+    if(sample_size_ < particle_set.getSampleSizeMinimum() ||
             sample_size_ > particle_set.getSampleSizeMaximum()) {
         throw std::runtime_error("Initialization sample size invalid!");
     }
 
     ParticleSet::Insertion insertion = particle_set.getInsertion();
     const ros::Time sampling_start = ros::Time::now();
-    const std::size_t map_count = maps.size();
+    const std::size_t map_count = maps_.size();
     Particle particle;
     for(std::size_t i = 0 ; i < sample_size_ ; ++i) {
         bool valid = false;
@@ -70,13 +67,33 @@ void UniformAllMaps2D::apply(ParticleSet &particle_set)
                 break;
             }
 
-            particle.pose_ = rng->get();
+            particle.pose_ = rng_->get();
             valid = true;
             for(std::size_t i = 0 ; i < map_count ; ++i) {
-                valid &= maps[i]->validate(maps_T_w[i] * particle.pose_);
+                valid &= maps_[i]->validate(maps_T_w_[i] * particle.pose_);
             }
         }
         insertion.insert(particle);
+    }
+}
+
+void UniformAllMaps2D::apply(Particle &particle)
+{
+    const ros::Time sampling_start = ros::Time::now();
+    const std::size_t map_count = maps_.size();
+    bool valid = false;
+    while(!valid) {
+        ros::Time now = ros::Time::now();
+        if(sampling_start + sampling_timeout_ < now) {
+            std::cerr << "[UniformAllMaps2D]: Sampling timed out!" << std::endl;
+            break;
+        }
+
+        particle.pose_ = rng_->get();
+        valid = true;
+        for(std::size_t i = 0 ; i < map_count ; ++i) {
+            valid &= maps_[i]->validate(maps_T_w_[i] * particle.pose_);
+        }
     }
 }
 
