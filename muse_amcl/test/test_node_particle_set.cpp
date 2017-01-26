@@ -293,7 +293,7 @@ TEST(TestMuseAMCL, testClustering)
     }
     i.close();
 
-    EXPECT_NO_FATAL_FAILURE(particle_set.updateDensityEstimate());
+    EXPECT_NO_FATAL_FAILURE(particle_set.cluster());
     auto clusters = particle_set.getClusters();
 
     EXPECT_EQ(2, clusters.size());
