@@ -2,18 +2,18 @@
 #define MOCK_PROPAGATION_H
 
 
-#include <muse_amcl/particle_filter/propagation.hpp>
+#include <muse_amcl/particle_filter/prediction_model.hpp>
 
 namespace muse_amcl {
-class MockPropagation : public Propagation
+class MockPropagation : public PredictionModel
 {
 public:
     typedef std::shared_ptr<MockPropagation> Ptr;
 
     MockPropagation();
 
-    virtual void apply(const Data::ConstPtr &data,
-                       ParticleSet::Poses set) override;
+    virtual void predict(const Data::ConstPtr &data,
+                         ParticleSet::Poses set) override;
 
 
     double  first_parameter;

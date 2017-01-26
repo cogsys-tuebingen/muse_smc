@@ -2,13 +2,14 @@
 #define PARTICLE_FILTER_HPP
 
 #include "particle_set.hpp"
-#include "update_queue.hpp"
-#include "propagation_queue.hpp"
 
 #include "../data_sources/tf_provider.hpp"
 #include "resampling.hpp"
 #include "sampling_uniform.hpp"
 #include "sampling_normal.hpp"
+
+#include "prediction.hpp"
+#include "update.hpp"
 
 #include <memory>
 #include <thread>
@@ -63,6 +64,16 @@ public:
         return resampling_;
     }
 
+    /// insert new predictions
+    void addPrediction(Prediction::Ptr &prediction)
+    {
+
+    }
+
+    void addUpdate(Update::Ptr &update)
+    {
+
+    }
 
 
 protected:

@@ -1,22 +1,36 @@
 #ifndef UPDATE_HPP
 #define UPDATE_HPP
 
-#include <memory>
-#include <vector>
-#include <tf/tf.h>
-#include <tf/transform_listener.h>
-#include <ros/node_handle.h>
+#include "update_model.hpp"
+#include "particle_set.hpp"
 
-#include <muse_amcl/data_types/data.hpp>
-#include <muse_amcl/data_types/map.hpp>
-#include <muse_amcl/particle_filter/particle_set.hpp>
 
 namespace muse_amcl {
 class Update {
 public:
-    typedef std::shared_ptr<Update> Ptr;
+    using Ptr = std::shared_ptr<Update>;
 
-    Update()
+    struct Less {
+        bool operator()( const Update& lhs,
+                         const Update& rhs ) const
+        {
+            return lhs.getStamp() > rhs.getStamp();
+        }
+        bool operator()( const Update::Ptr &lhs,
+                         const Update::Ptr &rhs ) const
+        {
+            return lhs->getStamp() > rhs->getStamp();
+        }
+    };
+
+    Update(const ros::Time        &stamp,
+           const Data::ConstPtr   &data,
+           const Map::ConstPtr    &map,
+           const UpdateModel::Ptr &model) :
+        stamp_(stamp),
+        data_(data),
+        map_(map),
+        model_(model)
     {
     }
 
@@ -24,37 +38,27 @@ public:
     {
     }
 
-    inline const static std::string Type()
+    inline void operator() (ParticleSet::Weights weights)
     {
-        return "muse_amcl::Update";
+        model_->update(data_, map_, weights);
     }
 
-    inline std::string getName() const
+    inline void apply(ParticleSet::Weights weights)
     {
-        return name_;
+        model_->update(data_, map_, weights);
     }
 
-    void setup(const std::string &name,
-               ros::NodeHandle   &nh_private)
+    inline ros::Time getStamp() const
     {
-        name_ = name;
-        doSetup(nh_private);
+        return stamp_;
     }
 
-    virtual double apply(const Data::ConstPtr &data,
-                         const Map::ConstPtr &map,
-                         ParticleSet::Weights set) = 0;
 
-protected:
-    std::string name_;
-
-    virtual void doSetup(ros::NodeHandle &nh_private) = 0;
-
-    std::string parameter(const std::string &name)
-    {
-        return name_ + "/" + name;
-    }
-
+private:
+    const ros::Time      stamp_;
+    const Data::ConstPtr data_;
+    const Map::ConstPtr  map_;
+    UpdateModel::Ptr     model_;
 };
 }
 

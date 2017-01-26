@@ -32,7 +32,7 @@ public:
         return frame_;
     }
 
-    inline const ros::Time & stamp() const
+    inline const ros::Time & getStamp() const
     {
         return stamp_;
     }

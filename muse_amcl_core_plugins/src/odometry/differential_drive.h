@@ -1,16 +1,16 @@
 #ifndef DIFFERENTIAL_DRIVE_H
 #define DIFFERENTIAL_DRIVE_H
 
-#include <muse_amcl/particle_filter/propagation.hpp>
+#include <muse_amcl/particle_filter/prediction_model.hpp>
 
 namespace muse_amcl {
-class DifferentialDrive : public Propagation
+class DifferentialDrive : public PredictionModel
 {
 public:
     DifferentialDrive();
 
-    virtual void apply(const Data::ConstPtr &data,
-                       ParticleSet::Poses set) override;
+    virtual void predict(const Data::ConstPtr &data,
+                         ParticleSet::Poses set) override;
 
 protected:
     virtual void doSetup(ros::NodeHandle &nh) override;

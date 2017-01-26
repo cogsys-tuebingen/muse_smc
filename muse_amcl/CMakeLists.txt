@@ -85,8 +85,6 @@ target_link_libraries(${PROJECT_NAME}_particle_filter
 
 add_executable(${PROJECT_NAME}_node
     src/node/muse_amcl_node.cpp
-    src/node/muse_amcl_frontend.cpp
-    src/node/muse_amcl_backend.cpp
 )
 
 add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

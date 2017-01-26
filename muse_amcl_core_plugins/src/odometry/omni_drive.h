@@ -1,10 +1,10 @@
 #ifndef OMNI_DRIVE_H
 #define OMNI_DRIVE_H
 
-#include <muse_amcl/particle_filter/propagation.hpp>
+#include <muse_amcl/particle_filter/prediction_model.hpp>
 
 namespace muse_amcl {
-class OmniDrive : public Propagation
+class OmniDrive : public PredictionModel
 {
 public:
     OmniDrive();

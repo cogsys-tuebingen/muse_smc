@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_amcl::MockPropagation, muse_amcl::Propagation)
+CLASS_LOADER_REGISTER_CLASS(muse_amcl::MockPropagation, muse_amcl::PredictionModel)
 
 using namespace muse_amcl;
 
@@ -11,7 +11,7 @@ MockPropagation::MockPropagation()
 {
 }
 
-void MockPropagation::apply(const Data::ConstPtr &data,
+void MockPropagation::predict(const Data::ConstPtr &data,
                             ParticleSet::Poses set)
 {
     std::cout << "Hello, I am a mock propagation - Greetings Traveller!" << std::endl;

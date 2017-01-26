@@ -10,10 +10,8 @@
 #include <muse_amcl/data_sources/data_provider.hpp>
 #include <muse_amcl/data_sources/tf_provider.hpp>
 
-#include <muse_amcl/particle_filter/update.hpp>
-#include <muse_amcl/particle_filter/update_manager.hpp>
-#include <muse_amcl/particle_filter/propagation.hpp>
-#include <muse_amcl/particle_filter/propagation_manager.hpp>
+#include <muse_amcl/particle_filter/update_forwarder.hpp>
+#include <muse_amcl/particle_filter/prediction_forwarder.hpp>
 #include <muse_amcl/particle_filter/particle_filter.hpp>
 
 #include <muse_amcl/plugins/plugin_loader.hpp>
