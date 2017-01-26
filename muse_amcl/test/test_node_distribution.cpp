@@ -1,4 +1,5 @@
 #include <muse_amcl/math/distribution.hpp>
+#include <muse_amcl/math/weighted_distribution.hpp>
 
 #include <gtest/gtest.h>
 #include <ros/ros.h>
@@ -262,8 +263,6 @@ TEST(TestMuseAMCL, testDistributionAddition)
         distribution_a.add(test_distribution_a.data[i]);
     }
 
-    std::cout << (distribution_a.getMean() - distribution_b.getMean()).norm() << std::endl;
-
     EXPECT_NEAR((distribution_a.getMean() - distribution_b.getMean()).norm(), 0.0, tolerance);
     EXPECT_TRUE(distribution_a.getN() == distribution_b.getN());
 
@@ -272,6 +271,49 @@ TEST(TestMuseAMCL, testDistributionAddition)
 
     EXPECT_NEAR((distribution_a.getEigenValues() - distribution_b.getEigenValues()).norm(), 0.0, tolerance);
     EXPECT_NEAR((distribution_a.getEigenVectors() - distribution_b.getEigenVectors()).norm(), 0.0, tolerance);
+}
+
+TEST(TestMuseAMCL, testWeightedDistribution)
+{
+    mms::WeightedDistribution<2> wd;
+    for(std::size_t i = 0 ; i < 10 ; ++i) {
+        wd.add(Eigen::Vector2d(i,i), 0.5);
+    }
+
+    Eigen::Vector2d mean = wd.getMean();
+    EXPECT_NEAR(4.5, mean(0), 1e-6);
+    EXPECT_NEAR(4.5, mean(1), 1e-6);
+
+    for(std::size_t i = 0 ; i < 10 ; ++i) {
+        wd.add(Eigen::Vector2d(i,i), 1.0);
+    }
+
+    mean = wd.getMean();
+    EXPECT_NEAR(4.5, mean(0), 1e-6);
+    EXPECT_NEAR(4.5, mean(1), 1e-6);
+
+    for(std::size_t i = 0 ; i < 10 ; ++i) {
+        wd.add(Eigen::Vector2d(2,2), 1.0);
+    }
+
+    mean = wd.getMean();
+    EXPECT_NEAR(3.5, mean(0), 1e-6);
+    EXPECT_NEAR(3.5, mean(1), 1e-6);
+
+    mms::WeightedDistribution<2> wdc = wd;
+    wdc += wd;
+    mean = wdc.getMean();
+    EXPECT_NEAR(3.5, mean(0), 1e-6);
+    EXPECT_NEAR(3.5, mean(1), 1e-6);
+
+    //wdc = wd;
+    for(std::size_t i = 0 ; i < 10 ; ++i) {
+        wdc.add(Eigen::Vector2d(8,8), 0.75);
+    }
+    wdc += wd;
+    mean = wdc.getMean();
+    EXPECT_NEAR(4.086956521739131, mean(0), 1e-6);
+    EXPECT_NEAR(4.086956521739131, mean(1), 1e-6);
 }
 
 int main(int argc, char *argv[])
