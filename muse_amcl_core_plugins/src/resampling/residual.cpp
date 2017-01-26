@@ -24,9 +24,8 @@ void Residual::doApply(ParticleSet &particle_set)
     {
         math::random::Uniform<1> rng(0.0, 1.0);
         double u_static = rng.get();
-        Particle sample;
         for(std::size_t i = 0 ; i < size ; ++i) {
-            sample.pose_ = p_t_1[i].pose_;
+            const auto &sample = p_t_1[i];
             u[i] = (i + u_static) / size;
             std::size_t copies = std::floor(sample.weight_ * size);
 
@@ -95,6 +94,7 @@ void Residual::doApplyRecovery(ParticleSet &particle_set)
                 const double recovery_probability = rng_recovery.get();
                 if(recovery_probability < recovery_random_pose_probability_) {
                     uniform_pose_sampler_->apply(particle);
+                    particle.weight_ = recovery_probability;
                     i_p_t.insert(particle);
                 } else {
                     i_p_t.insert(sample);
@@ -122,12 +122,15 @@ void Residual::doApplyRecovery(ParticleSet &particle_set)
                 cumsum_last = cumsum;
                 cumsum += *w_it / n_w_residual;
             }
-            if(rng_recovery.get() < recovery_random_pose_probability_) {
+
+            const double recovery_probability = rng_recovery.get();
+            if(recovery_probability < recovery_random_pose_probability_) {
                 uniform_pose_sampler_->apply(particle);
+                particle.weight_ = recovery_probability;
+                i_p_t.insert(particle);
             } else {
-                particle.pose_ = p_t_1_it->pose_;
+                i_p_t.insert(*p_t_1_it);
             }
-            i_p_t.insert(particle);
             ++u_it;
         }
     }
