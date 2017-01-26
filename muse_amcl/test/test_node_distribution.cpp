@@ -306,7 +306,7 @@ TEST(TestMuseAMCL, testWeightedDistribution)
     EXPECT_NEAR(3.5, mean(0), 1e-6);
     EXPECT_NEAR(3.5, mean(1), 1e-6);
 
-    //wdc = wd;
+    wdc = wd;
     for(std::size_t i = 0 ; i < 10 ; ++i) {
         wdc.add(Eigen::Vector2d(8,8), 0.75);
     }
