@@ -33,12 +33,13 @@ find_package(catkin REQUIRED COMPONENTS
     pluginlib
     cslibs_indexed_storage
     geometry_msgs
+    message_generation
 )
 
 add_service_files(
    FILES
-   global_initialization.srv
-   pose_initialization.srv
+   GlobalInitialization.srv
+   PoseInitialization.srv
 )
 
 generate_messages(

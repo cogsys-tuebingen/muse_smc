@@ -38,7 +38,7 @@ public:
 
 private:
     std::function<void (ParticleSet::Poses set)>  lambda_;
-    ros::Time                                            stamp_;
+    ros::Time                                     stamp_;
 
 };
 }

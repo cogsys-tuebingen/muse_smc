@@ -6,110 +6,84 @@
 #include "propagation_queue.hpp"
 
 #include "../data_sources/tf_provider.hpp"
+#include "resampling.hpp"
+#include "sampling_uniform.hpp"
+#include "sampling_normal.hpp"
 
 #include <memory>
 #include <thread>
 #include <atomic>
 
+
 namespace muse_amcl {
 class ParticleFilter {
 public:
+    using Ptr = std::shared_ptr<ParticleFilter>;
+
     ParticleFilter() :
-        tf_provider_(new TFProvider),
-        stop_(false),
-        running_(false)
-    {
-    }
-
-    virtual ~ParticleFilter()
-    {
-        disable();
-    }
-
-    /**
-     * @brief   Get the TFProvider, which should be used in all backend
-     *          threads, therefore in the the update objects.
-     * @return  the TFProvider
-     */
-    TFProvider::Ptr getTFProvider()
-    {
-        return tf_provider_;
-    }
-
-    /**
-     * @brief   Return the update queue which is then used by the front end
-     *          update managers.
-     * @return  the update queue
-     */
-    UpdateQueue& getUpdateQueue()
-    {
-        return update_queue_;
-    }
-
-    /**
-     * @brief   Return the propagation queue.
-     * @return  the propagation queue
-     */
-    PropagationQueue& getPropagationQueue()
-    {
-        return propagation_queue_;
-    }
-
-    /**
-     * @brief   Setup the particle filter.
-     *          Retrieve all important parameters
-     * @param   nh_private
-     */
-    void setup(ros::NodeHandle &nh_private)
+        name_("particle_filter")
     {
 
     }
 
-    /**
-     * @brief Enable the particle filter thread.
-     */
-    void enable()
+    void setup(ros::NodeHandle &nh_private,
+               const TFProvider::Ptr &tf_provider)
     {
-        if(running_)
-            return;
-        worker_thread_ = std::thread([this](){doExecute();});
-        running_ = true;
+        tf_provider_ = tf_provider;
     }
 
-    /**
-     * @brief Disable the particle filter thread.
-     */
-    void disable()
+    /// uniform pose sampling
+    void setUniformSampling(UniformSampling::Ptr &uniform_sampling)
     {
-        stop_ = true;
-        update_queue_.clear();
-        update_queue_.disableWaiting();
-        worker_thread_.join();
-        running_ = false;
+        uniform_sampling = uniform_sampling;
+
     }
+    UniformSampling::Ptr getUniformSampling() const
+    {
+        return uniform_sampling_;
+    }
+
+    /// normal pose sampling
+    void setNormalsampling(NormalSampling::Ptr &normal_sampling)
+    {
+        normal_sampling_ = normal_sampling;
+    }
+    NormalSampling::Ptr getNormalSampling() const
+    {
+        return normal_sampling_;
+    }
+
+    /// resampling
+    void setResampling(Resampling::Ptr &resampling)
+    {
+        resampling_ = resampling;
+    }
+    Resampling::Ptr getResampling() const
+    {
+        return resampling_;
+    }
+
+
 
 protected:
-    TFProvider::Ptr  tf_provider_;
-    UpdateQueue      update_queue_;
-    PropagationQueue propagation_queue_;
+    std::string         name_;
+    TFProvider::Ptr     tf_provider_;
+    ParticleSet::Ptr    particle_set_;
 
-    ParticleSet::Ptr particle_set_;
+    UniformSampling::Ptr  uniform_sampling_;
+    NormalSampling::Ptr   normal_sampling_;
+    Resampling::Ptr       resampling_;
 
-    std::thread      worker_thread_;
-    std::atomic_bool stop_;
-    std::atomic_bool running_;
 
-    void doExecute()
+
+
+
+
+    std::string parameter(const std::string &name)
     {
-        while(!stop_) {
-            /// get next update
-            /// check if can be propagated till then
-            /// propagate
-            /// update
-            /// check if it is time to resample
-            /// check if we can publish tf
-        }
+        return name_ + "/" + name;
     }
+
 
 };
 }

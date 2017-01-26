@@ -57,16 +57,16 @@ int main(int argc, char *argv[])
     std::map<std::string, muse_amcl::DataProvider::Ptr> datas;
 
     muse_amcl::PluginLoader<muse_amcl::Update>::load(nh, updates);
-    propagation = muse_amcl::PluginLoader<muse_amcl::Propagation>::load(nh);
+    muse_amcl::PluginLoader<muse_amcl::Propagation>::load(nh, propagation);
     muse_amcl::PluginLoader<muse_amcl::MapProvider>::load(nh, maps);
     muse_amcl::PluginLoader<muse_amcl::DataProvider>::load(nh, datas);
 
     using MapProviders = std::map<std::string, muse_amcl::MapProvider::Ptr>;
     using TFProvider = muse_amcl::TFProvider::Ptr;
 
-    uniform_pose_generation = muse_amcl::PluginLoader<muse_amcl::UniformSampling, MapProviders, TFProvider>::load(nh, maps, tf);
-    normal_pose_generation = muse_amcl::PluginLoader<muse_amcl::NormalSampling, MapProviders, TFProvider>::load(nh, maps, tf);
-    resampling = muse_amcl::PluginLoader<muse_amcl::Resampling, muse_amcl::UniformSampling::Ptr>::load(nh, uniform_pose_generation);
+    muse_amcl::PluginLoader<muse_amcl::UniformSampling, MapProviders, TFProvider>::load(nh, uniform_pose_generation, maps, tf);
+    muse_amcl::PluginLoader<muse_amcl::NormalSampling, MapProviders, TFProvider>::load(nh, normal_pose_generation, maps, tf);
+    muse_amcl::PluginLoader<muse_amcl::Resampling, muse_amcl::UniformSampling::Ptr>::load(nh, resampling, uniform_pose_generation);
 
     std::cout << "updates      " << updates.size() << std::endl;
     std::cout << "propagations " << (propagation ? 1 : 0) << std::endl;

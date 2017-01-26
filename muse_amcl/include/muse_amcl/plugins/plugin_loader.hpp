@@ -61,8 +61,9 @@ struct PluginLoader
         return plugins.size() > 0;
     }
 
-    static typename PluginType::Ptr load(ros::NodeHandle &nh_private,
-                                         const Arguments&... arguments)
+    static void load(ros::NodeHandle &nh_private,
+                     typename PluginType::Ptr &plugin,
+                     const Arguments&... arguments)
     {
         std::map<std::string, LaunchEntry> plugins_found;
         parseLaunchFile(nh_private, plugins_found);
@@ -73,11 +74,9 @@ struct PluginLoader
             const std::string &base_class_name = entry.second.base_class_name;
             const std::string &class_name = entry.second.class_name;
             if(base_class_name == PluginType::Type()) {
-                return factory.create(class_name, name, arguments...);
+                plugin = factory.create(class_name, name, arguments...);
             }
         }
-
-        return nullptr;
     }
 };
 }

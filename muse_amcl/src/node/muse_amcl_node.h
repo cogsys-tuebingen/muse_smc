@@ -3,19 +3,62 @@
 
 #include "../../include/muse_amcl/particle_filter/particle_filter.hpp"
 
+#include <muse_amcl/GlobalInitialization.h>
+#include <muse_amcl/PoseInitialization.h>
+
+#include <muse_amcl/data_sources/map_provider.hpp>
+#include <muse_amcl/data_sources/data_provider.hpp>
+#include <muse_amcl/data_sources/tf_provider.hpp>
+
+#include <muse_amcl/particle_filter/update.hpp>
+#include <muse_amcl/particle_filter/update_manager.hpp>
+#include <muse_amcl/particle_filter/propagation.hpp>
+#include <muse_amcl/particle_filter/propagation_manager.hpp>
+#include <muse_amcl/particle_filter/particle_filter.hpp>
+
+#include <muse_amcl/plugins/plugin_loader.hpp>
+#include <muse_amcl/plugins/plugin_factory.hpp>
+
+#include <ros/ros.h>
+
+
+namespace muse_amcl {
 class MuseAMCLNode
 {
 public:
     MuseAMCLNode();
     virtual ~MuseAMCLNode();
 
-    void setup();
     void start();
 
-private:
-    ros::NodeHandle nh_private_;
-    ros::NodeHandle nh_public_;
+    bool requestGlobalInitialization(const muse_amcl::GlobalInitializationRequest &req,
+                                     muse_amcl::GlobalInitializationResponse &res);
 
+    bool requestPoseInitialization(const muse_amcl::PoseInitializationRequest &req,
+                                   muse_amcl::PoseInitializationResponse &res);
+
+private:
+    ros::NodeHandle                          nh_private_;
+    ros::NodeHandle                          nh_public_;
+
+    //// data providers
+    TFProvider::Ptr                          tf_provider_frontend_;  /// for data providers and data conversion
+    TFProvider::Ptr                          tf_provider_backend_;   /// for the backend (the particle filter and the sensor updates)
+    std::map<std::string, MapProvider::Ptr>  map_providers_;
+    std::map<std::string, DataProvider::Ptr> data_providers_;
+
+    ParticleFilter                           particle_filter_;
+
+    //// prediction & update
+    std::map<std::string, Update::Ptr>       update_functions_;
+    Propagation::Ptr                         prediction_;
+
+    UpdateManager::Ptr                       update_manager_;
+    PropagationManager::Ptr                  predicition_manager_;
+
+    /// read all ros related stuff and initalize plugins
+    void setup();
 };
+}
 
 #endif /* MUSE_AMCL_NODE_H */
