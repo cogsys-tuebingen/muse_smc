@@ -32,6 +32,19 @@ find_package(catkin REQUIRED COMPONENTS
     visualization_msgs
     pluginlib
     cslibs_indexed_storage
+    geometry_msgs
+)
+
+add_service_files(
+   FILES
+   global_initialization.srv
+   pose_initialization.srv
+)
+
+generate_messages(
+   DEPENDENCIES
+   std_msgs
+   geometry_msgs
 )
 
 ## the catkin package definition
@@ -68,13 +81,19 @@ target_link_libraries(${PROJECT_NAME}_particle_filter
     ${tinyXML_LIBRARIES}
 )
 
+
 add_executable(${PROJECT_NAME}_node
     src/node/muse_amcl_node.cpp
+    src/node/muse_amcl_frontend.cpp
+    src/node/muse_amcl_backend.cpp
 )
+
+add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 target_link_libraries(${PROJECT_NAME}_node
     ${catkin_LIBRARIES}
 )
+
 
 
 if(${CATKIN_ENABLE_TESTING})

@@ -9,55 +9,107 @@
 
 #include <memory>
 #include <thread>
+#include <atomic>
 
 namespace muse_amcl {
 class ParticleFilter {
 public:
-    ParticleFilter()
+    ParticleFilter() :
+        tf_provider_(new TFProvider),
+        stop_(false),
+        running_(false)
     {
     }
 
-    void setup(const std::string &name,
-               ros::NodeHandle &nh_private)
+    virtual ~ParticleFilter()
     {
-        /// set the name
-        name_ = name;
-
-        int sample_size = 0;
-        sample_size = nh_private.param("sample_size", sample_size);
-        sample_size = nh_private.param("sample_size_max", sample_size);
-
-        if(sample_size <= 0) {
-            throw std::runtime_error("[ParticleFilter]: Either 'sample_size' or 'sample_size_max' must be defined and positive!");
-        }
-        int sample_size_min = 0;
-        if(nh_private.getParam(parameter("sample_size_min"), sample_size_min)) {
-            if(sample_size <= 0)
-                throw std::runtime_error("[ParticleFilter]: 'sample_size_min' must be greater zero!");
-            if(sample_size > sample_size)
-                throw std::runtime_error("[ParticleFilter]: 'sample_size_min' must be less equal 'sample_size'!");
-        }
-
-        std::string frame_id;
-        if(!nh_private.getParam(parameter("frame_id"), frame_id)) {
-            throw std::runtime_error("[ParticleFilter]: 'frame_id' must be defined!");
-        }
-
-//        particle_set_.reset(new ParticleSet(frame_id, sample_size, sample_size_min, sample_size));
+        disable();
     }
 
+    /**
+     * @brief   Get the TFProvider, which should be used in all backend
+     *          threads, therefore in the the update objects.
+     * @return  the TFProvider
+     */
+    TFProvider::Ptr getTFProvider()
+    {
+        return tf_provider_;
+    }
+
+    /**
+     * @brief   Return the update queue which is then used by the front end
+     *          update managers.
+     * @return  the update queue
+     */
+    UpdateQueue& getUpdateQueue()
+    {
+        return update_queue_;
+    }
+
+    /**
+     * @brief   Return the propagation queue.
+     * @return  the propagation queue
+     */
+    PropagationQueue& getPropagationQueue()
+    {
+        return propagation_queue_;
+    }
+
+    /**
+     * @brief   Setup the particle filter.
+     *          Retrieve all important parameters
+     * @param   nh_private
+     */
+    void setup(ros::NodeHandle &nh_private)
+    {
+
+    }
+
+    /**
+     * @brief Enable the particle filter thread.
+     */
+    void enable()
+    {
+        if(running_)
+            return;
+        worker_thread_ = std::thread([this](){doExecute();});
+        running_ = true;
+    }
+
+    /**
+     * @brief Disable the particle filter thread.
+     */
+    void disable()
+    {
+        stop_ = true;
+        update_queue_.clear();
+        update_queue_.disableWaiting();
+        worker_thread_.join();
+        running_ = false;
+    }
 
 protected:
-    std::string         name_;
-    ParticleSet::Ptr    particle_set_;
+    TFProvider::Ptr  tf_provider_;
+    UpdateQueue      update_queue_;
+    PropagationQueue propagation_queue_;
 
+    ParticleSet::Ptr particle_set_;
 
+    std::thread      worker_thread_;
+    std::atomic_bool stop_;
+    std::atomic_bool running_;
 
-    std::string parameter(const std::string &name)
+    void doExecute()
     {
-        return name_ + "/" + name;
+        while(!stop_) {
+            /// get next update
+            /// check if can be propagated till then
+            /// propagate
+            /// update
+            /// check if it is time to resample
+            /// check if we can publish tf
+        }
     }
-
 
 };
 }

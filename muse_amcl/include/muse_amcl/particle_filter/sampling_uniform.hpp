@@ -60,7 +60,7 @@ public:
      *        at the current time. Afterwards resampling may be called.
      * @param frame - frame poses should be generated in
      */
-    virtual inline void update(const std::string &frame) = 0;
+    virtual void update(const std::string &frame) = 0;
     /**
      * @brief Build a uniformely distributed particle set using maps that should
      *        be used for pose generation.
