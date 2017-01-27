@@ -38,9 +38,9 @@ TEST(TestMuseAMCLCorePlugins, testNormalSampling2D)
 
     /// setup
     normal2d.setup("particle_filter/normal_pose_generation",
-                    nh_private,
                     map_providers,
-                    tf_provider);
+                    tf_provider,
+                    nh_private);
 
     EXPECT_EQ(0, normal2d.getRandomSeed());
     EXPECT_EQ("particle_filter/normal_pose_generation", normal2d.getName());

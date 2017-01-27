@@ -37,18 +37,17 @@ struct PluginLoader
         }
     }
 
-    inline static bool load(ros::NodeHandle &nh_private,
-                            std::map<std::string, typename PluginType::Ptr> &plugins,
+    inline static bool load(std::map<std::string, typename PluginType::Ptr> &plugins,
                             const Arguments&... arguments)
     {
         plugins.clear();
-
+        static ros::NodeHandle nh_private("~");
         std::map<std::string, LaunchEntry> plugins_found;
         parseLaunchFile(nh_private, plugins_found);
 
         /// all in the launch file entered plugins have been retrieved now
         /// now we load the ones related to this ProviderManager
-        static PluginFactory<PluginType, Arguments...> factory; /// @TODO: make sure plugin manager stays alive!
+        static PluginFactory<PluginType, Arguments...> factory;
         for(const auto &entry : plugins_found) {
             const std::string &name = entry.first;
             const std::string &base_class_name = entry.second.base_class_name;
@@ -64,10 +63,11 @@ struct PluginLoader
     static void load(typename PluginType::Ptr &plugin,
                      const Arguments&... arguments)
     {
+        static ros::NodeHandle nh_private("~");
         std::map<std::string, LaunchEntry> plugins_found;
         parseLaunchFile(nh_private, plugins_found);
 
-        static PluginFactory<PluginType, Arguments...> factory;   /// @TODO: make sure plugin manager stays alive!
+        static PluginFactory<PluginType, Arguments...> factory;
         for(const auto &entry : plugins_found) {
             const std::string &name = entry.first;
             const std::string &base_class_name = entry.second.base_class_name;

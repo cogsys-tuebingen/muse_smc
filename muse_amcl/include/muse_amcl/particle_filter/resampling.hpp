@@ -39,8 +39,8 @@ public:
     }
 
     inline void setup(const std::string          &name,
-                      ros::NodeHandle            &nh_private,
-                      const UniformSampling::Ptr &uniform_pose_sampler)
+                      const UniformSampling::Ptr &uniform_pose_sampler,
+                      ros::NodeHandle            &nh_private)
     {
         name_ = name;
         uniform_pose_sampler_ = uniform_pose_sampler;

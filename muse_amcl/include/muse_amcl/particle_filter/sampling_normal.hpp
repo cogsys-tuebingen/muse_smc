@@ -37,9 +37,9 @@ public:
     }
 
     void setup(const std::string                             &name,
-               ros::NodeHandle                               &nh_private,
                const std::map<std::string, MapProvider::Ptr> &map_providers,
-               const TFProvider::Ptr                         &tf_provider)
+               const TFProvider::Ptr                         &tf_provider,
+               ros::NodeHandle                               &nh_private)
     {
         double sampling_timeout;
         double tf_timeout;

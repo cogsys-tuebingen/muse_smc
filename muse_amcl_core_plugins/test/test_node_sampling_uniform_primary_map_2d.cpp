@@ -34,9 +34,9 @@ TEST(TestMuseAMCLCorePlugins, testSamplingUniformPrimary2D)
 
     /// setup
     uniform2d.setup("particle_filter/uniform_pose_generation",
-                    nh_private,
                     map_providers,
-                    tf_provider);
+                    tf_provider,
+                    nh_private);
 
     EXPECT_EQ(2, uniform2d.getRandomSeed());
     EXPECT_EQ("particle_filter/uniform_pose_generation", uniform2d.getName());
