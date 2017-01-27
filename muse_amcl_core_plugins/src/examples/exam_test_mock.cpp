@@ -1,7 +1,8 @@
 #include <muse_amcl/data_sources/data_provider.hpp>
+#include <muse_amcl/data_sources/tf_provider.hpp>
 #include <muse_amcl/plugins/plugin_factory.hpp>
-#include <muse_amcl/particle_filter/update.hpp>
-#include <muse_amcl/particle_filter/prediction_model.hpp>
+#include <muse_amcl/particle_filter/update_forwarder.hpp>
+#include <muse_amcl/particle_filter/prediction_forwarder.hpp>
 #include <muse_amcl/data_types/map.hpp>
 
 #include "../mock/mock_data.hpp"
@@ -32,14 +33,21 @@ int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "muse_mock");
 
-    muse_amcl::PluginFactory<muse_amcl::Update> uf;
-    muse_amcl::PluginFactory<muse_amcl::Propagation> pf;
-    muse_amcl::PluginFactory<muse_amcl::DataProvider> df;
+    muse_amcl::TFProvider::Ptr tf_provider(new muse_amcl::TFProvider);
 
-    muse_amcl::Update::Ptr      u = uf.create("muse_amcl::MockUpdate",
-                                              "MOU");
-    muse_amcl::Propagation::Ptr p = pf.create("muse_amcl::MockPropagation",
-                                              "MOP");
+    muse_amcl::PluginFactory<muse_amcl::UpdateModel, muse_amcl::TFProvider::Ptr, ros::NodeHandle&> uf;
+    muse_amcl::PluginFactory<muse_amcl::PredictionModel, muse_amcl::TFProvider::Ptr, ros::NodeHandle&> pf;
+    muse_amcl::PluginFactory<muse_amcl::DataProvider, ros::NodeHandle&> df;
+    ros::NodeHandle nh("~");
+
+    muse_amcl::UpdateModel::Ptr     u = uf.create("muse_amcl::MockUpdate",
+                                                  "MOU",
+                                                  tf_provider,
+                                                  nh);
+    muse_amcl::PredictionModel::Ptr p = pf.create("muse_amcl::MockPropagation",
+                                                  "MOP",
+                                                  tf_provider,
+                                                  nh);
     muse_amcl::Indexation index({0.1, 0.1, 1./18. * M_PI});
     muse_amcl::ParticleSet set("frame", 1, index);
 
@@ -50,12 +58,13 @@ int main(int argc, char *argv[])
         return -1;
 
 
-    u->apply(data, map, set.getWeights());
-    p->apply(data, set.getPoses());
+    u->update(data, map, set.getWeights());
+    p->predict(data, set.getPoses());
 
 
     std::shared_ptr<muse_amcl::DataProvider> d = df.create("muse_amcl::MockDataProvider",
-                                                           "MOD");
+                                                           "MOD",
+                                                           nh);
 
     muse_amcl::DataProvider::DataConnection::Ptr c1 = d->connect(doSth);
     muse_amcl::DataProvider::DataConnection::Ptr c2 = d->connect(doSthElse);

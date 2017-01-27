@@ -48,11 +48,11 @@ private:
     ParticleFilter                           particle_filter_;
 
     //// prediction & update
-    std::map<std::string, Update::Ptr>       update_functions_;
-    Propagation::Ptr                         prediction_;
+    std::map<std::string, UpdateModel::Ptr>  update_models_;
+    PredictionModel::Ptr                     prediction_model_;
 
-    UpdateManager::Ptr                       update_manager_;
-    PropagationManager::Ptr                  predicition_manager_;
+    UpdateForwarder::Ptr                       update_manager_;
+    PredictionForwarder::Ptr                  predicition_manager_;
 
     /// read all ros related stuff and initalize plugins
     void setup();

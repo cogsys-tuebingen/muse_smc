@@ -4,15 +4,14 @@
 #include <muse_amcl/particle_filter/update.hpp>
 
 namespace muse_amcl {
-class LikelihoodFieldModel : public Update
+class LikelihoodFieldModel : public UpdateModel
 {
 public:
     LikelihoodFieldModel();
 
-    virtual double apply(const Data::ConstPtr &data,
-                         const Map::ConstPtr &map,
-                         ParticleSet::Weights set) override;
-
+    virtual void update(const Data::ConstPtr &data,
+                        const Map::ConstPtr &map,
+                        ParticleSet::Weights set) override;
 protected:
     virtual void doSetup(ros::NodeHandle &nh) override;
 

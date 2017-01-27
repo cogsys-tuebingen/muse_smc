@@ -9,8 +9,8 @@ class OmniDrive : public PredictionModel
 public:
     OmniDrive();
 
-    virtual void apply(const Data::ConstPtr &data,
-                       ParticleSet::Poses set) override;
+    virtual void predict(const Data::ConstPtr &data,
+                         ParticleSet::Poses set) override;
 
 protected:
     virtual void doSetup(ros::NodeHandle &nh) override;

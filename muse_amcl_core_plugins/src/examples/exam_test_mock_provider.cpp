@@ -1,6 +1,7 @@
 #include <ros/ros.h>
 
 #include <muse_amcl/data_sources/data_provider.hpp>
+#include <muse_amcl/data_sources/tf_provider.hpp>
 #include <muse_amcl/plugins/plugin_factory.hpp>
 
 
@@ -10,8 +11,11 @@ int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "muse_mock_data_provider");
 
-    muse_amcl::PluginFactory<muse_amcl::DataProvider> dpf;
-    DataProvider::Ptr dp = dpf.create("dataprovider", "muse_amcl::MockDataProvider");
+
+    TFProvider::Ptr tf(new TFProvider);
+    muse_amcl::PluginFactory<muse_amcl::DataProvider, ros::NodeHandle&> dpf;
+    ros::NodeHandle nh("~");
+    DataProvider::Ptr dp = dpf.create("dataprovider", "muse_amcl::MockDataProvider", nh);
 
     if(dp) {
         std::cout << "Dataprovider created !" << std::endl;

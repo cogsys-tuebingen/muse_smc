@@ -1,7 +1,7 @@
 #include "differential_drive.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_amcl::DifferentialDrive, muse_amcl::Propagation)
+CLASS_LOADER_REGISTER_CLASS(muse_amcl::DifferentialDrive, muse_amcl::PredictionModel)
 
 using namespace muse_amcl;
 

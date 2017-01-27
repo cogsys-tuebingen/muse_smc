@@ -39,7 +39,7 @@ public:
         doSetup(nh_private);
     }
 
-    virtual void predict(const Data::ConstPtr &data, ParticleSet::Poses &set) = 0;
+    virtual void predict(const Data::ConstPtr &data, ParticleSet::Poses set) = 0;
 
 protected:
     std::string name_;

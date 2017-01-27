@@ -29,7 +29,7 @@ public:
             const std::string data_provider_name     = nh_private.param<std::string>(data_provider_param, "");
             const std::string map_provider_name      = nh_private.param<std::string>(map_provider_param, "");
 
-            UpdateModel::Ptr        &model = models_.at(model_name);
+            UpdateModel::Ptr  model = models_.at(model_name);
             const DataProvider::Ptr &data_provider= data_providers.at(data_provider_name);
             const MapProvider::Ptr  &map_provider = map_providers.at(map_provider_name);
 
@@ -40,7 +40,7 @@ public:
                 filter_->addUpdate(u);
             };
 
-            connections_[update_name] = data_provider->connect(callback);
+            connections_[model_name] = data_provider->connect(callback);
         }
     }
 

@@ -61,8 +61,7 @@ struct PluginLoader
         return plugins.size() > 0;
     }
 
-    static void load(ros::NodeHandle &nh_private,
-                     typename PluginType::Ptr &plugin,
+    static void load(typename PluginType::Ptr &plugin,
                      const Arguments&... arguments)
     {
         std::map<std::string, LaunchEntry> plugins_found;

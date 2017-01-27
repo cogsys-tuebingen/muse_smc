@@ -2,7 +2,6 @@
 #define PLUGIN_FACTORY_HPP
 
 #include <string>
-#include <ros/node_handle.h>
 #include "plugin_manager.hpp"
 
 namespace muse_amcl {
@@ -10,8 +9,7 @@ template<typename PluginType, typename ... Arguments>
 class PluginFactory {
 public:
     PluginFactory() :
-        plugin_manager(PluginType::Type()),
-        nh_private_("~")
+        plugin_manager(PluginType::Type())
     {
         plugin_manager.load();
     }
@@ -23,7 +21,7 @@ public:
         auto constructor = plugin_manager.getConstructor(class_name);
         if(constructor) {
             typename PluginType::Ptr plugin = constructor();
-            plugin->setup(plugin_name, nh_private_, arguments...);
+            plugin->setup(plugin_name, arguments...);
             return plugin;
         } else {
             std::cerr << "[Factory] :"
@@ -41,7 +39,6 @@ public:
 
 protected:
     PluginManager<PluginType> plugin_manager;
-    ros::NodeHandle           nh_private_;
 
 };
 }

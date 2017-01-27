@@ -32,11 +32,11 @@ bool MuseAMCLNode::requestPoseInitialization(const muse_amcl::PoseInitialization
 void MuseAMCLNode::setup()
 {
     /// load all plugins
-    PluginLoader<Update>::load(nh_private_,      update_functions_);
-    PluginLoader<Propagation>::load(nh_private_, prediction_);
+    PluginLoader<UpdateModel, TFProvider::Ptr, ros::NodeHandle&>::load(nh_private_, update_models_, tf_provider_backend_, nh_private_);
+    PluginLoader<PredictionModel, TFProvider::Ptr, ros::NodeHandle&>::load(nh_private_, prediction_model_, tf_provider_backend_, nh_private_);
 
-    PluginLoader<MapProvider>::load(nh_private_,  map_providers_);
-    PluginLoader<DataProvider>::load(nh_private_, data_providers_);
+    PluginLoader<MapProvider, ros::NodeHandle&>::load(nh_private_,  map_providers_, nh_private_);
+    PluginLoader<DataProvider, ros::NodeHandle&>::load(nh_private_, data_providers_, nh_private_);
 
     //// sampling algorithms
     UniformSampling::Ptr uniform_sampling;
@@ -44,9 +44,9 @@ void MuseAMCLNode::setup()
     Resampling::Ptr      resampling;
 
 
-    PluginLoader<UniformSampling,  std::map<std::string, MapProvider::Ptr>, TFProvider::Ptr>::load(nh_private_, uniform_sampling, map_providers_, tf_provider_backend_);
-    PluginLoader<NormalSampling,   std::map<std::string, MapProvider::Ptr>, TFProvider::Ptr>::load(nh_private_, normal_sampling, map_providers_,  tf_provider_backend_);
-    PluginLoader<Resampling, UniformSampling::Ptr>::load(nh_private_, resampling, uniform_sampling);
+    PluginLoader<UniformSampling,  std::map<std::string, MapProvider::Ptr>, TFProvider::Ptr, ros::NodeHandle&>::load(uniform_sampling, map_providers_, tf_provider_backend_, nh_private_);
+    PluginLoader<NormalSampling,   std::map<std::string, MapProvider::Ptr>, TFProvider::Ptr, ros::NodeHandle&>::load(normal_sampling, map_providers_,  tf_provider_backend_, nh_private_);
+    PluginLoader<Resampling, UniformSampling::Ptr, ros::NodeHandle&>::load(nh_private_, resampling, uniform_sampling, nh_private_);
 
     particle_filter_.setNormalsampling(normal_sampling);
     particle_filter_.setUniformSampling(uniform_sampling);
