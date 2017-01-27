@@ -14,6 +14,9 @@
 #include <memory>
 #include <thread>
 #include <atomic>
+#include <queue>
+#include <mutex>
+#include <condition_variable>
 
 
 namespace muse_amcl {
@@ -84,6 +87,9 @@ protected:
     UniformSampling::Ptr  uniform_sampling_;
     NormalSampling::Ptr   normal_sampling_;
     Resampling::Ptr       resampling_;
+
+
+
 
 
 
