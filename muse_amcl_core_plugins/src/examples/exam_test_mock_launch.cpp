@@ -54,17 +54,19 @@ int main(int argc, char *argv[])
     std::map<std::string, muse_amcl::MapProvider::Ptr> maps;
     std::map<std::string, muse_amcl::DataProvider::Ptr> datas;
 
-    muse_amcl::PluginLoader<muse_amcl::UpdateModel, muse_amcl::TFProvider::Ptr, ros::NodeHandle&>::load(updates, tf, nh);
-    muse_amcl::PluginLoader<muse_amcl::PredictionModel, muse_amcl::TFProvider::Ptr, ros::NodeHandle&>::load(prediction, tf, nh);
-    muse_amcl::PluginLoader<muse_amcl::MapProvider, ros::NodeHandle&>::load(maps, nh);
-    muse_amcl::PluginLoader<muse_amcl::DataProvider, ros::NodeHandle&>::load(datas, nh);
+    muse_amcl::PluginLoader loader(nh);
+
+    loader.load<muse_amcl::UpdateModel, muse_amcl::TFProvider::Ptr, ros::NodeHandle&>(updates, tf, nh);
+    loader.load<muse_amcl::PredictionModel, muse_amcl::TFProvider::Ptr, ros::NodeHandle&>(prediction, tf, nh);
+    loader.load<muse_amcl::MapProvider, ros::NodeHandle&>(maps, nh);
+    loader.load<muse_amcl::DataProvider, ros::NodeHandle&>(datas, nh);
 
     using MapProviders = std::map<std::string, muse_amcl::MapProvider::Ptr>;
     using TFProvider = muse_amcl::TFProvider::Ptr;
 
-    muse_amcl::PluginLoader<muse_amcl::UniformSampling, MapProviders, TFProvider, ros::NodeHandle&>::load(uniform_pose_generation, maps, tf, nh);
-    muse_amcl::PluginLoader<muse_amcl::NormalSampling, MapProviders, TFProvider, ros::NodeHandle&>::load(normal_pose_generation, maps, tf, nh);
-    muse_amcl::PluginLoader<muse_amcl::Resampling, muse_amcl::UniformSampling::Ptr, ros::NodeHandle&>::load(resampling, uniform_pose_generation, nh);
+    loader.load<muse_amcl::UniformSampling, MapProviders, TFProvider, ros::NodeHandle&>(uniform_pose_generation, maps, tf, nh);
+    loader.load<muse_amcl::NormalSampling, MapProviders, TFProvider, ros::NodeHandle&>(normal_pose_generation, maps, tf, nh);
+    loader.load<muse_amcl::Resampling, muse_amcl::UniformSampling::Ptr, ros::NodeHandle&>(resampling, uniform_pose_generation, nh);
 
     std::cout << "updates      " << updates.size() << std::endl;
     std::cout << "propagations " << (prediction ? 1 : 0) << std::endl;
