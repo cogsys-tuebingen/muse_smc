@@ -15,7 +15,6 @@
 #include <thread>
 #include <atomic>
 #include <queue>
-#include <mutex>
 #include <condition_variable>
 
 
@@ -25,9 +24,18 @@ public:
     using Ptr = std::shared_ptr<ParticleFilter>;
 
     ParticleFilter() :
-        name_("particle_filter")
+        name_("particle_filter"),
+        working_(false),
+        stop_working_(true),
+        stop_waiting_(false)
     {
+    }
 
+    virtual ~ParticleFilter()
+    {
+        stop_working_ = true;
+        stop_waiting_ = true;
+        notify_event_.notify_one();
     }
 
     void setup(ros::NodeHandle &nh_private,
@@ -78,22 +86,94 @@ public:
 
     }
 
+    void requestPoseInitialization(const math::Pose &pose)
+    {
+        std::unique_lock<std::mutex> l(request_pose_mutex_);
+        requset_pose_ = pose;
+        request_pose_initilization_ = true;
+        notify_event_.notify_one();
+    }
+
+    void requestGlobalInitialization()
+    {
+        request_global_initialization_ = true;
+        notify_event_.notify_one();
+    }
+
+    void start()
+    {
+        if(!working_) {
+            stop_working_ = false;
+            /// spawn mr. backend thread here
+        }
+    }
+
+    void end()
+    {
+        if(working_) {
+            stop_waiting_ = true;
+
+            notify_event_.notify_one();
+        }
+    }
 
 protected:
-    std::string         name_;
-    TFProvider::Ptr     tf_provider_;
-    ParticleSet::Ptr    particle_set_;
+    std::string             name_;
+    TFProvider::Ptr         tf_provider_;
+    ParticleSet::Ptr        particle_set_;
 
-    UniformSampling::Ptr  uniform_sampling_;
-    NormalSampling::Ptr   normal_sampling_;
-    Resampling::Ptr       resampling_;
-
-
+    UniformSampling::Ptr    uniform_sampling_;
+    NormalSampling::Ptr     normal_sampling_;
+    Resampling::Ptr         resampling_;
 
 
+    std::thread             worker_thread_;
+    std::atomic_bool        working_;
+    std::atomic_bool        stop_working_;
+    std::condition_variable notify_event_;
+
+    std::queue<double>      update_queue_;      /// this is for the weighting functions and therefore important
+    std::queue<double>      prediction_queue_;  /// the predcition queue may not reach ovbersize.
+
+    std::mutex              request_pose_mutex_;
+    math::Pose              requset_pose_;
+    std::atomic_bool        request_pose_initilization_;
+    std::atomic_bool        request_global_initialization_;
+    std::atomic_bool        stop_waiting_;
+
+    inline void wait(std::unique_lock<std::mutex> &&lock)
+    {
+        while(update_queue_.empty()) {
+            notify_event_.wait(lock);
+            if(stop_waiting_) {
+                break;
+            }
+        }
+    }
+
+    inline void processRequests()
+    {
+        if(request_global_initialization_) {
+            request_global_initialization_ = false;
+
+        }
+        if(request_pose_initilization_) {
+            std::unique_lock<std::mutex> l(request_pose_mutex_);
+
+            request_pose_initilization_ = false;
+        }
+    }
 
 
 
+    inline void filter()
+    {
+        working_ = true;
+        while(!stop_working_) {
+
+        }
+        working_ = false;
+    }
 
 
     std::string parameter(const std::string &name)
