@@ -106,6 +106,7 @@ if(True)
         src/examples/exam_test_mock.cpp
     )
     target_link_libraries(muse_amcl_exam_test_mock
+        muse_amcl_mock_plugins
         ${catkin_LIBRARIES}
         ${tinyXML_LIBRARIES}
     )
