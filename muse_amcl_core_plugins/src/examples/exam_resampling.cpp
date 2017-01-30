@@ -1,7 +1,6 @@
 #include <muse_amcl/math/random.hpp>
 #include <muse_amcl/particle_filter/particle_set.hpp>
-#include <iostream>
-#include <vector>
+
 #include "../resampling/multinomial.h"
 #include "../resampling/stratified.h"
 #include "../resampling/systematic.h"
@@ -9,6 +8,9 @@
 #include "../resampling/residual.h"
 #include "../resampling/kld_2d.h"
 #include "../sampling/uniform_all_maps_2d.h"
+
+#include <iostream>
+#include <vector>
 
 struct TestUniformAllMaps2D : public muse_amcl::UniformAllMaps2D
 {

@@ -1,9 +1,10 @@
 #ifndef ARGUMENTS_HPP
 #define ARGUMENTS_HPP
 
+#include <muse_amcl/math/angle.hpp>
+
 #include <array>
 #include <typeinfo>
-#include "../math/angle.hpp"
 
 namespace muse_amcl {
 namespace pose_generation {

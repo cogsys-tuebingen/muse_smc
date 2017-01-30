@@ -1,10 +1,10 @@
 #ifndef PREDICTION_HPP
 #define PREDICTION_HPP
 
-#include "prediction_model.hpp"
-#include "../data_sources/data_provider.hpp"
-#include "../data_types/data.hpp"
-#include "particle_set.hpp"
+#include <muse_amcl/data_types/data.hpp>
+#include <muse_amcl/data_sources/data_provider.hpp>
+#include <muse_amcl/particle_filter/particle_set.hpp>
+#include <muse_amcl/particle_filter/prediction_model.hpp>
 
 namespace muse_amcl {
 class Prediction {

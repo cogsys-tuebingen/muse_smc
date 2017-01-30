@@ -1,10 +1,12 @@
 #ifndef PREDICTION_MODEL_HPP
 #define PREDICTION_MODEL_HPP
 
+
+#include <muse_amcl/particle_filter/particle_set.hpp>
+#include <muse_amcl/data_sources/tf_provider.hpp>
+#include <muse_amcl/data_types/data.hpp>
+
 #include <memory>
-#include "../data_sources/tf_provider.hpp"
-#include "../data_types/data.hpp"
-#include "particle_set.hpp"
 
 namespace muse_amcl {
 class PredictionModel {

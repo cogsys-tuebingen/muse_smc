@@ -48,6 +48,12 @@ public:
     {
         return (data_->*Member);
     }
+
+    inline const Data& getData() const
+    {
+        return *data_;
+    }
+
 };
 
 template<typename Data, typename T, T Data::*Member, typename Notifier>

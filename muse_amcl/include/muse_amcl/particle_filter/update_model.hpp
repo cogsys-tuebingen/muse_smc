@@ -2,10 +2,10 @@
 #define UPDATE_MODEL_HPP
 
 #include <memory>
-#include "../data_sources/tf_provider.hpp"
-#include "../data_types/data.hpp"
-#include "../data_types/map.hpp"
-#include "particle_set.hpp"
+#include <muse_amcl/data_sources/tf_provider.hpp>
+#include <muse_amcl/data_types/data.hpp>
+#include <muse_amcl/data_types/map.hpp>
+#include <muse_amcl/particle_filter/particle_set.hpp>
 
 namespace muse_amcl {
 class UpdateModel {

@@ -1,15 +1,15 @@
 #ifndef RESAMPLING_HPP
 #define RESAMPLING_HPP
 
+#include <muse_amcl/particle_filter/particle_set.hpp>
+#include <muse_amcl/particle_filter/sampling_uniform.hpp>
+#include <muse_amcl/math/random.hpp>
+
 #include <memory>
 #include <vector>
 #include <tf/tf.h>
 #include <tf/transform_listener.h>
 #include <ros/node_handle.h>
-
-#include "particle_set.hpp"
-#include "sampling_uniform.hpp"
-#include "../math/random.hpp"
 
 namespace muse_amcl {
 class Resampling {

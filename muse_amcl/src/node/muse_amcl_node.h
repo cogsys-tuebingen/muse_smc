@@ -1,7 +1,7 @@
 #ifndef MUSE_AMCL_NODE_H
 #define MUSE_AMCL_NODE_H
 
-#include "../../include/muse_amcl/particle_filter/particle_filter.hpp"
+#include <muse_amcl/particle_filter/particle_filter.hpp>
 
 #include <muse_amcl/GlobalInitialization.h>
 #include <muse_amcl/PoseInitialization.h>

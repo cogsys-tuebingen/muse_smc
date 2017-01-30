@@ -1,15 +1,13 @@
 #ifndef PARTICLE_FILTER_HPP
 #define PARTICLE_FILTER_HPP
 
-#include "particle_set.hpp"
-
-#include "../data_sources/tf_provider.hpp"
-#include "resampling.hpp"
-#include "sampling_uniform.hpp"
-#include "sampling_normal.hpp"
-
-#include "prediction.hpp"
-#include "update.hpp"
+#include <muse_amcl/data_sources/tf_provider.hpp>
+#include <muse_amcl/particle_filter/particle_set.hpp>
+#include <muse_amcl/particle_filter/resampling.hpp>
+#include <muse_amcl/particle_filter/sampling_normal.hpp>
+#include <muse_amcl/particle_filter/sampling_uniform.hpp>
+#include <muse_amcl/particle_filter/prediction.hpp>
+#include <muse_amcl/particle_filter/update.hpp>
 
 #include <memory>
 #include <thread>

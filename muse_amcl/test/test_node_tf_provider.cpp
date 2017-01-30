@@ -1,7 +1,6 @@
-#include "../include/muse_amcl/data_sources/tf_provider.hpp"
+#include <muse_amcl/data_sources/tf_provider.hpp>
 
 #include <gtest/gtest.h>
-
 #include  <thread>
 
 TEST(TestMuseAMCL, testTFProviderSingleThreaded)

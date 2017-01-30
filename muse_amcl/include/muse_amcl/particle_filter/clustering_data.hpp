@@ -1,8 +1,8 @@
 #ifndef CLUSTERING_DATA_HPP
 #define CLUSTERING_DATA_HPP
 
-#include "../math/weighted_distribution.hpp"
-#include "particle.hpp"
+#include <muse_amcl/math/weighted_distribution.hpp>
+#include <muse_amcl/particle_filter/particle.hpp>
 #include <vector>
 
 namespace muse_amcl {

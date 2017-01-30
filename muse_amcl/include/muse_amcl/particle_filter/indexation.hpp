@@ -4,8 +4,8 @@
 #include <memory>
 #include <array>
 
-#include "particle.hpp"     /// exchange by path header
-#include "../math/index.hpp"    /// exchange by path header
+#include <muse_amcl/particle_filter/particle.hpp>
+#include <muse_amcl/math/index.hpp>
 
 namespace muse_amcl {
 class Indexation {

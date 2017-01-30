@@ -15,8 +15,8 @@ void states(muse_amcl::ParticleSet& set)
 void weights(muse_amcl::ParticleSet &set)
 {
     std::size_t iteration = 0;
-    for(auto &state : set.getWeights()) {
-       state = 1.0;
+    for(auto &weight : set.getWeights()) {
+       weight = 1.0;
     }
 }
 
@@ -30,6 +30,24 @@ void particle(muse_amcl::ParticleSet &set)
                 std::cout << "was zero " << pos << std::endl;
             sum_x += pose.x();
             ++pos;
+    }
+}
+
+void weight_const_state(muse_amcl::ParticleSet &set)
+{
+    auto weights = set.getWeights();
+    for(muse_amcl::ParticleSet::Weights::iterator it = weights.begin() ; it != weights.end() ; ++it) {
+        const auto &particle = it.getData();
+        *it = 0.5;
+    }
+}
+
+void state_const_weight(muse_amcl::ParticleSet &set)
+{
+    auto poses = set.getPoses();
+    for(auto it = poses.begin() ; it != poses.end() ; ++it) {
+        const auto &particle = it.getData();
+        (*it).x() = 1.f;
     }
 }
 
@@ -77,6 +95,28 @@ int main(int argc, char *argv[])
 
         long length_micro_seconds = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
         std::cerr << "particle foreach: " << (length_micro_seconds / double(iterations)) * 1e-6 << "ms" << std::endl;
+    }
+
+    {
+        auto start = std::chrono::high_resolution_clock::now();
+        for(std::size_t iteration = 0; iteration < iterations; ++iteration) {
+            weight_const_state(particles);
+        }
+        auto end = std::chrono::high_resolution_clock::now();
+
+        long length_micro_seconds = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+        std::cerr << "iteration weight: " << (length_micro_seconds / double(iterations)) * 1e-6 << "ms" << std::endl;
+    }
+
+    {
+        auto start = std::chrono::high_resolution_clock::now();
+        for(std::size_t iteration = 0; iteration < iterations; ++iteration) {
+            state_const_weight(particles);
+        }
+        auto end = std::chrono::high_resolution_clock::now();
+
+        long length_micro_seconds = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+        std::cerr << "iteration state: " << (length_micro_seconds / double(iterations)) * 1e-6 << "ms" << std::endl;
     }
 
     std::cout << "a happy set of " << sum_x << " particles" << std::endl;
