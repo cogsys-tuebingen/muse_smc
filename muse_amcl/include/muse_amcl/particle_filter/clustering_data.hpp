@@ -13,8 +13,8 @@ struct Data {
     int                                      cluster_ = -1;
     ParticlePtrs                             samples_;
     math::statistic::WeightedDistribution<3> distribution_;    /// @TODO remove fixed dimension
-                                                       /// @TODO check what kind of sum
-                                                       /// that should be
+                                                               /// @TODO check what kind of sum
+                                                               /// that should be
     Data()
     {
     }

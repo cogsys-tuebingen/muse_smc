@@ -168,7 +168,7 @@ protected:
     {
         working_ = true;
         while(!stop_working_) {
-
+            /// after resampling reset the weight to 1.0 as suggested by "probabilistic robotics"
         }
         working_ = false;
     }

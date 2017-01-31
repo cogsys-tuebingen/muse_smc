@@ -354,6 +354,7 @@ private:
      */
     inline void updateInsertKD(const Particle &sample)
     {
+        /// weight reset to one ;) - more stable and suggested by the "probabilistic robotics"
         kdtree_->insert(indexation_.create(sample), clustering::Data(sample));
         updateIndices(sample.pose_);
         updateWeight(sample.weight_);
@@ -365,6 +366,7 @@ private:
      */
     inline void updateInsertArray(const Particle &sample)
     {
+        /// weight reset to one ;) - more stable and suggested by the "probabilistic robotics"
         array_->insert(indexation_.create(sample), clustering::Data(sample));
         updateIndices(sample.pose_);
         updateWeight(sample.weight_);

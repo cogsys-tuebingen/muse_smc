@@ -94,7 +94,7 @@ public:
     }
 
     /**
-     * @brief Return the front of the buffered vector.
+     * @brief Return reference to the front of the buffered vector.
      * @return the back
      */
     inline T& front()
@@ -103,13 +103,33 @@ public:
     }
 
     /**
-     * @brief Return the back of the buffered vector.
+     * @brief Return const reference to the front of the buffered vector.
+     * @return the back
+     */
+    inline const T& front() const
+    {
+        return data_.front();
+    }
+
+
+    /**
+     * @brief Return reference to the back of the buffered vector.
      * @return the back
      */
     inline T& back()
     {
         return data_.at(size_ - 1);
     }
+
+    /**
+     * @brief Return const reference to the back of the buffered vector.
+     * @return the back
+     */
+    inline const T& back() const
+    {
+        return data_.at(size_ - 1);
+    }
+
 
     /**
      * @brief Return the iterator pointing towards the beginning of the vector.
