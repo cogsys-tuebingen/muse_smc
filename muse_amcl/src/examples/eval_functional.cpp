@@ -2,7 +2,8 @@
 #include <functional>
 #include <iostream>
 #include "function.h"
-#include "delegate.hpp"
+
+#include <muse_amcl/utils/delegate.hpp>
 
 #define FUNC_NO_EXCEPTIONS
 #define FUNC_NO_RTTI
