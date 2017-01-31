@@ -39,8 +39,9 @@ indigo:
     - source /opt/ros/$(ls /opt/ros/ | sort -r | head -n 1)/setup.bash
     - rosdep install -y -r -i --from-paths src
     - catkin_make
-    - catkin_make run_tests
-
+    - catkin_make tests
+    - catkin_make run_tests_muse_amcl
+    
 jade:
   stage: build
   image: ros:jade
@@ -48,7 +49,8 @@ jade:
     - source /opt/ros/$(ls /opt/ros/ | sort -r | head -n 1)/setup.bash
     - rosdep install -y -r -i --from-paths src
     - catkin_make
-    - catkin_make run_tests
+    - catkin_make tests
+    - catkin_make run_tests_muse_amcl
 
 kinetic:
   stage: build
@@ -57,4 +59,5 @@ kinetic:
     - source /opt/ros/$(ls /opt/ros/ | sort -r | head -n 1)/setup.bash
     - rosdep install -y -r -i --from-paths src
     - catkin_make
-    - catkin_make run_tests
+    - catkin_make tests
+    - catkin_make run_tests_muse_amcl

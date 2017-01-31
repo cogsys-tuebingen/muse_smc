@@ -121,7 +121,9 @@ public:
     {
         sample_index_minimum_  = std::numeric_limits<int>::max();
         sample_index_maximum_  = std::numeric_limits<int>::min();
-        return Poses(*p_t_1, *this, &ParticleSet::updateIndices);
+
+        return Poses(*p_t_1,
+                     Poses::notify_update::from<ParticleSet, &ParticleSet::updateIndices>(this));
     }
 
     /**
@@ -133,7 +135,9 @@ public:
     {
         sample_weight_maximum_ = 0.0;
         sample_weight_sum_     = 0.0;
-        return Weights(*p_t_1, *this, &ParticleSet::updateWeight);
+
+        return Weights(*p_t_1,
+                     Weights::notify_update::from<ParticleSet, &ParticleSet::updateWeight>(this));
     }
 
     /**
