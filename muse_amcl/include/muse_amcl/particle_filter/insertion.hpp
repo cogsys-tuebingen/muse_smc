@@ -2,7 +2,7 @@
 #define INSERTION_HPP
 
 #include "particle.hpp"
-#include "buffered_vector.hpp"
+#include <muse_amcl/utils/buffered_vector.hpp>
 #include <muse_amcl/utils/delegate.hpp>
 
 namespace muse_amcl {

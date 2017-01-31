@@ -24,6 +24,8 @@ public:
         }
     };
 
+
+
     Prediction(const ros::Time            &stamp,
                const Data::ConstPtr       &data,
                const PredictionModel::Ptr &model) :
@@ -33,14 +35,16 @@ public:
     {
     }
 
-    void operator () (ParticleSet::Poses poses)
+    inline PredictionModel::Result operator ()
+        (const ros::Time &until, ParticleSet::Poses poses)
     {
-        model_->predict(data_, poses);
+        return model_->predict(data_, until, poses);
     }
 
-    void apply(ParticleSet::Poses poses)
+    inline PredictionModel::Result
+        apply(const ros::Time &until, ParticleSet::Poses poses)
     {
-        model_->predict(data_, poses);
+        return model_->predict(data_, until, poses);
     }
 
     ros::Time getStamp() const

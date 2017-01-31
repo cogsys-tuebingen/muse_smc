@@ -10,8 +10,9 @@ OmniDrive::OmniDrive()
 
 }
 
-bool OmniDrive::predict(const Data::ConstPtr &data,
-                        ParticleSet::Poses set)
+PredictionModel::Result OmniDrive::predict(const Data::ConstPtr &data,
+                                           const ros::Time      &until,
+                                           ParticleSet::Poses    set)
 {
 
 }

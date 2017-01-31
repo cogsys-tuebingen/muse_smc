@@ -12,8 +12,9 @@ public:
 
     MockPropagation();
 
-    virtual bool predict(const Data::ConstPtr &data,
-                         ParticleSet::Poses set) override;
+    virtual Result predict(const Data::ConstPtr &data,
+                           const ros::Time      &until,
+                           ParticleSet::Poses set) override;
 
 
     double  first_parameter;

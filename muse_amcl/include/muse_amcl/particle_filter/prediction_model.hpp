@@ -12,6 +12,30 @@ class PredictionModel {
 public:
     using Ptr = std::shared_ptr<PredictionModel>;
 
+    struct Result {
+        const bool              has_moved;  /// indicates whether the robot has moved or not
+        const Data::ConstPtr    left_over;  /// leftover for prediction, either it could not be
+                                            /// predicted until time or there is just a part still
+                                            /// open to be used for prediction
+        Result(const bool has_moved,
+               const Data::ConstPtr &left_over) :
+            has_moved(has_moved),
+            left_over(left_over)
+        {
+        }
+
+        Result(const bool has_moved) :
+            has_moved(has_moved)
+        {
+        }
+
+        Result() :
+            has_moved(false)
+        {
+        }
+
+    };
+
     PredictionModel()
     {
     }
@@ -40,7 +64,10 @@ public:
         doSetup(nh_private);
     }
 
-    virtual bool predict(const Data::ConstPtr &data, ParticleSet::Poses set) = 0;
+
+    virtual Result predict(const Data::ConstPtr &data,
+                           const ros::Time      &until,
+                           ParticleSet::Poses    poses) = 0;
 
 protected:
     std::string         name_;

@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 
 
     u->update(data, map, set.getWeights());
-    p->predict(data, set.getPoses());
+    p->predict(data, ros::Time::now(), set.getPoses());
 
 
     std::shared_ptr<muse_amcl::DataProvider> d = df.create("muse_amcl::MockDataProvider",
