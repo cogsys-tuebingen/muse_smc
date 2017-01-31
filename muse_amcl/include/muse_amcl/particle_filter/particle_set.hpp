@@ -40,8 +40,15 @@ public:
 
     /// particle sets should not be copyable
     ParticleSet(const ParticleSet &other) = delete;
+    ParticleSet& operator = (const ParticleSet &other) = delete;
 
-    ///
+    /**
+     * @brief ParticleSet constructor.
+     * @param frame         - the frame the particles are defined in
+     * @param sample_size   - the sample size
+     * @param indexation    - the discretization helper
+     * @param array_extent  - the size of the array
+     */
     ParticleSet(const std::string frame,
                 const std::size_t sample_size,
                 const Indexation &indexation,
@@ -62,12 +69,18 @@ public:
         array_to_be_used_(false)
     {
         kdtree_->set<cis::option::tags::node_allocator_chunk_size>(2 * sample_size_maximum_ + 1);
-
         array_size_ = indexation_.size({array_extent, array_extent, 2 * M_PI});
         array_->set<cis::option::tags::array_size>(array_size_[0], array_size_[1], array_size_[2]);
     }
 
-    ///
+    /**
+     * @brief ParticleSet constructor.
+     * @param frame                 - the frame the particles are defined in
+     * @param sample_size_minimum   - the minimum sample set size
+     * @param sample_size_maximum   - the maximum sample set size
+     * @param indexation            - the discretization helper
+     * @param array_extent          - the array size
+     */
     ParticleSet(const std::string frame,
                 const std::size_t sample_size_minimum,
                 const std::size_t sample_size_maximum,
@@ -91,6 +104,13 @@ public:
         array_size_ = indexation_.size({array_extent, array_extent, 2 * M_PI});
         array_->set<cis::option::tags::array_size>(array_size_[0], array_size_[1], array_size_[2]);
     }
+
+    /**
+     * @brief   Move assignemtn operator
+     * @param   other - the particle set to be moved
+     */
+    ParticleSet& operator = (ParticleSet &&other) = default;
+
 
     /**
      * @brief   Return a pose access handler. Weights can be iterated using the
@@ -151,13 +171,13 @@ public:
             array_->set<cis::option::tags::array_offset>(sample_index_minimum_[0],
                                                          sample_index_minimum_[1],
                                                          sample_index_minimum_[2]);
-            return Insertion(*p_t, *this,
-                                     &ParticleSet::updateInsertArray,
-                                     &ParticleSet::insertionFinished);
+            return Insertion(*p_t,
+                             Insertion::notify_update::from<ParticleSet, &ParticleSet::updateInsertArray>(this),
+                             Insertion::notify_finished::from<ParticleSet, &ParticleSet::insertionFinished>(this));
         } else {
-            return Insertion(*p_t, *this,
-                                     &ParticleSet::updateInsertKD,
-                                     &ParticleSet::insertionFinished);
+            return Insertion(*p_t,
+                             Insertion::notify_update::from<ParticleSet, &ParticleSet::updateInsertKD>(this),
+                             Insertion::notify_finished::from<ParticleSet, &ParticleSet::insertionFinished>(this));
         }
     }
 

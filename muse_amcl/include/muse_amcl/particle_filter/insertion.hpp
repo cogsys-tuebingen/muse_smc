@@ -3,20 +3,19 @@
 
 #include "particle.hpp"
 #include "buffered_vector.hpp"
+#include <muse_amcl/utils/delegate.hpp>
 
 namespace muse_amcl {
 template<typename Notifier>
 class Insertion {
 public:
-    using notify_finished = void (Notifier::*)();
-    using notify_update   = void (Notifier::*)(const Particle &);
+    using notify_finished = delegate<void()>;
+    using notify_update   = delegate<void(const Particle &)>;
 
     Insertion(std::buffered_vector<Particle> &data,
-              Notifier                       &notifier,
               notify_update                   update,
               notify_finished                 finshed) :
         data_(data),
-        notifier_(notifier),
         open_(true),
         update_(update),
         finished_(finshed)
@@ -26,20 +25,20 @@ public:
     virtual ~Insertion()
     {
         if(open_) {
-            (notifier_.*finished_)();
+            finished_();
         }
     }
 
     inline void insert(Particle&& sample)
     {
         data_.emplace_back(std::move(sample));
-        (notifier_.*update_)(sample);
+        update_(sample);
     }
 
     inline void insert(const Particle &sample)
     {
         data_.push_back(sample);
-        (notifier_.*update_)(sample);
+        update_(sample);
     }
 
     inline bool canInsert() const
@@ -50,7 +49,7 @@ public:
     inline void close()
     {
         if(open_) {
-            (notifier_.*finished_)();
+            finished_();
             open_ = false;
         } else {
             throw std::runtime_error("Insertion cannot be closed twice!");
@@ -64,7 +63,6 @@ public:
 
 private:
     std::buffered_vector<Particle> &data_;
-    Notifier                       &notifier_;
 
     bool                            open_;
     notify_update                   update_;

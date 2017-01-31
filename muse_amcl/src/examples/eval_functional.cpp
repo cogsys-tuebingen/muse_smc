@@ -174,11 +174,11 @@ void member_test_delegate(const std::size_t iterations)
 
 void global_test_delegate(const std::size_t iterations)
 {
-    delegate<void(const std::size_t)> test_member = delegate<void(const std::size_t)>::from<test>();
+    delegate<void(const std::size_t)> test_global = delegate<void(const std::size_t)>::from<test>();
 
     auto start = std::chrono::high_resolution_clock::now();
     for(std::size_t iteration = 0; iteration < iterations; ++iteration) {
-        test_member(iteration);
+        test_global(iteration);
     }
     auto end = std::chrono::high_resolution_clock::now();
 
