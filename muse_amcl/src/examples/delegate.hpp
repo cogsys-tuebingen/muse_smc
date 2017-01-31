@@ -12,6 +12,12 @@
 
 #include <utility>
 
+/**
+ * This code originated from the article
+ *     http://codereview.stackexchange.com/questions/14730/impossibly-fast-delegate-in-c11
+ * and was copied into this project 31.01.2017.
+ */
+
 template <typename T> class delegate;
 
 template<class R, class ...A>
@@ -26,13 +32,15 @@ class delegate<R (A...)>
   }
 
 public:
+
+
   delegate() = default;
 
   delegate(delegate const&) = default;
 
   delegate(delegate&&) = default;
 
-  delegate(::std::nullptr_t const) noexcept : delegate() { }
+  delegate(::std::nullptr_t) : object_ptr_{nullptr}, stub_ptr_{nullptr} { }
 
   template <class C, typename =
     typename ::std::enable_if< ::std::is_class<C>{}>::type>
@@ -241,14 +249,13 @@ public:
       ((object_ptr_ == rhs.object_ptr_) && (stub_ptr_ < rhs.stub_ptr_));
   }
 
-  bool operator==(::std::nullptr_t const) const noexcept
+  bool operator==(::std::nullptr_t) const noexcept
   {
-    return !stub_ptr_;
+      return object_ptr_ == nullptr;
   }
-
-  bool operator!=(::std::nullptr_t const) const noexcept
+  bool operator!=(::std::nullptr_t) const noexcept
   {
-    return stub_ptr_;
+      return object_ptr_ != nullptr;
   }
 
   explicit operator bool() const noexcept { return stub_ptr_; }
