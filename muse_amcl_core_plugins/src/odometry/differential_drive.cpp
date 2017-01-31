@@ -9,7 +9,7 @@ DifferentialDrive::DifferentialDrive()
 {
 }
 
-void DifferentialDrive::predict(const Data::ConstPtr &data,
+bool DifferentialDrive::predict(const Data::ConstPtr &data,
                                 ParticleSet::Poses set)
 {
 

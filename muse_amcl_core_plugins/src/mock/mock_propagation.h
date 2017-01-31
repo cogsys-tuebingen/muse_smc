@@ -12,7 +12,7 @@ public:
 
     MockPropagation();
 
-    virtual void predict(const Data::ConstPtr &data,
+    virtual bool predict(const Data::ConstPtr &data,
                          ParticleSet::Poses set) override;
 
 

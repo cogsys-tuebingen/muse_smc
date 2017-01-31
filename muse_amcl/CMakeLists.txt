@@ -171,6 +171,11 @@ if(${CATKIN_ENABLE_TESTING})
         src/examples/eval_angle_normalization.cpp
     )
 
+
+    add_executable(${PROJECT_NAME}_eval_functional
+        src/examples/eval_functional.cpp
+    )
+
 endif()
 
 if(${${PROJECT_NAME}_BUILD_VISUAL_EXAMPLES})

@@ -11,7 +11,7 @@ MockPropagation::MockPropagation()
 {
 }
 
-void MockPropagation::predict(const Data::ConstPtr &data,
+bool MockPropagation::predict(const Data::ConstPtr &data,
                               ParticleSet::Poses set)
 {
     std::cout << "Hello, I am a mock propagation - Greetings Traveller!" << std::endl;

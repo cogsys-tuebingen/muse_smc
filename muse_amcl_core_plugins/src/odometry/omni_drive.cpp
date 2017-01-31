@@ -10,7 +10,7 @@ OmniDrive::OmniDrive()
 
 }
 
-void OmniDrive::predict(const Data::ConstPtr &data,
+bool OmniDrive::predict(const Data::ConstPtr &data,
                         ParticleSet::Poses set)
 {
 

@@ -8,7 +8,6 @@
 #include "clustering_data.hpp"
 #include "clustering_impl.hpp"
 
-#include "iterator.hpp"
 #include "insertion.hpp"
 #include "member_iterator.hpp"
 
