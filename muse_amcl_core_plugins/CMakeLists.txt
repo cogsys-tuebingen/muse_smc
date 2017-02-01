@@ -27,9 +27,15 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME} SHARED
-    src/laser2D/beam_model.cpp
-    src/laser2D/likelihood_field_model.cpp
-    src/laser2D/likelihood_field_prob_model.cpp
+    src/laser_2d/beam_model.cpp
+    src/laser_2d/likelihood_field_model.cpp
+    src/laser_2d/likelihood_field_prob_model.cpp
+    src/laser_2d/data_provider_laser_2d.cpp
+    src/laser_2d/laser_scan_2d.hpp
+
+    src/maps_2d/data_provider_binary_grid_map.cpp
+    src/maps_2d/data_provider_distance_grid_map.cpp
+    src/maps_2d/data_provider_probability_grid_map.cpp
 
     src/odometry/differential_drive.cpp
     src/odometry/omni_drive.cpp
@@ -51,9 +57,9 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 add_library(muse_amcl_maps
-    src/maps/binary_gridmap.cpp
-    src/maps/distance_gridmap.cpp
-    src/maps/probability_gridmap.cpp
+    src/maps_2d/binary_gridmap.cpp
+    src/maps_2d/distance_gridmap.cpp
+    src/maps_2d/probability_gridmap.cpp
 )
 
 target_link_libraries(muse_amcl_maps

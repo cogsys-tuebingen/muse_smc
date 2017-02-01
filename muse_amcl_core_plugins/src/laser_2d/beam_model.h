@@ -14,7 +14,7 @@ public:
                         ParticleSet::Weights set) override;
 
 protected:
-    virtual void doSetup(ros::NodeHandle &nh) override;
+    virtual void doSetup(ros::NodeHandle &nh_private_) override;
 
 
 };
