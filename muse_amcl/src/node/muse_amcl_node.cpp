@@ -38,7 +38,7 @@ void MuseAMCLNode::setup()
     loader.load<PredictionModel, TFProvider::Ptr, ros::NodeHandle&>(prediction_model_, tf_provider_backend_, nh_private_);
 
     loader.load<MapProvider, ros::NodeHandle&>(map_providers_, nh_private_);
-    loader.load<DataProvider, ros::NodeHandle&>(data_providers_, nh_private_);
+    loader.load<DataProvider,TFProvider::Ptr, ros::NodeHandle&>(data_providers_, tf_provider_frontend_, nh_private_);
 
     //// sampling algorithms
     UniformSampling::Ptr uniform_sampling;

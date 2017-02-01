@@ -33,9 +33,9 @@ add_library(${PROJECT_NAME} SHARED
     src/laser_2d/data_provider_laser_2d.cpp
     src/laser_2d/laser_scan_2d.hpp
 
-    src/maps_2d/data_provider_binary_grid_map.cpp
-    src/maps_2d/data_provider_distance_grid_map.cpp
-    src/maps_2d/data_provider_probability_grid_map.cpp
+    src/maps_2d/map_provider_binary_gridmap.cpp
+    src/maps_2d/map_provider_distance_gridmap.cpp
+    src/maps_2d/map_provider_probability_gridmap.cpp
 
     src/odometry/differential_drive.cpp
     src/odometry/omni_drive.cpp

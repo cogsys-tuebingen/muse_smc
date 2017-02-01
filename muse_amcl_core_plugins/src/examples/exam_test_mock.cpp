@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 
     muse_amcl::PluginFactory<muse_amcl::UpdateModel, muse_amcl::TFProvider::Ptr, ros::NodeHandle&> uf;
     muse_amcl::PluginFactory<muse_amcl::PredictionModel, muse_amcl::TFProvider::Ptr, ros::NodeHandle&> pf;
-    muse_amcl::PluginFactory<muse_amcl::DataProvider, ros::NodeHandle&> df;
+    muse_amcl::PluginFactory<muse_amcl::DataProvider, muse_amcl::TFProvider::Ptr, ros::NodeHandle&> df;
     ros::NodeHandle nh("~");
 
     muse_amcl::UpdateModel::Ptr     u = uf.create("muse_amcl::MockUpdate",
@@ -64,6 +64,7 @@ int main(int argc, char *argv[])
 
     std::shared_ptr<muse_amcl::DataProvider> d = df.create("muse_amcl::MockDataProvider",
                                                            "MOD",
+                                                           tf_provider,
                                                            nh);
 
     muse_amcl::DataProvider::DataConnection::Ptr c1 = d->connect(doSth);

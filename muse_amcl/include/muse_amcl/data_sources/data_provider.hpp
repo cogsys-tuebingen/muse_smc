@@ -5,6 +5,7 @@
 #include <functional>
 #include <ros/node_handle.h>
 
+#include "tf_provider.hpp"
 #include <muse_amcl/utils/signals.hpp>
 #include <muse_amcl/data_types/data.hpp>
 
@@ -34,10 +35,12 @@ public:
         return name_;
     }
 
-    void setup(const std::string &name,
-               ros::NodeHandle   &nh_private)
+    void setup(const std::string     &name,
+               const TFProvider::Ptr &tf_provider,
+               ros::NodeHandle       &nh_private)
     {
         name_ = name;
+        tf_provider_ = tf_provider;
         doSetup(nh_private);
     }
 
@@ -69,12 +72,13 @@ public:
     }
 
 protected:
-    std::string name_;
-    DataSignal  data_received_;
+    std::string       name_;
+    DataSignal        data_received_;
+    TFProvider::Ptr   tf_provider_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) = 0;
 
-    std::string parameter(const std::string &name)
+    std::string privateParameter(const std::string &name)
     {
         return name_ + "/" + name;
     }

@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
     loader.load<muse_amcl::UpdateModel, muse_amcl::TFProvider::Ptr, ros::NodeHandle&>(updates, tf, nh);
     loader.load<muse_amcl::PredictionModel, muse_amcl::TFProvider::Ptr, ros::NodeHandle&>(prediction, tf, nh);
     loader.load<muse_amcl::MapProvider, ros::NodeHandle&>(maps, nh);
-    loader.load<muse_amcl::DataProvider, ros::NodeHandle&>(datas, nh);
+    loader.load<muse_amcl::DataProvider, muse_amcl::TFProvider::Ptr, ros::NodeHandle&>(datas, tf, nh);
 
     using MapProviders = std::map<std::string, muse_amcl::MapProvider::Ptr>;
     using TFProvider = muse_amcl::TFProvider::Ptr;

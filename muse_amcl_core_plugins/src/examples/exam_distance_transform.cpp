@@ -1,7 +1,7 @@
 #include <opencv2/opencv.hpp>
 #include <chrono>
 
-#include <muse_amcl_core_plugins/maps/distance_transform.hpp>
+#include <muse_amcl_core_plugins/maps_2d/distance_transform.hpp>
 
 int main(int argc, char *argv[])
 {

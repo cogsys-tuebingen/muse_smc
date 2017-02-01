@@ -13,9 +13,9 @@ int main(int argc, char *argv[])
 
 
     TFProvider::Ptr tf(new TFProvider);
-    muse_amcl::PluginFactory<muse_amcl::DataProvider, ros::NodeHandle&> dpf;
+    muse_amcl::PluginFactory<muse_amcl::DataProvider, TFProvider::Ptr, ros::NodeHandle&> dpf;
     ros::NodeHandle nh("~");
-    DataProvider::Ptr dp = dpf.create("dataprovider", "muse_amcl::MockDataProvider", nh);
+    DataProvider::Ptr dp = dpf.create("dataprovider", "muse_amcl::MockDataProvider", tf, nh);
 
     if(dp) {
         std::cout << "Dataprovider created !" << std::endl;
