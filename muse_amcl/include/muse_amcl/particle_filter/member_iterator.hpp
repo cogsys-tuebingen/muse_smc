@@ -5,7 +5,7 @@
 #include <muse_amcl/utils/delegate.hpp>
 
 namespace muse_amcl {
-template<typename Data, typename T, T Data::*Member, typename Notifier>
+template<typename Data, typename T, T Data::*Member>
 class MemberIterator : public std::iterator<std::random_access_iterator_tag, T>
 {
     using parent    = std::iterator<std::random_access_iterator_tag, T>;
@@ -32,12 +32,12 @@ public:
         return *this;
     }
 
-    inline bool operator ==(const MemberIterator<Data, T, Member, Notifier> &_other) const
+    inline bool operator ==(const MemberIterator<Data, T, Member> &_other) const
     {
         return data_ == _other.data_;
     }
 
-    inline bool operator !=(const MemberIterator<Data, T, Member, Notifier> &_other) const
+    inline bool operator !=(const MemberIterator<Data, T, Member> &_other) const
     {
         return !(*this == _other);
     }
@@ -54,10 +54,10 @@ public:
 
 };
 
-template<typename Data, typename T, T Data::*Member, typename Notifier>
+template<typename Data, typename T, T Data::*Member>
 class MemberDecorator {
 public:
-    using iterator = MemberIterator<Data, T, Member, Notifier>;
+    using iterator = MemberIterator<Data, T, Member>;
     using notify_update = delegate<void(const T&)>;
 
     MemberDecorator(std::buffered_vector<Data> &data,

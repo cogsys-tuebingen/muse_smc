@@ -14,7 +14,7 @@ void Residual::doSetup(ros::NodeHandle &nh_private)
 void Residual::doApply(ParticleSet &particle_set)
 {
     const ParticleSet::Particles &p_t_1 = particle_set.getSamples();
-    ParticleSet::Insertion i_p_t = particle_set.getInsertion();
+    Insertion i_p_t = particle_set.getInsertion();
 
     const std::size_t size = p_t_1.size();
     std::vector<double> u(size);
@@ -68,7 +68,7 @@ void Residual::doApplyRecovery(ParticleSet &particle_set)
     uniform_pose_sampler_->update(particle_set.getFrame());
 
     const ParticleSet::Particles &p_t_1 = particle_set.getSamples();
-    ParticleSet::Insertion i_p_t = particle_set.getInsertion();
+    Insertion i_p_t = particle_set.getInsertion();
 
     math::random::Uniform<1> rng_recovery(0.0, 1.0);
 

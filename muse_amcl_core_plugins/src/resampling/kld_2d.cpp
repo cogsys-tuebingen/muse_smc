@@ -10,7 +10,7 @@ void KLD2D::doApply(ParticleSet &particle_set)
 {
     const ParticleSet::Particles &p_t_1 = particle_set.getSamples();
     const double w_max = particle_set.getSampleWeightMaximum();
-    ParticleSet::Insertion  i_p_t = particle_set.getInsertion();
+    Insertion  i_p_t = particle_set.getInsertion();
     const std::size_t size = p_t_1.size();
 
     math::random::Uniform<1> rng(0.0, 1.0);
@@ -47,7 +47,7 @@ void KLD2D::doApplyRecovery(ParticleSet &particle_set)
 {
     const ParticleSet::Particles &p_t_1 = particle_set.getSamples();
     const double w_max = particle_set.getSampleWeightMaximum();
-    ParticleSet::Insertion  i_p_t = particle_set.getInsertion();
+    Insertion  i_p_t = particle_set.getInsertion();
     const std::size_t size = p_t_1.size();
 
     math::random::Uniform<1> rng(0.0, 1.0);

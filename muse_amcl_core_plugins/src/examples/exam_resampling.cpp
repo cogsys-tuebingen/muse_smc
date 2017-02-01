@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
     muse_amcl::Indexation index({0.1, 0.1, 1./18. * M_PI});
     muse_amcl::ParticleSet set("frame", 10, index);
     {
-        muse_amcl::ParticleSet::Insertion insert = set.getInsertion();
+        muse_amcl::Insertion insert = set.getInsertion();
         for(std::size_t i = 0 ; i < size ; ++i)
             insert.insert(muse_amcl::Particle());
         insert.close();

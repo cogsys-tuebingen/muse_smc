@@ -15,7 +15,7 @@ void Multinomial::doSetup(ros::NodeHandle &nh_private)
 void Multinomial::doApply(ParticleSet &particle_set)
 {
     const ParticleSet::Particles &p_t_1 = particle_set.getSamples();
-    ParticleSet::Insertion i_p_t = particle_set.getInsertion();
+    Insertion i_p_t = particle_set.getInsertion();
 
     /// prepare ordered sequence of random numbers
     const std::size_t size = p_t_1.size();
@@ -61,7 +61,7 @@ void Multinomial::doApplyRecovery(ParticleSet &particle_set)
     uniform_pose_sampler_->update(particle_set.getFrame());
 
     const ParticleSet::Particles &p_t_1 = particle_set.getSamples();
-    ParticleSet::Insertion i_p_t = particle_set.getInsertion();
+    Insertion i_p_t = particle_set.getInsertion();
 
     /// prepare ordered sequence of random numbers
     const std::size_t size = p_t_1.size();

@@ -13,24 +13,30 @@ public:
     using Ptr = std::shared_ptr<PredictionModel>;
 
     struct Result {
-        const bool              has_moved;  /// indicates whether the robot has moved or not
-        const Data::ConstPtr    left_over;  /// leftover for prediction, either it could not be
-                                            /// predicted until time or there is just a part still
-                                            /// open to be used for prediction
-        Result(const bool has_moved,
+        const double         linear_distance_moved;
+        const double         angular_distance_moved;
+        const Data::ConstPtr left_over;  /// leftover for prediction, either it could not be
+                                         /// predicted until time or there is just a part still
+                                         /// open to be used for prediction
+        Result(const double linear_distance_moved,
+               const double angular_distance_moved,
                const Data::ConstPtr &left_over) :
-            has_moved(has_moved),
+            linear_distance_moved(linear_distance_moved),
+            angular_distance_moved(angular_distance_moved),
             left_over(left_over)
         {
         }
 
-        Result(const bool has_moved) :
-            has_moved(has_moved)
+        Result(const double linear_distance_moved,
+               const double angular_distance_moved) :
+            linear_distance_moved(linear_distance_moved),
+            angular_distance_moved(angular_distance_moved)
         {
         }
 
         Result() :
-            has_moved(false)
+            linear_distance_moved(0.0),
+            angular_distance_moved(0.0)
         {
         }
 
@@ -54,9 +60,9 @@ public:
         return name_;
     }
 
-    void setup(const std::string         &name,
-               const TFProvider::Ptr     &tf_provider,
-               ros::NodeHandle           &nh_private)
+    inline void setup(const std::string         &name,
+                      const TFProvider::Ptr     &tf_provider,
+                      ros::NodeHandle           &nh_private)
     {
         name_        = name;
         base_frame_  = nh_private.param("base_frame", std::string("base_link"));
@@ -76,7 +82,7 @@ protected:
 
     virtual void doSetup(ros::NodeHandle &nh) = 0;
 
-    inline std::string parameter(const std::string &name)
+    inline std::string privateParameter(const std::string &name)
     {
         return name_ + "/" + name;
     }

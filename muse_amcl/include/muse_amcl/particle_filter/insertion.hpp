@@ -6,7 +6,6 @@
 #include <muse_amcl/utils/delegate.hpp>
 
 namespace muse_amcl {
-template<typename Notifier>
 class Insertion {
 public:
     using notify_finished = delegate<void()>;

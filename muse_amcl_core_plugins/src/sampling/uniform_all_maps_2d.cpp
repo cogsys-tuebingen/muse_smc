@@ -54,7 +54,7 @@ void UniformAllMaps2D::apply(ParticleSet &particle_set)
         throw std::runtime_error("Initialization sample size invalid!");
     }
 
-    ParticleSet::Insertion insertion = particle_set.getInsertion();
+    Insertion insertion = particle_set.getInsertion();
     const ros::Time sampling_start = ros::Time::now();
     const std::size_t map_count = maps_.size();
     Particle particle;

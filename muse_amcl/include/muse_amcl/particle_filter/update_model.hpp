@@ -51,7 +51,7 @@ protected:
 
     virtual void doSetup(ros::NodeHandle &nh_private) = 0;
 
-    inline std::string parameter(const std::string &name) const
+    inline std::string privateParameter(const std::string &name) const
     {
         return name_ + "/" + name;
     }

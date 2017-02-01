@@ -42,7 +42,7 @@ void Normal2D::apply(const math::Pose       &pose,
         throw std::runtime_error("Initialization sample size invalid!");
     }
 
-    ParticleSet::Insertion insertion = particle_set.getInsertion();
+    Insertion insertion = particle_set.getInsertion();
 
     const ros::Time sampling_start = ros::Time::now();
     Particle particle;

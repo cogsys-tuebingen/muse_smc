@@ -168,6 +168,11 @@ protected:
     {
         working_ = true;
         while(!stop_working_) {
+            /// 1. process requests which occured
+            processRequests();
+
+
+
             /// after resampling reset the weight to 1.0 as suggested by "probabilistic robotics"
         }
         working_ = false;

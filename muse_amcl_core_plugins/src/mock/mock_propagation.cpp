@@ -21,6 +21,6 @@ PredictionModel::Result MockPropagation::predict(const Data::ConstPtr &data,
 
 void MockPropagation::doSetup(ros::NodeHandle &nh)
 {
-    first_parameter  = nh.param(parameter("first"), 0.5);
-    second_parameter = nh.param(parameter("second"),1);
+    first_parameter  = nh.param(privateParameter("first"), 0.5);
+    second_parameter = nh.param(privateParameter("second"),1);
 }

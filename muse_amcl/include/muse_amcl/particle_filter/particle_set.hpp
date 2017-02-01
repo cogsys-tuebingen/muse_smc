@@ -27,11 +27,10 @@ public:
 
     using Index     = Indexation::IndexType;
     using Size      = Indexation::SizeType;
-    using Poses     = MemberDecorator<Particle, Particle::PoseType,   &Particle::pose_,   ParticleSet>;
-    using Weights   = MemberDecorator<Particle, Particle::WeightType, &Particle::weight_, ParticleSet>;
+    using Poses     = MemberDecorator<Particle, Particle::PoseType,   &Particle::pose_>;
+    using Weights   = MemberDecorator<Particle, Particle::WeightType, &Particle::weight_>;
     using Particles = std::buffered_vector<Particle>;
     using Clusters        = std::unordered_map<int, std::vector<const Particle*>>;
-    using Insertion       = muse_amcl::Insertion<ParticleSet>;
     using KDTreeBuffered  = cis::Storage<clustering::Data, Indexation::IndexType::Base, cis::backend::kdtree::KDTreeBuffered>;
     using Array           = cis::Storage<clustering::Data, Indexation::IndexType::Base, cis::backend::array::Array>;
     using KDClustering    = cis::operations::clustering::Clustering<KDTreeBuffered>;

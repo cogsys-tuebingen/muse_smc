@@ -12,16 +12,23 @@ namespace cis = cslibs_indexed_storage;
 
 namespace muse_amcl {
 namespace clustering {
+/**
+ * @brief The ClusteringImpl struct encodes the clustering strategy using the cslibs_index_storage
+ *        library.
+ */
 struct ClusteringImpl {
     using Index = Indexation::IndexType;
 
-    //! used neighborhood, look at direct neighbors only
-    /// REQUIRED DEFINTIONS !!!
+    /// required definitions -->
     using neighborhood_t  = cis::operations::clustering::GridNeighborhoodStatic<std::tuple_size<Index::Base>::value, 3>;
     using visitor_index_t = neighborhood_t::offset_t;   //!< currently needed by the clustering API
 
-    //! called when a new cluster should be started
-    bool start(const Index &, Data& data)
+    /**
+     * @brief Open a new cluster if possible.
+     * @param data - the data container currently processed
+     * @return true indicates whether a cluster could be created
+     */
+    inline bool start(const Index &, Data& data)
     {
         if(data.cluster_ != -1)
             return false;
@@ -34,7 +41,11 @@ struct ClusteringImpl {
         return true;
     }
 
-    //! called when a cluster is extended due to found neighbors
+    /**
+     * @brief Extend an existing cluster with this operation.
+     * @param data  - the data wrapper currently in scope
+     * @return
+     */
     bool extend(const Index&, const Index&, Data& data)
     {
         if (data.cluster_ != -1)
@@ -47,7 +58,9 @@ struct ClusteringImpl {
         return true;
     }
 
-    //! vistor implementation for neighbors
+    /**
+     * @brief Visitor for the neighbourhood.
+     */
     template<typename visitor_t>
     void visit_neighbours(const Index&, const visitor_t& visitor)
     {

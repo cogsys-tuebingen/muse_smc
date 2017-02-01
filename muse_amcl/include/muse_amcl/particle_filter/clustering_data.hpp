@@ -7,24 +7,39 @@
 
 namespace muse_amcl {
 namespace clustering {
+/**
+ * @brief The Data struct wraps sample information for clustering.
+ *        There is a weighted meand and covariance calculation based on the
+ *        importance weights of the inserted samples.
+ */
 struct Data {
     using ParticlePtrs = std::vector<const Particle*>;
 
-    int                                      cluster_ = -1;
-    ParticlePtrs                             samples_;
+    int                                      cluster_ = -1;    /// the cluster id
+    ParticlePtrs                             samples_;         /// samples which belong to the cluster
     math::statistic::WeightedDistribution<3> distribution_;    /// @TODO remove fixed dimension
                                                                /// @TODO check what kind of sum
-                                                               /// that should be
-    Data()
-    {
-    }
 
+    /**
+     *  @brief Default constructor.
+     */
+    Data() = default;
+
+    /**
+     * @brief Data constructor.
+     * @param sample - sample first introduced into the wrapper
+     */
     Data(const Particle &sample)
     {
         samples_.emplace_back(&sample);
         distribution_.add(sample.pose_.eigen3D(), sample.weight_);
     }
 
+    /**
+     * @brief Merge operation for this data container. It fuses the samples associated and the
+     *        weighted mean and covariance calculation.
+     * @param other - another data container
+     */
     inline void merge(const Data &other)
     {
         samples_.insert(samples_.end(), other.samples_.begin(), other.samples_.end());
