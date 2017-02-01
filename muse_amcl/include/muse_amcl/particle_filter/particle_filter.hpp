@@ -26,15 +26,13 @@ public:
     ParticleFilter() :
         name_("particle_filter"),
         working_(false),
-        stop_working_(true),
-        stop_waiting_(false)
+        stop_working_(true)
     {
     }
 
     virtual ~ParticleFilter()
     {
         stop_working_ = true;
-        stop_waiting_ = true;
         notify_event_.notify_one();
     }
 
@@ -115,7 +113,6 @@ public:
     void end()
     {
         if(working_) {
-            stop_waiting_ = true;
             notify_event_.notify_one();
         }
     }
@@ -144,17 +141,6 @@ protected:
     math::Pose              requset_pose_;
     std::atomic_bool        request_pose_initilization_;
     std::atomic_bool        request_global_initialization_;
-    std::atomic_bool        stop_waiting_;
-
-    inline void wait(std::unique_lock<std::mutex> &&lock)
-    {
-        while(update_queue_.empty()) {
-            notify_event_.wait(lock);
-            if(stop_waiting_) {
-                break;
-            }
-        }
-    }
 
     inline void processRequests()
     {
@@ -171,20 +157,33 @@ protected:
 
     inline void filter()
     {
+        std::unique_lock<std::mutex> lock_updates(mutex_update_queue_);
         working_ = true;
         while(!stop_working_) {
+            /// 0. wait for new tasks
+            notify_event_.wait(lock_updates);
             /// 1. process requests which occured
             processRequests();
             /// 2. get a new sensor update from the queue
+            if(!update_queue_.empty()) {
+                Update::Ptr update = update_queue_.top();
+                update_queue_.pop();
+                lock_updates.unlock();
+                /// 4. propagate until we reach the time stamp of update
 
-
-
-
-            /// after resampling reset the weight to 1.0 as suggested by "probabilistic robotics"
+                /// 5. go on with the queue
+                lock_updates.lock();
+            }
+            /// 6. check if its time for resampling
+            {
+                /// resample
+                for(auto &weight : particle_set_->getWeights()) {
+                    weight = 1.0;
+                }
+            }
         }
         working_ = false;
     }
-
 
     std::string parameter(const std::string &name)
     {
