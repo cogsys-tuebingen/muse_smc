@@ -20,8 +20,10 @@ namespace muse_amcl {
 class ParticleFilter {
 public:
     using Ptr = std::shared_ptr<ParticleFilter>;
-    using UpdateQueue = std::priority_queue<Update::Ptr, std::vector<Update::Ptr>, Update::Less>;
-    using PredictionQueue = std::priority_queue<Prediction::Ptr, std::vector<Prediction::Ptr>, Prediction::Less>;
+    using UpdateQueue     =
+        std::priority_queue<Update::Ptr, std::vector<Update::Ptr>, Update::Less>;
+    using PredictionQueue =
+        std::priority_queue<Prediction::Ptr, std::vector<Prediction::Ptr>, Prediction::Less>;
 
     ParticleFilter() :
         name_("particle_filter"),
@@ -40,6 +42,11 @@ public:
                const TFProvider::Ptr &tf_provider)
     {
         tf_provider_ = tf_provider;
+        resampling_minimum_linear_distance_  =
+                nh_private.param(privateParameter("resampling_minimum_linear_distance"), 0.25);
+        resampling_minimum_angular_distance_ =
+                nh_private.param(privateParameter("resampling_minimum_angular_distance"), M_PI / 10.0);
+
     }
 
     /// uniform pose sampling
@@ -239,13 +246,17 @@ protected:
                 /// 7. cluster the particle set an update the transformation
                 particle_set_->cluster();
                 ParticleSet::Clusters clusters = particle_set_->getClusters();
+
+
+                /// todo get the transformation odom -> world
+
             }
             publishTF();
         }
         working_ = false;
     }
 
-    std::string parameter(const std::string &name)
+    std::string privateParameter(const std::string &name)
     {
         return name_ + "/" + name;
     }

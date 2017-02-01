@@ -50,6 +50,8 @@ void MuseAMCLNode::setup()
     loader.load<NormalSampling,   std::map<std::string, MapProvider::Ptr>, TFProvider::Ptr, ros::NodeHandle&>(normal_sampling, map_providers_,  tf_provider_backend_, nh_private_);
     loader.load<Resampling, UniformSampling::Ptr, ros::NodeHandle&>(resampling, uniform_sampling, nh_private_);
 
+    particle_filter_.setup(nh_private_,
+                           tf_provider_backend_);
     particle_filter_.setNormalsampling(normal_sampling);
     particle_filter_.setUniformSampling(uniform_sampling);
     particle_filter_.setResampling(resampling);
