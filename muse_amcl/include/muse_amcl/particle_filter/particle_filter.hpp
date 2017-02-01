@@ -76,14 +76,14 @@ public:
     /// insert new predictions
     void addPrediction(Prediction::Ptr &prediction)
     {
-        std::unique_lock<std::mutex> l(mutex_prediction_queue_);
+        std::unique_lock<std::mutex> l(prediction_queue_mutex_);
         prediction_queue_.emplace(prediction);
         notify_event_.notify_one();
     }
 
     void addUpdate(Update::Ptr &update)
     {
-        std::unique_lock<std::mutex> l(mutex_update_queue_);
+        std::unique_lock<std::mutex> l(update_queue_mutex_);
         update_queue_.emplace(update);
         notify_event_.notify_one();
     }
@@ -120,22 +120,31 @@ public:
 protected:
     std::string             name_;
     TFProvider::Ptr         tf_provider_;
+    ros::Time               particle_set_stamp_;
     ParticleSet::Ptr        particle_set_;
 
     UniformSampling::Ptr    uniform_sampling_;
     NormalSampling::Ptr     normal_sampling_;
     Resampling::Ptr         resampling_;
 
-
     std::thread             worker_thread_;
     std::atomic_bool        working_;
     std::atomic_bool        stop_working_;
     std::condition_variable notify_event_;
 
-    mutable std::mutex      mutex_update_queue_;
-    mutable std::mutex      mutex_prediction_queue_;
-    UpdateQueue             update_queue_;      /// this is for the weighting functions and therefore important
-    PredictionQueue         prediction_queue_;  /// the predcition queue may not reach ovbersize.
+    //// ------------------ paramters ----------------------///
+    double                  resampling_minimum_linear_distance_;
+    double                  resampling_minimum_angular_distance_;
+
+
+    //// ------------------ working members ----------------///
+    mutable std::mutex      update_queue_mutex_;
+    mutable std::mutex      prediction_queue_mutex_;
+    UpdateQueue             update_queue_;                  /// this is for the weighting functions and therefore important
+    PredictionQueue         prediction_queue_;              /// the predcition queue may not reach ovbersize.
+
+    double                  prediction_linear_distance_;    /// integrated movement from odometry
+    double                  prediction_angular_distance_;    /// integrated movement from odometry
 
     std::mutex              request_pose_mutex_;
     math::Pose              requset_pose_;
@@ -146,19 +155,55 @@ protected:
     {
         if(request_global_initialization_) {
             request_global_initialization_ = false;
+            particle_set_stamp_ = ros::Time::now();
         }
         if(request_pose_initilization_) {
             std::unique_lock<std::mutex> l(request_pose_mutex_);
             request_pose_initilization_ = false;
+            particle_set_stamp_ = ros::Time::now();
         }
     }
 
+    inline bool predict(const ros::Time &until)
+    {
+        /// as long we haven't predicted far enough in time, we need to do so
+        /// if we get an left over or reached the time, we can drop out
+        while(until > particle_set_stamp_) {
+            Prediction::Ptr prediction;
+            {
+                std::unique_lock<std::mutex> l(prediction_queue_mutex_);
+                if(prediction_queue_.empty())
+                    return false;
+
+                prediction = prediction_queue_.top();
+                prediction_queue_.pop();
+            }
+
+            PredictionModel::Movement movement = prediction->apply(until, particle_set_->getPoses());
+            prediction_linear_distance_ += movement.linear_distance;
+            prediction_angular_distance_ += movement.angular_distance;
+
+            if(!prediction->isDone()) {
+                /// if prediction is not fully finished, push it back onto the queue
+                std::unique_lock<std::mutex> l(prediction_queue_mutex_);
+                prediction_queue_.emplace(prediction);
+                break;
+            }
+        }
+        return true;
+    }
+
+    inline void publishTF()
+    {
+
+    }
 
 
     inline void filter()
     {
-        std::unique_lock<std::mutex> lock_updates(mutex_update_queue_);
+        std::unique_lock<std::mutex> lock_updates(update_queue_mutex_);
         working_ = true;
+
         while(!stop_working_) {
             /// 0. wait for new tasks
             notify_event_.wait(lock_updates);
@@ -170,17 +215,32 @@ protected:
                 update_queue_.pop();
                 lock_updates.unlock();
                 /// 4. propagate until we reach the time stamp of update
-
+                if(predict(update->getStamp())) {
+                    update->apply(particle_set_->getWeights());
+                    update.reset();
+                }
                 /// 5. go on with the queue
                 lock_updates.lock();
+                if(update)
+                    update_queue_.emplace(update);
             }
             /// 6. check if its time for resampling
-            {
-                /// resample
+            if(prediction_linear_distance_ > resampling_minimum_linear_distance_ ||
+                    prediction_angular_distance_ > resampling_minimum_angular_distance_){
+                prediction_linear_distance_  = 0.0;
+                prediction_angular_distance_ = 0.0;
+
+                resampling_->apply(*particle_set_);
+
                 for(auto &weight : particle_set_->getWeights()) {
                     weight = 1.0;
                 }
+
+                /// 7. cluster the particle set an update the transformation
+                particle_set_->cluster();
+                ParticleSet::Clusters clusters = particle_set_->getClusters();
             }
+            publishTF();
         }
         working_ = false;
     }

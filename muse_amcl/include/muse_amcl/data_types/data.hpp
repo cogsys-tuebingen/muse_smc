@@ -2,7 +2,7 @@
 #define DATA_HPP
 
 #include <memory>
-#include <ros/time.h>
+#include <muse_amcl/data_types/time_frame.hpp>
 
 namespace muse_amcl {
 class Data {
@@ -11,15 +11,14 @@ public:
     typedef std::shared_ptr<const Data> ConstPtr;
 
     Data(const std::string &_frame) :
-        frame_(_frame),
-        stamp_(ros::Time::now())
+        frame_(_frame)
     {
     }
 
-    Data(const std::string &_frame,
-         const ros::Time   &_stamp) :
-        frame_(_frame),
-        stamp_(_stamp)
+    Data(const std::string &frame,
+         const TimeFrame   &time_frame) :
+        frame_(frame),
+        time_frame_(time_frame)
     {
     }
 
@@ -32,9 +31,9 @@ public:
         return frame_;
     }
 
-    inline const ros::Time & getStamp() const
+    inline const TimeFrame & getTimeFrame() const
     {
-        return stamp_;
+        return time_frame_;
     }
 
     template<typename T>
@@ -55,7 +54,7 @@ protected:
     Data(const Data &other) = delete;
 
     std::string frame_;
-    ros::Time   stamp_;
+    TimeFrame   time_frame_;
 };
 }
 

@@ -12,34 +12,45 @@ class PredictionModel {
 public:
     using Ptr = std::shared_ptr<PredictionModel>;
 
+    struct Movement {
+        Movement(const double linear_distance,
+                 const double angular_distance) :
+            linear_distance(linear_distance),
+            angular_distance(angular_distance)
+        {
+        }
+
+        Movement() :
+            linear_distance(0.0),
+            angular_distance(0.0)
+
+        {
+        }
+        const double linear_distance;
+        const double angular_distance;
+    };
+
     struct Result {
-        const double         linear_distance_moved;
-        const double         angular_distance_moved;
-        const Data::ConstPtr left_over;  /// leftover for prediction, either it could not be
-                                         /// predicted until time or there is just a part still
-                                         /// open to be used for prediction
         Result(const double linear_distance_moved,
                const double angular_distance_moved,
                const Data::ConstPtr &left_over) :
-            linear_distance_moved(linear_distance_moved),
-            angular_distance_moved(angular_distance_moved),
+            movement(linear_distance_moved, angular_distance_moved),
             left_over(left_over)
         {
         }
 
         Result(const double linear_distance_moved,
                const double angular_distance_moved) :
-            linear_distance_moved(linear_distance_moved),
-            angular_distance_moved(angular_distance_moved)
+            movement(linear_distance_moved, angular_distance_moved)
         {
         }
 
-        Result() :
-            linear_distance_moved(0.0),
-            angular_distance_moved(0.0)
-        {
-        }
+        Result() = default;
 
+        const Movement       movement;
+        const Data::ConstPtr left_over;  /// leftover for prediction, either it could not be
+                                         /// predicted until time or there is just a part still
+                                         /// open to be used for prediction
     };
 
     PredictionModel()

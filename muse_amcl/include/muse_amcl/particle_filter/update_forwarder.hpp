@@ -36,7 +36,7 @@ public:
 
 
             auto callback = [this, model, map_provider] (const Data::ConstPtr &data) {
-                Update::Ptr u(new Update(data->getStamp(), data, map_provider->getMap(), model));
+                Update::Ptr u(new Update(data->getTimeFrame().end, data, map_provider->getMap(), model));
                 filter_->addUpdate(u);
             };
 

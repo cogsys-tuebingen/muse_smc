@@ -4,6 +4,7 @@
 #include "update_model.hpp"
 #include "particle_set.hpp"
 
+#include <muse_amcl/data_types/time_frame.hpp>
 
 namespace muse_amcl {
 class Update {

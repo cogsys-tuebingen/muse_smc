@@ -10,7 +10,6 @@ namespace muse_amcl {
 class Prediction {
 public:
     using Ptr = std::shared_ptr<Prediction>;
-
     struct Less {
         bool operator()( const Prediction& lhs,
                          const Prediction& rhs ) const
@@ -25,7 +24,6 @@ public:
     };
 
 
-
     Prediction(const ros::Time            &stamp,
                const Data::ConstPtr       &data,
                const PredictionModel::Ptr &model) :
@@ -35,28 +33,36 @@ public:
     {
     }
 
-    inline PredictionModel::Result operator ()
+    inline PredictionModel::Movement operator ()
         (const ros::Time &until, ParticleSet::Poses poses)
     {
-        return model_->predict(data_, until, poses);
+        PredictionModel::Result model_response = model_->predict(data_, until, poses);
+        data_ = model_response.left_over;
+        return model_response.movement;
     }
 
-    inline PredictionModel::Result
+    inline PredictionModel::Movement
         apply(const ros::Time &until, ParticleSet::Poses poses)
     {
-        return model_->predict(data_, until, poses);
+        PredictionModel::Result model_response = model_->predict(data_, until, poses);
+        data_ = model_response.left_over;
+        return model_response.movement;
     }
 
-    ros::Time getStamp() const
+    inline bool isDone() const
+    {
+        return data_.get() != nullptr;
+    }
+
+    inline const ros::Time & getStamp() const
     {
         return stamp_;
     }
 
 private:
-    const ros::Time      stamp_;
-    const Data::ConstPtr data_;
-    PredictionModel::Ptr model_;
-
+    const ros::Time         stamp_;
+    Data::ConstPtr          data_;
+    PredictionModel::Ptr    model_;
 };
 }
 
