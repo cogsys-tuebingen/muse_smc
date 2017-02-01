@@ -20,6 +20,8 @@ namespace muse_amcl {
 class ParticleFilter {
 public:
     using Ptr = std::shared_ptr<ParticleFilter>;
+    using UpdateQueue = std::priority_queue<Update::Ptr, std::vector<Update::Ptr>, Update::Less>;
+    using PredictionQueue = std::priority_queue<Prediction::Ptr, std::vector<Prediction::Ptr>, Prediction::Less>;
 
     ParticleFilter() :
         name_("particle_filter"),
@@ -76,12 +78,16 @@ public:
     /// insert new predictions
     void addPrediction(Prediction::Ptr &prediction)
     {
-
+        std::unique_lock<std::mutex> l(mutex_prediction_queue_);
+        prediction_queue_.emplace(prediction);
+        notify_event_.notify_one();
     }
 
     void addUpdate(Update::Ptr &update)
     {
-
+        std::unique_lock<std::mutex> l(mutex_update_queue_);
+        update_queue_.emplace(update);
+        notify_event_.notify_one();
     }
 
     void requestPoseInitialization(const math::Pose &pose)
@@ -110,7 +116,6 @@ public:
     {
         if(working_) {
             stop_waiting_ = true;
-
             notify_event_.notify_one();
         }
     }
@@ -130,8 +135,10 @@ protected:
     std::atomic_bool        stop_working_;
     std::condition_variable notify_event_;
 
-    std::queue<double>      update_queue_;      /// this is for the weighting functions and therefore important
-    std::queue<double>      prediction_queue_;  /// the predcition queue may not reach ovbersize.
+    mutable std::mutex      mutex_update_queue_;
+    mutable std::mutex      mutex_prediction_queue_;
+    UpdateQueue             update_queue_;      /// this is for the weighting functions and therefore important
+    PredictionQueue         prediction_queue_;  /// the predcition queue may not reach ovbersize.
 
     std::mutex              request_pose_mutex_;
     math::Pose              requset_pose_;
@@ -153,11 +160,9 @@ protected:
     {
         if(request_global_initialization_) {
             request_global_initialization_ = false;
-
         }
         if(request_pose_initilization_) {
             std::unique_lock<std::mutex> l(request_pose_mutex_);
-
             request_pose_initilization_ = false;
         }
     }
@@ -170,6 +175,8 @@ protected:
         while(!stop_working_) {
             /// 1. process requests which occured
             processRequests();
+            /// 2. get a new sensor update from the queue
+
 
 
 
