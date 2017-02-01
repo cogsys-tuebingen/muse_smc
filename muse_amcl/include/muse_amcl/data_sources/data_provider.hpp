@@ -7,13 +7,15 @@
 
 #include "tf_provider.hpp"
 #include <muse_amcl/utils/signals.hpp>
+#include <muse_amcl/utils/delegate.hpp>
 #include <muse_amcl/data_types/data.hpp>
+
 
 namespace muse_amcl {
 class DataProvider {
 public:
     typedef std::shared_ptr<DataProvider>              Ptr;
-    typedef std::function<void(const Data::ConstPtr&)> Callback;
+    typedef delegate<void(const Data::ConstPtr&)>      Callback;
     typedef Signal<Callback>                           DataSignal;
     typedef DataSignal::Connection                     DataConnection;
 
