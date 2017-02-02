@@ -23,11 +23,14 @@ void BeamModel::update(const Data::ConstPtr  &data,
     if(!gridmap)
         throw std::runtime_error("[BeamModel]: Trying to use wrong map type with this model.");
 
+    /// get laser to base ...
 
 
 }
 
 void BeamModel::doSetup(ros::NodeHandle &nh_private_)
 {
+
+
 
 }

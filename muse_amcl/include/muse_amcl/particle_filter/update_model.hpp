@@ -35,7 +35,6 @@ public:
                       ros::NodeHandle       &nh_private)
     {
         name_        = name;
-        base_frame_  = nh_private.param("base_frame", std::string("base_link"));
         tf_provider_ = tf_provider;
         doSetup(nh_private);
     }
@@ -46,7 +45,6 @@ public:
 
 protected:
     std::string         name_;
-    std::string         base_frame_;
     TFProvider::Ptr     tf_provider_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) = 0;
