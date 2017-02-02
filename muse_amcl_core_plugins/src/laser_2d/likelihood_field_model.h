@@ -13,7 +13,12 @@ public:
                         const Map::ConstPtr &map,
                         ParticleSet::Weights set) override;
 protected:
-    virtual void doSetup(ros::NodeHandle &nh) override;
+    std::size_t max_beams_;
+    double      z_hit_;
+    double      z_rand_;
+    double      sigma_hit_;
+
+    virtual void doSetup(ros::NodeHandle &nh_private) override;
 
 };
 }
