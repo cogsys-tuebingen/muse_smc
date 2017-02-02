@@ -30,7 +30,12 @@ void BeamModel::update(const Data::ConstPtr  &data,
 
 void BeamModel::doSetup(ros::NodeHandle &nh_private_)
 {
-
-
-
+    max_beams_ = nh_private_.getParam(privateParameter("max_beams"), 30);
+    z_hit_ = nh_private.getParam(privateParameter("z_hit"), 0.8);
+    z_short_ = nh_private.getParam(privateParameter("z_short"), 0.1);
+    z_max_ = nh_private.getParam(privateParameter("z_max"), 0.05);
+    z_rand_ = nh_private.getParam(privateParameter("z_rand"), 0.05);
+    sigma_hit_ = nh_private.getParam(privateParameter("sigma_hit"), 0.15);
+    lambda_short_ = nh_private.getParam(privateParameter("lambda_short"), 0.01);
+    chi_outlier_ = nh_private.getParam(privateParameter("chi_outlier"), 0.05);
 }
