@@ -80,9 +80,9 @@ public:
     }
 
     template<typename T>
-    T const * as() const
+    T const & as() const
     {
-        return dynamic_cast<const T*>(this);
+        return dynamic_cast<const T&>(*this);
     }
 
 protected:

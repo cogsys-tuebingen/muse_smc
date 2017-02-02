@@ -19,9 +19,8 @@ void BeamModel::update(const Data::ConstPtr  &data,
                        ParticleSet::Weights set)
 {
 
-    const maps::BinaryGridMap *gridmap = map->as<maps::BinaryGridMap>();
-    if(!gridmap)
-        throw std::runtime_error("[BeamModel]: Trying to use wrong map type with this model.");
+    const maps::BinaryGridMap &gridmap = map->as<maps::BinaryGridMap>();
+    const LaserScan2D         &laser_data = data->as<LaserScan2D>();
 
     /// get laser to base ...
 

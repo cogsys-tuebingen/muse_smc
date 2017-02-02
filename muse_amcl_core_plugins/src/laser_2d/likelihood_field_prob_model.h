@@ -15,7 +15,16 @@ public:
                         ParticleSet::Weights set) override;
 
 protected:
-    virtual void doSetup(ros::NodeHandle &nh) override;
+    std::size_t max_beams_;
+    double      z_hit_;
+    double      z_rand_;
+    double      sigma_hit_;
+    bool        beam_skip_;
+    double      beam_skip_distance_;
+    double      beam_skip_threshold_;
+    double      beam_skip_error_threshold_;
+
+    virtual void doSetup(ros::NodeHandle &nh_private) override;
 
 };
 }

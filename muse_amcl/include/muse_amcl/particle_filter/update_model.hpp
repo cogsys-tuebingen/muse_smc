@@ -34,8 +34,9 @@ public:
                       const TFProvider::Ptr &tf_provider,
                       ros::NodeHandle       &nh_private)
     {
-        name_        = name;
-        tf_provider_ = tf_provider;
+        name_             = name;
+        robot_base_frame_ = nh_private.param<std::string>(privateParameter(robot_base_frame_), "robot_base_frame");
+        tf_provider_      = tf_provider;
         doSetup(nh_private);
     }
 
@@ -45,6 +46,7 @@ public:
 
 protected:
     std::string         name_;
+    std::string         robot_base_frame_;
     TFProvider::Ptr     tf_provider_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) = 0;

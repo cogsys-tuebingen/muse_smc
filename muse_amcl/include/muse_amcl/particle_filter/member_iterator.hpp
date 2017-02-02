@@ -106,7 +106,7 @@ public:
      * @param update - on update callback
      */
     MemberDecorator(std::buffered_vector<Data> &data,
-                    notify_update                update) :
+                    notify_update               update) :
         data_(data),
         update_(update)
     {
@@ -131,6 +131,7 @@ public:
     inline iterator end() {
         return iterator(&data_.back() + 1, update_);
     }
+
 private:
     std::buffered_vector<Data> &data_;      /// the container to be iterated
     notify_update               update_;    /// on update callback

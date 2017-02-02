@@ -1,6 +1,7 @@
 #include "likelihood_field_model.h"
 
-#include <muse_amcl_core_plugins/maps_2d/binary_gridmap.h>
+#include <muse_amcl_core_plugins/laser_2d/laser_scan_2d.hpp>
+#include <muse_amcl_core_plugins/maps_2d/distance_gridmap.h>
 
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_amcl::LikelihoodFieldModel, muse_amcl::UpdateModel)
@@ -16,10 +17,10 @@ void LikelihoodFieldModel::update(const Data::ConstPtr &data,
                                   const Map::ConstPtr  &map,
                                   ParticleSet::Weights  set)
 {
-    const maps::BinaryGridMap *gridmap = map->as<maps::BinaryGridMap>();
-    if(!gridmap)
-        throw std::runtime_error("[LikelihoodField]: Trying to use wrong map type with this model.");
+    const maps::DistanceGridMap &gridmap = map->as<maps::DistanceGridMap>();
+    const LaserScan2D           &laser_data = data->as<LaserScan2D>();
 
+    /// get laser to base ...
 }
 
 void LikelihoodFieldModel::doSetup(ros::NodeHandle &nh_private)

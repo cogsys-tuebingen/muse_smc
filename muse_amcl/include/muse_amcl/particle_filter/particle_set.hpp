@@ -136,7 +136,7 @@ public:
         sample_weight_sum_     = 0.0;
 
         return Weights(*p_t_1,
-                     Weights::notify_update::from<ParticleSet, &ParticleSet::updateWeight>(this));
+                       Weights::notify_update::from<ParticleSet, &ParticleSet::updateWeight>(this));
     }
 
     /**
