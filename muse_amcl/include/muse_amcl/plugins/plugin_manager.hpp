@@ -9,6 +9,7 @@
 #include <mutex>
 #include <functional>
 #include <typeindex>
+#include <muse_amcl/utils/delegate.hpp>
 
 namespace muse_amcl
 {
@@ -20,7 +21,7 @@ class PluginManagerImp
     friend class PluginManager;
 
 protected:
-    typedef std::function<std::shared_ptr<M>()> PluginConstructorM;
+    typedef delegate<std::shared_ptr<M>()> PluginConstructorM;
     typedef std::map<std::string, PluginConstructorM> Constructors;
 
 protected:

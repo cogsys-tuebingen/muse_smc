@@ -1,10 +1,11 @@
 #include <muse_amcl/utils/signals.hpp>
+#include <muse_amcl/utils/delegate.hpp>
 
 #include <gtest/gtest.h>
 
 TEST(TestMuseAMCL, testSignalVoidCallback)
 {
-    using TestCallback = std::function<void(int,int)>;
+    using TestCallback = delegate<void(int,int)>;
     using TestSignal = muse_amcl::Signal<TestCallback>;
 
     auto callback = [](int a, int b){return;};
@@ -15,7 +16,7 @@ TEST(TestMuseAMCL, testSignalVoidCallback)
 
 TEST(TestMuseAMCL, testSignalNonVoidCallback)
 {
-    using TestCallback = std::function<int(int,int)>;
+    using TestCallback = delegate<int(int,int)>;
     using TestSignal = muse_amcl::Signal<TestCallback>;
 
     auto callback = [](int a, int b){return 0;};
@@ -26,7 +27,7 @@ TEST(TestMuseAMCL, testSignalNonVoidCallback)
 
 TEST(TestMuseAMCL, enabling)
 {
-    using TestCallback = std::function<void()>;
+    using TestCallback = delegate<void()>;
     using TestSignal = muse_amcl::Signal<TestCallback>;
 
     auto callback = [](){;};
@@ -43,7 +44,7 @@ TEST(TestMuseAMCL, enabling)
 TEST(TestMuseAMCL, testSignalCallbackExecution)
 {
     int result = 0;
-    using TestCallback = std::function<void(int)>;
+    using TestCallback = delegate<void(int)>;
     using TestSignal = muse_amcl::Signal<TestCallback>;
 
     auto increment = [&result](int a){result += a;};
@@ -65,7 +66,7 @@ TEST(TestMuseAMCL, testSignalCallbackExecution)
 TEST(TestMuseAMCL, testSignalEnableDisable)
 {
     int result = 0;
-    using TestCallback = std::function<void(int)>;
+    using TestCallback = delegate<void(int)>;
     using TestSignal = muse_amcl::Signal<TestCallback>;
 
     auto increment = [&result](int a){result += a;};
@@ -95,7 +96,7 @@ TEST(TestMuseAMCL, testSignalEnableDisable)
 TEST(TestMuseAMCL, testSignalDisconnectViaHandleReset)
 {
     int result = 0;
-    using TestCallback = std::function<void(int)>;
+    using TestCallback = delegate<void(int)>;
     using TestSignal = muse_amcl::Signal<TestCallback>;
 
     auto increment = [&result](int a){result += a;};
@@ -123,7 +124,7 @@ TEST(TestMuseAMCL, testSignalDisconnectViaHandleReset)
 TEST(TestMuseAMCL, testSignalDisconnectViaMethod)
 {
     int result = 0;
-    using TestCallback = std::function<void(int)>;
+    using TestCallback = delegate<void(int)>;
     using TestSignal = muse_amcl::Signal<TestCallback>;
 
     auto increment = [&result](int a){result += a;};
