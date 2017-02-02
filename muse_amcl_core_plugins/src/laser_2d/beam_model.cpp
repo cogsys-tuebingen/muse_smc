@@ -1,6 +1,6 @@
 #include "beam_model.h"
 
-#include "laser_scan_2d.hpp"
+#include <muse_amcl_core_plugins/laser_2d/laser_scan_2d.hpp>
 #include <muse_amcl_core_plugins/maps_2d/binary_gridmap.h>
 
 #include <class_loader/class_loader_register_macro.h>

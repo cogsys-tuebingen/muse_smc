@@ -1,6 +1,6 @@
 #include "data_provider_laser_2d.h"
 
-#include "laser_scan_2d.hpp"
+#include <muse_amcl_core_plugins/laser_2d/laser_scan_2d.hpp>
 
 using namespace muse_amcl;
 
@@ -12,7 +12,5 @@ void DataProviderLaser2D::doSetup(ros::NodeHandle &nh_private)
 
 void DataProviderLaser2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
 {
-    //// setup the sensor data
-
-
+    /// do the undistortion using tf
 }
