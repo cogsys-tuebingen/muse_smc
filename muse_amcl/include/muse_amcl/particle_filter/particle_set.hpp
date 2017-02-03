@@ -118,11 +118,9 @@ public:
      */
     inline Poses getPoses()
     {
-        sample_index_minimum_  = std::numeric_limits<int>::max();
-        sample_index_maximum_  = std::numeric_limits<int>::min();
-
         return Poses(*p_t_1,
-                     Poses::notify_update::from<ParticleSet, &ParticleSet::updateIndices>(this));
+                     Poses::notify_update::from<ParticleSet, &ParticleSet::updateIndices>(this),
+                     Poses::notify_touch::from<ParticleSet, &ParticleSet::resetIndices>(this));
     }
 
     /**
@@ -132,11 +130,9 @@ public:
      */
     inline Weights getWeights()
     {
-        sample_weight_maximum_ = 0.0;
-        sample_weight_sum_     = 0.0;
-
         return Weights(*p_t_1,
-                       Weights::notify_update::from<ParticleSet, &ParticleSet::updateWeight>(this));
+                       Weights::notify_update::from<ParticleSet, &ParticleSet::updateWeight>(this),
+                       Weights::notify_touch::from<ParticleSet, &ParticleSet::resetWeights>(this));
     }
 
     /**
@@ -347,6 +343,18 @@ private:
     Size                            array_size_;        /// the arrays size
 
     Clusters                        p_t_1_clusters_;
+
+    inline void resetWeights()
+    {
+        sample_weight_maximum_ = 0.0;
+        sample_weight_sum_     = 0.0;
+    }
+
+    inline void resetIndices()
+    {
+        sample_index_minimum_  = std::numeric_limits<int>::max();
+        sample_index_maximum_  = std::numeric_limits<int>::min();
+    }
 
     /**
      * @brief Histogram index boundaries update callback for pose iterator access.

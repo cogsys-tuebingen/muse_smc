@@ -26,7 +26,7 @@ public:
     {
     }
 
-    inline const std::string & frame() const
+    inline const std::string & getFrame() const
     {
         return frame_;
     }

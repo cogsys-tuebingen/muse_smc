@@ -12,6 +12,9 @@ public:
     BinaryGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupancy_grid,
                   const double threshold = 1.0);
 
+    double getRange(const math::Point &from, const math::Point &to) const;
+
+
 private:
     void convert(const nav_msgs::OccupancyGrid &occupancy_grid,
                  const double threshold);

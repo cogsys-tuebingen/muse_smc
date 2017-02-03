@@ -15,10 +15,9 @@ template<typename T>
 class GridMap : public Map
 {
 public:
-    typedef std::shared_ptr<GridMap>    Ptr;
-    typedef Bresenham<const T>          LineIterator;
-    typedef std::array<int, 2>          Index;
-    typedef std::array<double, 2>       Position;
+    using Ptr = std::shared_ptr<GridMap>;
+    using LineIterator = Bresenham<T const>;
+    using Index = std::array<int, 2>;
 
     GridMap(const double origin_x,
             const double origin_y,
@@ -50,16 +49,16 @@ public:
 
     virtual inline math::Point getMin() const override
     {
-        Position p;
+        math::Point p;
         fromIndex({0,0},p);
-        return math::Point(p[0], p[1], 0.0);
+        return p;
     }
 
     virtual inline math::Point getMax() const override
     {
-        Position p;
+        math::Point p;
         fromIndex({(int)width_-1,(int)height_-1},p);
-        return math::Point(p[0], p[1], 0.0);
+        return p;
     }
 
     virtual inline math::Pose getOrigin() const
@@ -68,11 +67,11 @@ public:
         return math::Pose(origin);
     }
 
-    inline bool toIndex(const Position &p,
+    inline bool toIndex(const math::Point &p,
                         Index &i) const
     {
-        double _x = p[0];
-        double _y = p[1];
+        double _x = p.x();
+        double _y = p.y();
         double x = _x;
         double y = _y;
 
@@ -90,10 +89,10 @@ public:
     }
 
     inline void fromIndex(const Index &i,
-                          Position &p) const
+                          math::Point &p) const
     {
-        double &_x = p[0];
-        double &_y = p[1];
+        double &_x = p.x();
+        double &_y = p.y();
         _x = i[0] * resolution_;
         _y = i[1] * resolution_;
         if(origin_phi_ != 0.0)  {
@@ -126,8 +125,8 @@ public:
         return LineIterator(cap(start), cap(_end), width_, data_ptr_);
     }
 
-    inline LineIterator getLineIterator(const Position &start,
-                                        const Position &end) const
+    inline LineIterator getLineIterator(const math::Point &start,
+                                        const math::Point &end) const
     {
         Index start_index;
         Index end_index;
@@ -175,7 +174,7 @@ protected:
     double      tx_;
     double      ty_;
 
-    inline Index cap(const Index &_i)
+    inline Index cap(const Index &_i) const
     {
         return {(_i[0] < 0 ? 0 : (_i[0] > max_index_[0] ? max_index_[0] : _i[0])),
                 (_i[1] < 0 ? 0 : (_i[1] > max_index_[1] ? max_index_[1] : _i[1]))};

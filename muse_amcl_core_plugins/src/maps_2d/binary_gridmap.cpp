@@ -24,6 +24,19 @@ BinaryGridMap::BinaryGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupancy_
 {
 }
 
+double BinaryGridMap::getRange(const math::Point &from, const math::Point &to) const
+{
+    LineIterator it = getLineIterator(from, to);
+    while(!it.done()) {
+        if(*it)
+            break;
+        ++it;
+    }
+    math::Point end;
+    fromIndex({static_cast<int>(it.x()), static_cast<int>(it.y())}, end);
+    return end.distance(from);
+}
+
 void BinaryGridMap::convert(const nav_msgs::OccupancyGrid &occupancy_grid,
                             const double threshold)
 {

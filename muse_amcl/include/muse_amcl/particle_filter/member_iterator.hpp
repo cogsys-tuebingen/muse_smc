@@ -99,6 +99,7 @@ class MemberDecorator {
 public:
     using iterator = MemberIterator<Data, T, Member>;
     using notify_update = delegate<void(const T&)>;
+    using notify_touch  = delegate<void()>;
 
     /**
      * @brief MemberDecorator constrcutor.
@@ -106,8 +107,11 @@ public:
      * @param update - on update callback
      */
     MemberDecorator(std::buffered_vector<Data> &data,
-                    notify_update               update) :
+                    notify_update               update,
+                    notify_touch                touch) :
         data_(data),
+        untouched_(true),
+        touch_(touch),
         update_(update)
     {
     }
@@ -119,6 +123,11 @@ public:
      */
     inline iterator begin()
     {
+        if(untouched_) {
+            untouched_ = false;
+            touch_();
+        }
+
         return iterator(&data_.front(), update_);
     }
 
@@ -134,7 +143,9 @@ public:
 
 private:
     std::buffered_vector<Data> &data_;      /// the container to be iterated
-    notify_update               update_;    /// on update callback
+    bool                       untouched_;
+    notify_touch               touch_;    /// notify wether an iterator is in use or not
+    notify_update              update_;    /// on update callback
 };
 }
 #endif // PARTICLE_SET_MEMBER_ITERATOR_HPP
