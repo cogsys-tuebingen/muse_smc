@@ -192,4 +192,11 @@ public:
 };
 }
 }
+
+inline muse_amcl::math::Point operator * (const muse_amcl::math::Point &p,
+                                          const tf::Transform &t)
+{
+    return muse_amcl::math::Point(t * p);
+}
+
 #endif /* POINT_HPP */

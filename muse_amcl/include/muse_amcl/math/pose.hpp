@@ -291,6 +291,18 @@ private:
 }
 }
 
+inline muse_amcl::math::Pose operator * (const muse_amcl::math::Pose &pose_a,
+                                         const muse_amcl::math::Pose &pose_b)
+{
+    return pose_b.transformed(pose_a.tf());
+}
+
+inline muse_amcl::math::Pose operator * (const muse_amcl::math::Pose &pose_a,
+                                         const tf::Pose &pose_b)
+{
+    return muse_amcl::math::Pose(pose_a.tf() * pose_b);
+}
+
 inline muse_amcl::math::Pose operator * (const tf::Transform &transform,
                                          const muse_amcl::math::Pose &pose)
 {

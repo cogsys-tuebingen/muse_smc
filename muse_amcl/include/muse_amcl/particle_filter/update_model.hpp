@@ -35,7 +35,8 @@ public:
                       ros::NodeHandle       &nh_private)
     {
         name_             = name;
-        robot_base_frame_ = nh_private.param<std::string>(privateParameter("robot_base_frame"), "robot_base_frame");
+        world_frame_      = nh_private.param<std::string>("world_frame", "world");
+        robot_base_frame_ = nh_private.param<std::string>("robot_base_frame", "base_link");
         tf_timeout_       = ros::Duration(nh_private.param<double>(privateParameter("tf_timeout"), 0.1));
         tf_provider_      = tf_provider;
         doSetup(nh_private);
@@ -48,6 +49,7 @@ public:
 protected:
     std::string         name_;
     std::string         robot_base_frame_;
+    std::string         world_frame_;
     ros::Duration       tf_timeout_;
     TFProvider::Ptr     tf_provider_;
 

@@ -53,6 +53,7 @@ add_library(${PROJECT_NAME} SHARED
 
 target_link_libraries(${PROJECT_NAME}
     ${catkin_LIBRARIES}
+    muse_amcl_maps
 )
 
 add_library(muse_amcl_maps

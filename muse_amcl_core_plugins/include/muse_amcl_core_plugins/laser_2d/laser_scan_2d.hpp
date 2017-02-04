@@ -80,9 +80,8 @@ public:
         return rays_;
     }
 
-
 private:
-    Rays rays_;
+    Rays rays_;         /// only valid rays shall be contained here
     double range_min_;
     double range_max_;
     double angle_min_;
