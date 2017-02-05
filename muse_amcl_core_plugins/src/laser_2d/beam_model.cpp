@@ -81,7 +81,7 @@ void BeamModel::update(const Data::ConstPtr  &data,
             const double pz = probability(ray_range, map_range);
             p += pz * pz * pz;  /// @todo : fix the inprobable thing ;)
         }
-        *it = p;
+        *it *= p;
     }
 }
 

@@ -19,10 +19,15 @@ protected:
     double      z_hit_;
     double      z_rand_;
     double      sigma_hit_;
+    double      denominator_hit_;
     bool        beam_skip_;
     double      beam_skip_distance_;
     double      beam_skip_threshold_;
     double      beam_skip_error_threshold_;
+
+    std::vector<int>    observation_histogram_;
+    std::vector<char>   observation_mask_;
+    std::vector<double> observation_probability_buffer_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) override;
 

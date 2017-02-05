@@ -56,7 +56,7 @@ void LikelihoodFieldModel::update(const Data::ConstPtr &data,
             const double pz = p_hit(gridmap.at(ray_end_point)) + p_rand;
             p += pz * pz * pz;  /// @todo : fix the inprobable thing ;)
         }
-        *it = p;
+        *it *= p;
     }
 }
 

@@ -141,6 +141,15 @@ public:
         return iterator(&data_.back() + 1, update_);
     }
 
+    /**
+     * @brief getData allows read only access encapsulated data.
+     * @return  const reference
+     */
+    inline const std::buffered_vector<Data>& getData() const
+    {
+        return data_;
+    }
+
 private:
     std::buffered_vector<Data> &data_;      /// the container to be iterated
     bool                       untouched_;
