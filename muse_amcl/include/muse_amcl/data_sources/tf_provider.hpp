@@ -24,9 +24,10 @@ public:
         {
         }
 
+        LockedTFProvider(const LockedTFProvider &other) = delete;
+
         virtual ~LockedTFProvider()
         {
-            lock_.unlock();
         }
 
         inline bool lookupTransform(const std::string    &target_frame,
@@ -157,9 +158,10 @@ public:
         tf_.getFrameStrings(frames);
     }
 
-    inline void getLockedTFProvider()
+    inline LockedTFProvider getLockedTFProvider()
     {
-
+        std::unique_lock<std::mutex> lock;
+        return LockedTFProvider(std::move(lock), *this);
     }
 
 
