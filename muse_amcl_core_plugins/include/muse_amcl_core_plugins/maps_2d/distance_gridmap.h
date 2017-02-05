@@ -10,15 +10,18 @@ class DistanceGridMap : public GridMap<double>
 {
 public:
     DistanceGridMap(const nav_msgs::OccupancyGrid &occupancy_grid,
-                    const double threshold = 1.0);
+                    const double threshold = 1.0,
+                    const std::size_t kernel_size = 5);
     DistanceGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupancy_grid,
-                    const double threshold = 1.0);
+                    const double threshold = 1.0,
+                    const std::size_t kernel_size = 5);
 
     double at(const math::Point &point) const;
 
 private:
     void convert(const nav_msgs::OccupancyGrid &occupancy_grid,
-                 const double threshold);
+                 const double threshold,
+                 const std::size_t kernel_size);
 
 };
 }

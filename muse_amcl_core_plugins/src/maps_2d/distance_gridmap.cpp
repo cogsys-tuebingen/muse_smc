@@ -6,7 +6,7 @@ using namespace muse_amcl;
 using namespace maps;
 
 DistanceGridMap::DistanceGridMap(const nav_msgs::OccupancyGrid &occupancy_grid,
-                                 const double threshold) :
+                                 const double threshold, const std::size_t kernel_size) :
     GridMap<double>(occupancy_grid.info.origin.position.x,
                     occupancy_grid.info.origin.position.y,
                     tf::getYaw(occupancy_grid.info.origin.orientation),
@@ -15,11 +15,11 @@ DistanceGridMap::DistanceGridMap(const nav_msgs::OccupancyGrid &occupancy_grid,
                     occupancy_grid.info.width,
                     occupancy_grid.header.frame_id)
 {
-    convert(occupancy_grid, threshold);
+    convert(occupancy_grid, threshold, kernel_size);
 }
 
 DistanceGridMap::DistanceGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupancy_grid,
-                                 const double threshold) :
+                                 const double threshold, const std::size_t kernel_size) :
     DistanceGridMap(*occupancy_grid, threshold)
 {
 }
@@ -35,7 +35,7 @@ double DistanceGridMap::at(const math::Point &point) const
 
 
 
-void DistanceGridMap::convert(const nav_msgs::OccupancyGrid &occupancy_grid, const double threshold)
+void DistanceGridMap::convert(const nav_msgs::OccupancyGrid &occupancy_grid, const double threshold, const std::size_t kernel_size)
 {
     const std::size_t size = height_ * width_;
     const int8_t *occupancy_grid_ptr = occupancy_grid.data.data();
@@ -53,6 +53,6 @@ void DistanceGridMap::convert(const nav_msgs::OccupancyGrid &occupancy_grid, con
         }
     }
 
-    distance_transform::Borgefors<double> bf(height_, width_, resolution_, threshold, 5);
+    distance_transform::Borgefors<double> bf(height_, width_, resolution_, threshold, kernel_size);
     bf.apply(buffer, data_);
 }
