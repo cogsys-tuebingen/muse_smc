@@ -24,6 +24,16 @@ DistanceGridMap::DistanceGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupa
 {
 }
 
+double DistanceGridMap::at(const math::Point &point) const
+{
+    Index i;
+    toIndex(point, i);
+    if(invalid(i))
+        return std::numeric_limits<double>::max();
+    return GridMap<double>::at(i[0], i[1]);
+}
+
+
 
 void DistanceGridMap::convert(const nav_msgs::OccupancyGrid &occupancy_grid, const double threshold)
 {

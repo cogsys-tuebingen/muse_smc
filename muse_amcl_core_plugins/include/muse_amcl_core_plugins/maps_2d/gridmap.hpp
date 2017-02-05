@@ -119,6 +119,26 @@ public:
         return data_ptr_[width_ * idy + idx];
     }
 
+    inline T& at(const math::Point &point)
+    {
+        Index i;
+        toIndex(point, i);
+        if(invalid(i)) {
+            throw std::runtime_error("[GridMap] : Invalid Index!");
+        }
+        return at(i[0], i[1]);
+    }
+
+    inline const T& at(const math::Point &point) const
+    {
+        Index i;
+        toIndex(point, i);
+        if(invalid(i)) {
+            throw std::runtime_error("[GridMap] : Invalid Index!");
+        }
+        return at(i);
+    }
+
     inline LineIterator getLineIterator(const Index &start,
                                         const Index &_end) const
     {
@@ -180,7 +200,7 @@ protected:
                 (_i[1] < 0 ? 0 : (_i[1] > max_index_[1] ? max_index_[1] : _i[1]))};
     }
 
-    inline bool invalid(const Index &_i)
+    inline bool invalid(const Index &_i) const
     {
         return _i[0] < 0 || _i[1] < 0 ||
                _i[0] > max_index_[0] || _i[1] > max_index_[1];

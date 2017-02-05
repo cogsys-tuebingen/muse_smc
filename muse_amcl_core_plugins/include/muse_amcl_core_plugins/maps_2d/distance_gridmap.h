@@ -14,6 +14,8 @@ public:
     DistanceGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupancy_grid,
                     const double threshold = 1.0);
 
+    double at(const math::Point &point) const;
+
 private:
     void convert(const nav_msgs::OccupancyGrid &occupancy_grid,
                  const double threshold);

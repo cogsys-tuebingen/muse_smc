@@ -23,15 +23,8 @@ protected:
     double      denominator_hit_;
     double      lambda_short_;
     double      chi_outlier_;
-    double      range_min_;
-    double      range_max_;
-    double      p_rand_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) override;
-
-
-
-
 
 };
 }

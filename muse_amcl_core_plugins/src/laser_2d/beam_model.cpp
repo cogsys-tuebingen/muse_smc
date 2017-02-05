@@ -8,10 +8,8 @@ CLASS_LOADER_REGISTER_CLASS(muse_amcl::BeamModel, muse_amcl::UpdateModel)
 
 using namespace muse_amcl;
 
-
 BeamModel::BeamModel()
 {
-
 }
 
 void BeamModel::update(const Data::ConstPtr  &data,
@@ -40,7 +38,10 @@ void BeamModel::update(const Data::ConstPtr  &data,
     const LaserScan2D::Rays rays = laser_data.getRays();
     const ParticleSet::Weights::iterator end = set.end();
     const std::size_t rays_size = rays.size();
-    const std::size_t ray_step      = (rays_size) / max_beams_;
+    const std::size_t ray_step  = std::max(1ul, (rays_size) / max_beams_);
+    const double range_max = laser_data.getRangeMax();
+    const double p_rand = z_rand_ * 1.0 / range_max;
+
 
     /// mixture distribution entries
     auto p_hit = [this](const double z) {
@@ -51,16 +52,16 @@ void BeamModel::update(const Data::ConstPtr  &data,
             return z_short_ * lambda_short_ * exp(-lambda_short_ * ray_range);
         return 0.0;
     };
-    auto p_max = [this](const double ray_range)
+    auto p_max = [this, range_max](const double ray_range)
     {
-        if(ray_range >= range_max_)
+        if(ray_range >= range_max)
             return z_max_ * 1.0;
         return 0.0;
     };
-    auto p_random = [this](const double ray_range)
+    auto p_random = [this, range_max, p_rand](const double ray_range)
     {
-        if(ray_range < range_max_)
-            return p_rand_;
+        if(ray_range < range_max)
+            return p_rand;
         return 0.0;
     };
     auto probability = [p_hit, p_short, p_max, p_random] (const double ray_range, const double map_range)
@@ -95,7 +96,4 @@ void BeamModel::doSetup(ros::NodeHandle &nh_private)
     denominator_hit_ = 0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
     lambda_short_ = nh_private.param(privateParameter("lambda_short"), 0.01);
     chi_outlier_  = nh_private.param(privateParameter("chi_outlier"), 0.05);
-    range_min_    = nh_private.param(privateParameter("range_min"), 0.05);
-    range_max_    = nh_private.param(privateParameter("range_max"), 30.0);
-    p_rand_       = z_rand_ * 1.0 / range_max_;
 }
