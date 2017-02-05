@@ -9,30 +9,46 @@ class LaserScan2D : public muse_amcl::Data
 {
 public:
     struct Ray {
-        const double angle;
-        const double range;
-        math::Point  point;
+        const double angle_;
+        const double range_;
+        math::Point  point_;
 
         Ray(const double angle,
             const double range) :
-            angle(angle),
-            range(range),
-            point(math::Point(std::cos(angle) * range,
-                              std::sin(angle) * range))
+            angle_(angle),
+            range_(range),
+            point_(math::Point(std::cos(angle) * range_,
+                               std::sin(angle) * range_))
+        {
+        }
+
+        Ray(const math::Point &pt) :
+            angle_(std::atan2(pt.y(), pt.x())),
+            range_(std::hypot(pt.y(), pt.x())),
+            point_(pt)
         {
         }
     };
 
+    using Ptr = std::shared_ptr<LaserScan2D>;
     using Rays = std::vector<Ray>;
 
     LaserScan2D(const std::string &frame) :
-        Data(frame)
+        Data(frame),
+        range_min_(0.0),
+        range_max_(std::numeric_limits<double>::max()),
+        angle_min_(-M_PI),
+        angle_max_(+M_PI)
     {
     }
 
     LaserScan2D(const std::string &frame,
                 const TimeFrame &time_frame) :
-        Data(frame, time_frame)
+        Data(frame, time_frame),
+        range_min_(0.0),
+        range_max_(std::numeric_limits<double>::max()),
+        angle_min_(-M_PI),
+        angle_max_(+M_PI)
     {
     }
 
