@@ -14,8 +14,13 @@ public:
                            ParticleSet::Poses set) override;
 
 protected:
-    virtual void doSetup(ros::NodeHandle &nh) override;
+    double alpha_1_;
+    double alpha_2_;
+    double alpha_3_;
+    double alpha_4_;
+    double alpha_5_;
 
+    virtual void doSetup(ros::NodeHandle &nh_private) override;
 };
 }
 

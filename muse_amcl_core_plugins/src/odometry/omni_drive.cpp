@@ -15,9 +15,14 @@ PredictionModel::Result OmniDrive::predict(const Data::ConstPtr &data,
                                            ParticleSet::Poses    set)
 {
 
+
+
 }
 
-void OmniDrive::doSetup(ros::NodeHandle &nh)
+void OmniDrive::doSetup(ros::NodeHandle &nh_private)
 {
-
+    alpha_1_ = nh_private.param<double>(privateParameter("alpha1"), alpha_1_);
+    alpha_2_ = nh_private.param<double>(privateParameter("alpha1"), alpha_2_);
+    alpha_3_ = nh_private.param<double>(privateParameter("alpha1"), alpha_3_);
+    alpha_4_ = nh_private.param<double>(privateParameter("alpha1"), alpha_4_);
 }
