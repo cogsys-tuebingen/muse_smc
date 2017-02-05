@@ -1,4 +1,0 @@
-#ifndef ODOMETRY_POSE_2D_HPP
-#define ODOMETRY_POSE_2D_HPP
-
-#endif // ODOMETRY_POSE_2D_HPP

@@ -173,11 +173,11 @@ TEST(TestMuseAMCL, testClustering)
     {
         mms::Distribution<3> distribution_kdtree_buffered_a;
         for(const muse_amcl::Particle *p : clusters_kdtree_buffered.clusters_[0]) {
-            distribution_kdtree_buffered_a.add(p->pose_.eigen3D());
+            distribution_kdtree_buffered_a.add(p->pose_.getEigen3D());
         }
         mms::Distribution<3> distribution_kdtree_buffered_b;
         for(const muse_amcl::Particle *p : clusters_kdtree_buffered.clusters_[1]) {
-            distribution_kdtree_buffered_b.add(p->pose_.eigen3D());
+            distribution_kdtree_buffered_b.add(p->pose_.getEigen3D());
         }
 
         Eigen::Vector3d mean_a = distribution_kdtree_buffered_a.getMean();
@@ -251,11 +251,11 @@ TEST(TestMuseAMCL, testClustering)
     {
         mms::Distribution<3> distribution_kdtree_a;
         for(const muse_amcl::Particle *p : clusters_kdtree.clusters_[0]) {
-            distribution_kdtree_a.add(p->pose_.eigen3D());
+            distribution_kdtree_a.add(p->pose_.getEigen3D());
         }
         mms::Distribution<3> distribution_kdtree_b;
         for(const muse_amcl::Particle *p : clusters_kdtree.clusters_[1]) {
-            distribution_kdtree_b.add(p->pose_.eigen3D());
+            distribution_kdtree_b.add(p->pose_.getEigen3D());
         }
 
         Eigen::Vector3d mean_a = distribution_kdtree_a.getMean();
@@ -329,11 +329,11 @@ TEST(TestMuseAMCL, testClustering)
     {
         mms::Distribution<3> distribution_array_a;
         for(const muse_amcl::Particle *p : clusters_array.clusters_[0]) {
-            distribution_array_a.add(p->pose_.eigen3D());
+            distribution_array_a.add(p->pose_.getEigen3D());
         }
         mms::Distribution<3> distribution_array_b;
         for(const muse_amcl::Particle *p : clusters_array.clusters_[1]) {
-            distribution_array_b.add(p->pose_.eigen3D());
+            distribution_array_b.add(p->pose_.getEigen3D());
         }
 
         Eigen::Vector3d mean_a = distribution_array_a.getMean();

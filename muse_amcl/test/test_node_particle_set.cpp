@@ -300,11 +300,11 @@ TEST(TestMuseAMCL, testClustering)
 
     mms::Distribution<3> distribution_a;
     for(const muse_amcl::Particle *p : clusters[0]) {
-        distribution_a.add(p->pose_.eigen3D());
+        distribution_a.add(p->pose_.getEigen3D());
     }
     mms::Distribution<3> distribution_b;
     for(const muse_amcl::Particle *p : clusters[1]) {
-        distribution_b.add(p->pose_.eigen3D());
+        distribution_b.add(p->pose_.getEigen3D());
     }
 
     Eigen::Vector3d mean_a = distribution_a.getMean();

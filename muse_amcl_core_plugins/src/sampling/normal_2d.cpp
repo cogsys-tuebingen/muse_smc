@@ -32,9 +32,9 @@ void Normal2D::apply(const math::Pose       &pose,
                      const math::Covariance &covariance,
                      ParticleSet            &particle_set)
 {
-    RandomPoseGenerator::Ptr rng(new RandomPoseGenerator(pose.eigen3D(), covariance.eigen3D()));
+    RandomPoseGenerator::Ptr rng(new RandomPoseGenerator(pose.getEigen3D(), covariance.eigen3D()));
     if(random_seed_ >= 0) {
-        rng.reset(new RandomPoseGenerator(pose.eigen3D(), covariance.eigen3D(), random_seed_));
+        rng.reset(new RandomPoseGenerator(pose.getEigen3D(), covariance.eigen3D(), random_seed_));
     }
 
     if(sample_size_ < particle_set.getSampleSizeMinimum() &&

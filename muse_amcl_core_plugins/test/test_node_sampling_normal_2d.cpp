@@ -82,9 +82,9 @@ TEST(TestMuseAMCLCorePlugins, testNormalSampling2D)
     Eigen::Matrix3d sigma_est = distribution.getCovariance();
 
     EXPECT_EQ(5000, particles.size());
-    EXPECT_NEAR(mu.eigen3D()(0), mu_est(0), 1e-1);
-    EXPECT_NEAR(mu.eigen3D()(1), mu_est(1), 1e-1);
-    EXPECT_NEAR(mu.eigen3D()(2), mu_est(2), 1e-1);
+    EXPECT_NEAR(mu.getEigen3D()(0), mu_est(0), 1e-1);
+    EXPECT_NEAR(mu.getEigen3D()(1), mu_est(1), 1e-1);
+    EXPECT_NEAR(mu.getEigen3D()(2), mu_est(2), 1e-1);
 
     EXPECT_NEAR(sigma(0,0), sigma_est(0,0), 1e-2);
     EXPECT_NEAR(sigma(1,1), sigma_est(1,1), 1e-2);

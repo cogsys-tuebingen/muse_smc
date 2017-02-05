@@ -32,7 +32,7 @@ struct Data {
     Data(const Particle &sample)
     {
         samples_.emplace_back(&sample);
-        distribution_.add(sample.pose_.eigen3D(), sample.weight_);
+        distribution_.add(sample.pose_.getEigen3D(), sample.weight_);
     }
 
     /**

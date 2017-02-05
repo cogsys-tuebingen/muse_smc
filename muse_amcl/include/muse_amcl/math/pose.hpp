@@ -49,7 +49,7 @@ public:
      * @param p
      */
     Pose(const Vector3d &p) :
-        pose_(tf::createQuaternionFromRPY(0,0,p(2)),
+        pose_(tf::createQuaternionFromYaw(p(2)),
               tf::Vector3(p(0),p(1), 0))
     {
     }
@@ -113,7 +113,7 @@ public:
      * @brief eigen3D returns the 2D pose as an Eigen datatype.
      * @return
      */
-    inline Vector3d eigen3D() const
+    inline Vector3d getEigen3D() const
     {
         const tf::Vector3 &position = pose_.getOrigin();
         return Vector3d(position.x(), position.y(), yaw());
@@ -123,7 +123,7 @@ public:
      * @brief eigen3D returns the 3D pose as an Eigen datatype.
      * @return
      */
-    inline Vector6d eigen6D() const
+    inline Vector6d getEigen6D() const
     {
         const tf::Vector3 &position = pose_.getOrigin();
         Vector6d e;
@@ -132,6 +132,18 @@ public:
         e[2] = position.z();
         pose_.getBasis().getRPY(e[3],e[4],e[5]);
         return e;
+    }
+
+    inline void setEigen3D(const Vector3d &p)
+    {
+        pose_.setOrigin(tf::Point(p(0), p(1), 0.0));
+        pose_.setRotation(tf::createQuaternionFromYaw(p(2)));
+    }
+
+    inline void setEigen6D(const Vector6d &p)
+    {
+        pose_.setOrigin(tf::Point(p(0), p(1), p(2)));
+        pose_.setRotation(tf::createQuaternionFromRPY(p(3),p(4),p(5)));
     }
 
     /**
