@@ -21,17 +21,16 @@ PredictionModel::Result DifferentialDrive::predict(const Data::ConstPtr &data,
     if(until > odometry.getTimeFrame().end) {
         return PredictionModel::Result(0, 0, data);
     } else {
-        double delta_trans      = odometry.getDelta().origin().length();
-        double delta_rot1       = 0.0;
-        if(delta_trans >= 0.01) {
-            delta_rot1 = std::atan2(odometry.getDelta().origin().y(),
-                                    odometry.getDelta().origin().x());
-        }
-        double delta_rot2 = odometry.getDelta().rotation().getAngle();
-        double delta_rot_noise1 = std::min(std::abs(math::angle::difference(delta_rot1, 0.0)),
-                                           std::abs(math::angle::difference(delta_rot1, M_PI)));
-        double delta_rot_noise2 = std::min(std::abs(math::angle::difference(delta_rot2, 0.0)),
-                                           std::abs(math::angle::difference(delta_rot2, M_PI)));
+        const double delta_trans     = odometry.getDelta().getOrigin().length();
+        const double delta_rot1     = delta_trans >= 0.0 ? std::atan2(odometry.getDelta().getOrigin().y(),
+                                                                      odometry.getDelta().getOrigin().x())
+                                                         : 0.0;
+
+        const double delta_rot2 = odometry.getDelta().getRotation().getAngle();
+        const double delta_rot_noise1 = std::min(std::abs(math::angle::difference(delta_rot1, 0.0)),
+                                                 std::abs(math::angle::difference(delta_rot1, M_PI)));
+        const double delta_rot_noise2 = std::min(std::abs(math::angle::difference(delta_rot2, 0.0)),
+                                                 std::abs(math::angle::difference(delta_rot2, M_PI)));
 
         auto sq = [](const double x) { return x * x; };
 
@@ -55,6 +54,8 @@ PredictionModel::Result DifferentialDrive::predict(const Data::ConstPtr &data,
             pose(2) += delta_rot_hat1 + delta_rot_hat2;
             sample.setEigen3D(pose);
         }
+
+        return PredictionModel::Result(delta_trans, delta_rot2);
     }
 }
 
@@ -65,5 +66,4 @@ void DifferentialDrive::doSetup(ros::NodeHandle &nh_private)
     alpha_2_ = nh_private.param<double>(privateParameter("alpha2"), 0.1);
     alpha_3_ = nh_private.param<double>(privateParameter("alpha3"), 0.1);
     alpha_4_ = nh_private.param<double>(privateParameter("alpha4"), 0.1);
-    alpha_5_ = nh_private.param<double>(privateParameter("alpha5"), 0.1);
 }

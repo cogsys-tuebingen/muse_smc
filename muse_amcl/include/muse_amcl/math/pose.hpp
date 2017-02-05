@@ -86,7 +86,7 @@ public:
      * @brief rotation returns a reference to the rotation quaternion.
      * @return
      */
-    inline tf::Quaternion rotation() const
+    inline const tf::Quaternion getRotation() const
     {
         return pose_.getRotation();
     }
@@ -95,7 +95,7 @@ public:
      * @brief rotation returns a reference to the origin.
      * @return
      */
-    inline tf::Vector3 & origin()
+    inline tf::Vector3 & getOrigin()
     {
         return pose_.getOrigin();
     }
@@ -104,7 +104,7 @@ public:
      * @brief rotation returns a const reference to the origin.
      * @return
      */
-    inline const tf::Vector3 & origin() const
+    inline const tf::Vector3 & getOrigin() const
     {
         return pose_.getOrigin();
     }

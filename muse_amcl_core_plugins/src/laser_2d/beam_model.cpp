@@ -77,7 +77,7 @@ void BeamModel::update(const Data::ConstPtr  &data,
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const double        ray_range = laser_rays[i].range_;
             const math::Point   ray_end_point = pose.tf() * laser_rays[i].point_;
-            const double        map_range = gridmap.getRange(pose.origin(), ray_end_point);
+            const double        map_range = gridmap.getRange(pose.getOrigin(), ray_end_point);
             const double pz = probability(ray_range, map_range);
             p += pz * pz * pz;  /// @todo : fix the inprobable thing ;)
         }

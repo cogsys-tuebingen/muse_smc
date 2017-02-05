@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
         m.apply(ps_copy);
         std::cout << "multinomial particle set" << std::endl;
         for(const auto &p : ps_copy.getSamples()) {
-            std::cout << p.pose_.origin().x() << " " << p.weight_ << std::endl;
+            std::cout << p.pose_.getOrigin().x() << " " << p.weight_ << std::endl;
         }
         std::cout << "----------------" << std::endl;
     }
@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
         m.apply(ps_copy);
         std::cout << "stratified particle set" << std::endl;
         for(const auto &p : ps_copy.getSamples()) {
-            std::cout << p.pose_.origin().x() << " " << p.weight_ << std::endl;
+            std::cout << p.pose_.getOrigin().x() << " " << p.weight_ << std::endl;
         }
         std::cout << "----------------" << std::endl;
     }
@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
         m.apply(ps_copy);
         std::cout << "systematic particle set" << std::endl;
         for(const auto &p : ps_copy.getSamples()) {
-            std::cout << p.pose_.origin().x() << " " << p.weight_ << std::endl;
+            std::cout << p.pose_.getOrigin().x() << " " << p.weight_ << std::endl;
         }
         std::cout << "----------------" << std::endl;
     }
@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
         m.apply(ps_copy);
         std::cout << "residual particle set" << std::endl;
         for(const auto &p : ps_copy.getSamples()) {
-            std::cout << p.pose_.origin().x() << " " << p.weight_ << std::endl;
+            std::cout << p.pose_.getOrigin().x() << " " << p.weight_ << std::endl;
         }
         std::cout << "----------------" << std::endl;
     }
@@ -206,7 +206,7 @@ int main(int argc, char *argv[])
         k.apply(ps_copy);
         std::cout << "kld2d particle set" << std::endl;
         for(const auto &p : ps_copy.getSamples()) {
-            std::cout << p.pose_.origin().x() << " " << p.weight_ << std::endl;
+            std::cout << p.pose_.getOrigin().x() << " " << p.weight_ << std::endl;
         }
         std::cout << "----------------" << std::endl;
     }
@@ -226,7 +226,7 @@ int main(int argc, char *argv[])
         m.apply(ps_copy);
         std::cout << "wheel of fortune particle set" << std::endl;
         for(const auto &p : ps_copy.getSamples()) {
-            std::cout << p.pose_.origin().x() << " " << p.weight_ << std::endl;
+            std::cout << p.pose_.getOrigin().x() << " " << p.weight_ << std::endl;
         }
         std::cout << "----------------" << std::endl;
     }
