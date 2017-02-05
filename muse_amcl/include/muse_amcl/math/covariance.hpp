@@ -102,7 +102,7 @@ public:
      * @brief data
      * @return const reference to data
      */
-    inline const Matrix6d &data() const
+    inline const Matrix6d &getData() const
     {
         return data_;
     }
@@ -111,7 +111,7 @@ public:
      * @brief data return a reference to the data matrix.
      * @return reference to data
      */
-    inline Matrix6d &data()
+    inline Matrix6d &getData()
     {
         return data_;
     }
@@ -121,7 +121,7 @@ public:
      *        data() getter methods can be used.
      * @return copy of 6D matrix
      */
-    inline Matrix6d eigen6D() const
+    inline Matrix6d getEigen6D() const
     {
         return data_;
     }
@@ -131,7 +131,7 @@ public:
      *        with components x,y,psi
      * @return copy of 3D components
      */
-    inline Matrix3d eigen3D() const
+    inline Matrix3d getEigen3D() const
     {
         Matrix3d m;
         m.block<2,2>(0,0) = data_.block<2,2>(0,0);

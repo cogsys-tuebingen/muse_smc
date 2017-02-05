@@ -68,7 +68,7 @@ public:
      * @brief tf returns the TF pose as reference.
      * @return
      */
-    inline tf::Pose & tf()
+    inline tf::Pose & getPose()
     {
         return pose_;
     }
@@ -77,7 +77,7 @@ public:
      * @brief tf returns the TF pose as const reference.
      * @return
      */
-    inline const tf::Pose & tf() const
+    inline const tf::Pose & getPose() const
     {
         return pose_;
     }
@@ -306,13 +306,13 @@ private:
 inline muse_amcl::math::Pose operator * (const muse_amcl::math::Pose &pose_a,
                                          const muse_amcl::math::Pose &pose_b)
 {
-    return pose_b.transformed(pose_a.tf());
+    return pose_b.transformed(pose_a.getPose());
 }
 
 inline muse_amcl::math::Pose operator * (const muse_amcl::math::Pose &pose_a,
                                          const tf::Pose &pose_b)
 {
-    return muse_amcl::math::Pose(pose_a.tf() * pose_b);
+    return muse_amcl::math::Pose(pose_a.getPose() * pose_b);
 }
 
 inline muse_amcl::math::Pose operator * (const tf::Transform &transform,

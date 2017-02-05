@@ -13,7 +13,7 @@ void UniformPrimaryMap2D::update(const std::string &frame)
     const ros::Time   now = ros::Time::now();
 
     primary_map = primary_map_provider_->getMap();
-    primary_T_o_ = primary_map->getOrigin().tf();
+    primary_T_o_ = primary_map->getOrigin().getPose();
     if(!tf_provider_->lookupTransform(frame, primary_map->getFrame(), now, w_T_primary_, tf_timeout_)) {
         throw std::runtime_error("[UniformPrimaryMap2D]: Could not get primary map transform!");
     }

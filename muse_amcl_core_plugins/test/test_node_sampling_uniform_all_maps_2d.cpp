@@ -61,7 +61,7 @@ TEST(TestMuseAMCLCorePlugins, testSamplingUniformAllMaps2D)
     math::statistic::Distribution<3> distribution;
     const ParticleSet::Particles &particles = particle_set.getSamples();
     for(auto &particle : particles) {
-        Eigen::Vector3d pose = particle.pose_.eigen3D();
+        Eigen::Vector3d pose = particle.pose_.getEigen3D();
         distribution.add(pose);
     }
 

@@ -9,8 +9,8 @@ using Covariance = muse_amcl::math::Covariance;
 TEST(TestMuseAMCL, testDefaultConstructor)
 {
     Covariance cov;
-    EXPECT_EQ(cov.data() , Matrix6d::Zero());
-    EXPECT_EQ(cov.eigen3D() , Matrix3d::Zero());
+    EXPECT_EQ(cov.getData() , Matrix6d::Zero());
+    EXPECT_EQ(cov.getEigen3D() , Matrix3d::Zero());
 }
 
 TEST(TestMuseAMCL, testConstructor3d)
@@ -33,8 +33,8 @@ TEST(TestMuseAMCL, testConstructor3d)
     const Matrix6d data6D = makeIt6D(data3D);
 
     Covariance cov(data3D);
-    EXPECT_EQ(cov.data() , data6D);
-    EXPECT_EQ(cov.eigen3D() , data3D);
+    EXPECT_EQ(cov.getData() , data6D);
+    EXPECT_EQ(cov.getEigen3D() , data3D);
 }
 
 TEST(TestMuseAMCL, testConstructor6d)
@@ -56,8 +56,8 @@ TEST(TestMuseAMCL, testConstructor6d)
     const Matrix3d data3D = makeIt3D(data6D);
 
     Covariance cov(data6D);
-    EXPECT_EQ(cov.data() , data6D);
-    EXPECT_EQ(cov.eigen3D() , data3D);
+    EXPECT_EQ(cov.getData() , data6D);
+    EXPECT_EQ(cov.getEigen3D() , data3D);
 }
 
 TEST(TestMuseAMCL, testConstructorStd3d)
@@ -86,8 +86,8 @@ TEST(TestMuseAMCL, testConstructorStd3d)
     }
 
     Covariance cov(data);
-    EXPECT_EQ(cov.data() , data6D);
-    EXPECT_EQ(cov.eigen3D() , data3D);
+    EXPECT_EQ(cov.getData() , data6D);
+    EXPECT_EQ(cov.getEigen3D() , data3D);
 }
 
 TEST(TestMuseAMCL, testConstructorStd6d)
@@ -115,8 +115,8 @@ TEST(TestMuseAMCL, testConstructorStd6d)
     }
 
     Covariance cov(data);
-    EXPECT_EQ(cov.data(), data6D);
-    EXPECT_EQ(cov.eigen3D(), data3D);
+    EXPECT_EQ(cov.getData(), data6D);
+    EXPECT_EQ(cov.getEigen3D(), data3D);
 }
 
 int main(int argc, char *argv[])

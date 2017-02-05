@@ -25,7 +25,7 @@ public:
     {
         start_pose_ = start;
         end_pose_ = end;
-        delta_ = start * end.tf().inverse();
+        delta_ = start * end.getPose().inverse();
     }
 
     inline const math::Pose& getStartPose() const
