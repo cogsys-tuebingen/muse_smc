@@ -7,6 +7,11 @@ CLASS_LOADER_REGISTER_CLASS(muse_amcl::MapProviderBinaryGridMapService, muse_amc
 
 using namespace muse_amcl;
 
+MapProviderBinaryGridMapService::MapProviderBinaryGridMapService() :
+    loading_(false)
+{
+}
+
 Map::ConstPtr MapProviderBinaryGridMapService::getMap() const
 {
     nav_msgs::GetMap req;
@@ -39,7 +44,7 @@ Map::ConstPtr MapProviderBinaryGridMapService::getMap() const
         }
     }
     std::unique_lock<std::mutex> l(map_mutex_);
-    if(blocking_) {
+    if(!map_ && blocking_) {
         map_loaded_.wait(l);
     }
     return map_;

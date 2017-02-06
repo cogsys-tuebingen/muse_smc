@@ -15,7 +15,7 @@ namespace muse_amcl {
 class MapProviderDistanceGridMapService : public MapProvider
 {
 public:
-    MapProviderDistanceGridMapService() = default;
+    MapProviderDistanceGridMapService();
 
     Map::ConstPtr getMap() const override;
 

@@ -14,7 +14,7 @@
             <param name="base_class" value="muse_amcl::MapProvider" />
             <param name="topic" value="/map" />
             <param name="threshold" value="0.3"/>
-            <param name="kernel_size" value="7" />
+            <param name="kernel_size" value="9" />
             <param name="blocking" value="true" />
         </group>
         <group ns="probability_gridmap">
@@ -35,7 +35,7 @@
             <param name="class" value="muse_amcl::MapProviderDistanceGridMapService" />
             <param name="base_class" value="muse_amcl::MapProvider" />
             <param name="service" value="/static_map" />
-            <param name="kernel_size" value="9" />
+            <param name="kernel_size" value="7" />
             <param name="blocking" value="true" />
         </group>
         <group ns="probability_gridmap_service">
@@ -46,7 +46,7 @@
         </group>
     </group>
 
-    <node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(find muse_amcl_core_plugins)/res/gridmaps/rawseeds_0.05.yaml" />
+    <node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(find muse_amcl_core_plugins)/res/gridmaps/sand_0.05.yaml" respawn="true" />
     <test test-name="muse_amcl_core_plugins_test_node_gridmap_providers" pkg="muse_amcl_core_plugins" type="muse_amcl_core_plugins_test_node_gridmap_providers" required="true" />
 
 

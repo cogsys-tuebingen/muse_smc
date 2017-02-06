@@ -25,6 +25,8 @@ void ProbabilityGridMap::convert(const nav_msgs::OccupancyGrid &occupancy_grid)
 {
     const std::size_t size = height_ * width_;
     const int8_t *occupancy_grid_ptr = occupancy_grid.data.data();
+    data_.resize(size, 0);
+    data_ptr_ = data_.data();
     for(std::size_t i = 0 ; i < size ; ++i) {
         int8_t occupancy = occupancy_grid_ptr[i];
         assert(occupancy <= 100);

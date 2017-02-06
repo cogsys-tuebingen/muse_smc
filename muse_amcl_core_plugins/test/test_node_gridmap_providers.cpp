@@ -29,19 +29,74 @@ TEST(TestMuseAMCLCorePlugins, testLoadMapProviders)
     EXPECT_TRUE(map_providers.find("probability_gridmap_service") != map_providers.end());
 }
 
-
-
 TEST(TestMuseAMCLCorePlugins, testGetMapsTopic)
 {
-    MapProvider::Ptr binary_gridmap_provider = map_providers["binary_gridmap"];
+    /// binary gridmap provider
+    MapProvider::Ptr map_provider = map_providers["binary_gridmap"];
     Map::ConstPtr map;
     std::size_t tries = 0;
+//    while(!map) {
+//        ++tries;
+//        map = map_provider->getMap();
+//        ros::Rate(10).sleep();
+//    }
+//    EXPECT_EQ(1, tries);
+
+    /// distance gridmap provider
+    map_provider = map_providers["distance_gridmap"];
+    tries = 0;
+    map.reset();
     while(!map) {
         ++tries;
-        map = binary_gridmap_provider->getMap();
+        map = map_provider->getMap();
         ros::Rate(10).sleep();
     }
-    std::cout << "[GridmapTopic] : " << tries << std::endl;
+    EXPECT_EQ(1, tries);
+
+//    /// probability gridmap provider
+//    map_provider = map_providers["probability_gridmap"];
+//    tries = 0;
+//    map.reset();
+//    while(!map) {
+//        ++tries;
+//        map = map_provider->getMap();
+//        ros::Rate(10).sleep();
+//    }
+//    EXPECT_EQ(1, tries);
+
+//    /// binary gridmap service
+//    map_provider = map_providers["binary_gridmap_service"];
+//    tries = 0;
+//    map.reset();
+//    while(!map) {
+//        ++tries;
+//        map = map_provider->getMap();
+//        ros::Rate(10).sleep();
+//    }
+//    EXPECT_EQ(1, tries);
+
+//    /// distance gridmap service
+//    map_provider = map_providers["distance_gridmap_service"];
+//    tries = 0;
+//    map.reset();
+//    while(!map) {
+//        ++tries;
+//        map = map_provider->getMap();
+//        ros::Rate(10).sleep();
+//    }
+//    EXPECT_EQ(1, tries);
+
+//    /// probability gridmap service
+//    map_provider = map_providers["probability_gridmap_service"];
+//    tries = 0;
+//    map.reset();
+//    while(!map) {
+//        ++tries;
+//        map = map_provider->getMap();
+//        ros::Rate(10).sleep();
+//    }
+    EXPECT_EQ(1, tries);
+
 }
 
 
@@ -64,6 +119,6 @@ int main(int argc, char *argv[])
     int test_result = RUN_ALL_TESTS();
     stop_ros_loop = true;
     if(roslooper.joinable())
-       roslooper.join();
+        roslooper.join();
     return test_result;
 }

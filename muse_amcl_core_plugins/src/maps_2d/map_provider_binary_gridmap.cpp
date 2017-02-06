@@ -13,7 +13,7 @@ MapProviderBinaryGridMap::MapProviderBinaryGridMap() :
 Map::ConstPtr MapProviderBinaryGridMap::getMap() const
 {
     std::unique_lock<std::mutex> l(map_mutex_);
-    if(blocking_) {
+    if(!map_ && blocking_) {
         map_loaded_.wait(l);
     }
     return map_;

@@ -5,6 +5,11 @@ CLASS_LOADER_REGISTER_CLASS(muse_amcl::MapProviderProbabilityGridMapService, mus
 
 using namespace muse_amcl;
 
+MapProviderProbabilityGridMapService::MapProviderProbabilityGridMapService() :
+    loading_(false)
+{
+}
+
 Map::ConstPtr MapProviderProbabilityGridMapService::getMap() const
 {
     nav_msgs::GetMap req;
@@ -38,7 +43,7 @@ Map::ConstPtr MapProviderProbabilityGridMapService::getMap() const
         }
     }
     std::unique_lock<std::mutex> l(map_mutex_);
-    if(blocking_) {
+    if(!map_ && blocking_) {
         map_loaded_.wait(l);
     }
     return map_;

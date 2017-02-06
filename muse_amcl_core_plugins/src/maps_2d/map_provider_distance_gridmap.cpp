@@ -5,10 +5,15 @@ CLASS_LOADER_REGISTER_CLASS(muse_amcl::MapProviderDistanceGridMap, muse_amcl::Ma
 
 using namespace muse_amcl;
 
+MapProviderDistanceGridMap::MapProviderDistanceGridMap() :
+    loading_(false)
+{
+}
+
 Map::ConstPtr MapProviderDistanceGridMap::getMap() const
 {
     std::unique_lock<std::mutex> l(map_mutex_);
-    if(blocking_) {
+    if(!map_ && blocking_) {
         map_loaded_.wait(l);
     }
     return map_;
@@ -46,8 +51,11 @@ void MapProviderDistanceGridMap::callback(const nav_msgs::OccupancyGridConstPtr 
                 loading_ = false;
                 map_loaded_.notify_one();
             };
-
-            worker_ = std::thread(load);
+            if(blocking_) {
+                worker_ = std::thread(load_blocking);
+            } else {
+                worker_ = std::thread(load);
+            }
             worker_.detach();
         }
     }

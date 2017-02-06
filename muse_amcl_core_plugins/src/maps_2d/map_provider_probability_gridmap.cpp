@@ -5,10 +5,15 @@ CLASS_LOADER_REGISTER_CLASS(muse_amcl::MapProviderProbabilityGridMap, muse_amcl:
 
 using namespace muse_amcl;
 
+MapProviderProbabilityGridMap::MapProviderProbabilityGridMap() :
+    loading_(false)
+{
+}
+
 Map::ConstPtr MapProviderProbabilityGridMap::getMap() const
 {
     std::unique_lock<std::mutex> l(map_mutex_);
-    if(blocking_) {
+    if(!map_ && blocking_) {
         map_loaded_.wait(l);
     }
     return map_;

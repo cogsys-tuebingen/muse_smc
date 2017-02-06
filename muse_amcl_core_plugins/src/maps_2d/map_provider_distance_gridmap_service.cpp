@@ -5,6 +5,11 @@ CLASS_LOADER_REGISTER_CLASS(muse_amcl::MapProviderDistanceGridMapService, muse_a
 
 using namespace muse_amcl;
 
+MapProviderDistanceGridMapService::MapProviderDistanceGridMapService() :
+    loading_(false)
+{
+}
+
 Map::ConstPtr MapProviderDistanceGridMapService::getMap() const
 {
     nav_msgs::GetMap req;
@@ -34,6 +39,8 @@ Map::ConstPtr MapProviderDistanceGridMapService::getMap() const
                     worker_ = std::thread(load);
                 }
                 worker_.detach();
+            } else if(blocking_) {
+                map_loaded_.notify_one();
             }
         }
     }

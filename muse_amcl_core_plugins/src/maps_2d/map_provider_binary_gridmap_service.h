@@ -14,7 +14,7 @@ namespace muse_amcl {
 class MapProviderBinaryGridMapService : public MapProvider
 {
 public:
-    MapProviderBinaryGridMapService() = default;
+    MapProviderBinaryGridMapService();
 
     Map::ConstPtr getMap() const override;
 

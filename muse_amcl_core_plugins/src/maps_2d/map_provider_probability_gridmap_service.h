@@ -14,7 +14,7 @@ namespace muse_amcl {
 class MapProviderProbabilityGridMapService : public MapProvider
 {
 public:
-    MapProviderProbabilityGridMapService() = default;
+    MapProviderProbabilityGridMapService();
 
     Map::ConstPtr getMap() const override;
 
