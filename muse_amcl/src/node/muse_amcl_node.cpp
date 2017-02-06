@@ -10,6 +10,11 @@ MuseAMCLNode::MuseAMCLNode() :
 
 MuseAMCLNode::~MuseAMCLNode()
 {
+    for(auto &d : data_providers_) {
+        d.second->disable();
+    }
+
+    particle_filter_->end();
 }
 
 void MuseAMCLNode::start()
