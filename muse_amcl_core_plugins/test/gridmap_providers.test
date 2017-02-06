@@ -7,6 +7,7 @@
             <param name="base_class" value="muse_amcl::MapProvider" />
             <param name="topic" value="/map" />
             <param name="threshold" value="0.25"/>
+            <param name="blocking" value="true" />
         </group>
         <group ns="distance_gridmap">
             <param name="class" value="muse_amcl::MapProviderDistanceGridMap" />
@@ -14,11 +15,13 @@
             <param name="topic" value="/map" />
             <param name="threshold" value="0.3"/>
             <param name="kernel_size" value="7" />
+            <param name="blocking" value="true" />
         </group>
         <group ns="probability_gridmap">
             <param name="class" value="muse_amcl::MapProviderProbabilityGridMap" />
             <param name="base_class" value="muse_amcl::MapProvider" />
             <param name="topic" value="/map" />
+            <param name="blocking" value="true" />
         </group>
         <!-- BY SERVICE -->
         <group ns="binary_gridmap_service">
@@ -26,17 +29,20 @@
             <param name="base_class" value="muse_amcl::MapProvider" />
             <param name="service" value="/static_map" />
             <param name="threshold" value="0.25"/>
+            <param name="blocking" value="true" />
         </group>
         <group ns="distance_gridmap_service">
             <param name="class" value="muse_amcl::MapProviderDistanceGridMapService" />
             <param name="base_class" value="muse_amcl::MapProvider" />
             <param name="service" value="/static_map" />
             <param name="kernel_size" value="9" />
+            <param name="blocking" value="true" />
         </group>
         <group ns="probability_gridmap_service">
             <param name="class" value="muse_amcl::MapProviderProbabilityGridMapService" />
             <param name="base_class" value="muse_amcl::MapProvider" />
             <param name="service" value="/static_map" />
+            <param name="blocking" value="true" />
         </group>
     </group>
 

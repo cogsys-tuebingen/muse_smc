@@ -6,9 +6,9 @@
 #include <mutex>
 #include <thread>
 #include <atomic>
+#include <condition_variable>
 #include <muse_amcl/data_sources/map_provider.hpp>
 #include <muse_amcl_core_plugins/maps_2d/probability_gridmap.h>
-
 
 namespace muse_amcl {
 class MapProviderProbabilityGridMap : public MapProvider
@@ -21,8 +21,10 @@ public:
 protected:
     ros::Subscriber source_;
     std::string     topic_;
+    bool            blocking_;
 
     mutable std::mutex            map_mutex_;
+    mutable std::condition_variable  map_loaded_;
     maps::ProbabilityGridMap::Ptr map_;
     std::atomic_bool              loading_;
     std::thread                   worker_;

@@ -6,6 +6,7 @@
 #include <mutex>
 #include <thread>
 #include <atomic>
+#include <condition_variable>
 #include <muse_amcl/data_sources/map_provider.hpp>
 #include <muse_amcl_core_plugins/maps_2d/distance_gridmap.h>
 
@@ -23,8 +24,10 @@ protected:
     std::string                service_name_;
     double                     binarization_threshold_;
     std::size_t                kernel_size_;
+    bool                       blocking_;
 
     mutable std::mutex                 map_mutex_;
+    mutable std::condition_variable     map_loaded_;
     mutable maps::DistanceGridMap::Ptr map_;
     mutable std::atomic_bool           loading_;
     mutable std::thread                worker_;

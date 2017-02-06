@@ -14,18 +14,33 @@ Map::ConstPtr MapProviderProbabilityGridMapService::getMap() const
         if(!loading_) {
             if(!map_ || req.response.map.info.map_load_time > map_->getStamp()) {
                 loading_ = true;
+
                 auto load = [this, req]() {
                     maps::ProbabilityGridMap::Ptr map(new maps::ProbabilityGridMap(req.response.map));
                     std::unique_lock<std::mutex>l(map_mutex_);
                     map_ = map;
                     loading_ = false;
                 };
-                worker_ = std::thread(load);
+                auto load_blocking = [this, req]() {
+                    std::unique_lock<std::mutex>l(map_mutex_);
+                    map_.reset(new maps::ProbabilityGridMap(req.response.map));
+                    loading_ = false;
+                    map_loaded_.notify_one();
+                };
+
+                if(blocking_) {
+                    worker_ = std::thread(load_blocking);
+                } else {
+                    worker_ = std::thread(load);
+                }
                 worker_.detach();
             }
         }
     }
     std::unique_lock<std::mutex> l(map_mutex_);
+    if(blocking_) {
+        map_loaded_.wait(l);
+    }
     return map_;
 
 }
@@ -34,4 +49,5 @@ void MapProviderProbabilityGridMapService::doSetup(ros::NodeHandle &nh_private)
 {
     service_name_ = nh_private.param<std::string>(privateParameter("service"), "/static_map");
     source_ = nh_private.serviceClient<nav_msgs::GetMap>(service_name_);
+    blocking_ = nh_private.param<bool>(privateParameter("blocking"), false);
 }

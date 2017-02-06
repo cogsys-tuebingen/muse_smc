@@ -6,6 +6,7 @@
 #include <mutex>
 #include <thread>
 #include <atomic>
+#include <condition_variable>
 #include <muse_amcl/data_sources/map_provider.hpp>
 #include <muse_amcl_core_plugins/maps_2d/binary_gridmap.h>
 
@@ -18,14 +19,16 @@ public:
     Map::ConstPtr getMap() const override;
 
 protected:
-    mutable ros::ServiceClient source_;
-    std::string                service_name_;
-    double                     binarization_threshold_;
+    mutable ros::ServiceClient          source_;
+    std::string                         service_name_;
+    double                              binarization_threshold_;
+    bool                                blocking_;
 
-    mutable std::mutex                 map_mutex_;
-    mutable maps::BinaryGridMap::Ptr   map_;
-    mutable std::atomic_bool           loading_;
-    mutable std::thread                worker_;
+    mutable std::mutex                  map_mutex_;
+    mutable std::condition_variable     map_loaded_;
+    mutable maps::BinaryGridMap::Ptr    map_;
+    mutable std::atomic_bool            loading_;
+    mutable std::thread                 worker_;
 
     void doSetup(ros::NodeHandle &nh_private) override;
 
