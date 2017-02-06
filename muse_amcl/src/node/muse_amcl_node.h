@@ -36,23 +36,33 @@ public:
                                    muse_amcl::PoseInitializationResponse &res);
 
 private:
-    ros::NodeHandle                          nh_private_;
-    ros::NodeHandle                          nh_public_;
+    using MapProviders = std::map<std::string, MapProvider::Ptr>;
+    using DataProviders = std::map<std::string, DataProvider::Ptr>;
+    using UpdateModels = std::map<std::string, UpdateModel::Ptr>;
+
+    ros::NodeHandle             nh_private_;
+    ros::NodeHandle             nh_public_;
 
     //// data providers
-    TFProvider::Ptr                          tf_provider_frontend_;  /// for data providers and data conversion
-    TFProvider::Ptr                          tf_provider_backend_;   /// for the backend (the particle filter and the sensor updates)
-    std::map<std::string, MapProvider::Ptr>  map_providers_;
-    std::map<std::string, DataProvider::Ptr> data_providers_;
+    TFProvider::Ptr             tf_provider_frontend_;  /// for data providers and data conversion
+    TFProvider::Ptr             tf_provider_backend_;   /// for the backend (the particle filter and the sensor updates)
+    MapProviders                map_providers_;
+    DataProviders               data_providers_;
 
-    ParticleFilter                           particle_filter_;
+    ParticleFilter::Ptr         particle_filter_;
 
     //// prediction & update
-    std::map<std::string, UpdateModel::Ptr>  update_models_;
-    PredictionModel::Ptr                     prediction_model_;
+    UpdateModels                update_models_;
+    PredictionModel::Ptr        prediction_model_;
 
-    UpdateForwarder::Ptr                       update_manager_;
-    PredictionForwarder::Ptr                  predicition_manager_;
+    /// sampling & resampling
+    UniformSampling::Ptr        uniform_sampling_;
+    NormalSampling::Ptr         normal_sampling_;
+    Resampling::Ptr             resampling_;
+
+
+    UpdateForwarder::Ptr        update_forwarder_;
+    PredictionForwarder::Ptr    predicition_forwarder_;
 
     /// read all ros related stuff and initalize plugins
     void setup();

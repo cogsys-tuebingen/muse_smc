@@ -30,12 +30,10 @@ public:
         connection_ = provider->connect(callback);
     }
 
-
 private:
     PredictionModel::Ptr              model_;
     ParticleFilter::Ptr               filter_;
     DataProvider::DataConnection::Ptr connection_;
-
 };
 }
 

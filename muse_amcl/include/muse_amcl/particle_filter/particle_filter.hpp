@@ -95,10 +95,12 @@ public:
         notify_event_.notify_one();
     }
 
-    void requestPoseInitialization(const math::Pose &pose)
+    void requestPoseInitialization(const math::Pose &pose,
+                                   const math::Covariance &covariance)
     {
         std::unique_lock<std::mutex> l(request_pose_mutex_);
         requset_pose_ = pose;
+        request_covariance_ = covariance;
         request_pose_initilization_ = true;
         notify_event_.notify_one();
     }
@@ -155,6 +157,7 @@ protected:
 
     std::mutex              request_pose_mutex_;
     math::Pose              requset_pose_;
+    math::Covariance        request_covariance_;
     std::atomic_bool        request_pose_initilization_;
     std::atomic_bool        request_global_initialization_;
 

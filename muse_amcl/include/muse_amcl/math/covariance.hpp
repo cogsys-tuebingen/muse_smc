@@ -67,7 +67,7 @@ public:
     Covariance(const std::vector<double> &data) :
         data_(Matrix6d::Zero())
     {
-        auto get = [data](std::size_t r, std::size_t c, std::size_t step)
+        auto get = [&data](std::size_t r, std::size_t c, std::size_t step)
         {
             return data[r * step + c];
         };
@@ -97,7 +97,6 @@ public:
             throw std::runtime_error("[Covariance] : matrix represented by data must have dimension 3 or 6.");
         }
     }
-
     /**
      * @brief data
      * @return const reference to data
