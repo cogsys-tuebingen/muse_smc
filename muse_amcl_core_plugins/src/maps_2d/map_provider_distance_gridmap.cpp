@@ -1,27 +1,27 @@
 #include "map_provider_distance_gridmap.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_amcl::MapProviderDistanceGridmap, muse_amcl::MapProvider)
+CLASS_LOADER_REGISTER_CLASS(muse_amcl::MapProviderDistanceGridMap, muse_amcl::MapProvider)
 
 using namespace muse_amcl;
 
-Map::ConstPtr MapProviderDistanceGridmap::getMap() const
+Map::ConstPtr MapProviderDistanceGridMap::getMap() const
 {
     std::unique_lock<std::mutex> l(map_mutex_);
     return map_;
 }
 
-void MapProviderDistanceGridmap::doSetup(ros::NodeHandle &nh_private)
+void MapProviderDistanceGridMap::doSetup(ros::NodeHandle &nh_private)
 {
     topic_ = nh_private.param<std::string>(privateParameter("topic"), "/map");
     binarization_threshold_ = nh_private.param<double>(privateParameter("threshold"), 0.5);
     kernel_size_ = std::max(nh_private.param<int>(privateParameter("kernel_size"), 5), 5);
     kernel_size_ += 1 - (kernel_size_ % 2);
 
-    source_= nh_private.subscribe(topic_, 1, &MapProviderDistanceGridmap::callback, this);
+    source_= nh_private.subscribe(topic_, 1, &MapProviderDistanceGridMap::callback, this);
 }
 
-void MapProviderDistanceGridmap::callback(const nav_msgs::OccupancyGridConstPtr &msg)
+void MapProviderDistanceGridMap::callback(const nav_msgs::OccupancyGridConstPtr &msg)
 {
     /// conversion can take time
     /// we allow concurrent loading, this way, the front end thread is not blocking.

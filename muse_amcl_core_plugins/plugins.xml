@@ -85,10 +85,10 @@
    <class type="muse_amcl::MapProviderDistanceGridMapService" base_class_type="muse_amcl::MapProvider">
       <description>Provides cspace map versions given a destinct threshold by Service.</description>
    </class>
-   <class type="muse_amcl::MapProviderProbabilityGridmap" base_class_type="muse_amcl::MapProvider">
+   <class type="muse_amcl::MapProviderProbabilityGridMap" base_class_type="muse_amcl::MapProvider">
       <description>Provides floating point probability map versions by topic.</description>
    </class>
-   <class type="muse_amcl::MapProviderProbabilityGridmapService" base_class_type="muse_amcl::MapProvider">
+   <class type="muse_amcl::MapProviderProbabilityGridMapService" base_class_type="muse_amcl::MapProvider">
       <description>Provides floating point probability map versions by service.</description>
    </class>
    <!-- Data Providers -->

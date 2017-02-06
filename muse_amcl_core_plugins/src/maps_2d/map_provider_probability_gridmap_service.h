@@ -10,10 +10,10 @@
 #include <muse_amcl_core_plugins/maps_2d/probability_gridmap.h>
 
 namespace muse_amcl {
-class MapProviderProbabilityGridmapService : public MapProvider
+class MapProviderProbabilityGridMapService : public MapProvider
 {
 public:
-    MapProviderProbabilityGridmapService() = default;
+    MapProviderProbabilityGridMapService() = default;
 
     Map::ConstPtr getMap() const override;
 

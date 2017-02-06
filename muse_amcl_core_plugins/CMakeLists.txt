@@ -100,7 +100,7 @@ if(${CATKIN_ENABLE_TESTING})
     )
 
     add_unit_test_rostest(${PROJECT_NAME}_test_node_gridmap_providers
-        test/map_providers.test
+        test/gridmap_providers.test
         test/test_node_gridmap_providers.cpp
         "${PROJECT_NAME}"
     )

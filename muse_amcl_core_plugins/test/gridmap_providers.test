@@ -3,38 +3,38 @@
     <group ns="muse_amcl_core_plugins_test_node_gridmap_providers">
        <!-- BY TOPIC -->
         <group ns="binary_gridmap">
-            <param name="class" value="muse_amcl::MockMapProvider" />
+            <param name="class" value="muse_amcl::MapProviderBinaryGridMap" />
             <param name="base_class" value="muse_amcl::MapProvider" />
             <param name="topic" value="/map" />
             <param name="threshold" value="0.25"/>
         </group>
         <group ns="distance_gridmap">
-            <param name="class" value="muse_amcl::MockMapProvider" />
+            <param name="class" value="muse_amcl::MapProviderDistanceGridMap" />
             <param name="base_class" value="muse_amcl::MapProvider" />
             <param name="topic" value="/map" />
             <param name="threshold" value="0.3"/>
             <param name="kernel_size" value="7" />
         </group>
         <group ns="probability_gridmap">
-            <param name="class" value="muse_amcl::MockMapProvider" />
+            <param name="class" value="muse_amcl::MapProviderProbabilityGridMap" />
             <param name="base_class" value="muse_amcl::MapProvider" />
             <param name="topic" value="/map" />
         </group>
         <!-- BY SERVICE -->
         <group ns="binary_gridmap_service">
-            <param name="class" value="muse_amcl::MockMapProvider" />
+            <param name="class" value="muse_amcl::MapProviderBinaryGridMapService" />
             <param name="base_class" value="muse_amcl::MapProvider" />
             <param name="service" value="/static_map" />
             <param name="threshold" value="0.25"/>
         </group>
         <group ns="distance_gridmap_service">
-            <param name="class" value="muse_amcl::MockMapProvider" />
+            <param name="class" value="muse_amcl::MapProviderDistanceGridMapService" />
             <param name="base_class" value="muse_amcl::MapProvider" />
             <param name="service" value="/static_map" />
             <param name="kernel_size" value="9" />
         </group>
         <group ns="probability_gridmap_service">
-            <param name="class" value="muse_amcl::MockMapProvider" />
+            <param name="class" value="muse_amcl::MapProviderProbabilityGridMapService" />
             <param name="base_class" value="muse_amcl::MapProvider" />
             <param name="service" value="/static_map" />
         </group>

@@ -5,6 +5,10 @@ using namespace muse_amcl;
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_amcl::MapProviderBinaryGridMap, muse_amcl::MapProvider)
 
+MapProviderBinaryGridMap::MapProviderBinaryGridMap() :
+    loading_(false)
+{
+}
 
 Map::ConstPtr MapProviderBinaryGridMap::getMap() const
 {
@@ -23,6 +27,7 @@ void MapProviderBinaryGridMap::callback(const nav_msgs::OccupancyGridConstPtr &m
 {
     /// conversion can take time
     /// we allow concurrent loading, this way, the front end thread is not blocking.
+    std::cout << "got sth" << std::endl;
     if(!loading_) {
         if(!map_ || msg->info.map_load_time > map_->getStamp()) {
             loading_ = true;

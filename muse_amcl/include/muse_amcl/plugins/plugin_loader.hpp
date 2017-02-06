@@ -38,8 +38,8 @@ public:
     }
 
     template<typename PluginType, typename ... Arguments>
-    void load(typename PluginType::Ptr &plugin,
-               const Arguments&... arguments)
+    inline void load(typename PluginType::Ptr &plugin,
+                     const Arguments&... arguments)
     {
         static PluginFactory<PluginType, Arguments...> factory;
         for(const auto &entry : plugins_found_) {
@@ -50,6 +50,15 @@ public:
                 plugin = factory.create(class_name, name, arguments...);
             }
         }
+    }
+
+    inline std::set<std::string> getFoundNames() const
+    {
+        std::set<std::string> found;
+        for(const auto &entry : plugins_found_) {
+            found.insert(entry.first);
+        }
+        return found;
     }
 
 private:
