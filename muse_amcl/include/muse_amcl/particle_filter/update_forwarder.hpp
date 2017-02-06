@@ -33,11 +33,14 @@ public:
             const DataProvider::Ptr &data_provider= data_providers.at(data_provider_name);
             const MapProvider::Ptr  &map_provider = map_providers.at(map_provider_name);
 
-
-
             auto callback = [this, model, map_provider] (const Data::ConstPtr &data) {
-                Update::Ptr u(new Update(data->getTimeFrame().end, data, map_provider->getMap(), model));
-                filter_->addUpdate(u);
+                Map::ConstPtr map = map_provider->getMap();
+                if(map) {
+                    Update::Ptr u(new Update(data->getTimeFrame().end, data, map, model));
+                    filter_->addUpdate(u);
+                 } else {
+                    std::cerr << "[UpdateForwarder]: Could not get map from '" << map_provider->getName() << "'!" << std::endl;
+                }
             };
 
             connections_[model_name] = data_provider->connect(callback);

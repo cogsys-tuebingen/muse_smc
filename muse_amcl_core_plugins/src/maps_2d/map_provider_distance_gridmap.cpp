@@ -23,14 +23,16 @@ void MapProviderDistanceGridmap::callback(const nav_msgs::OccupancyGridConstPtr 
     /// conversion can take time
     /// we allow concurrent loading, this way, the front end thread is not blocking.
     if(!loading_) {
-        loading_ = true;
-        auto load = [this, msg]() {
-            maps::DistanceGridMap::Ptr map(new maps::DistanceGridMap(*msg, binarization_threshold_, kernel_size_));
-            std::unique_lock<std::mutex>l(map_mutex_);
-            map_ = map;
-            loading_ = false;
-        };
-        worker_ = std::thread(load);
-        worker_.detach();
+        if(!map_ || msg->info.map_load_time > map_->getStamp()) {
+            loading_ = true;
+            auto load = [this, msg]() {
+                maps::DistanceGridMap::Ptr map(new maps::DistanceGridMap(*msg, binarization_threshold_, kernel_size_));
+                std::unique_lock<std::mutex>l(map_mutex_);
+                map_ = map;
+                loading_ = false;
+            };
+            worker_ = std::thread(load);
+            worker_.detach();
+        }
     }
 }

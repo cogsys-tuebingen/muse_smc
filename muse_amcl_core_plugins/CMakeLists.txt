@@ -35,6 +35,9 @@ add_library(${PROJECT_NAME} SHARED
     src/maps_2d/map_provider_binary_gridmap.cpp
     src/maps_2d/map_provider_distance_gridmap.cpp
     src/maps_2d/map_provider_probability_gridmap.cpp
+    src/maps_2d/map_provider_binary_gridmap_service.cpp
+    src/maps_2d/map_provider_distance_gridmap_service.cpp
+    src/maps_2d/map_provider_probability_gridmap_service.cpp
 
     src/odometry/differential_drive.cpp
     src/odometry/omni_drive.cpp
