@@ -1,5 +1,8 @@
 #include "map_provider_probability_gridmap_service.h"
 
+#include <class_loader/class_loader_register_macro.h>
+CLASS_LOADER_REGISTER_CLASS(muse_amcl::MapProviderProbabilityGridmapService, muse_amcl::MapProvider)
+
 using namespace muse_amcl;
 
 Map::ConstPtr MapProviderProbabilityGridmapService::getMap() const
@@ -29,6 +32,6 @@ Map::ConstPtr MapProviderProbabilityGridmapService::getMap() const
 
 void MapProviderProbabilityGridmapService::doSetup(ros::NodeHandle &nh_private)
 {
-    service_name_ = nh_private.param<std::string>(privateParameter("service"), "/map");
+    service_name_ = nh_private.param<std::string>(privateParameter("service"), "/static_map");
     source_ = nh_private.serviceClient<nav_msgs::GetMap>(service_name_);
 }

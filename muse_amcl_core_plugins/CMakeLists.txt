@@ -98,6 +98,13 @@ if(${CATKIN_ENABLE_TESTING})
         test/test_node_sampling_uniform_primary_map_2d.cpp
        "${PROJECT_NAME}"
     )
+
+    add_unit_test_rostest(${PROJECT_NAME}_test_node_gridmap_providers
+        test/map_providers.test
+        test/test_node_gridmap_providers.cpp
+        "${PROJECT_NAME}"
+    )
+
 endif()
 
 if(True)

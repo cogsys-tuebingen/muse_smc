@@ -2,6 +2,10 @@
 
 using namespace muse_amcl;
 
+#include <class_loader/class_loader_register_macro.h>
+CLASS_LOADER_REGISTER_CLASS(muse_amcl::MapProviderBinaryGridMap, muse_amcl::MapProvider)
+
+
 Map::ConstPtr MapProviderBinaryGridMap::getMap() const
 {
     std::unique_lock<std::mutex> l(map_mutex_);

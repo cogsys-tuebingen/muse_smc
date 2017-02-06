@@ -1,5 +1,7 @@
 #include "map_provider_distance_gridmap_service.h"
 
+#include <class_loader/class_loader_register_macro.h>
+CLASS_LOADER_REGISTER_CLASS(muse_amcl::MapProviderDistanceGridMapService, muse_amcl::MapProvider)
 
 using namespace muse_amcl;
 
@@ -30,7 +32,7 @@ Map::ConstPtr MapProviderDistanceGridMapService::getMap() const
 
 void MapProviderDistanceGridMapService::doSetup(ros::NodeHandle &nh_private)
 {
-    service_name_ = nh_private.param<std::string>(privateParameter("service"), "/map");
+    service_name_ = nh_private.param<std::string>(privateParameter("service"), "/static_map");
     binarization_threshold_ = nh_private.param<double>(privateParameter("threshold"), 0.5);
     kernel_size_ = std::max(nh_private.param<int>(privateParameter("kernel_size"), 5), 5);
     kernel_size_ += 1 - (kernel_size_ % 2);

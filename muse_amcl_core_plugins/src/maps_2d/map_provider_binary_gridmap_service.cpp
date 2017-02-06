@@ -2,6 +2,9 @@
 
 #include <nav_msgs/GetMap.h>
 
+#include <class_loader/class_loader_register_macro.h>
+CLASS_LOADER_REGISTER_CLASS(muse_amcl::MapProviderBinaryGridMapService, muse_amcl::MapProvider)
+
 using namespace muse_amcl;
 
 Map::ConstPtr MapProviderBinaryGridMapService::getMap() const
@@ -30,7 +33,7 @@ Map::ConstPtr MapProviderBinaryGridMapService::getMap() const
 
 void MapProviderBinaryGridMapService::doSetup(ros::NodeHandle &nh_private)
 {
-    service_name_ = nh_private.param<std::string>(privateParameter("service"), "/map");
+    service_name_ = nh_private.param<std::string>(privateParameter("service"), "/static_map");
     binarization_threshold_ = nh_private.param<double>(privateParameter("threshold"), 0.5);
     source_= nh_private.serviceClient<nav_msgs::GetMap>(service_name_);
 }

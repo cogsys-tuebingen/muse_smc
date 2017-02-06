@@ -1,5 +1,8 @@
 #include "map_provider_probability_gridmap.h"
 
+#include <class_loader/class_loader_register_macro.h>
+CLASS_LOADER_REGISTER_CLASS(muse_amcl::MapProviderProbabilityGridMap, muse_amcl::MapProvider)
+
 using namespace muse_amcl;
 
 Map::ConstPtr MapProviderProbabilityGridMap::getMap() const

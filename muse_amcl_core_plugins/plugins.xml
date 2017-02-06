@@ -72,4 +72,27 @@
    <class type="muse_amcl::WheelOfFortune" base_class_type="muse_amcl::Resampling">
      <description>Systematic resampling.</description>
    </class>
+   <!-- Map Providers -->
+   <class type="muse_amcl::MapProviderBinaryGridMap" base_class_type="muse_amcl::MapProvider">
+     <description>Provides binarized map versions given a destinct threshold by topic.</description>
+   </class>
+   <class type="muse_amcl::MapProviderBinaryGridMapService" base_class_type="muse_amcl::MapProvider">
+      <description>Provides binarized map versions given a destinct threshold by service.</description>
+   </class>
+   <class type="muse_amcl::MapProviderDistanceGridMap" base_class_type="muse_amcl::MapProvider">
+      <description>Provides cspace map versions given a destinct threshold by topic.</description>
+   </class>
+   <class type="muse_amcl::MapProviderDistanceGridMapService" base_class_type="muse_amcl::MapProvider">
+      <description>Provides cspace map versions given a destinct threshold by Service.</description>
+   </class>
+   <class type="muse_amcl::MapProviderProbabilityGridmap" base_class_type="muse_amcl::MapProvider">
+      <description>Provides floating point probability map versions by topic.</description>
+   </class>
+   <class type="muse_amcl::MapProviderProbabilityGridmapService" base_class_type="muse_amcl::MapProvider">
+      <description>Provides floating point probability map versions by service.</description>
+   </class>
+   <!-- Data Providers -->
+   <class type="muse_amcl::DataProviderLaser2D" base_class_type="muse_amcl::DataProvider">
+      <description>Provides 2D laserscans with the possible to define a linear and angular FOV.</description>
+   </class>
 </library>
