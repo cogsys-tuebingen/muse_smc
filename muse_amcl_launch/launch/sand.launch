@@ -8,8 +8,8 @@
         <param name="rate_tf" 	 value="30.0" />
         
         <group ns="front_laser">
-            <param name="class" value="muse_amcl::DataProviderLaser2D" />
-            <param name="base_class" value="muse_amcl::DataProvider" />
+          <param name="class" value="muse_amcl::DataProviderLaser2D" />
+          <param name="base_class" value="muse_amcl::DataProvider" />
         	<param name="topic" value="/scan" />
         	<param name="undistortion" value="false" />
         	<param name="undistortion_fixed_frame" value="/odom" />
@@ -21,38 +21,48 @@
         </group>
         <group ns="beam_model">
             <param name="class" value="muse_amcl::BeamModel" />
-            <param name="base_class" value="muse_amcl::Update" />
-
-            
-
-
+            <param name="base_class" value="muse_amcl::UpdateModel" />
+            <param name="data_provider" value="front_laser" />
+            <param name="map_provider" value="sand" />
         </group>
-
-
-
-        <group ns="update0">
-            <param name="class" value="muse_amcl::MockUpdate" />
-            <param name="base_class" value="muse_amcl::Update" />
-
-            <param name="data_provider" value="data0" />
-            <param name="map_provider" value="map0" />
-
-            <param name="first" value="0.01" />
-            <param name="second" value="1" />
-        </group>
-        <group ns="propagation1">
-            <param name="class" value="muse_amcl::MockPropagation" />
-            <param name="base_class" value="muse_amcl::Propagation" />
-            <param name="data_provider" value="data1" />
-            <param name="first" value="0.00001" />
-            <param name="second" value="10000" />
-        </group>
-        <group ns="map0">
-            <param name="class" value="muse_amcl::MockMapProvider" />
+        <group ns="differential_drive_model">
+            <param name="class" value="muse_amcl::DifferentialDrive" />
+            <param name="base_class" value="muse_amcl::PredictionModel"/>
+            <param name="data_provider" value="odometry" />
+         </group>
+        <group ns="sand">
+            <param name="class" value="muse_amcl::MapProviderBinaryGridMap" />
             <param name="base_class" value="muse_amcl::MapProvider" />
+            <param name="topic" value="/map" />
         </group>
-
-
+        <group ns="odometry">
+            <param name="base_class" value="muse_amcl::DataProvider" />
+            <param name="class"      value="muse_amcl::DataProviderOdometry" />
+        </group>
+        <group ns="resampling">
+            <param name="base_class" value="muse_amcl::Resampling" />
+            <param name="class"      value="muse_amcl::Multinomial" />
+        </group>
+        <group ns="uniform_pose_generation">
+          <param name="class"     value="muse_amcl::UniformAllMaps2D" />
+          <param name="base_class"  value="muse_amcl::UniformPoseGeneration" />
+          <param name="seed"    value="2" />
+          <param name="timeout"   value="10.0" />
+          <param name="tf_timeout"  value="0.1" />
+          <param name="sample_size" value="500" />
+          <param name="primary_map" value="map0" />
+        </group>
+        <group ns="normal_pose_generation">
+          <rosparam param="maps">
+            ["sand"]
+          </rosparam>
+          <param name="timeout"   value="10.0" />
+          <param name="tf_timeout"  value="0.1" />
+          <param name="sample_size" value="500" />
+          <param name="class"     value="muse_amcl::Normal2D" />
+          <param name="base_class"  value="muse_amcl::NormalPoseGeneration" />
+          <param name="seed"    value="0" />
+        </group>
         <group ns="particle_filter">
          	  <param name="resampling_offset_linear" value="0.2" />
         	  <param name="resampling_offset_angular" value="0.314" />
@@ -66,35 +76,9 @@
             <param name="resolution_radial" value="0.0314256"/> <!-- angular discretization resolution -->
 
             <param name="array_extent" value="10.0" /> 			<!-- use array if possible, higher speed -->
- 
-
-           <group ns="resampling">
-		      <param name="class" 	   value="muse_amcl::KLD2D" />
-              <param name="base_class" value="muse_amcl::Resampling" />
-              <param name="class" 	   value="muse_amcl::KLD2D" />
-           </group>
-            <group ns="uniform_pose_generation">
-              <param name="class" 		value="muse_amcl::UniformAllMaps2D" />
-              <param name="base_class"  value="muse_amcl::UniformPoseGeneration" />
-              <param name="seed" 		value="2" />
-              <param name="timeout" 	value="10.0" />
-              <param name="tf_timeout" 	value="0.1" />
-              <param name="sample_size" value="500" />
-              <param name="primary_map" value="map0" />
-            </group>
-            <group ns="normal_pose_generation">
-              <rosparam param="maps">
-                ["sand"]
-              </rosparam>
-              <param name="timeout" 	value="10.0" />
-              <param name="tf_timeout"  value="0.1" />
-              <param name="sample_size" value="500" />
-              <param name="class" 		value="muse_amcl::Normal2D" />
-              <param name="base_class" 	value="muse_amcl::NormalPoseGeneration" />
-              <parma name="seed" 		value="0" />
-            </group>
-
         </group>
     </group>
-    <node type="muse_amcl" name="muse_amcl" pkg="muse_amcl" output="screen">
+    <node pkg="tf" type="static_transform_publisher" name="sand_T_w" args="1 1 0 3.14159265359 0 0 map world 100"/>
+    <node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(find muse_amcl_core_plugins)/res/gridmaps/sand_0.05.yaml" respawn="true" />
+    <node type="muse_amcl_node" name="muse_amcl" pkg="muse_amcl" output="screen" />
 </launch>

@@ -14,20 +14,20 @@
 </library>
 <library path="libmuse_amcl_core_plugins">
    <!-- Update functions -->
-   <class type="muse_amcl::BeamModel" base_class_type="muse_amcl::Update">
+   <class type="muse_amcl::BeamModel" base_class_type="muse_amcl::UpdateModel">
      <description>Beam model update function.</description>
    </class>
-   <class type="muse_amcl::LikelihoodFieldModel" base_class_type="muse_amcl::Update">
+   <class type="muse_amcl::LikelihoodFieldModel" base_class_type="muse_amcl::UpdateModel">
      <description>Likelihoodfield model update function.</description>
    </class>
-   <class type="muse_amcl::LikelihoodFieldProbModel" base_class_type="muse_amcl::Update">
+   <class type="muse_amcl::LikelihoodFieldProbModel" base_class_type="muse_amcl::UpdateModel">
      <description>Likelihoodfield model update function with consistency check.</description>
    </class>
    <!-- Propagation Functions -->
-   <class type="muse_amcl::DifferentialDrive" base_class_type="muse_amcl::Propagation">
+   <class type="muse_amcl::DifferentialDrive" base_class_type="muse_amcl::PredictionModel">
      <description>Differential drive propagation model.</description>
    </class>
-   <class type="muse_amcl::OmniDrive" base_class_type="muse_amcl::Propagation">
+   <class type="muse_amcl::OmniDrive" base_class_type="muse_amcl::PredictionModel">
      <description>Omnidirectional drive propagation model.</description>
    </class>
    <!-- Pose Generation -->
@@ -94,5 +94,8 @@
    <!-- Data Providers -->
    <class type="muse_amcl::DataProviderLaser2D" base_class_type="muse_amcl::DataProvider">
       <description>Provides 2D laserscans with the possible to define a linear and angular FOV.</description>
+   </class>
+   <class type="muse_amcl::DataProviderOdometry" base_class_type="muse_amcl::DataProvider">
+      <description>Data provider for standard odmetry messages.</description>
    </class>
 </library>

@@ -30,7 +30,7 @@ public:
 
     inline const static std::string Type()
     {
-        return "muse_amcl::PoseGeneration";
+        return "muse_amcl::Resampling";
     }
 
     inline std::string getName() const

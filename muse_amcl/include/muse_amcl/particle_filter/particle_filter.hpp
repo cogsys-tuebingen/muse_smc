@@ -61,6 +61,7 @@ public:
         const std::size_t sample_size = nh_private.param<int>(privateParameter("sample_size"), 0);
         std::size_t sample_size_maximum = sample_size;
         std::size_t sample_size_minimum = sample_size;
+
         if(sample_size == 0) {
            sample_size_maximum = nh_private.param<int>(privateParameter("sample_size_minimum"), 0);
            sample_size_minimum = nh_private.param<int>(privateParameter("sample_size_maximum"), 0);
@@ -72,28 +73,27 @@ public:
 
         muse_amcl::Indexation indexation ({resolution_linear, resolution_linear, resolution_angular});
         particle_set_.reset(new ParticleSet(world_frame, sample_size_minimum, sample_size_maximum, indexation, array_extent));
-
     }
 
     /// uniform pose sampling
-    void setUniformSampling(UniformSampling::Ptr &uniform_sampling)
+    void setUniformSampling(UniformSampling::Ptr &sampling_uniform)
     {
-        uniform_sampling = uniform_sampling;
+        sampling_uniform_ = sampling_uniform;
 
     }
     UniformSampling::Ptr getUniformSampling() const
     {
-        return uniform_sampling_;
+        return sampling_uniform_;
     }
 
     /// normal pose sampling
-    void setNormalsampling(NormalSampling::Ptr &normal_sampling)
+    void setNormalsampling(NormalSampling::Ptr &sampling_normal_pose)
     {
-        normal_sampling_ = normal_sampling;
+        sampling_normal_pose_ = sampling_normal_pose;
     }
     NormalSampling::Ptr getNormalSampling() const
     {
-        return normal_sampling_;
+        return sampling_normal_pose_;
     }
 
     /// resampling
@@ -125,8 +125,8 @@ public:
                                    const math::Covariance &covariance)
     {
         std::unique_lock<std::mutex> l(request_pose_mutex_);
-        requset_pose_ = pose;
-        request_covariance_ = covariance;
+        initialization_pose_ = pose;
+        initialization_covariance_ = covariance;
         request_pose_initilization_ = true;
         notify_event_.notify_one();
     }
@@ -141,16 +141,17 @@ public:
     {
         if(!working_) {
             stop_working_ = false;
-            /// spawn mr. backend thread here
+            worker_thread_ = std::thread([this](){loop();});
+            requestGlobalInitialization();
         }
     }
 
-    void end()
-    {
-        if(working_) {
-            notify_event_.notify_one();
-        }
-    }
+//    void end()
+//    {
+//        if(working_) {
+//            notify_event_.notify_one();
+//        }
+//    }
 
 protected:
     std::string             name_;
@@ -163,8 +164,8 @@ protected:
     ros::Time               particle_set_stamp_;
     ParticleSet::Ptr        particle_set_;
 
-    UniformSampling::Ptr    uniform_sampling_;
-    NormalSampling::Ptr     normal_sampling_;
+    UniformSampling::Ptr    sampling_uniform_;
+    NormalSampling::Ptr     sampling_normal_pose_;
     Resampling::Ptr         resampling_;
 
     std::thread             worker_thread_;
@@ -190,8 +191,8 @@ protected:
 
     //// ------------------ requests -----------------------///
     std::mutex              request_pose_mutex_;
-    math::Pose              requset_pose_;
-    math::Covariance        request_covariance_;
+    math::Pose              initialization_pose_;
+    math::Covariance        initialization_covariance_;
     std::atomic_bool        request_pose_initilization_;
     std::atomic_bool        request_global_initialization_;
 
@@ -199,12 +200,16 @@ protected:
     {
         if(request_global_initialization_) {
             request_global_initialization_ = false;
+            sampling_uniform_->apply(*particle_set_);
             particle_set_stamp_ = ros::Time::now();
+            publishPoses(true);
         }
         if(request_pose_initilization_) {
             std::unique_lock<std::mutex> l(request_pose_mutex_);
             request_pose_initilization_ = false;
+            sampling_normal_pose_->apply(initialization_pose_, initialization_covariance_, *particle_set_);
             particle_set_stamp_ = ros::Time::now();
+            publishPoses(true);
         }
     }
 
@@ -237,10 +242,10 @@ protected:
         return true;
     }
 
-    inline void publishPoses()
+    inline void publishPoses(const bool force = false)
     {
         const ros::Time now = ros::Time::now();
-        if(pub_poses_last_time_ + pub_poses_delay_ > now) {
+        if(pub_poses_last_time_ + pub_poses_delay_ > now || force) {
             geometry_msgs::PoseArray poses;
             poses.header.frame_id = particle_set_->getFrame();
             poses.header.stamp = now;
@@ -256,6 +261,7 @@ protected:
                 poses.poses.emplace_back(pose_to_msg(sample));
             }
             pub_poses_.publish(poses);
+            ros::spinOnce();
             pub_poses_last_time_ = now;
         };
     }
@@ -269,7 +275,7 @@ protected:
         };
     }
 
-    inline void filter()
+    inline void loop()
     {
         std::unique_lock<std::mutex> lock_updates(update_queue_mutex_);
         working_ = true;

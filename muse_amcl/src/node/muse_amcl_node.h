@@ -27,13 +27,15 @@ public:
     MuseAMCLNode();
     virtual ~MuseAMCLNode();
 
+    bool setup();
+
     void start();
 
-    bool requestGlobalInitialization(const muse_amcl::GlobalInitializationRequest &req,
-                                     muse_amcl::GlobalInitializationResponse &res);
+    bool requestGlobalInitialization(muse_amcl::GlobalInitialization::Request &req,
+                                     muse_amcl::GlobalInitialization::Response &res);
 
-    bool requestPoseInitialization(const muse_amcl::PoseInitializationRequest &req,
-                                   muse_amcl::PoseInitializationResponse &res);
+    bool requestPoseInitialization(muse_amcl::PoseInitialization::Request &req,
+                                   muse_amcl::PoseInitialization::Response &res);
 
 private:
     using MapProviders  = std::map<std::string, MapProvider::Ptr>;
@@ -42,6 +44,8 @@ private:
 
     ros::NodeHandle             nh_private_;
     ros::NodeHandle             nh_public_;
+    ros::ServiceServer          initialization_service_global_;
+    ros::ServiceServer          initialization_service_pose_;
 
     //// data providers
     TFProvider::Ptr             tf_provider_frontend_;  /// for data providers and data conversion
@@ -64,8 +68,7 @@ private:
     UpdateForwarder::Ptr        update_forwarder_;
     PredictionForwarder::Ptr    predicition_forwarder_;
 
-    /// read all ros related stuff and initalize plugins
-    void setup();
+
 };
 }
 
