@@ -89,8 +89,7 @@ int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "muse_amcl");
     MuseAMCLNode node;
-
-
+    node.start();
     return 0;
 }
 

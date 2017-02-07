@@ -36,9 +36,9 @@ public:
                                    muse_amcl::PoseInitializationResponse &res);
 
 private:
-    using MapProviders = std::map<std::string, MapProvider::Ptr>;
+    using MapProviders  = std::map<std::string, MapProvider::Ptr>;
     using DataProviders = std::map<std::string, DataProvider::Ptr>;
-    using UpdateModels = std::map<std::string, UpdateModel::Ptr>;
+    using UpdateModels  = std::map<std::string, UpdateModel::Ptr>;
 
     ros::NodeHandle             nh_private_;
     ros::NodeHandle             nh_public_;
