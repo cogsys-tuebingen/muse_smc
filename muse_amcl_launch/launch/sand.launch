@@ -54,8 +54,8 @@
 
 
         <group ns="particle_filter">
-        	<param name="resampling_offset_linear" value="0.2" />
-        	<param name="resampling_offset_angular" value="0.314" />
+         	  <param name="resampling_offset_linear" value="0.2" />
+        	  <param name="resampling_offset_angular" value="0.314" />
 
 
             <param name="sample_size"     value="500" /> 		<!-- if set, maximum and minimum are this value -->
@@ -65,7 +65,7 @@
             <param name="resolution_linear" value="0.05" />     <!-- linear discretization resolution -->
             <param name="resolution_radial" value="0.0314256"/> <!-- angular discretization resolution -->
 
-            <param name="array_size" value="10.0" /> 			<!-- use array if possible, higher speed -->
+            <param name="array_extent" value="10.0" /> 			<!-- use array if possible, higher speed -->
  
 
            <group ns="resampling">

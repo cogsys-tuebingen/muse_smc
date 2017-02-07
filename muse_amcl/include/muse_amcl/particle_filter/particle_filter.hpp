@@ -17,7 +17,6 @@
 #include <queue>
 #include <condition_variable>
 
-
 namespace muse_amcl {
 class ParticleFilter {
 public:
@@ -53,19 +52,26 @@ public:
                 nh_private.param(privateParameter("resampling_offset_angular"), M_PI / 10.0);
 
         const std::string topic_poses = nh_private.param<std::string>(privateParameter("topic_poses"), "/muse_amcl/poses");
-        pub_poses_  = nh_private.advertise<geometry_msgs::PoseArray>(topic_poses, 1);
+        const std::string world_frame = nh_private.param<std::string>("world_frame", "/world");
         const double pose_rate = nh_private.param<double>("pose_rate", 30.0);
-        pub_poses_delay_ = ros::Rate(pose_rate).cycleTime();
         const double pub_tf_rate = nh_private.param<double>("tf_rate", 30.0);
-        pub_tf_delay_ = ros::Rate(pub_tf_rate).cycleTime();
-        const std::size_t sample_size = param<int>(privateParameter("sample_size"), 0);
+        const double resolution_linear  = nh_private.param<double>(privateParameter("resolution_linear"), 0.1);
+        const double resolution_angular = nh_private.param<double>(privateParameter("resolution_angular"), M_PI / 18.0);
+        const double array_extent       = nh_private.param<double>(privateParameter("array_extent"), 5.0);
+        const std::size_t sample_size = nh_private.param<int>(privateParameter("sample_size"), 0);
         std::size_t sample_size_maximum = sample_size;
         std::size_t sample_size_minimum = sample_size;
         if(sample_size == 0) {
-           sample_size_maximum = param<int>(privateParameter("sample_size_minimum"), 0);
-           sample_size_minimum = param<int>(privateParameter("sample_size_maximum"), 0);
+           sample_size_maximum = nh_private.param<int>(privateParameter("sample_size_minimum"), 0);
+           sample_size_minimum = nh_private.param<int>(privateParameter("sample_size_maximum"), 0);
         }
 
+        pub_poses_  = nh_private.advertise<geometry_msgs::PoseArray>(topic_poses, 1);
+        pub_poses_delay_ = ros::Rate(pose_rate).cycleTime();
+        pub_tf_delay_ = ros::Rate(pub_tf_rate).cycleTime();
+
+        muse_amcl::Indexation indexation ({resolution_linear, resolution_linear, resolution_angular});
+        particle_set_.reset(new ParticleSet(world_frame, sample_size_minimum, sample_size_maximum, indexation, array_extent));
 
     }
 
@@ -166,7 +172,7 @@ protected:
     std::atomic_bool        stop_working_;
     std::condition_variable notify_event_;
 
-    //// ------------------ paramters ----------------------///
+    //// ------------------ parameters ----------------------///
     double                  resampling_offset_linear_;
     double                  resampling_offset_angular_;
     ros::Duration           pub_poses_delay_;
@@ -218,7 +224,7 @@ protected:
             }
 
             PredictionModel::Movement movement = prediction->apply(until, particle_set_->getPoses());
-            prediction_linear_distance_ += movement.linear_distance;
+            prediction_linear_distance_  += movement.linear_distance;
             prediction_angular_distance_ += movement.angular_distance;
 
             if(!prediction->isDone()) {
