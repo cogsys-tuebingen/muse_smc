@@ -84,6 +84,10 @@ protected:
         std::vector<std::string> map_provider_ids;
         nh_private.getParam(parameter("maps"), map_provider_ids);
 
+        if(map_provider_ids.size() == 0) {
+            throw std::runtime_error("[UniformSampling]: No map providers were found!");
+        }
+
         for(auto m : map_provider_ids) {
             map_providers_.emplace_back(map_providers.at(m));
         }

@@ -20,7 +20,7 @@
         	<!-- <param name="angle_max" value="3.1425" /> -->
         </group>
         <group ns="beam_model">
-            <param name="class" value="muse_amcl::BeamModel" />
+            <param name="class" value="muse_amcl::MockUpdate" />
             <param name="base_class" value="muse_amcl::UpdateModel" />
             <param name="data_provider" value="front_laser" />
             <param name="map_provider" value="sand" />
@@ -44,12 +44,15 @@
             <param name="class"      value="muse_amcl::Multinomial" />
         </group>
         <group ns="uniform_pose_generation">
+          <rosparam param="maps">
+            ["sand"]
+          </rosparam>
           <param name="class"     value="muse_amcl::UniformAllMaps2D" />
           <param name="base_class"  value="muse_amcl::UniformPoseGeneration" />
           <param name="seed"    value="2" />
           <param name="timeout"   value="10.0" />
           <param name="tf_timeout"  value="0.1" />
-          <param name="sample_size" value="500" />
+          <param name="sample_size" value="10000" />
           <param name="primary_map" value="map0" />
         </group>
         <group ns="normal_pose_generation">
@@ -64,11 +67,9 @@
           <param name="seed"    value="0" />
         </group>
         <group ns="particle_filter">
-         	  <param name="resampling_offset_linear" value="0.2" />
-        	  <param name="resampling_offset_angular" value="0.314" />
-
-
-            <param name="sample_size"     value="500" /> 		<!-- if set, maximum and minimum are this value -->
+         	<param name="resampling_offset_linear" value="0.2" />
+        	<param name="resampling_offset_angular" value="0.314" />
+            <param name="sample_size"     value="10000" /> 		<!-- if set, maximum and minimum are this value -->
             <param name="sample_size_min" value="" /> 			<!-- if not sample_size is already set -->
             <param name="sample_size_max" value="" /> 			<!-- if not sample_size is already set -->
             

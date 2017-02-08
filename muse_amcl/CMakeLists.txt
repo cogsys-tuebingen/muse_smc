@@ -66,14 +66,9 @@ include_directories(
     ${Boost_INCLUDE_DIRS}
 )
 
-add_library(${PROJECT_NAME}_tf
-    src/tf/tf_provider.cpp
-)
-target_link_libraries(${PROJECT_NAME}_tf
-    ${catkin_LIBRARIES}
-)
-
 add_library(${PROJECT_NAME}_particle_filter
+    include/muse_amcl/particle_filter/update_model.hpp
+    include/muse_amcl/particle_filter/prediction_model.hpp
     src/particle_filter/particle_filter.cpp
 )
 

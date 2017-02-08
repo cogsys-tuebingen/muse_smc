@@ -156,6 +156,7 @@ public:
             /// this means that bounaries have to be update for time step t-1
             const Size size = indexation_.size(sample_index_minimum_, sample_index_maximum_);
             array_to_be_used_ = size[0] <= array_size_[0] && size[1] <= array_size_[1] && size[2] <= array_size_[2];
+            array_to_be_used_ = false;
             /// maybe the radian part can be exchanged by static value
         }
 

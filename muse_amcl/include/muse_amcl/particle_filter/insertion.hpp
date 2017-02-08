@@ -83,8 +83,8 @@ public:
     inline void close()
     {
         if(open_) {
-            closed_();
             open_ = false;
+            closed_();
         } else {
             throw std::runtime_error("Insertion cannot be closed twice!");
         }

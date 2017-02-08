@@ -48,8 +48,8 @@ public:
 
 protected:
     std::string         name_;
-    std::string         robot_base_frame_;
     std::string         world_frame_;
+    std::string         robot_base_frame_;
     ros::Duration       tf_timeout_;
     TFProvider::Ptr     tf_provider_;
 

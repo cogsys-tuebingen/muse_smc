@@ -3,7 +3,9 @@
 using namespace muse_amcl;
 
 MuseAMCLNode::MuseAMCLNode() :
-    nh_private_("~")
+    nh_private_("~"),
+    tf_provider_frontend_(new TFProvider),
+    tf_provider_backend_(new TFProvider)
 {
 }
 

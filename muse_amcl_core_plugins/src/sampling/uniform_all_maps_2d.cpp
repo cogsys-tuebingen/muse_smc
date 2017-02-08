@@ -59,6 +59,7 @@ void UniformAllMaps2D::apply(ParticleSet &particle_set)
     Insertion insertion = particle_set.getInsertion();
     const ros::Time sampling_start = ros::Time::now();
     const std::size_t map_count = maps_.size();
+
     Particle particle;
     for(std::size_t i = 0 ; i < sample_size_ ; ++i) {
         bool valid = false;
@@ -66,8 +67,9 @@ void UniformAllMaps2D::apply(ParticleSet &particle_set)
             ros::Time now = ros::Time::now();
             if(sampling_start + sampling_timeout_ < now) {
                 std::cerr << "[UniformAllMaps2D]: Sampling timed out!" << std::endl;
-                break;
+                return;
             }
+
 
             particle.pose_ = rng_->get();
             valid = true;

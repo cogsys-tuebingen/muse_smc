@@ -1,8 +1,8 @@
 <library path="libmuse_amcl_mock_plugins">
-   <class type="muse_amcl::MockUpdate" base_class_type="muse_amcl::Update">
+   <class type="muse_amcl::MockUpdate" base_class_type="muse_amcl::UpdateModel">
      <description>Mockup</description>
    </class>
-   <class type="muse_amcl::MockPropagation" base_class_type="muse_amcl::Propagation">
+   <class type="muse_amcl::MockPropagation" base_class_type="muse_amcl::PredictionModel">
      <description>Mockup</description>
    </class>
    <class type="muse_amcl::MockDataProvider" base_class_type="muse_amcl::DataProvider">

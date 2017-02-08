@@ -142,7 +142,6 @@ public:
         if(!working_) {
             stop_working_ = false;
             worker_thread_ = std::thread([this](){loop();});
-            requestGlobalInitialization();
         }
     }
 
@@ -320,8 +319,8 @@ protected:
             //                /// todo get the transformation odom -> world
 
             //            }
-            publishPoses();
-            publishTF();
+//            publishPoses();
+//            publishTF();
         }
         working_ = false;
     }
