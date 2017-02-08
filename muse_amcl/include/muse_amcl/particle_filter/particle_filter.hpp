@@ -142,6 +142,7 @@ public:
         if(!working_) {
             stop_working_ = false;
             worker_thread_ = std::thread([this](){loop();});
+            worker_thread_.detach();
         }
     }
 

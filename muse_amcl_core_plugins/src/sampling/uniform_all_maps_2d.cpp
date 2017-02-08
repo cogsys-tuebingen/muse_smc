@@ -25,6 +25,11 @@ void UniformAllMaps2D::update(const std::string &frame)
     for(auto &m : map_providers_) {
         tf::Transform map_T_w;
         Map::ConstPtr map = m->getMap();
+        if(!map) {
+            std::cerr << "[UniformAllMaps2D]: " + m->getName() + " return nullptr!" << std::endl;
+            continue;
+        }
+
         if(tf_provider_->lookupTransform(map->getFrame(), frame, now, map_T_w, tf_timeout_)) {
             maps_.emplace_back(map);
             maps_T_w_.emplace_back(map_T_w);

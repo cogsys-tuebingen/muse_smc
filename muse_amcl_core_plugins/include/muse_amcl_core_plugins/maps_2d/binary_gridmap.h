@@ -14,6 +14,8 @@ public:
 
     double getRange(const math::Point &from, const math::Point &to) const;
 
+    virtual bool validate(const math::Pose &p) const;
+
 
 private:
     void convert(const nav_msgs::OccupancyGrid &occupancy_grid,

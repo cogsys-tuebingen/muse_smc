@@ -16,6 +16,7 @@
 
 #include <muse_amcl/plugins/plugin_loader.hpp>
 #include <muse_amcl/plugins/plugin_factory.hpp>
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
 
 #include <ros/ros.h>
 
@@ -37,6 +38,8 @@ public:
     bool requestPoseInitialization(muse_amcl::PoseInitialization::Request &req,
                                    muse_amcl::PoseInitialization::Response &res);
 
+    void poseInitialization(const geometry_msgs::PoseWithCovarianceStampedConstPtr &msg);
+
 private:
     using MapProviders  = std::map<std::string, MapProvider::Ptr>;
     using DataProviders = std::map<std::string, DataProvider::Ptr>;
@@ -46,6 +49,7 @@ private:
     ros::NodeHandle             nh_public_;
     ros::ServiceServer          initialization_service_global_;
     ros::ServiceServer          initialization_service_pose_;
+    ros::Subscriber             initialization_subscriber_pose_;
 
     //// data providers
     TFProvider::Ptr             tf_provider_frontend_;  /// for data providers and data conversion

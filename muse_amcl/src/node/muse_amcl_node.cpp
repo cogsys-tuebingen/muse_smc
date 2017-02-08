@@ -22,6 +22,7 @@ void MuseAMCLNode::start()
         d.second->enable();
     }
     particle_filter_->start();
+    std::cout << "[MuseAMCLNode]: Up and running!" << std::endl;
     ros::spin();
 }
 
@@ -51,6 +52,23 @@ bool MuseAMCLNode::requestPoseInitialization(muse_amcl::PoseInitialization::Requ
     particle_filter_->requestPoseInitialization(convert_pose(), convert_covariance());
     res.success = true;
     return true;
+}
+
+void MuseAMCLNode::poseInitialization(const geometry_msgs::PoseWithCovarianceStampedConstPtr &msg)
+{
+    auto convert_pose = [&msg]() {
+        tf::Pose p;
+        tf::poseMsgToTF(msg->pose.pose, p);
+        return math::Pose(p);
+    };
+    auto convert_covariance = [&msg]() {
+        std::vector<double> v(36, 0.0);
+        for(std::size_t i = 0 ; i < 36 ; ++i) {
+            v[i] = msg->pose.covariance[i];
+        }
+        return math::Covariance(v);
+    };
+    particle_filter_->requestPoseInitialization(convert_pose(), convert_covariance());
 }
 
 bool MuseAMCLNode::setup()
@@ -109,8 +127,9 @@ bool MuseAMCLNode::setup()
     predicition_forwarder_->bind(data_providers_, nh_private_);
     update_forwarder_->bind(data_providers_, map_providers_, nh_private_);
 
-    initialization_service_pose_ = nh_private_.advertiseService("/muse_amcl/pose_initialization", &MuseAMCLNode::requestPoseInitialization, this);
-    initialization_service_global_ = nh_private_.advertiseService("/muse_amcl/global_initialization", &MuseAMCLNode::requestGlobalInitialization, this);
+    initialization_service_pose_    = nh_private_.advertiseService("/muse_amcl/pose_initialization", &MuseAMCLNode::requestPoseInitialization, this);
+    initialization_service_global_  = nh_private_.advertiseService("/muse_amcl/global_initialization", &MuseAMCLNode::requestGlobalInitialization, this);
+    initialization_subscriber_pose_ = nh_private_.subscribe("/initialpose", 1, &MuseAMCLNode::poseInitialization, this);
 }
 
 

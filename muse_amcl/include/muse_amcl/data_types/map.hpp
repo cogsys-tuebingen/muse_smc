@@ -29,7 +29,7 @@ public:
     {
     }
 
-    virtual inline bool validate(const math::Pose &p) const
+    virtual bool validate(const math::Pose &p) const
     {
         return true;
     }
