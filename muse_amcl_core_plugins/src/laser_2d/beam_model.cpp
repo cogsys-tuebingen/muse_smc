@@ -24,16 +24,18 @@ void BeamModel::update(const Data::ConstPtr  &data,
     /// laser to base transform
     tf::Transform base_T_laser;
     tf::Transform map_T_world;
-    tf_provider_->lookupTransform(robot_base_frame_,
+    if(!tf_provider_->lookupTransform(robot_base_frame_,
                                   laser_data.getFrame(),
                                   laser_data.getTimeFrame().end,
                                   base_T_laser,
-                                  tf_timeout_);
-    tf_provider_->lookupTransform(world_frame_,
+                                  tf_timeout_))
+        return;
+    if(!tf_provider_->lookupTransform(world_frame_,
                                   gridmap.getFrame(),
                                   laser_data.getTimeFrame().end,
                                   map_T_world,
-                                  tf_timeout_);
+                                  tf_timeout_))
+        return;
 
     const LaserScan2D::Rays rays = laser_data.getRays();
     const ParticleSet::Weights::iterator end = set.end();

@@ -63,8 +63,8 @@ public:
         std::size_t sample_size_minimum = sample_size;
 
         if(sample_size == 0) {
-           sample_size_maximum = nh_private.param<int>(privateParameter("sample_size_minimum"), 0);
-           sample_size_minimum = nh_private.param<int>(privateParameter("sample_size_maximum"), 0);
+            sample_size_maximum = nh_private.param<int>(privateParameter("sample_size_minimum"), 0);
+            sample_size_minimum = nh_private.param<int>(privateParameter("sample_size_maximum"), 0);
         }
 
         pub_poses_  = nh_private.advertise<geometry_msgs::PoseArray>(topic_poses, 1);
@@ -109,6 +109,7 @@ public:
     /// insert new predictions
     void addPrediction(Prediction::Ptr &prediction)
     {
+        std::cout << "[ParticleFilter]: received prediction!" << std::endl;
         std::unique_lock<std::mutex> l(prediction_queue_mutex_);
         prediction_queue_.emplace(prediction);
         notify_event_.notify_one();
@@ -116,6 +117,7 @@ public:
 
     void addUpdate(Update::Ptr &update)
     {
+        std::cout << "[ParticleFilter]: received update!" << std::endl;
         std::unique_lock<std::mutex> l(update_queue_mutex_);
         update_queue_.emplace(update);
         notify_event_.notify_one();
@@ -124,6 +126,7 @@ public:
     void requestPoseInitialization(const math::Pose &pose,
                                    const math::Covariance &covariance)
     {
+        std::cout << "[ParticleFilter]: requested pose localization" << std::endl;
         std::unique_lock<std::mutex> l(request_pose_mutex_);
         initialization_pose_ = pose;
         initialization_covariance_ = covariance;
@@ -133,6 +136,7 @@ public:
 
     void requestGlobalInitialization()
     {
+        std::cout << "[ParticleFilter]: requested global localization" << std::endl;
         request_global_initialization_ = true;
         notify_event_.notify_one();
     }
@@ -146,12 +150,12 @@ public:
         }
     }
 
-//    void end()
-//    {
-//        if(working_) {
-//            notify_event_.notify_one();
-//        }
-//    }
+    //    void end()
+    //    {
+    //        if(working_) {
+    //            notify_event_.notify_one();
+    //        }
+    //    }
 
 protected:
     std::string             name_;
@@ -239,13 +243,13 @@ protected:
                 break;
             }
         }
-        return true;
+        return prediction_linear_distance_ > 0.0 || prediction_angular_distance_ > 0.0;
     }
 
     inline void publishPoses(const bool force = false)
     {
         const ros::Time now = ros::Time::now();
-        if(pub_poses_last_time_ + pub_poses_delay_ > now || force) {
+        if(pub_poses_last_time_ + pub_poses_delay_ < now || force) {
             geometry_msgs::PoseArray poses;
             poses.header.frame_id = particle_set_->getFrame();
             poses.header.stamp = now;
@@ -282,46 +286,52 @@ protected:
 
         while(!stop_working_) {
             /// 0. wait for new tasks
+            std::cout << "waiting" << std::endl;
             notify_event_.wait(lock_updates);
+            if(stop_working_) {
+                break;
+            }
+            std::cout << "stopped waiting" << std::endl;
             /// 1. process requests which occured
             processRequests();
             /// 2. get a new sensor update from the queue
-            //            if(!update_queue_.empty()) {
-            //                Update::Ptr update = update_queue_.top();
-            //                update_queue_.pop();
-            //                lock_updates.unlock();
-            //                /// 4. propagate until we reach the time stamp of update
-            //                if(predict(update->getStamp())) {
-            //                    update->apply(particle_set_->getWeights());
-            //                    update.reset();
-            //                }
-            //                /// 5. go on with the queue
-            //                lock_updates.lock();
-            //                if(update)
-            //                    update_queue_.emplace(update);
-            //            }
-            //            /// 6. check if its time for resampling
-            //            if(prediction_linear_distance_ > resampling_minimum_linear_distance_ ||
-            //                    prediction_angular_distance_ > resampling_minimum_angular_distance_){
-            //                prediction_linear_distance_  = 0.0;
-            //                prediction_angular_distance_ = 0.0;
+            if(!update_queue_.empty()) {
+                Update::Ptr update = update_queue_.top();
+                update_queue_.pop();
+                lock_updates.unlock();
+                /// 4. propagate until we reach the time stamp of update
+                if(predict(update->getStamp())) {
+                    update->apply(particle_set_->getWeights());
+                    update.reset();
+                }
+                /// 5. go on with the queue
+                lock_updates.lock();
+                if(update)
+                    update_queue_.emplace(update);
+            }
 
-            //                resampling_->apply(*particle_set_);
+            /// 6. check if its time for resampling
+            if(prediction_linear_distance_ > resampling_offset_linear_ ||
+                    prediction_angular_distance_ > resampling_offset_angular_){
+                prediction_linear_distance_  = 0.0;
+                prediction_angular_distance_ = 0.0;
 
-            //                for(auto &weight : particle_set_->getWeights()) {
-            //                    weight = 1.0;
-            //                }
+                resampling_->apply(*particle_set_);
 
-            //                /// 7. cluster the particle set an update the transformation
-            //                particle_set_->cluster();
-            //                ParticleSet::Clusters clusters = particle_set_->getClusters();
+                for(auto &weight : particle_set_->getWeights()) {
+                    weight = 1.0;
+                }
+
+                /// 7. cluster the particle set an update the transformation
+                particle_set_->cluster();
+                ParticleSet::Clusters clusters = particle_set_->getClusters();
 
 
-            //                /// todo get the transformation odom -> world
+                /// todo get the transformation odom -> world
 
-            //            }
-//            publishPoses();
-//            publishTF();
+            }
+            publishPoses(true);
+            publishTF();
         }
         working_ = false;
     }

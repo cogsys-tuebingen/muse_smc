@@ -51,7 +51,7 @@ public:
 
     inline bool isDone() const
     {
-        return data_.get() != nullptr;
+        return data_.get() == nullptr;
     }
 
     inline const ros::Time & getStamp() const

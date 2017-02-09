@@ -10,7 +10,7 @@ class UniformAllMaps2D : public UniformSampling
 public:
     UniformAllMaps2D();
 
-    virtual void update(const std::string &frame) override;
+    virtual bool update(const std::string &frame) override;
     virtual void apply(ParticleSet &particle_set) override;
     virtual void apply(Particle &particle) override;
 

@@ -13,7 +13,7 @@ UniformAllMaps2D::UniformAllMaps2D()
 {
 }
 
-void UniformAllMaps2D::update(const std::string &frame)
+bool UniformAllMaps2D::update(const std::string &frame)
 {
     const ros::Time   now   = ros::Time::now();
 
@@ -22,26 +22,27 @@ void UniformAllMaps2D::update(const std::string &frame)
     muse_amcl::math::Point max(std::numeric_limits<double>::lowest(),
                                std::numeric_limits<double>::lowest());
 
-    for(auto &m : map_providers_) {
-        tf::Transform map_T_w;
-        Map::ConstPtr map = m->getMap();
+    const std::size_t map_provider_count = map_providers_.size();
+    maps_T_w_.resize(map_provider_count);
+    maps_.resize(map_provider_count);
+    for(std::size_t i = 0 ; i < map_provider_count ; ++i) {
+        Map::ConstPtr map = map_providers_[i]->getMap();
         if(!map) {
-            std::cerr << "[UniformAllMaps2D]: " + m->getName() + " return nullptr!" << std::endl;
-            continue;
+            std::cerr << "[UniformAllMaps2D]: " + map_providers_[i]->getName() + " returned nullptr!" << std::endl;
+            return false;
         }
+        if(tf_provider_->lookupTransform(map->getFrame(), frame, now, maps_T_w_[i], tf_timeout_)) {
+            maps_[i] = map;
 
-        if(tf_provider_->lookupTransform(map->getFrame(), frame, now, map_T_w, tf_timeout_)) {
-            maps_.emplace_back(map);
-            maps_T_w_.emplace_back(map_T_w);
-
-            tf::Transform w_T_map = map_T_w.inverse();
+            tf::Transform w_T_map = maps_T_w_[i].inverse();
             min = min.cwiseMin(w_T_map * map->getMin());
             max = max.cwiseMax(w_T_map * map->getMax());
 
         } else {
             std::cerr << "[UniformAllMaps2D]: Could not lookup transform '"
                       << frame << " -> " << map->getFrame()
-                      << std::endl;
+                      << "'!" << std::endl;
+            return false;
         }
     }
 
@@ -50,6 +51,7 @@ void UniformAllMaps2D::update(const std::string &frame)
         rng_.reset(new RandomPoseGenerator({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}, 0));
     }
 
+    return true;
 }
 
 void UniformAllMaps2D::apply(ParticleSet &particle_set)
@@ -59,7 +61,8 @@ void UniformAllMaps2D::apply(ParticleSet &particle_set)
         throw std::runtime_error("Initialization sample size invalid!");
     }
 
-    update(particle_set.getFrame());
+    if(!update(particle_set.getFrame()))
+        return;
 
     Insertion insertion = particle_set.getInsertion();
     const ros::Time sampling_start = ros::Time::now();

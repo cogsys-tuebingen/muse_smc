@@ -8,28 +8,40 @@ CLASS_LOADER_REGISTER_CLASS(muse_amcl::UniformPrimaryMap2D, muse_amcl::UniformSa
 using namespace muse_amcl;
 
 
-void UniformPrimaryMap2D::update(const std::string &frame)
+bool UniformPrimaryMap2D::update(const std::string &frame)
 {
     const ros::Time   now = ros::Time::now();
 
-    primary_map = primary_map_provider_->getMap();
-    primary_T_o_ = primary_map->getOrigin().getPose();
-    if(!tf_provider_->lookupTransform(frame, primary_map->getFrame(), now, w_T_primary_, tf_timeout_)) {
-        throw std::runtime_error("[UniformPrimaryMap2D]: Could not get primary map transform!");
+    primary_map  = primary_map_provider_->getMap();
+    if(!primary_map) {
+        std::cerr << "[UniformPrimaryMap2D]: Could not retrieve primary map from '" << primary_map_provider_->getName() << "'!" << std::endl;
+        return false;
     }
 
-    for(auto &m : map_providers_) {
-        tf::StampedTransform map_T_w;
-        Map::ConstPtr map = m->getMap();
-        if(tf_provider_->lookupTransform(map->getFrame(), frame, now, map_T_w, tf_timeout_)) {
-            secondary_maps_.emplace_back(map);
-            secondary_maps_T_w_.emplace_back(map_T_w);
+    primary_T_o_ = primary_map->getOrigin().getPose();
+    if(!tf_provider_->lookupTransform(frame, primary_map->getFrame(), now, w_T_primary_, tf_timeout_)) {
+        std::cerr << "[UniformPrimaryMap2D]: Could not get primary map transform!" << std::endl;
+        return false;
+    }
+
+    const std::size_t map_provider_count = map_providers_.size();
+    for(std::size_t i = 0 ; i < map_provider_count ; ++i) {
+        Map::ConstPtr map = map_providers_[i]->getMap();
+        if(!map) {
+            std::cerr << "[UniformPrimaryMap2D]: " + map_providers_[i]->getName() + " returned nullptr!" << std::endl;
+            return false;
+        }
+
+        if(tf_provider_->lookupTransform(map->getFrame(), frame, now, secondary_maps_T_w_[i], tf_timeout_)) {
+            secondary_maps_[i] = map;
         } else {
             std::cerr << "[UniformPrimaryMap2D]: Could not lookup transform '"
                       << frame << " -> " << map->getFrame()
                       << std::endl;
+            return false;
         }
     }
+
     /// particles are generated in the primary map frame, since formulation has
     /// to be axis-aligned, relative to the map origin
     /// but internal frames are already within calculation
@@ -45,6 +57,8 @@ void UniformPrimaryMap2D::update(const std::string &frame)
     if(random_seed_ >= 0) {
         rng_.reset(new RandomPoseGenerator({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}, random_seed_));
     }
+
+    return true;
 }
 
 void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
@@ -53,6 +67,10 @@ void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
             sample_size_ > particle_set.getSampleSizeMaximum()) {
         throw std::runtime_error("Initialization sample size invalid!");
     }
+
+    if(!update(particle_set.getFrame()))
+        return;
+
 
     Insertion insertion = particle_set.getInsertion();
     const std::size_t          secondary_maps_count = secondary_maps_.size();

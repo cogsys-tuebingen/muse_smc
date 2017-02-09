@@ -128,7 +128,7 @@ public:
             touch_();
         }
 
-        return iterator(&data_.front(), update_);
+        return iterator(&(*data_.begin()), update_);
     }
 
     /**
@@ -138,7 +138,7 @@ public:
      * @return iterato at position n+1
      */
     inline iterator end() {
-        return iterator(&data_.back() + 1, update_);
+        return iterator(&(*data_.end()), update_);
     }
 
     /**
