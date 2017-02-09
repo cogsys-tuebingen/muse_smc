@@ -16,8 +16,8 @@ public:
 protected:
 
     int random_seed_;
-    std::vector<Map::ConstPtr>        maps_;
-    std::vector<tf::StampedTransform> maps_T_w_;
+    std::vector<Map::ConstPtr>  maps_;
+    std::vector<tf::Transform>  maps_T_w_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) override;
 

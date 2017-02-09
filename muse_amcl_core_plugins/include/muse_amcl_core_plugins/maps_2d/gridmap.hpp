@@ -41,9 +41,9 @@ public:
     {
         if(origin_phi_ != 0.0) {
             tx_ =  cos_phi_ * origin_x +
-                    sin_phi_ * origin_y;
+                   sin_phi_ * origin_y;
             ty_ = -sin_phi_ * origin_x +
-                    cos_phi_ * origin_y;
+                   cos_phi_ * origin_y;
         }
     }
 
@@ -77,9 +77,9 @@ public:
 
         if(origin_phi_ != 0.0) {
             x =  cos_phi_ * _x +
-                    sin_phi_ * _y;
+                 sin_phi_ * _y;
             y = -sin_phi_ * _x +
-                    cos_phi_ * _y;
+                 cos_phi_ * _y;
         }
 
         i[0] = (x - tx_) / resolution_;

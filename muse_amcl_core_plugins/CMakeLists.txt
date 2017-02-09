@@ -172,10 +172,10 @@ if(True)
             ${catkin_LIBRARIES}
         )
 
-        add_executable(muse_amcl_exam_distance_transoform
+        add_executable(muse_amcl_exam_distance_transform
             src/examples/exam_distance_transform.cpp
         )
-        target_link_libraries(muse_amcl_exam_distance_transoform
+        target_link_libraries(muse_amcl_exam_distance_transform
             ${OpenCV_LIBRARIES}
         )
     endif()

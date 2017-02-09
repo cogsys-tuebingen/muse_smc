@@ -39,7 +39,6 @@ double BinaryGridMap::getRange(const math::Point &from, const math::Point &to) c
 
 bool BinaryGridMap::validate(const math::Pose &p) const
 {
-    std::cerr << "was here" << std::endl;
     Index index;
     if(toIndex(p.getOrigin(), index))
         return at(index[0], index[1]) == 0;
