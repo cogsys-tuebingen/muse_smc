@@ -5,18 +5,18 @@
 
 namespace muse_amcl {
     struct TimeFrame {
-        const ros::Time start;
+        const ros::Time begin;
         const ros::Time end;
 
         TimeFrame() :
-            start(ros::Time::now()),
-            end(start)
+            begin(ros::Time::now()),
+            end(begin)
         {
         }
 
         TimeFrame(const ros::Time &start,
                   const ros::Time &end) :
-            start(start),
+            begin(start),
             end(end)
         {
         }

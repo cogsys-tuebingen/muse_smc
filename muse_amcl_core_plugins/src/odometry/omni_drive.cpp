@@ -20,7 +20,7 @@ PredictionModel::Result OmniDrive::predict(const Data::ConstPtr &data,
 {
     const Odometry &odometry = data->as<Odometry>();
     if(until > odometry.getTimeFrame().end) {
-        return PredictionModel::Result(0, 0, data);
+        return PredictionModel::Result(0, 0, ros::Duration(0.0), data);
     } else {
         auto sq = [](const double x) { return x * x; };
 
@@ -55,7 +55,7 @@ PredictionModel::Result OmniDrive::predict(const Data::ConstPtr &data,
             sample.setEigen3D(pose);
         }
 
-        return PredictionModel::Result(delta_trans, delta_rot);
+        return PredictionModel::Result(delta_trans, delta_rot, odometry.getTimeFrame().end - odometry.getTimeFrame().begin);
     }
 }
 

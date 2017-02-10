@@ -14,34 +14,40 @@ public:
 
     struct Movement {
         Movement(const double linear_distance,
-                 const double angular_distance) :
+                 const double angular_distance,
+                 const ros::Duration &duration) :
             linear_distance(linear_distance),
-            angular_distance(angular_distance)
+            angular_distance(angular_distance),
+            prediction_duration(duration)
         {
         }
 
         Movement() :
             linear_distance(0.0),
-            angular_distance(0.0)
+            angular_distance(0.0),
+            prediction_duration(0.0)
 
         {
         }
-        const double linear_distance;
-        const double angular_distance;
+        const double        linear_distance;
+        const double        angular_distance;
+        const ros::Duration prediction_duration;
     };
 
     struct Result {
         Result(const double linear_distance_moved,
                const double angular_distance_moved,
+               const ros::Duration &prediction_duration,
                const Data::ConstPtr &left_over) :
-            movement(linear_distance_moved, angular_distance_moved),
+            movement(linear_distance_moved, angular_distance_moved, prediction_duration),
             left_over(left_over)
         {
         }
 
         Result(const double linear_distance_moved,
-               const double angular_distance_moved) :
-            movement(linear_distance_moved, angular_distance_moved)
+               const double angular_distance_moved,
+               const ros::Duration &prediction_duration) :
+            movement(linear_distance_moved, angular_distance_moved, prediction_duration)
         {
         }
 

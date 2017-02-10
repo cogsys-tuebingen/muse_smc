@@ -82,5 +82,5 @@
     </group>
     <node pkg="tf" type="static_transform_publisher" name="sand_T_w" args="1 1 0 3.14159265359 0 0 map world 100"/>
     <node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(find muse_amcl_core_plugins)/res/gridmaps/sand_0.05.yaml" respawn="true" />
- <node type="muse_amcl_node" name="muse_amcl" pkg="muse_amcl" output="screen" /> 
+ <!-- <node type="muse_amcl_node" name="muse_amcl" pkg="muse_amcl" output="screen" /> -->
 </launch>

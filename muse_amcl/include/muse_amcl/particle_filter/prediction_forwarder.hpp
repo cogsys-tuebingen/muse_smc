@@ -24,7 +24,7 @@ public:
         const DataProvider::Ptr &provider = data_providers.at(provider_name);
 
         auto callback = [this] (const Data::ConstPtr &data) {
-            Prediction::Ptr p(new Prediction(data->getTimeFrame().end, data, model_));
+            Prediction::Ptr p(new Prediction(data, model_));
             filter_->addPrediction(p);
         };
         connection_ = provider->connect(callback);

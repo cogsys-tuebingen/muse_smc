@@ -37,10 +37,8 @@ public:
     };
 
 
-    Prediction(const ros::Time            &stamp,
-               const Data::ConstPtr       &data,
+    Prediction(const Data::ConstPtr       &data,
                const PredictionModel::Ptr &model) :
-        stamp_(stamp),
         data_(data),
         model_(model)
     {
@@ -69,11 +67,10 @@ public:
 
     inline const ros::Time & getStamp() const
     {
-        return stamp_;
+        return data_->getTimeFrame().begin;
     }
 
 private:
-    const ros::Time         stamp_;
     Data::ConstPtr          data_;
     PredictionModel::Ptr    model_;
 };

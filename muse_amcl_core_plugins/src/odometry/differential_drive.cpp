@@ -19,7 +19,7 @@ PredictionModel::Result DifferentialDrive::predict(const Data::ConstPtr &data,
 {
     const Odometry &odometry = data->as<Odometry>();
     if(until > odometry.getTimeFrame().end) {
-        return PredictionModel::Result(0, 0, data);
+        return PredictionModel::Result(0, 0, ros::Duration(0.0), data);
     } else {
         const double delta_trans     = odometry.getDelta().getOrigin().length();
         const double delta_rot1     = delta_trans >= 0.0 ? std::atan2(odometry.getDelta().getOrigin().y(),
@@ -55,7 +55,7 @@ PredictionModel::Result DifferentialDrive::predict(const Data::ConstPtr &data,
             sample.setEigen3D(pose);
         }
 
-        return PredictionModel::Result(delta_trans, delta_rot2);
+        return PredictionModel::Result(delta_trans, delta_rot2, odometry.getTimeFrame().end - odometry.getTimeFrame().begin);
     }
 }
 

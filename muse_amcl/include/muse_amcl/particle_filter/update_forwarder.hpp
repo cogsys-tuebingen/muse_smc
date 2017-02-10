@@ -36,7 +36,7 @@ public:
             auto callback = [this, model, map_provider] (const Data::ConstPtr &data) {
                 Map::ConstPtr map = map_provider->getMap();
                 if(map) {
-                    Update::Ptr u(new Update(data->getTimeFrame().end, data, map, model));
+                    Update::Ptr u(new Update(data, map, model));
                     filter_->addUpdate(u);
                  } else {
                     std::cerr << "[UpdateForwarder]: Could not get map from '" << map_provider->getName() << "'!" << std::endl;

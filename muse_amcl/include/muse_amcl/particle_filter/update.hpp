@@ -37,11 +37,9 @@ public:
         }
     };
 
-    Update(const ros::Time        &stamp,
-           const Data::ConstPtr   &data,
+    Update(const Data::ConstPtr   &data,
            const Map::ConstPtr    &map,
            const UpdateModel::Ptr &model) :
-        stamp_(stamp),
         data_(data),
         map_(map),
         model_(model)
@@ -64,12 +62,11 @@ public:
 
     inline ros::Time getStamp() const
     {
-        return stamp_;
+        return data_->getTimeFrame().end;
     }
 
 
 private:
-    const ros::Time      stamp_;
     const Data::ConstPtr data_;
     const Map::ConstPtr  map_;
     UpdateModel::Ptr     model_;
