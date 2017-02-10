@@ -72,12 +72,11 @@ void Multinomial::doApplyRecovery(ParticleSet &particle_set)
         auto u_it = u.rbegin();
         auto u_it_last = u_it;
         auto u_end = u.rend();
-        ++u_it;
         while(u_it != u_end) {
-            *u_it = *u_it_last * std::pow(rng.get(), 1.0 / k);
-            u_it_last = u_it;
             ++u_it;
-            --k;
+             *u_it = *u_it_last * std::pow(rng.get(), 1.0 / k);
+              u_it_last = u_it;
+             --k;
         }
     }
     /// draw samples

@@ -46,6 +46,7 @@ public:
         uniform_pose_sampler_ = uniform_pose_sampler;
         recovery_alpha_fast_ = nh_private.param(parameter("recovery_alpha_fast"), 0.0);
         recovery_alpha_slow_ = nh_private.param(parameter("recovery_alpha_slow"), 0.0);
+
     }
 
     inline void apply(ParticleSet &particle_set)

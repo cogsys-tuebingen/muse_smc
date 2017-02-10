@@ -104,6 +104,7 @@ void ParticleFilter::addPrediction(Prediction::Ptr &prediction)
 
 void ParticleFilter::addUpdate(Update::Ptr &update)
 {
+    std::cout << "[ParticleFilter]: Received update!" << std::endl;
     std::unique_lock<std::mutex> l(update_queue_mutex_);
     update_queue_.emplace(update);
     notify_event_.notify_one();
@@ -175,6 +176,7 @@ void ParticleFilter::processRequests()
 bool ParticleFilter::processPredictions(const ros::Time &until)
 {
     while(until > particle_set_stamp_) {
+        std::cout << "predictn" << std::endl;
         Prediction::Ptr prediction;
         {
             std::unique_lock<std::mutex> l(prediction_queue_mutex_);
@@ -196,6 +198,7 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
         prediction_angular_distance_      += movement.angular_distance;
         particle_set_stamp_               += movement.prediction_duration;
 
+        std::cout << "prediction applied" << std::endl;
         if(!prediction->isDone()) {
             /// if prediction is not fully finished, push it back onto the queue
             std::unique_lock<std::mutex> l(prediction_queue_mutex_);
@@ -203,6 +206,7 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
             break;
         }
     }
+
     return prediction_linear_distance_ > 0.0 || prediction_angular_distance_ > 0.0;
 }
 

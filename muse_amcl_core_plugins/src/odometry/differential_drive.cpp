@@ -18,7 +18,7 @@ PredictionModel::Result DifferentialDrive::predict(const Data::ConstPtr &data,
                                                    ParticleSet::Poses set)
 {
     const Odometry &odometry = data->as<Odometry>();
-    if(until > odometry.getTimeFrame().end) {
+    if(until < odometry.getTimeFrame().end) {
         return PredictionModel::Result(0, 0, ros::Duration(0.0), data);
     } else {
         const double delta_trans     = odometry.getDelta().getOrigin().length();
