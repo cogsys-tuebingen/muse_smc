@@ -22,9 +22,9 @@ class ParticleFilter {
 public:
     using Ptr = std::shared_ptr<ParticleFilter>;
     using UpdateQueue     =
-    std::priority_queue<Update::Ptr, std::vector<Update::Ptr>, Update::Less>;
+    std::priority_queue<Update::Ptr, std::vector<Update::Ptr>, Update::Greater>;
     using PredictionQueue =
-    std::priority_queue<Prediction::Ptr, std::vector<Prediction::Ptr>, Prediction::Less>;
+    std::priority_queue<Prediction::Ptr, std::vector<Prediction::Ptr>, Prediction::Greater>;
 
     ParticleFilter() :
         name_("particle_filter"),
@@ -109,7 +109,6 @@ public:
     /// insert new predictions
     void addPrediction(Prediction::Ptr &prediction)
     {
-        std::cout << "[ParticleFilter]: received prediction!" << std::endl;
         std::unique_lock<std::mutex> l(prediction_queue_mutex_);
         prediction_queue_.emplace(prediction);
         notify_event_.notify_one();
@@ -117,7 +116,6 @@ public:
 
     void addUpdate(Update::Ptr &update)
     {
-        std::cout << "[ParticleFilter]: received update!" << std::endl;
         std::unique_lock<std::mutex> l(update_queue_mutex_);
         update_queue_.emplace(update);
         notify_event_.notify_one();
@@ -131,6 +129,7 @@ public:
         initialization_pose_ = pose;
         initialization_covariance_ = covariance;
         request_pose_initilization_ = true;
+        particle_set_stamp_ = ros::Time::now();
         notify_event_.notify_one();
     }
 
@@ -138,12 +137,14 @@ public:
     {
         std::cout << "[ParticleFilter]: requested global localization" << std::endl;
         request_global_initialization_ = true;
+        particle_set_stamp_ = ros::Time::now();
         notify_event_.notify_one();
     }
 
     void start()
     {
         if(!working_) {
+            particle_set_stamp_ = ros::Time::now();
             stop_working_ = false;
             worker_thread_ = std::thread([this](){loop();});
             worker_thread_.detach();
@@ -221,7 +222,9 @@ protected:
     {
         /// as long we haven't predicted far enough in time, we need to do so
         /// if we get an left over or reached the time, we can drop out
+        std::cout << particle_set_stamp_ << " " << until << std::endl;
         while(until > particle_set_stamp_) {
+            std::cout << "went into while loop" << std::endl;
             Prediction::Ptr prediction;
             {
                 std::unique_lock<std::mutex> l(prediction_queue_mutex_);
@@ -286,12 +289,10 @@ protected:
 
         while(!stop_working_) {
             /// 0. wait for new tasks
-            std::cout << "waiting" << std::endl;
             notify_event_.wait(lock_updates);
             if(stop_working_) {
                 break;
             }
-            std::cout << "stopped waiting" << std::endl;
             /// 1. process requests which occured
             processRequests();
             /// 2. get a new sensor update from the queue
@@ -300,14 +301,15 @@ protected:
                 update_queue_.pop();
                 lock_updates.unlock();
                 /// 4. propagate until we reach the time stamp of update
+
                 if(predict(update->getStamp())) {
                     update->apply(particle_set_->getWeights());
                     update.reset();
                 }
                 /// 5. go on with the queue
-                lock_updates.lock();
-                if(update)
-                    update_queue_.emplace(update);
+//                lock_updates.lock();
+//                if(update)
+//                    update_queue_.emplace(update);
             }
 
             /// 6. check if its time for resampling

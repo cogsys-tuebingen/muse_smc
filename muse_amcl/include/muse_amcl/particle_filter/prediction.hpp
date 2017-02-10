@@ -14,6 +14,19 @@ public:
         bool operator()( const Prediction& lhs,
                          const Prediction& rhs ) const
         {
+            return lhs.getStamp() < rhs.getStamp();
+        }
+        bool operator()( const Prediction::Ptr& lhs,
+                         const Prediction::Ptr& rhs ) const
+        {
+            return lhs->getStamp() < rhs->getStamp();
+        }
+    };
+
+    struct Greater {
+        bool operator()( const Prediction& lhs,
+                         const Prediction& rhs ) const
+        {
             return lhs.getStamp() > rhs.getStamp();
         }
         bool operator()( const Prediction::Ptr& lhs,

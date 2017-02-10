@@ -15,6 +15,19 @@ public:
         bool operator()( const Update& lhs,
                          const Update& rhs ) const
         {
+            return lhs.getStamp() < rhs.getStamp();
+        }
+        bool operator()( const Update::Ptr &lhs,
+                         const Update::Ptr &rhs ) const
+        {
+            return lhs->getStamp() < rhs->getStamp();
+        }
+    };
+
+    struct Greater {
+        bool operator()( const Update& lhs,
+                         const Update& rhs ) const
+        {
             return lhs.getStamp() > rhs.getStamp();
         }
         bool operator()( const Update::Ptr &lhs,
