@@ -186,6 +186,10 @@ public:
      */
     inline void normalizeWeights()
     {
+        if(p_t_1->size() == 0)
+            return;
+
+
         for(auto &s : *p_t_1) {
             s.weight_ /= sample_weight_sum_;
         }

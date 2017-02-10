@@ -157,6 +157,13 @@ if(True)
         src/examples/exam_vector.cpp
     )
 
+    add_executable(${PROJECT_NAME}_test_node_odometry
+        test/test_node_odometry.cpp
+    )
+    target_link_libraries(${PROJECT_NAME}_test_node_odometry
+        ${catkin_LIBRARIES}
+    )
+
     find_package(OpenCV QUIET)
     include_directories(
         ${OpenCV_INCLUDE_DIRS}

@@ -23,14 +23,10 @@ void Multinomial::doApply(ParticleSet &particle_set)
     math::random::Uniform<1> rng(0.0, 1.0);
     std::vector<double> u(size, std::pow(rng.get(), 1.0 / k));
     {
-        auto u_it = u.rbegin();
-        auto u_it_last = u_it;
-        auto u_end = u.rend();
-        ++u_it;
-        while(u_it != u_end) {
+        auto u_it_last = u.rbegin();
+        for(auto u_it = u.rbegin()+1; u_it > u.rend() ; ++u_it) {
             *u_it = *u_it_last * std::pow(rng.get(), 1.0 / k);
-            u_it_last = u_it;
-            ++u_it;
+             u_it_last = u_it;
             --k;
         }
     }
@@ -69,14 +65,11 @@ void Multinomial::doApplyRecovery(ParticleSet &particle_set)
     math::random::Uniform<1> rng(0.0, 1.0);
     std::vector<double> u(size, std::pow(rng.get(), 1.0 / k));
     {
-        auto u_it = u.rbegin();
-        auto u_it_last = u_it;
-        auto u_end = u.rend();
-        while(u_it != u_end) {
-            ++u_it;
-             *u_it = *u_it_last * std::pow(rng.get(), 1.0 / k);
-              u_it_last = u_it;
-             --k;
+        auto u_it_last = u.rbegin();
+        for(auto u_it = u.rbegin()+1; u_it > u.rend() ; ++u_it) {
+            *u_it = *u_it_last * std::pow(rng.get(), 1.0 / k);
+             u_it_last = u_it;
+            --k;
         }
     }
     /// draw samples
@@ -102,10 +95,10 @@ void Multinomial::doApplyRecovery(ParticleSet &particle_set)
             if(recovery_probability < recovery_random_pose_probability_) {
                 uniform_pose_sampler_->apply(particle);
                 particle.weight_ = recovery_probability;
-                i_p_t.insert(particle);
             } else {
                 particle.pose_ = p_t_1_it->pose_;
             }
+            i_p_t.insert(particle);
         }
     }
 }

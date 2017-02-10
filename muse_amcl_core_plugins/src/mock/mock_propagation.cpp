@@ -11,7 +11,7 @@ MockPropagation::MockPropagation()
 {
 }
 
-PredictionModel::Result MockPropagation::predict(const Data::ConstPtr &data,
+PredictionModel::Result MockPropagation::doPredict(const Data::ConstPtr &data,
                                                  const ros::Time &until,
                                                  ParticleSet::Poses set)
 {

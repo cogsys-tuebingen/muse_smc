@@ -30,6 +30,15 @@ TEST(TestMuseAMCL, testAngleNormalization)
     EXPECT_NEAR(0.0, mm::angle::normalize( 2 * M_PI), 1e-6);
 }
 
+TEST(TestMuseAMCL, testAngleDiff)
+{
+    EXPECT_NEAR(-M_PI / 2, mm::angle::difference(0, M_PI / 2), 1e-6);
+    EXPECT_NEAR(M_PI / 2, mm::angle::difference(-M_PI / 2, M_PI), 1e-6);
+    EXPECT_NEAR(-M_PI / 2, mm::angle::difference(-M_PI / 2, 2 * M_PI), 1e-6);
+    EXPECT_NEAR(-M_PI / 2, mm::angle::difference(-M_PI / 2, 0), 1e-6);
+    EXPECT_NEAR(0.0, mm::angle::difference(2 * M_PI, 0), 1e-6);
+}
+
 TEST(TestMuseAMCL, testToRadianConversion)
 {
     // expclicit

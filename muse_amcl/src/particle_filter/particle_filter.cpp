@@ -9,7 +9,9 @@ ParticleFilter::ParticleFilter()  :
     working_(false),
     stop_working_(true),
     request_global_initialization_(false),
-    request_pose_initilization_(false)
+    request_pose_initilization_(false),
+    prediction_linear_distance_(0.0),
+    prediction_angular_distance_(0.0)
 {
 }
 
@@ -190,7 +192,6 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
         if(prediction->getStamp() < particle_set_stamp_)
             continue;
 
-
         /// mutate time stamp
 
         PredictionModel::Movement movement = prediction->apply(until, particle_set_->getPoses());
@@ -252,9 +253,11 @@ void ParticleFilter::loop()
         if(stop_working_) {
             break;
         }
-
         /// 1. process requests if possible
         processRequests();
+        if(particle_set_->getSampleSize() == 0) {
+            sampling_uniform_->apply(*particle_set_);
+        }
         /// 2. check for new update in the queue
         if(!update_queue_.empty()) {
             Update::Ptr update = update_queue_.top();
@@ -264,6 +267,7 @@ void ParticleFilter::loop()
                 /// 5. drop it if there was no movement at all
                 if(processPredictions(update->getStamp())) {
                     update->apply(particle_set_->getWeights());
+                    particle_set_->normalizeWeights();
                 }
             }
         }
@@ -271,14 +275,15 @@ void ParticleFilter::loop()
         /// 6. check if its time for resampling
         if(prediction_linear_distance_ > resampling_offset_linear_ ||
                 prediction_angular_distance_ > resampling_offset_angular_){
-            prediction_linear_distance_  = 0.0;
-            prediction_angular_distance_ = 0.0;
-
+            particle_set_->normalizeWeights();
             resampling_->apply(*particle_set_);
 
             for(auto &weight : particle_set_->getWeights()) {
                 weight = 1.0;
             }
+
+            prediction_linear_distance_  = 0.0;
+            prediction_angular_distance_ = 0.0;
 
             /// 7. cluster the particle set an update the transformation
             particle_set_->cluster();

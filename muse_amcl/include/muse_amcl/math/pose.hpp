@@ -208,7 +208,7 @@ public:
     inline double roll() const
     {
         double roll,pitch,yaw;
-        pose_.getBasis().getRPY(roll,pitch,yaw);
+        rpy(roll, pitch, yaw);
         return roll;
     }
 
@@ -219,7 +219,7 @@ public:
     inline double pitch() const
     {
         double roll,pitch,yaw;
-        pose_.getBasis().getRPY(roll,pitch,yaw);
+        rpy(roll, pitch, yaw);
         return pitch;
     }
 
@@ -229,9 +229,7 @@ public:
      */
     inline double yaw() const
     {
-        double roll,pitch,yaw;
-        pose_.getBasis().getRPY(roll,pitch,yaw);
-        return yaw;
+        return tf::getYaw(pose_.getRotation());
     }
 
     /**
@@ -242,9 +240,9 @@ public:
      */
     inline void rpy(double &roll,
                     double &pitch,
-                    double &yaw)
+                    double &yaw) const
     {
-        pose_.getBasis().getRPY(roll,pitch,yaw);
+        tf::Matrix3x3 (pose_.getRotation()).getEulerYPR(yaw, pitch, roll);
     }
 
     /**

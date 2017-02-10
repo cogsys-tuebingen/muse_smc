@@ -29,6 +29,11 @@
             <param name="class" value="muse_amcl::DifferentialDrive" />
             <param name="base_class" value="muse_amcl::PredictionModel"/>
             <param name="data_provider" value="odometry" />
+            <param name="alpha1" value="0.00" />
+            <param name="alpha2" value="0.00" />
+            <param name="alpha3" value="0.00" />
+            <param name="alpha4" value="0.00" />
+            <param name="alpha4" value="0.00" />
          </group>
         <group ns="sand">
             <param name="class" value="muse_amcl::MapProviderBinaryGridMap" />

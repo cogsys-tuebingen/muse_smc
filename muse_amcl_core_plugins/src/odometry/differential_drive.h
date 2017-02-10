@@ -9,7 +9,7 @@ class DifferentialDrive : public PredictionModel
 public:
     DifferentialDrive();
 
-    virtual Result predict(const Data::ConstPtr &data,
+    virtual Result doPredict(const Data::ConstPtr &data,
                            const ros::Time &until,
                            ParticleSet::Poses set) override;
 

@@ -55,6 +55,14 @@ TEST(TestMuseAMCL, testEmplaceBack)
     }
 }
 
+TEST(TestMuseAMCL, testVectorIterator)
+{
+    std::vector<double> t;
+    EXPECT_EQ(t.end(), t.begin());
+    EXPECT_LT(t.end(),  t.begin() + 1);
+    EXPECT_GT(t.rend(), t.rbegin() + 1);
+}
+
 
 int main(int argc, char *argv[])
 {

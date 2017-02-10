@@ -96,7 +96,7 @@ protected:
             recovery_fast_ += recovery_alpha_fast_ * (weight_average - recovery_fast_);
         }
 
-        recovery_random_pose_probability_ = 1.0 - recovery_alpha_fast_ / recovery_alpha_slow_;
+        recovery_random_pose_probability_ = 1.0 - recovery_fast_ / recovery_slow_;
     }
 };
 }

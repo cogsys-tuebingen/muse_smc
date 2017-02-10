@@ -83,19 +83,33 @@ public:
     {
         name_        = name;
         tf_provider_ = tf_provider;
+        eps_zero_linear_  = nh_private.param(privateParameter("eps_zero_linear"), 1e-4);
+        eps_zero_angular_ = nh_private.param(privateParameter("eps_zero_angular"), 1e-4);
         doSetup(nh_private);
     }
 
 
-    virtual Result predict(const Data::ConstPtr &data,
-                           const ros::Time      &until,
-                           ParticleSet::Poses    poses) = 0;
+    Result predict(const Data::ConstPtr &data,
+                   const ros::Time      &until,
+                   ParticleSet::Poses    poses)
+    {
+        if(until < data->getTimeFrame().end) {
+            return Result(0, 0, ros::Duration(0.0), data);
+        } else {
+            return doPredict(data, until, poses);
+        }
+    }
 
 protected:
     std::string         name_;
     TFProvider::Ptr     tf_provider_;
+    double              eps_zero_linear_;
+    double              eps_zero_angular_;
 
     virtual void doSetup(ros::NodeHandle &nh) = 0;
+    virtual Result doPredict(const Data::ConstPtr &data,
+                             const ros::Time      &until,
+                             ParticleSet::Poses    poses) = 0;
 
     inline std::string privateParameter(const std::string &name)
     {
