@@ -14,10 +14,11 @@ namespace clustering {
  */
 struct Data {
     using ParticlePtrs = std::vector<const Particle*>;
+    using Distribution = math::statistic::WeightedDistribution<3>;
 
-    int                                      cluster_ = -1;    /// the cluster id
-    ParticlePtrs                             samples_;         /// samples which belong to the cluster
-    math::statistic::WeightedDistribution<3> distribution_;    /// @TODO remove fixed dimension
+    int              cluster_ = -1;    /// the cluster id
+    ParticlePtrs     samples_;         /// samples which belong to the cluster
+    Distribution     distribution_;    /// @TODO remove fixed dimension
                                                                /// @TODO check what kind of sum
 
     /**

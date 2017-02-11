@@ -9,9 +9,14 @@ using namespace muse_amcl;
 void KLD2D::doApply(ParticleSet &particle_set)
 {
     const ParticleSet::Particles &p_t_1 = particle_set.getSamples();
+    const std::size_t size = p_t_1.size();
+    if(size == 0) {
+        std::cerr << "[KLD2D]: Cannot resample empty set!" << std::endl;
+        return;
+    }
+
     const double w_max = particle_set.getSampleWeightMaximum();
     Insertion  i_p_t = particle_set.getInsertion();
-    const std::size_t size = p_t_1.size();
 
     math::random::Uniform<1> rng(0.0, 1.0);
     double beta = 0.0;

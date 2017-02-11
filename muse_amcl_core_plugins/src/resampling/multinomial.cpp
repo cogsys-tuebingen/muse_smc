@@ -15,19 +15,22 @@ void Multinomial::doSetup(ros::NodeHandle &nh_private)
 void Multinomial::doApply(ParticleSet &particle_set)
 {
     const ParticleSet::Particles &p_t_1 = particle_set.getSamples();
+    const std::size_t size = p_t_1.size();
+    if(size == 0) {
+        std::cerr << "[Multinomial]: Cannot resample empty set!" << std::endl;
+        return;
+    }
+
     Insertion i_p_t = particle_set.getInsertion();
 
     /// prepare ordered sequence of random numbers
-    const std::size_t size = p_t_1.size();
     std::size_t k = size;
     math::random::Uniform<1> rng(0.0, 1.0);
     std::vector<double> u(size, std::pow(rng.get(), 1.0 / k));
     {
-        auto u_it_last = u.rbegin();
-        for(auto u_it = u.rbegin()+1; u_it > u.rend() ; ++u_it) {
-            *u_it = *u_it_last * std::pow(rng.get(), 1.0 / k);
-             u_it_last = u_it;
-            --k;
+        for(int k = u.size() - 2; k >= 0 ; --k) {
+            double u_ = std::pow(rng.get(), 1.0 / k);
+            u[k] = u[k+1] * u_;
         }
     }
     /// draw samples

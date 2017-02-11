@@ -16,9 +16,13 @@ void Stratified::doApply(ParticleSet &particle_set)
 {
     /// initalize particle new particle set
     const ParticleSet::Particles &p_t_1 = particle_set.getSamples();
-    Insertion  i_p_t = particle_set.getInsertion();
     const std::size_t size = p_t_1.size();
+    if(size == 0) {
+        std::cerr << "[Stratified]: Cannot resample empty set!" << std::endl;
+        return;
+    }
 
+    Insertion  i_p_t = particle_set.getInsertion();
     /// prepare ordered sequence of random numbers
     math::random::Uniform<1> rng(0.0, 1.0);
     std::vector<double> u(size);

@@ -36,6 +36,7 @@ struct ClusteringImpl {
         ++current_cluster_;
 
         clusters_.emplace(current_cluster_, data.samples_);
+        distributions_.emplace(current_cluster_, data.distribution_);
         data.cluster_ = current_cluster_;
 
         return true;
@@ -51,8 +52,10 @@ struct ClusteringImpl {
         if (data.cluster_ != -1)
             return false;
 
-        auto& cluster = clusters_[current_cluster_];
+        auto& cluster       = clusters_[current_cluster_];
+        auto& distribution = distributions_[current_cluster_];
         cluster.insert(cluster.end(), data.samples_.begin(), data.samples_.end());
+        distribution += data.distribution_;
 
         data.cluster_ = current_cluster_;
         return true;
@@ -70,6 +73,7 @@ struct ClusteringImpl {
 
     int current_cluster_ = -1;
     std::unordered_map<int, Data::ParticlePtrs> clusters_;
+    std::unordered_map<int, Data::Distribution> distributions_;
 
 };
 }

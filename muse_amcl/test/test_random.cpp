@@ -204,9 +204,9 @@ TEST(TestMuseAMCL, testRandomNormal2d)
         EXPECT_NEAR(sigma(1,0), sigma_est(1,0), 1e-2);
         EXPECT_NEAR(sigma(1,1), sigma_est(1,1), 1e-2);
     }
-
-
 }
+
+
 
 int main(int argc, char *argv[])
 {

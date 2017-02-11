@@ -59,7 +59,7 @@ public:
         range_max_ = range_max;
     }
 
-    inline void setAngleInteraval(const double angle_min,
+    inline void setAngleInterval(const double angle_min,
                                   const double angle_max)
     {
         angle_min_ = angle_min;

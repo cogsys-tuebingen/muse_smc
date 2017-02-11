@@ -2,6 +2,7 @@
 #define DIFFERENTIAL_DRIVE_H
 
 #include <muse_amcl/particle_filter/prediction_model.hpp>
+#include <muse_amcl/math/random.hpp>
 
 namespace muse_amcl {
 class DifferentialDrive : public PredictionModel
@@ -20,6 +21,10 @@ protected:
     double       alpha_3_;
     double       alpha_4_;
     double       alpha_5_;
+
+    math::random::Normal<1>::Ptr rng_delta_rot_hat1_;
+    math::random::Normal<1>::Ptr rng_delta_trans_hat_;
+    math::random::Normal<1>::Ptr rng_delta_rot_hat2_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) override;
 };

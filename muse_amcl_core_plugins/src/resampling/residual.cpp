@@ -14,9 +14,14 @@ void Residual::doSetup(ros::NodeHandle &nh_private)
 void Residual::doApply(ParticleSet &particle_set)
 {
     const ParticleSet::Particles &p_t_1 = particle_set.getSamples();
+    const std::size_t size = p_t_1.size();
+    if(size == 0) {
+        std::cerr << "[Residual]: Cannot resample empty set!" << std::endl;
+        return;
+    }
+
     Insertion i_p_t = particle_set.getInsertion();
 
-    const std::size_t size = p_t_1.size();
     std::vector<double> u(size);
     std::vector<double> w_residual(size);
     double              n_w_residual = 0.0;

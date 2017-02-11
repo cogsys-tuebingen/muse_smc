@@ -137,8 +137,11 @@ int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "muse_amcl");
     MuseAMCLNode node;
-    if(node.setup())
+    if(node.setup()) {
         node.start();
-    return 0;
+    } else {
+        std::cerr << "[MuseAMCLNode]: Could not setup!" << std::endl;
     }
+    return 0;
+}
 

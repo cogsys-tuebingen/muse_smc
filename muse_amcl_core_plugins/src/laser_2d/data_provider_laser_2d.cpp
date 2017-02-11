@@ -32,10 +32,14 @@ void DataProviderLaser2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
         const auto &ranges         = msg->ranges;
         const auto angle_increment = msg->angle_increment;
         auto angle                 = msg->angle_min;
-        auto rays                  = laserscan->getRays();
+        auto &rays                  = laserscan->getRays();
+        laserscan->setAngleInterval(std::max(angle_min_, (double) msg->angle_min),
+                                    std::min(angle_max_, (double) msg->angle_max));
+        laserscan->setRangeInterval(std::max(range_min_, (double) range_min),
+                                    std::min(range_max_, (double) range_max));
         for(const auto range : ranges) {
             if(range >= range_min && range <= range_max &&
-                    range >= range_min_ && range <= range_max_) {
+                    angle >= angle_min_ && angle <= angle_max_) {
                 rays.emplace_back(LaserScan2D::Ray(angle, range));
             }
             angle += angle_increment;
@@ -49,7 +53,7 @@ void DataProviderLaser2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
         const auto angle_increment = msg->angle_increment;
         const auto sensor_frame    = msg->header.frame_id;
         auto angle                 = msg->angle_min;
-        auto rays                  = laserscan->getRays();
+        auto &rays                  = laserscan->getRays();
 
         const ros::Time end_time = msg->header.stamp;
         const ros::Time start_time = end_time - ros::Duration(msg->scan_time);
@@ -78,9 +82,14 @@ void DataProviderLaser2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
         ros::Duration stamp_delta = (end_time - start_time) * (1.0 / ranges.size());
         const tf::Transform end_T_fixed = fixed_T_end.inverse();
 
+        laserscan->setAngleInterval(std::max(angle_min_, (double) msg->angle_min),
+                                    std::min(angle_max_,(double) msg->angle_max));
+        laserscan->setRangeInterval(std::max(range_min_,(double) range_min),
+                                    std::min(range_max_,(double) range_max));
+
         for(const auto range : ranges) {
             if(range >= range_min && range <= range_max &&
-                    range >= range_min_ && range <= range_max_) {
+                    angle >= angle_min_ && angle <= angle_max_) {
                 tf::StampedTransform fixed_T_current;
                 tf_provider.lookupTransform(undistortion_fixed_frame_,sensor_frame, stamp, fixed_T_current);
 

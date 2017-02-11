@@ -27,7 +27,6 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
                            const TFProvider::Ptr &tf_provider)
 {
     const std::string topic_poses   = nh_private.param<std::string>(privateParameter("topic_poses"), "/muse_amcl/poses");
-    const std::string world_frame   = nh_private.param<std::string>("world_frame", "/world");
     const double pose_rate          = nh_private.param<double>("pose_rate", 30.0);
     const double pub_tf_rate        = nh_private.param<double>("tf_rate", 30.0);
     const double resolution_linear  = nh_private.param<double>(privateParameter("resolution_linear"), 0.1);
@@ -62,8 +61,12 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     pub_poses_delay_           = ros::Rate(pose_rate).cycleTime();
     pub_tf_delay_              = ros::Rate(pub_tf_rate).cycleTime();
 
+    world_frame_   = nh_private.param<std::string>("world_frame", "/world");
+    odom_frame_    = nh_private.param<std::string>("odom_frame", "/odom");
+    base_frame_    = nh_private.param<std::string>("base_frame", "/base_link");
+
     muse_amcl::Indexation indexation ({resolution_linear, resolution_linear, resolution_angular});
-    particle_set_.reset(new ParticleSet(world_frame, sample_size_minimum, sample_size_maximum, indexation, array_extent));
+    particle_set_.reset(new ParticleSet(world_frame_, sample_size_minimum, sample_size_maximum, indexation, array_extent));
     particle_set_stamp_ = ros::Time::now(); /// the first time the particle set is touched is the first time it is valid
 }
 
@@ -106,7 +109,6 @@ void ParticleFilter::addPrediction(Prediction::Ptr &prediction)
 
 void ParticleFilter::addUpdate(Update::Ptr &update)
 {
-    std::cout << "[ParticleFilter]: Received update!" << std::endl;
     std::unique_lock<std::mutex> l(update_queue_mutex_);
     update_queue_.emplace(update);
     notify_event_.notify_one();
@@ -178,7 +180,6 @@ void ParticleFilter::processRequests()
 bool ParticleFilter::processPredictions(const ros::Time &until)
 {
     while(until > particle_set_stamp_) {
-        std::cout << "predictn" << std::endl;
         Prediction::Ptr prediction;
         {
             std::unique_lock<std::mutex> l(prediction_queue_mutex_);
@@ -199,7 +200,6 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
         prediction_angular_distance_      += movement.angular_distance;
         particle_set_stamp_               += movement.prediction_duration;
 
-        std::cout << "prediction applied" << std::endl;
         if(!prediction->isDone()) {
             /// if prediction is not fully finished, push it back onto the queue
             std::unique_lock<std::mutex> l(prediction_queue_mutex_);
@@ -237,10 +237,11 @@ void ParticleFilter::publishPoses(const bool force)
 void ParticleFilter::publishTF()
 {
     const ros::Time now = ros::Time::now();
-    if(pub_tf_last_time_ + pub_tf_delay_ > now) {
-
-        pub_tf_last_time_ = now;
-    };
+    tf::Transform o_T_b;
+    if(tf_provider_->lookupTransform(odom_frame_, base_frame_, now, o_T_b, ros::Duration(0.1))) {
+        tf::StampedTransform o_T_w(o_T_b * tf_last_b_T_w_, now, world_frame_, odom_frame_);
+        tf_broadcaster_.sendTransform(o_T_w);
+    }
 }
 
 void ParticleFilter::loop()
@@ -286,11 +287,31 @@ void ParticleFilter::loop()
             prediction_angular_distance_ = 0.0;
 
             /// 7. cluster the particle set an update the transformation
+            /// @todo allow mean method
             particle_set_->cluster();
-            ParticleSet::Clusters clusters = particle_set_->getClusters();
+            const ParticleSet::Clusters &clusters = particle_set_->getClusters();
+            const ParticleSet::Distributions &distributions = particle_set_->getClusterDistributions();
             /// todo get the transformation odom -> world
+            double max_weight = std::numeric_limits<double>::lowest();
+            int    max_cluster_id = -1;
+            for(const auto &cluster : clusters) {
+                const int cluster_id = cluster.first;
+                const auto &distribution = distributions.at(cluster_id);
+                const double weight = distribution.getWeight() ;
+                if(weight > max_weight) {
+                    max_cluster_id = cluster_id;
+                    max_weight = weight;
+                }
+            }
 
-        }
+            if(max_cluster_id == -1) {
+                std::cerr << "[ParticleFilter]: Clustering the particles seems to has failed!" << std::endl;
+            } else {
+                Eigen::Vector3d mean = distributions.at(max_cluster_id).getMean();
+                math::Pose w_T_b(mean);
+                tf_last_b_T_w_ = w_T_b.inverse().getPose(), particle_set_stamp_;
+            }
+       }
         publishPoses(true);
         publishTF();
     }

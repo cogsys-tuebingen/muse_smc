@@ -1,8 +1,9 @@
 <?xml version="1.0" ?>
 <launch>
     <group ns="muse_amcl">
-        <param name="world_frame" value="world" />
-        <param name="base_frame"  value="base_link" />
+        <param name="world_frame" value="/world" />
+        <param name="odom_frame" value="/odom" />
+        <param name="base_frame"  value="/base_link" />
         <param name="topic_poses" value="/muse_amcl/poses"/>
         <param name="rate_poses" value="30.0" />
         <param name="rate_tf" 	 value="30.0" />
@@ -24,16 +25,23 @@
             <param name="base_class" value="muse_amcl::UpdateModel" />
             <param name="data_provider" value="front_laser" />
             <param name="map_provider" value="sand" />
+            <param name="z_hit" value="0.7"/>
+            <param name="z_short" value="0.1"/>
+            <param name="z_max" value="0.05"/>
+            <param name="z_rand" value="0.15"/>
+            <param name="sigma_hit" value="0.05"/>
+            <param name="lambda_short" value="0.1"/>
         </group>
         <group ns="differential_drive_model">
             <param name="class" value="muse_amcl::DifferentialDrive" />
             <param name="base_class" value="muse_amcl::PredictionModel"/>
             <param name="data_provider" value="odometry" />
-            <param name="alpha1" value="0.00" />
-            <param name="alpha2" value="0.00" />
-            <param name="alpha3" value="0.00" />
-            <param name="alpha4" value="0.00" />
-            <param name="alpha4" value="0.00" />
+            <param name="alpha1" value="0.4"/>
+            <param name="alpha2" value="0.3"/>
+            <param name="alpha3" value="0.0"/>
+            <param name="alpha4" value="0.0"/>
+            <param name="alpha5" value="0.0"/>
+ 
          </group>
         <group ns="sand">
             <param name="class" value="muse_amcl::MapProviderBinaryGridMap" />
@@ -43,7 +51,7 @@
         <group ns="odometry">
             <param name="base_class" value="muse_amcl::DataProvider" />
             <param name="class"      value="muse_amcl::DataProviderOdometry" />
-            <param name="topic" 	 value="/odom" />
+            <param name="topic" 	   value="/odom" />
         </group>
         <group ns="resampling">
             <param name="base_class" value="muse_amcl::Resampling" />
@@ -58,7 +66,7 @@
           <param name="seed"    value="2" />
           <param name="timeout"   value="10.0" />
           <param name="tf_timeout"  value="0.1" />
-          <param name="sample_size" value="10000" />
+          <param name="sample_size" value="1000" />
           <param name="primary_map" value="map0" />
         </group>
         <group ns="normal_pose_generation">
@@ -67,7 +75,7 @@
           </rosparam>
           <param name="timeout"   value="10.0" />
           <param name="tf_timeout"  value="0.1" />
-          <param name="sample_size" value="10000" />
+          <param name="sample_size" value="1000" />
           <param name="class"     value="muse_amcl::Normal2D" />
           <param name="base_class"  value="muse_amcl::NormalPoseGeneration" />
           <param name="seed"    value="0" />
@@ -75,7 +83,7 @@
         <group ns="particle_filter">
          	<param name="resampling_offset_linear" value="0.2" />
         	<param name="resampling_offset_angular" value="0.314" />
-            <param name="sample_size"     value="10000" /> 		<!-- if set, maximum and minimum are this value -->
+            <param name="sample_size"     value="1000" /> 		<!-- if set, maximum and minimum are this value -->
             <param name="sample_size_min" value="" /> 			<!-- if not sample_size is already set -->
             <param name="sample_size_max" value="" /> 			<!-- if not sample_size is already set -->
             
@@ -85,7 +93,7 @@
             <param name="array_extent" value="10.0" /> 			<!-- use array if possible, higher speed -->
         </group>
     </group>
-    <node pkg="tf" type="static_transform_publisher" name="sand_T_w" args="1 1 0 3.14159265359 0 0 map world 100"/>
+    <node pkg="tf" type="static_transform_publisher" name="sand_T_w" args="0 0 0 0 0 0 map world 100"/>
     <node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(find muse_amcl_core_plugins)/res/gridmaps/sand_0.05.yaml" respawn="true" />
  <!-- <node type="muse_amcl_node" name="muse_amcl" pkg="muse_amcl" output="screen" /> -->
 </launch>

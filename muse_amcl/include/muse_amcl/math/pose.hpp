@@ -283,6 +283,11 @@ public:
         pose_ = transform * pose_;
     }
 
+    inline Pose inverse() const
+    {
+        return Pose(pose_.inverse());
+    }
+
     /**
      * @brief toString returns a formated string with the point contents.
      * @return  the formatted string with point data

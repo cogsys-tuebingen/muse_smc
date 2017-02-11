@@ -72,7 +72,7 @@ void BeamModel::update(const Data::ConstPtr  &data,
         return p_hit(z) + p_short(z, ray_range) + p_max(ray_range) + p_random(ray_range);
     };
 
-
+    std::vector<double> debug;
     for(auto it = set.begin() ; it != end ; ++it) {
         const math::Pose pose = map_T_world * it.getData().pose_ * base_T_laser; /// laser scanner pose in map coordinates
         double p = 1.0;
@@ -82,6 +82,7 @@ void BeamModel::update(const Data::ConstPtr  &data,
             const double        map_range = gridmap.getRange(pose.getOrigin(), ray_end_point);
             const double pz = probability(ray_range, map_range);
             p += pz * pz * pz;  /// @todo : fix the inprobable thing ;)
+            debug.push_back(p);
         }
         *it *= p;
     }
