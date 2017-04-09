@@ -32,12 +32,12 @@ int main(int argc, char *argv[])
 
                 muse_amcl::maps::Bresenham<uchar> it({s.x, s.y},
                                                      {e.x,e.y},
-                                                     mask.cols,
+                                                     {mask.cols, mask.rows},
                                                      mask.ptr<uchar>() );
 
                 muse_amcl::maps::Bresenham<uchar> const_it({s.x, s.y},
                                                            {e.x,e.y},
-                                                           mask.cols,
+                                                           {mask.cols, mask.rows},
                                                            mask.ptr<uchar>() );
 
                 while(!it.done()) {

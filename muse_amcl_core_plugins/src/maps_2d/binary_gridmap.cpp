@@ -34,10 +34,8 @@ double BinaryGridMap::getRange(const math::Point &from, const math::Point &to) c
     }
     if(!*it)
         return -1;
-
-
     math::Point end;
-    fromIndex({static_cast<int>(it.x()), static_cast<int>(it.y())}, end);
+    fromIndex({it.x(), it.y()}, end);
     return end.distance(from);
 }
 

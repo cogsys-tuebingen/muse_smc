@@ -13,13 +13,15 @@ class Bresenham
 {
 public:
     typedef std::array<int, 2> Index;
+    typedef std::array<int, 2> Size;
 
     inline explicit Bresenham(const Index      &_start,
                               const Index      &_end,
-                              const std::size_t _step,
+                              const Size        _size,
                               T *               _data) :
         data(_data),
-        step(_step),
+        size(_size),
+        step(_size[0]),
         start(_start),
         end(_end),
         steep(std::abs(_end[1] - _start[1]) > std::abs(_end[0] - _start[0])),
@@ -28,6 +30,7 @@ public:
         if(steep) {
             std::swap(start[0], start[1]);
             std::swap(end[0], end[1]);
+            std::swap(size[0], size[1]);
         }
 
         delta_x = std::abs(end[0] - start[0]);
@@ -42,12 +45,12 @@ public:
 
     }
 
-    inline std::size_t x() const
+    inline int x() const
     {
         return steep ? index[1] : index[0];
     }
 
-    inline std::size_t y() const
+    inline int y() const
     {
         return steep ? index[0] : index[1];
     }
@@ -71,7 +74,13 @@ public:
 
     inline bool done()
     {
-        return index[0] == end[0] && index[1] == end[1];
+        const bool reached_end = index[0] == end[0] && index[1] == end[1];
+        const bool outer_limits = index[0] < 0 ||
+                                  index[1] < 0 ||
+                                  index[0] >= size[0] ||
+                                  index[1] >= size[1];
+
+        return reached_end || outer_limits;
     }
 
     inline T& operator *() const
@@ -80,7 +89,7 @@ public:
     }
 
 private:
-    inline std::size_t pos() const
+    inline int pos() const
     {
         if(steep)
             return index[0] * step + index[1];
@@ -88,8 +97,9 @@ private:
     }
 
     T           *data;
-    std::size_t  data_pos;
-    std::size_t  step;
+    int          data_pos;
+    Size         size;
+    int          step;
 
     Index        start;
     Index        end;

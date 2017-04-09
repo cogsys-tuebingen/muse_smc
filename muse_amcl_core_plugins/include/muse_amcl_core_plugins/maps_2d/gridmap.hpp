@@ -104,8 +104,8 @@ public:
             _x = x;
             _y = y;
         }
-        _x += origin_x_;
-        _y += origin_y_;
+        _x += tx_;
+        _y += ty_;
     }
 
     inline T& at(const std::size_t idx,
@@ -143,7 +143,7 @@ public:
     inline LineIterator getLineIterator(const Index &start,
                                         const Index &_end) const
     {
-        return LineIterator(cap(start), cap(_end), width_, data_ptr_);
+        return LineIterator(start, _end, width_, data_ptr_);
     }
 
     inline LineIterator getLineIterator(const math::Point &start,
@@ -153,7 +153,9 @@ public:
         Index end_index;
         toIndex(start, start_index);
         toIndex(end, end_index);
-        return LineIterator(cap(start_index), cap(end_index), width_, data_ptr_);
+        return LineIterator(start_index, end_index,
+                            {static_cast<int>(width_),
+                             static_cast<int>(height_)}, data_ptr_);
     }
 
     inline double getResolution() const
@@ -195,11 +197,16 @@ protected:
     double      tx_;
     double      ty_;
 
-    inline Index cap(const Index &_i) const
-    {
-        return {(_i[0] < 0 ? 0 : (_i[0] > max_index_[0] ? max_index_[0] : _i[0])),
-                (_i[1] < 0 ? 0 : (_i[1] > max_index_[1] ? max_index_[1] : _i[1]))};
-    }
+    /**
+      * @todo: implement capping by inesection with bounding box implementation
+      *        maybe utilize boost geometry.
+      */
+
+    /**
+     * @brief invalid
+     * @param _i
+     * @return
+     */
 
     inline bool invalid(const Index &_i) const
     {

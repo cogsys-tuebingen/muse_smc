@@ -58,6 +58,7 @@ public:
             cv::line(rendered_map, pose_origin_, pose_direction_, cv::Scalar(0,255), 1, CV_AA);
         }
         cv::flip(rendered_map, rendered_map, 0);
+        cv::resize(rendered_map, rendered_map, cv::Size(), scale_, scale_);
         return true;
     }
 
@@ -91,7 +92,7 @@ private:
             math::Point position(msg->pose.pose.position.x, msg->pose.pose.position.y);
             if(gridmap_->toIndex(position, index)) {
 
-                pose_origin_ = cv::Point(index[0], index[1]) * scale_;
+                pose_origin_ = cv::Point(index[0], index[1]);
 
                 const double yaw = tf::getYaw(msg->pose.pose.orientation);
                 const int    len = 10; // px
@@ -113,14 +114,22 @@ private:
                     scan_point.y() += std::sin(angle) * maximum_range_;
 
                     gridmap_->toIndex(scan_point, scan_index);
-                    scan_ray_directions_.emplace_back(cv::Point(scan_index[0], scan_index[1]) * scale_);
+                    scan_ray_directions_.emplace_back(cv::Point(scan_index[0], scan_index[1]));
+
+                    auto it = gridmap_->getLineIterator(position, scan_point);
+                    while(!it.done()) {
+                        if(*it)
+                            break;
+                        rendered_map_.at<cv::Vec3b>(it.y(),it.x()) = cv::Vec3b(0,255,0);
+                        ++it;
+                    }
 
                     double range = gridmap_->getRange(position, scan_point);
                     if(range > 0.0) {
                         scan_point.x() = position.x() + std::cos(angle) * range;
                         scan_point.y() = position.y() + std::sin(angle) * range;
                         gridmap_->toIndex(scan_point, scan_index);
-                        scan_points_.emplace_back(cv::Point(scan_index[0], scan_index[1]) * scale_);
+                        scan_points_.emplace_back(cv::Point(scan_index[0], scan_index[1]));
                     }
                 }
                 has_pose_ = true;
@@ -143,12 +152,18 @@ private:
         cv::Vec3b *render_map_ptr = rendered_map_.ptr<cv::Vec3b>();
         for(std::size_t i = 0 ; i < rows ; ++i) {
             for(std::size_t j = 0 ; j < cols ; ++j) {
-                if(gridmap_->at(j,i) == 0) {
-                    render_map_ptr[i * cols + j] = cv::Vec3b(255,255,255);
+                math::Point p;
+                std::array<int, 2> index;
+                gridmap_->fromIndex({static_cast<int>(j),
+                                     static_cast<int>(i)},
+                                    p);
+                gridmap_->toIndex(p, index);
+
+                if(gridmap_->at(index[0],index[1]) == 0) {
+                    render_map_ptr[index[1] * cols + index[0]] = cv::Vec3b(255,255,255);
                 }
             }
         }
-        cv::resize(rendered_map_, rendered_map_, cv::Size(), scale_, scale_);
     }
 };
 }
