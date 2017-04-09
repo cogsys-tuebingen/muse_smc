@@ -31,14 +31,14 @@ int main(int argc, char *argv[])
                 mask.at<uchar>(e.y, e.x) = 255;
 
                 muse_amcl::maps::Bresenham<uchar> it({s.x, s.y},
-                                                {e.x,e.y},
-                                                mask.cols,
-                                                mask.ptr<uchar>() );
+                                                     {e.x,e.y},
+                                                     mask.cols,
+                                                     mask.ptr<uchar>() );
 
                 muse_amcl::maps::Bresenham<uchar> const_it({s.x, s.y},
-                {e.x,e.y},
-                                                      mask.cols,
-                                                      mask.ptr<uchar>() );
+                                                           {e.x,e.y},
+                                                           mask.cols,
+                                                           mask.ptr<uchar>() );
 
                 while(!it.done()) {
                     display.at<cv::Vec3b>(it.y(), it.x()) = cv::Vec3b(255,255,255);

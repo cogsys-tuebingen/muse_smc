@@ -22,7 +22,7 @@ public:
         step(_step),
         start(_start),
         end(_end),
-        steep(std::abs(_end[0] - _start[0]) <= std::abs(_end[1] - _start[1])),
+        steep(std::abs(_end[1] - _start[1]) > std::abs(_end[0] - _start[0])),
         error(0)
     {
         if(steep) {
@@ -34,7 +34,8 @@ public:
         delta_y = std::abs(end[1] - start[1]);
         delta_error = delta_y;
         index = start;
-        data += steep ? (index[0] * step + index[1]) : (index[1] * step + index[0]);
+
+        data_pos = pos();
 
         step_x = start[0] < end[0] ? 1 : -1;
         step_y = start[1] < end[1] ? 1 : -1;
@@ -57,14 +58,13 @@ public:
             return *this;
 
         index[0] += step_x;
-        data += steep ? step * step_y : step_x;
 
         error += delta_error;
         if(2 * error >= delta_x) {
             index[1] += step_y;
             error -= delta_x;
-            data += steep ? step_x : step * step_y;
         }
+        data_pos = pos();
 
         return *this;
     }
@@ -76,11 +76,19 @@ public:
 
     inline T& operator *() const
     {
-        return *data;
+        return data[data_pos];
     }
 
 private:
+    inline std::size_t pos() const
+    {
+        if(steep)
+            return index[0] * step + index[1];
+        return index[1] * step + index[0];
+    }
+
     T           *data;
+    std::size_t  data_pos;
     std::size_t  step;
 
     Index        start;

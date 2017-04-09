@@ -239,7 +239,7 @@ void ParticleFilter::publishTF()
     const ros::Time now = ros::Time::now();
     tf::Transform o_T_b;
     if(tf_provider_->lookupTransform(odom_frame_, base_frame_, now, o_T_b, ros::Duration(0.1))) {
-        tf::StampedTransform o_T_w(o_T_b * tf_last_b_T_w_, now, world_frame_, odom_frame_);
+        tf::StampedTransform o_T_w((o_T_b * tf_last_b_T_w_).inverse(), now, world_frame_, odom_frame_);
         tf_broadcaster_.sendTransform(o_T_w);
     }
 }
@@ -313,7 +313,7 @@ void ParticleFilter::loop()
             }
        }
         publishPoses(true);
-        publishTF();
+//        publishTF();
     }
     working_ = false;
 

@@ -170,6 +170,16 @@ if(True)
     )
     if(${OpenCV_FOUND})
 
+        add_executable(muse_amcl_test_node_gridmap
+            test/test_node_gridmap.cpp
+        )
+
+        target_link_libraries(muse_amcl_test_node_gridmap
+            ${catkin_LIBRARIES}
+            ${OpenCV_LIBRARIES}
+            ${PROJECT_NAME}
+        )
+
         add_executable(muse_amcl_exam_map_line_iterator
             src/examples/exam_map_line_iterator.cpp
         )

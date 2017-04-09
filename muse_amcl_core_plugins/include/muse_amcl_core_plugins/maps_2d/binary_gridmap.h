@@ -7,6 +7,8 @@ namespace maps {
 class BinaryGridMap : public GridMap<int8_t>
 {
 public:
+    using Ptr = std::shared_ptr<BinaryGridMap>;
+
     BinaryGridMap(const nav_msgs::OccupancyGrid &occupancy_grid,
                   const double threshold = 1.0);
     BinaryGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupancy_grid,
