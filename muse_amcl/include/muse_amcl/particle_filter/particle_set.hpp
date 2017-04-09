@@ -15,8 +15,8 @@
 #include <string>
 
 #include <cslibs_indexed_storage/storage.hpp>
-#include <cslibs_indexed_storage/backend/kdtree/kdtree_buffered.hpp>
 #include <cslibs_indexed_storage/backend/array/array.hpp>
+#include <cslibs_indexed_storage/backend/kdtree/kdtree_buffered.hpp>
 
 namespace muse_amcl {
 class ParticleSet {
@@ -161,8 +161,6 @@ public:
             /// maybe the radian part can be exchanged by static value
         }
 
-        sample_index_minimum_  = std::numeric_limits<int>::max();
-        sample_index_maximum_  = std::numeric_limits<int>::min();
         sample_weight_maximum_ = 0.0;
         sample_weight_sum_     = 0.0;
         p_t->clear();
