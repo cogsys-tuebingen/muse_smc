@@ -6,6 +6,8 @@
 #include <muse_amcl/utils/delegate.hpp>
 #include <mutex>
 
+#include <muse_amcl/utils/logger.hpp>
+
 namespace muse_amcl {
 class TFProvider {
 public:
@@ -177,7 +179,7 @@ protected:
         try  {
             tf_.lookupTransform(target_frame, source_frame, time, transform);
         } catch (const tf::TransformException &e) {
-            std::cerr << e.what() << std::endl;
+            Logger::getLogger().error(e.what(), "TFProvider");
             return false;
         }
         return true;
@@ -207,7 +209,7 @@ protected:
             tf_.lookupTransform(target_frame, source_frame, time, stamped);
             transform = stamped;
         } catch (const tf::TransformException &e) {
-            std::cerr << e.what() << std::endl;
+            Logger::getLogger().error(e.what(), "TFProvider");
             return false;
         }
         return true;
@@ -226,15 +228,10 @@ protected:
             transform = stamped;
             return true;
         } else {
-            std::cerr << error << std::endl;
+            Logger::getLogger().error(error, "TFProvider");
         }
         return false;
     }
-
-
-
-
-
 };
 }
 #endif // TF_PROVIDER_HPP

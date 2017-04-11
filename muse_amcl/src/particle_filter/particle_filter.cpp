@@ -305,7 +305,7 @@ void ParticleFilter::loop()
             }
 
             if(max_cluster_id == -1) {
-                std::cerr << "[ParticleFilter]: Clustering the particles seems to has failed!" << std::endl;
+                Logger::getLogger().error("Clustering has failed.", "ParticleFilter");
             } else {
                 Eigen::Vector3d mean = distributions.at(max_cluster_id).getMean();
                 math::Pose w_T_b(mean);

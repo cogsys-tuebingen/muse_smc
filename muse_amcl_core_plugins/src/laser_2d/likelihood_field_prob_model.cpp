@@ -117,6 +117,13 @@ void LikelihoodFieldProbModel::doSetup(ros::NodeHandle &nh_private)
     observation_histogram_.resize(max_beams_, 0);
     observation_mask_.resize(max_beams_, 0);
 
-
-    /// @todo - fix the default parameters
+    Logger &l = Logger::getLogger();
+    l.info("max_beams_=" + std::to_string(max_beams_), "UpdateModel:" + name_);
+    l.info("z_hit_=" + std::to_string(z_hit_), "UpdateModel:" + name_);
+    l.info("z_rand_=" + std::to_string(z_rand_), "UpdateModel:" + name_);
+    l.info("sigma_hit_=" + std::to_string(sigma_hit_), "UpdateModel:" + name_);
+    l.info("beam_skip_=" + std::to_string(beam_skip_), "UpdateModel:" + name_);
+    l.info("beam_skip_distance_=" + std::to_string(beam_skip_distance_), "UpdateModel:" + name_);
+    l.info("beam_skip_threshold_=" + std::to_string(beam_skip_threshold_), "UpdateModel:" + name_);
+    l.info("beam_skip_error_threshold_=" + std::to_string(beam_skip_error_threshold_), "UpdateModel:" + name_);
 }

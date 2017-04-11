@@ -67,4 +67,11 @@ void LikelihoodFieldModel::doSetup(ros::NodeHandle &nh_private)
     z_rand_ = nh_private.param(privateParameter("z_rand"), 0.05);
     sigma_hit_ = nh_private.param(privateParameter("sigma_hit"), 0.15);
     denominator_hit_ = 0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
+
+    Logger &l = Logger::getLogger();
+    l.info("max_beams_=" + std::to_string(max_beams_), "UpdateModel:" + name_);
+    l.info("z_hit_=" + std::to_string(z_hit_), "UpdateModel:" + name_);
+    l.info("z_rand_=" + std::to_string(z_rand_), "UpdateModel:" + name_);
+    l.info("sigma_hit_=" + std::to_string(sigma_hit_), "UpdateModel:" + name_);
+
 }

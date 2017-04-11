@@ -90,4 +90,7 @@ void Normal2D::apply(const math::Pose       &pose,
 void Normal2D::doSetup(ros::NodeHandle &nh_private)
 {
     random_seed_ = nh_private.param(parameter("seed"), -1);
+
+    Logger &l = Logger::getLogger();
+    l.info("random_seed_='" + std::to_string(random_seed_) + "'", "NormalSampling:" + name_);
 }

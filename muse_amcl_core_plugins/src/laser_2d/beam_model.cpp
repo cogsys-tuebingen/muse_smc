@@ -103,7 +103,7 @@ void BeamModel::doSetup(ros::NodeHandle &nh_private)
     Logger &l = Logger::getLogger();
     l.info("max_beams_=" + std::to_string(max_beams_), "UpdateModel:" + name_);
     l.info("z_hit_=" + std::to_string(z_hit_), "UpdateModel:" + name_);
-    l.info("z_hit_=" + std::to_string(z_short_), "UpdateModel:" + name_);
+    l.info("z_short_=" + std::to_string(z_short_), "UpdateModel:" + name_);
     l.info("z_max_=" + std::to_string(z_max_), "UpdateModel:" + name_);
     l.info("z_rand_=" + std::to_string(z_rand_), "UpdateModel:" + name_);
     l.info("sigma_hit_=" + std::to_string(sigma_hit_), "UpdateModel:" + name_);

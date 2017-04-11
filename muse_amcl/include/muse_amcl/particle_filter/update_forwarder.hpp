@@ -3,7 +3,9 @@
 
 #include "update.hpp"
 #include "particle_filter.hpp"
-#include "../data_sources/map_provider.hpp"
+
+#include <muse_amcl/data_sources/map_provider.hpp>
+#include <muse_amcl/utils/logger.hpp>
 
 namespace muse_amcl {
 class UpdateForwarder {
@@ -39,8 +41,8 @@ public:
                     Update::Ptr u(new Update(data, map, model));
                     filter_->addUpdate(u);
                  } else {
-                    std::cerr << "[UpdateForwarder]: Could not get map from '" << map_provider->getName() << "'!" << std::endl;
-                }
+                    Logger::getLogger().error("Could not get map from '" + map_provider->getName() + "'.", "UpdateForwarder");
+                 }
             };
 
             connections_[model_name] = data_provider->connect(callback);

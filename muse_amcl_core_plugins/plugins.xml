@@ -1,17 +1,3 @@
-<library path="libmuse_amcl_mock_plugins">
-   <class type="muse_amcl::MockUpdate" base_class_type="muse_amcl::UpdateModel">
-     <description>Mockup</description>
-   </class>
-   <class type="muse_amcl::MockPropagation" base_class_type="muse_amcl::PredictionModel">
-     <description>Mockup</description>
-   </class>
-   <class type="muse_amcl::MockDataProvider" base_class_type="muse_amcl::DataProvider">
-     <description>Mockup</description>
-   </class>
-   <class type="muse_amcl::MockMapProvider" base_class_type="muse_amcl::MapProvider">
-   	 <description>Mockup</description>
-   </class>
-</library>
 <library path="libmuse_amcl_core_plugins">
    <!-- Update functions -->
    <class type="muse_amcl::BeamModel" base_class_type="muse_amcl::UpdateModel">

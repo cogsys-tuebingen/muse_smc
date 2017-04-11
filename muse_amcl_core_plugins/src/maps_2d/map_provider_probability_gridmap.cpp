@@ -24,6 +24,10 @@ void MapProviderProbabilityGridMap::doSetup(ros::NodeHandle &nh_private)
     topic_ = nh_private.param<std::string>(privateParameter("topic"), "/map");
     source_= nh_private.subscribe(topic_, 1, &MapProviderProbabilityGridMap::callback, this);
     blocking_ = nh_private.param<bool>(privateParameter("blocking"), false);
+
+    Logger &l = Logger::getLogger();
+    l.info("topic_='" + topic_ + "'", "MapProvider:" + name_);
+    l.info("blocking_='" + std::to_string(blocking_) + "'", "MapProvider:" + name_);
 }
 
 void MapProviderProbabilityGridMap::callback(const nav_msgs::OccupancyGridConstPtr &msg)

@@ -9,7 +9,9 @@
 #include <mutex>
 #include <functional>
 #include <typeindex>
+
 #include <muse_amcl/utils/delegate.hpp>
+#include <muse_amcl/utils/logger.hpp>
 
 namespace muse_amcl
 {
@@ -55,11 +57,11 @@ protected:
         document.LoadFile(xml_file);
         TiXmlElement * config = document.RootElement();
         if (config == nullptr) {
-            std::cerr << "[Plugin] Cannot load the file " << xml_file << std::endl;
+            Logger::getLogger().error("Cannot load file '" + xml_file + "'.", "PluginManager");
             return false;
         }
         if (config->ValueStr() != "library") {
-            std::cerr << "[Plugin] Manifest root is not <library>" << std::endl;
+            Logger::getLogger().error("Manifest root is not <library>.", "PluginManager");
             return false;
         }
 
@@ -68,7 +70,8 @@ protected:
 
             std::string library_name = library->Attribute("path");
             if (library_name.size() == 0) {
-                std::cerr << "[Plugin] Item in row" << library->Row() << " does not contain a path attribute" << std::endl;
+                Logger::getLogger().error("Item in row '" + std::to_string(library->Row()) +
+                                          "' does not contain a path attribute", "PluginManager");
                 continue;
             }
 

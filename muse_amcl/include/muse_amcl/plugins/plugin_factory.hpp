@@ -2,7 +2,9 @@
 #define PLUGIN_FACTORY_HPP
 
 #include <string>
+
 #include "plugin_manager.hpp"
+#include <muse_amcl/utils/logger.hpp>
 
 namespace muse_amcl {
 template<typename PluginType, typename ... Arguments>
@@ -24,10 +26,9 @@ public:
             plugin->setup(plugin_name, arguments...);
             return plugin;
         } else {
-            std::cerr << "[Factory] :"
-                      << " Cannot create '"  << class_name
-                      << "' derivded from '" << PluginType::Type()
-                      << "'" << std::endl;
+            Logger::getLogger().error("Cannot create class '"  + class_name +
+                                      "' derived from class '" + PluginType::Type() + "'.",
+                                      "PluginFactory");
             return nullptr;
         }
     }

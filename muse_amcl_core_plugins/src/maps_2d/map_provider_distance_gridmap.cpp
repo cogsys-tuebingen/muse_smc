@@ -28,6 +28,12 @@ void MapProviderDistanceGridMap::doSetup(ros::NodeHandle &nh_private)
     blocking_ = nh_private.param<bool>(privateParameter("blocking"), false);
 
     source_= nh_private.subscribe(topic_, 1, &MapProviderDistanceGridMap::callback, this);
+
+    Logger &l = Logger::getLogger();
+    l.info("topic_='" + topic_ + "'", "MapProvider:" + name_);
+    l.info("binarization_threshold_='" + std::to_string(binarization_threshold_) + "'", "MapProvider:" + name_);
+    l.info("kernel_size_='" + std::to_string(kernel_size_) + "'", "MapProvider:" + name_);
+    l.info("blocking_='" + std::to_string(blocking_) + "'", "MapProvider:" + name_);
 }
 
 void MapProviderDistanceGridMap::callback(const nav_msgs::OccupancyGridConstPtr &msg)

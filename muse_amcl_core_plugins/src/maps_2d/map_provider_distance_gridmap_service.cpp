@@ -60,5 +60,11 @@ void MapProviderDistanceGridMapService::doSetup(ros::NodeHandle &nh_private)
     kernel_size_ += 1 - (kernel_size_ % 2);
     blocking_ = nh_private.param<bool>(privateParameter("blocking"), false);
     source_   = nh_private.serviceClient<nav_msgs::GetMap>(service_name_);
+
+    Logger &l = Logger::getLogger();
+    l.info("service_name_='" + service_name_ + "'", "MapProvider:" + name_);
+    l.info("binarization_threshold_='" + std::to_string(binarization_threshold_) + "'", "MapProvider:" + name_);
+    l.info("kernel_size_='" + std::to_string(kernel_size_) + "'", "MapProvider:" + name_);
+    l.info("blocking_='" + std::to_string(blocking_) + "'", "MapProvider:" + name_);
 }
 
