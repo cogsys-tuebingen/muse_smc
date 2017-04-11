@@ -19,6 +19,7 @@ public:
                               const Index      &_end,
                               const Size        _size,
                               T *               _data) :
+        done_(false),
         data(_data),
         size(_size),
         step(_size[0]),
@@ -48,10 +49,10 @@ public:
     inline int x() const
     {
         return steep ? index[1] : index[0];
-    }
+        }
 
-    inline int y() const
-    {
+        inline int y() const
+        {
         return steep ? index[0] : index[1];
     }
 
@@ -76,9 +77,9 @@ public:
     {
         const bool reached_end = index[0] == end[0] && index[1] == end[1];
         const bool outer_limits = index[0] < 0 ||
-                                  index[1] < 0 ||
-                                  index[0] >= size[0] ||
-                                  index[1] >= size[1];
+                index[1] < 0 ||
+                index[0] >= size[0] ||
+                index[1] >= size[1];
 
         return reached_end || outer_limits;
     }
@@ -96,6 +97,7 @@ private:
         return index[1] * step + index[0];
     }
 
+    bool         done_;
     T           *data;
     int          data_pos;
     Size         size;

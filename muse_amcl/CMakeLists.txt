@@ -34,6 +34,7 @@ find_package(catkin REQUIRED COMPONENTS
     cslibs_indexed_storage
     geometry_msgs
     message_generation
+    std_msgs
 )
 
 add_service_files(

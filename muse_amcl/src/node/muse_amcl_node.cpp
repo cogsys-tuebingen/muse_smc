@@ -21,15 +21,24 @@ void MuseAMCLNode::start()
     for(auto &d : data_providers_) {
         d.second->enable();
     }
+    Logger& l = Logger::getLogger();
+    l.info("Enabled all data providers.", "MuseAMCLNode");
+
     particle_filter_->start();
-    std::cout << "[MuseAMCLNode]: Up and running!" << std::endl;
+    l.info("Started particle filter.", "MuseAMCLNode");
+
     ros::spin();
 }
 
 bool MuseAMCLNode::requestGlobalInitialization(muse_amcl::GlobalInitialization::Request &req,
                                                muse_amcl::GlobalInitialization::Response &res)
 {
+    Logger& l = Logger::getLogger();
+    l.info("Received a global initialization request.", "MuseAMCLNode");
+
     particle_filter_->requestGlobalInitialization();
+    l.info("Dispatched request to particle filter.", "MuseAMCLNode");
+
     res.success = true;
     return true;
 }
@@ -37,6 +46,9 @@ bool MuseAMCLNode::requestGlobalInitialization(muse_amcl::GlobalInitialization::
 bool MuseAMCLNode::requestPoseInitialization(muse_amcl::PoseInitialization::Request &req,
                                              muse_amcl::PoseInitialization::Response &res)
 {
+    Logger& l = Logger::getLogger();
+    l.info("Received a pose initialization request.", "MuseAMCLNode");
+
     auto convert_pose = [&req]() {
         tf::Pose p;
         tf::poseMsgToTF(req.pose.pose, p);
@@ -50,12 +62,17 @@ bool MuseAMCLNode::requestPoseInitialization(muse_amcl::PoseInitialization::Requ
         return math::Covariance(v);
     };
     particle_filter_->requestPoseInitialization(convert_pose(), convert_covariance());
+    l.info("Dispatched request to particle filter.", "MuseAMCLNode");
+
     res.success = true;
     return true;
 }
 
 void MuseAMCLNode::poseInitialization(const geometry_msgs::PoseWithCovarianceStampedConstPtr &msg)
 {
+    Logger& l = Logger::getLogger();
+    l.info("Received a global initial pose message.", "MuseAMCLNode");
+
     auto convert_pose = [&msg]() {
         tf::Pose p;
         tf::poseMsgToTF(msg->pose.pose, p);
@@ -68,51 +85,59 @@ void MuseAMCLNode::poseInitialization(const geometry_msgs::PoseWithCovarianceSta
         }
         return math::Covariance(v);
     };
+
     particle_filter_->requestPoseInitialization(convert_pose(), convert_covariance());
+    l.info("Dispatched request to particle filter.", "MuseAMCLNode");
+
 }
 
 bool MuseAMCLNode::setup()
 {
+    Logger& l = Logger::getLogger();
+    l.info("Setup started.", "MuseAMCLNode");
+
     /// load all plugins
     PluginLoader loader(nh_private_);
 
     loader.load<UpdateModel, TFProvider::Ptr, ros::NodeHandle&>(update_models_, tf_provider_backend_, nh_private_);
     if(update_models_.empty()) {
-        std::cerr << "[MuseAMCLNode]: No update models were found!" << std::endl;
+        l.error("No update models were found!", "MuseAMCLNode");
         return false;
     }
     loader.load<PredictionModel, TFProvider::Ptr, ros::NodeHandle&>(prediction_model_, tf_provider_backend_, nh_private_);
     if(update_models_.empty()) {
-        std::cerr << "[MuseAMCLNode]: No prediction model was found!" << std::endl;
+        l.error("No prediction model was found!", "MuseAMCLNode");
         return false;
     }
     loader.load<MapProvider, ros::NodeHandle&>(map_providers_, nh_private_);
     if(update_models_.empty()) {
-        std::cerr << "[MuseAMCLNode]: No map providers were found!" << std::endl;
+        l.error("No map providers were found!", "MuseAMCLNode");
         return false;
     }
     loader.load<DataProvider,TFProvider::Ptr, ros::NodeHandle&>(data_providers_, tf_provider_frontend_, nh_private_);
     if(update_models_.empty()) {
-        std::cerr << "[MuseAMCLNode]: No data providers were found!" << std::endl;
+        l.error("No data providers were found!", "MuseAMCLNode");
         return false;
     }
 
     //// sampling algorithms
     loader.load<UniformSampling,  MapProviders, TFProvider::Ptr, ros::NodeHandle&>(uniform_sampling_, map_providers_, tf_provider_backend_, nh_private_);
     if(!uniform_sampling_) {
-        std::cerr << "[MuseAMCLNode]: No uniform sampling algorithm was found!" << std::endl;
+        l.error("No uniform sampling algorithm was found!", "MuseAMCLNode");
         return false;
     }
     loader.load<NormalSampling, MapProviders, TFProvider::Ptr, ros::NodeHandle&>(normal_sampling_, map_providers_,  tf_provider_backend_, nh_private_);
     if(!normal_sampling_) {
-        std::cerr << "[MuseAMCLNode]: No normal sampling algorithm was found!" << std::endl;
+        l.error("No normal sampling algorithm was found!", "MuseAMCL");
         return false;
     }
     loader.load<Resampling, UniformSampling::Ptr, ros::NodeHandle&>(resampling_, uniform_sampling_, nh_private_);
     if(!resampling_) {
-        std::cerr << "[MuseAMCLNode]: No resampling algorithm was found!" << std::endl;
+        l.error("No resampling algorithm was found!", "MuseAMCL");
         return false;
     }
+
+    l.info("All plugins loaded.", "MuseAMCLNode");
 
     //// set up the necessary functions for the particle filter
     particle_filter_.reset(new ParticleFilter);
@@ -121,26 +146,33 @@ bool MuseAMCLNode::setup()
     particle_filter_->setUniformSampling(uniform_sampling_);
     particle_filter_->setResampling(resampling_);
 
+    l.info("Equipped particle filter with all providers and samplers.", "MuseAMCLNode");
     //// set up the froward data functionality
     predicition_forwarder_.reset(new PredictionForwarder(prediction_model_, particle_filter_));
-    update_forwarder_.reset(new UpdateForwarder(update_models_, particle_filter_));
     predicition_forwarder_->bind(data_providers_, nh_private_);
+    l.info("Equipped prediction forwarder with model.", "MuseAMCLNode");
+
+    update_forwarder_.reset(new UpdateForwarder(update_models_, particle_filter_));
     update_forwarder_->bind(data_providers_, map_providers_, nh_private_);
+    l.info("Equipped update forwarder with model.", "MuseAMCLNode");
 
     initialization_service_pose_    = nh_private_.advertiseService("/muse_amcl/pose_initialization", &MuseAMCLNode::requestPoseInitialization, this);
     initialization_service_global_  = nh_private_.advertiseService("/muse_amcl/global_initialization", &MuseAMCLNode::requestGlobalInitialization, this);
     initialization_subscriber_pose_ = nh_private_.subscribe("/initialpose", 1, &MuseAMCLNode::poseInitialization, this);
+    l.info("All subscribers and services set up.", "MuseAMCLNode");
+    l.info("Setup has been finished.", "MuseAMCLNode");
 }
-
 
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "muse_amcl");
+    Logger &l = Logger::getLogger(true);
+
     MuseAMCLNode node;
     if(node.setup()) {
         node.start();
     } else {
-        std::cerr << "[MuseAMCLNode]: Could not setup!" << std::endl;
+        l.error("Setup failed.", "MuseAMCLNode");
     }
     return 0;
 }

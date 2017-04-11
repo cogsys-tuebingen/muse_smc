@@ -13,13 +13,13 @@
 #include <muse_amcl/particle_filter/update_forwarder.hpp>
 #include <muse_amcl/particle_filter/prediction_forwarder.hpp>
 #include <muse_amcl/particle_filter/particle_filter.hpp>
+#include <muse_amcl/utils/logger.hpp>
 
 #include <muse_amcl/plugins/plugin_loader.hpp>
 #include <muse_amcl/plugins/plugin_factory.hpp>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 
 #include <ros/ros.h>
-
 
 namespace muse_amcl {
 class MuseAMCLNode
@@ -71,6 +71,7 @@ private:
 
     UpdateForwarder::Ptr        update_forwarder_;
     PredictionForwarder::Ptr    predicition_forwarder_;
+
 
 
 };

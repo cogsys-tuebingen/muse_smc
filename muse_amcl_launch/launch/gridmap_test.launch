@@ -2,7 +2,7 @@
 <launch>
 	<!--- muse amcl parameters -->
   <!-- setting up the testing environment -->
-  <arg name="map_path" value="/home/hanten/Workspace/data/rawseeds/grid_maps/rawseeds_0.05.yaml" />
+  <arg name="map_path" value="$(find muse_amcl_core_plugins)/res/gridmaps/rawseeds_0.05.yaml" />
 	
     <!-- using only one map, the world and map frame can be collapsed -->
 	<node pkg="tf" type="static_transform_publisher" name="map_T_odom" args="0 0 0 0 0 0 map odom 100"/>
