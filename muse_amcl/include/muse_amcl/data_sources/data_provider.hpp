@@ -58,6 +58,7 @@ public:
      */
     DataConnection::Ptr connect(const Callback &callback)
     {
+        Logger::getLogger().info("Created a data connection.", "DataProvider:" + name_);
         return data_received_.connect(callback);
     }
 
@@ -66,6 +67,7 @@ public:
      */
     void enable()
     {
+        Logger::getLogger().info("Enabled.", "DataProvider:" + name_);
         data_received_.enable();
     }
 
@@ -74,6 +76,7 @@ public:
      */
     void disable()
     {
+        Logger::getLogger().info("Disabled.", "DataProvider:" + name_);
         data_received_.disable();
     }
 

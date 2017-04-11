@@ -40,12 +40,15 @@ public:
                 if(map) {
                     Update::Ptr u(new Update(data, map, model));
                     filter_->addUpdate(u);
-                 } else {
+                    Logger::getLogger().info("Received update to forward.", "UpdateForwarder");
+                } else {
                     Logger::getLogger().error("Could not get map from '" + map_provider->getName() + "'.", "UpdateForwarder");
                  }
             };
 
             connections_[model_name] = data_provider->connect(callback);
+            Logger::getLogger().info("Connected data provider '" + data_provider->getName() +
+                                     "' and map provider '" + map_provider->getName() + "'.", "UpdateForwarder");
         }
     }
 

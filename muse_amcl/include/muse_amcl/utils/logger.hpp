@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include <chrono>
+#include <mutex>
 
 namespace muse_amcl {
 class Logger {
@@ -19,7 +20,8 @@ public:
             long s, ms;
             getTime(s,ms);
 
-            const std::string ms_off = ms >= 100 ? "" : (ms >= 10 ? "00" : "0");
+            const std::string ms_off = ms >= 100 ? "" : (ms >= 10 ? "0" : "00");
+            std::unique_lock<std::mutex> l(mutex_);
             if(sender == "") {
                 std::cout << "[" << s << "." << ms_off << ms << "][INFO] " << msg << std::endl;
                 if(write_to_disk_) {
@@ -28,7 +30,7 @@ public:
             } else {
                 std::cout << "[" << s << "." << ms_off << ms << "][INFO][" << sender << "]:" << msg << std::endl;
                 if(write_to_disk_) {
-                     out_ << "[" << s << "." << ms_off << ms << "][INFO][" << sender << "]:" << msg << std::endl;
+                    out_ << "[" << s << "." << ms_off << ms << "][INFO][" << sender << "]:" << msg << std::endl;
                 }
             }
         }
@@ -42,14 +44,15 @@ public:
             getTime(s,ms);
 
             const std::string ms_off = ms >= 100 ? "" : (ms >= 10 ? "00" : "0");
+            std::unique_lock<std::mutex> l(mutex_);
             if(sender == "") {
                 std::cerr << "[" << s << "." << ms_off << ms << "][ERROR] " << msg << std::endl;
                 if(write_to_disk_)
-                     out_ << "[" << s << "." << ms_off << ms << "][ERROR] " << msg << std::endl;
+                    out_ << "[" << s << "." << ms_off << ms << "][ERROR] " << msg << std::endl;
             } else {
                 std::cerr << "[" << s << "." << ms_off << ms << "]ERROR][" << sender << "]:" << msg << std::endl;
                 if(write_to_disk_)
-                     out_ << "[" << s << "." << ms_off << ms << "][ERROR][" << sender << "]:" << msg << std::endl;
+                    out_ << "[" << s << "." << ms_off << ms << "][ERROR][" << sender << "]:" << msg << std::endl;
             }
         }
     }
@@ -62,21 +65,22 @@ public:
             getTime(s,ms);
 
             const std::string ms_off = ms >= 100 ? "" : (ms >= 10 ? "00" : "0");
+            std::unique_lock<std::mutex> l(mutex_);
             if(sender == "") {
                 std::cout << "[" << s << "." << ms_off << ms << "][WARN] " << msg << std::endl;
                 if(write_to_disk_)
-                     out_ << "[" << s << "." << ms_off << ms << "][WARN] " << msg << std::endl;
+                    out_ << "[" << s << "." << ms_off << ms << "][WARN] " << msg << std::endl;
             } else {
                 std::cout << "[" << s << "." << ms_off << ms << "][WARN][" << sender << "]:" << msg << std::endl;
                 if(write_to_disk_)
-                     out_ << "[" << s << "." << ms_off << ms << "][WARN][" << sender << "]:" << msg << std::endl;
+                    out_ << "[" << s << "." << ms_off << ms << "][WARN][" << sender << "]:" << msg << std::endl;
             }
         }
     }
 
     static inline Logger& getLogger(const bool enable = false,
-                                   const Level level = ALL,
-                                   const bool write_to_disk = true) {
+                                    const Level level = ALL,
+                                    const bool write_to_disk = true) {
         static Logger l(enable, level, write_to_disk);
         return l;
     }
@@ -94,7 +98,7 @@ private:
         auto now = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
         seconds = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
         milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count()
-                       - 1000 * seconds;
+                - 1000 * seconds;
     }
 
     Logger(const bool  enable = false,
@@ -117,6 +121,7 @@ private:
     Level         level_;
     bool          write_to_disk_;
     std::ofstream out_;
+    std::mutex    mutex_;
 
 };
 }
