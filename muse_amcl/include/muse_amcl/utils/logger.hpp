@@ -78,6 +78,21 @@ public:
         }
     }
 
+    void markNewLogSection()
+    {
+        if(enabled_) {
+            std::string line = "";
+            for(std::size_t i = 0 ; i < 80 ; ++i)
+                line += "-";
+
+            std::unique_lock<std::mutex> l(mutex_);
+            std::cout << line << std::endl;
+            if(write_to_disk_) {
+                out_ << line << std::endl;
+            }
+        }
+    }
+
     static inline Logger& getLogger(const bool enable = false,
                                     const Level level = ALL,
                                     const bool write_to_disk = true) {

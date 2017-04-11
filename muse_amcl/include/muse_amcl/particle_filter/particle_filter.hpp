@@ -8,6 +8,8 @@
 #include <muse_amcl/particle_filter/sampling_uniform.hpp>
 #include <muse_amcl/particle_filter/prediction.hpp>
 #include <muse_amcl/particle_filter/update.hpp>
+#include <muse_amcl/utils/logger.hpp>
+
 #include <geometry_msgs/PoseArray.h>
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>

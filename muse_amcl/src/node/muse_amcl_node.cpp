@@ -26,6 +26,7 @@ void MuseAMCLNode::start()
 
     particle_filter_->start();
     l.info("Started particle filter.", "MuseAMCLNode");
+    l.markNewLogSection();
 
     ros::spin();
 }
@@ -161,6 +162,7 @@ bool MuseAMCLNode::setup()
     initialization_subscriber_pose_ = nh_private_.subscribe("/initialpose", 1, &MuseAMCLNode::poseInitialization, this);
     l.info("All subscribers and services set up.", "MuseAMCLNode");
     l.info("Setup has been finished.", "MuseAMCLNode");
+    l.markNewLogSection();
 }
 
 int main(int argc, char *argv[])

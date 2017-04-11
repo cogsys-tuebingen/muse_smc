@@ -26,8 +26,10 @@ ParticleFilter::~ParticleFilter()
 void ParticleFilter::setup(ros::NodeHandle &nh_private,
                            const TFProvider::Ptr &tf_provider)
 {
+    Logger &l = Logger::getLogger();
+
     const std::string topic_poses   = nh_private.param<std::string>(privateParameter("topic_poses"), "/muse_amcl/poses");
-    const double pose_rate          = nh_private.param<double>("pose_rate", 30.0);
+    const double pub_pose_rate      = nh_private.param<double>("pub_pose_rate", 30.0);
     const double pub_tf_rate        = nh_private.param<double>("tf_rate", 30.0);
     const double resolution_linear  = nh_private.param<double>(privateParameter("resolution_linear"), 0.1);
     const double resolution_angular = nh_private.param<double>(privateParameter("resolution_angular"), M_PI / 18.0);
@@ -42,23 +44,26 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     }
 
     if(sample_size_minimum < 0 || sample_size_maximum < 0) {
+        l.error("Minimum or maximum sample sizes cannot be less than zero.", "ParticleFilter");
         throw std::runtime_error("[ParticleFilter]: Minimum or maximum sample sizes cannot be less than zero!");
     }
 
     if(sample_size_maximum == 0) {
+        l.error("The maximum sample size may not be zero.", "ParticleFilter");
         throw std::runtime_error("[ParticleFilter]: The maximum sample size may not be zero!");
     }
 
     if(sample_size_minimum > sample_size_maximum) {
+        l.error("The minimum sample size may not be greater than the maximum sample size.", "ParticleFilter");
         throw std::runtime_error("[ParticleFilter]: The minimum sample size may not be greater than the maximum sample size!");
     }
 
-    tf_provider_ = tf_provider;
+    tf_provider_               = tf_provider;
 
     resampling_offset_linear_  = nh_private.param(privateParameter("resampling_offset_linear"), 0.25);
     resampling_offset_angular_ = nh_private.param(privateParameter("resampling_offset_angular"), M_PI / 10.0);
     pub_poses_                 = nh_private.advertise<geometry_msgs::PoseArray>(topic_poses, 1);
-    pub_poses_delay_           = ros::Rate(pose_rate).cycleTime();
+    pub_poses_delay_           = ros::Rate(pub_pose_rate).cycleTime();
     pub_tf_delay_              = ros::Rate(pub_tf_rate).cycleTime();
 
     world_frame_   = nh_private.param<std::string>("world_frame", "/world");
@@ -68,11 +73,32 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     muse_amcl::Indexation indexation ({resolution_linear, resolution_linear, resolution_angular});
     particle_set_.reset(new ParticleSet(world_frame_, sample_size_minimum, sample_size_maximum, indexation, array_extent));
     particle_set_stamp_ = ros::Time::now(); /// the first time the particle set is touched is the first time it is valid
+
+    l.info("sample_size='"  + std::to_string(sample_size) +"'", "ParticleFilter");
+    l.info("sample_size_maximum='"  + std::to_string(sample_size) +"'", "ParticleFilter");
+    l.info("sample_size_minimum='"  + std::to_string(sample_size) +"'", "ParticleFilter");
+
+    l.info("resolution_linear='"  + std::to_string(resolution_linear) +"'", "ParticleFilter");
+    l.info("resolution_angular='"  + std::to_string(resolution_angular) +"'", "ParticleFilter");
+    l.info("array_extent='"  + std::to_string(array_extent) +"'", "ParticleFilter");
+
+    l.info("resampling_offset_linear_='"  + std::to_string(resampling_offset_linear_) + "'", "ParticleFilter");
+    l.info("resampling_offset_angular_='" + std::to_string(resampling_offset_angular_) + "'", "ParticleFilter");
+    l.info("topic_poses='" + topic_poses + "'", "ParticleFilter");
+    l.info("pub_rate '" + std::to_string(pub_pose_rate) + "'", "ParticleFilter");
+    l.info("pub_tf_rate='" + std::to_string(pub_tf_rate) + "'", "ParticleFilter");
+    l.info("world_frame_='" + world_frame_ + "'", "ParticleFilter");
+    l.info("odom_frame_='" + odom_frame_ + "'", "ParticleFilter");
+    l.info("base_frame_='" + base_frame_ + "'", "ParticleFilter");
+
+    l.info("Set up.", "ParticleFilter");
+
 }
 
 void ParticleFilter::setUniformSampling(const UniformSampling::Ptr &sampling_uniform)
 {
     sampling_uniform_ = sampling_uniform;
+    Logger::getLogger().info("Set uniform sampling '" + sampling_uniform->getName() + "'", "ParticleFilter");
 }
 
 UniformSampling::Ptr ParticleFilter::getUniformSampling() const
@@ -83,6 +109,7 @@ UniformSampling::Ptr ParticleFilter::getUniformSampling() const
 void ParticleFilter::setNormalsampling(NormalSampling::Ptr &sampling_normal_pose)
 {
     sampling_normal_pose_ = sampling_normal_pose;
+    Logger::getLogger().info("Set normal sampling '" + sampling_normal_pose->getName() + "'", "ParticleFilter");
 }
 
 NormalSampling::Ptr ParticleFilter::getNormalSampling() const
@@ -93,6 +120,7 @@ NormalSampling::Ptr ParticleFilter::getNormalSampling() const
 void ParticleFilter::setResampling(Resampling::Ptr &resampling)
 {
     resampling_ = resampling;
+    Logger::getLogger().info("Set normal resampling '" + resampling->getName() + "'", "ParticleFilter");
 }
 
 Resampling::Ptr ParticleFilter::getResampling() const
@@ -104,6 +132,7 @@ void ParticleFilter::addPrediction(Prediction::Ptr &prediction)
 {
     std::unique_lock<std::mutex> l(prediction_queue_mutex_);
     prediction_queue_.emplace(prediction);
+    Logger::getLogger().info("Got prediction.", "ParticleFilter");
     //    notify_event_.notify_one();   <--- main trigger should be the sensor measurements
 }
 
@@ -112,50 +141,55 @@ void ParticleFilter::addUpdate(Update::Ptr &update)
     std::unique_lock<std::mutex> l(update_queue_mutex_);
     update_queue_.emplace(update);
     notify_event_.notify_one();
+    Logger::getLogger().info("Got update.", "ParticleFilter");
 }
 
 void ParticleFilter::requestPoseInitialization(const math::Pose &pose,
                                                const math::Covariance &covariance)
 {
-    std::cout << "[ParticleFilter]: requested pose localization" << std::endl;
-    std::unique_lock<std::mutex> l(request_pose_mutex_);
-    initialization_pose_ = pose;
-    initialization_covariance_ = covariance;
-    request_pose_initilization_ = true;
-    particle_set_stamp_ = ros::Time::now();
-    notify_event_.notify_one();
+    {
+        std::unique_lock<std::mutex> l(request_pose_mutex_);
+        initialization_pose_ = pose;
+        initialization_covariance_ = covariance;
+        request_pose_initilization_ = true;
+        particle_set_stamp_ = ros::Time::now();
+        notify_event_.notify_one();
+    }
+    Logger::getLogger().info("Got pose initialization request.", "ParticleFilter");
 }
 
 void ParticleFilter::requestGlobalInitialization()
 {
-    std::cout << "[ParticleFilter]: requested global localization" << std::endl;
     request_global_initialization_ = true;
-    particle_set_stamp_ = ros::Time::now();
     notify_event_.notify_one();
+
+    Logger::getLogger().info("Got global initialization request.", "ParticleFilter");
 }
 
 void ParticleFilter::start()
 {
-    std::unique_lock<std::mutex> l(worker_thread_mutex_);
     if(!working_) {
+        std::unique_lock<std::mutex> l(worker_thread_mutex_);
         stop_working_  = false;
         worker_thread_ = std::thread([this](){loop();});
         worker_thread_.detach();
         working_ = true;
     } else {
+        Logger::getLogger().error("Worker thread already running!", "ParticleFilter");
         throw std::runtime_error("[ParticleFilter]: Worker thread already running!");
     }
 }
 
 void ParticleFilter::end()
 {
-    std::unique_lock<std::mutex> l(worker_thread_mutex_);
     if(working_) {
+        std::unique_lock<std::mutex> l(worker_thread_mutex_);
         stop_working_ = true;
         notify_event_.notify_one();
         if(worker_thread_.joinable())
             worker_thread_.join();
     } else{
+        Logger::getLogger().error("Cannot end worker thread which is not running!", "ParticleFilter");
         throw std::runtime_error("[ParticleFilter]: Cannot end worker thread which is not running!");
     }
 }
@@ -167,6 +201,7 @@ void ParticleFilter::processRequests()
         sampling_uniform_->apply(*particle_set_);
         particle_set_stamp_ = ros::Time::now();
         publishPoses(true);
+        Logger::getLogger().info("Global localization request has been processed", "ParticleFilter");
     }
     if(request_pose_initilization_) {
         std::unique_lock<std::mutex> l(request_pose_mutex_);
@@ -174,11 +209,14 @@ void ParticleFilter::processRequests()
         sampling_normal_pose_->apply(initialization_pose_, initialization_covariance_, *particle_set_);
         particle_set_stamp_ = ros::Time::now();
         publishPoses(true);
+        Logger::getLogger().info("Pose localization request has been processed", "ParticleFilter");
     }
 }
 
 bool ParticleFilter::processPredictions(const ros::Time &until)
 {
+    Logger::getLogger().info("Starting to propagate the samples.", "ParticleFilter");
+    Logger::getLogger().info("Before, '" + std::to_string(prediction_queue_.size()) + "' samples in queue.", "ParticleFilter");
     while(until > particle_set_stamp_) {
         Prediction::Ptr prediction;
         {
@@ -208,6 +246,7 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
         }
     }
 
+    Logger::getLogger().info("After, '" + std::to_string(prediction_queue_.size()) + "' samples in queue.", "ParticleFilter");
     return prediction_linear_distance_ > 0.0 || prediction_angular_distance_ > 0.0;
 }
 
@@ -231,6 +270,8 @@ void ParticleFilter::publishPoses(const bool force)
         }
         pub_poses_.publish(poses);
         pub_poses_last_time_ = now;
+
+        Logger::getLogger().info("Published poses.", "ParticleFilter");
     };
 }
 
@@ -241,15 +282,20 @@ void ParticleFilter::publishTF()
     if(tf_provider_->lookupTransform(odom_frame_, base_frame_, now, o_T_b, ros::Duration(0.1))) {
         tf::StampedTransform o_T_w((o_T_b * tf_last_b_T_w_).inverse(), now, world_frame_, odom_frame_);
         tf_broadcaster_.sendTransform(o_T_w);
+        Logger::getLogger().info("Published TF.", "ParticleFilter");
     }
 }
 
 void ParticleFilter::loop()
 {
+    Logger::getLogger().info("Starting loop.", "ParticleFilter");
     std::unique_lock<std::mutex> lock_updates(update_queue_mutex_);
     while(!stop_working_) {
         /// 0. wait for new tasks
         notify_event_.wait(lock_updates);
+
+        Logger::getLogger().info("Woke up to process events.", "ParticleFilter");
+
         /// 1. check if we want to terminate the filter
         if(stop_working_) {
             break;
@@ -270,12 +316,18 @@ void ParticleFilter::loop()
                     update->apply(particle_set_->getWeights());
                     particle_set_->normalizeWeights();
                 }
+                Logger::getLogger().info("Processed update.", "ParticleFilter");
             }
         }
 
         /// 6. check if its time for resampling
         if(prediction_linear_distance_ > resampling_offset_linear_ ||
                 prediction_angular_distance_ > resampling_offset_angular_){
+
+            Logger::getLogger().info("About to resample, prediction_linear_distance='" + std::to_string(prediction_linear_distance_) +
+                                     ", prediction_angular_distance='" + std::to_string(prediction_angular_distance_) + "'.",
+                                     "ParticleFilter");
+
             particle_set_->normalizeWeights();
             resampling_->apply(*particle_set_);
 
@@ -311,9 +363,9 @@ void ParticleFilter::loop()
                 math::Pose w_T_b(mean);
                 tf_last_b_T_w_ = w_T_b.inverse().getPose(), particle_set_stamp_;
             }
-       }
+        }
         publishPoses(true);
-//        publishTF();
+        publishTF();
     }
     working_ = false;
 
