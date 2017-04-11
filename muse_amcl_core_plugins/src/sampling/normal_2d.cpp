@@ -26,7 +26,7 @@ void Normal2D::update(const std::string &frame)
         tf::Transform map_T_w;
         Map::ConstPtr map = m->getMap();
         if(!map) {
-            std::cerr << "[Normal2D]: " + m->getName() + " return nullptr!" << std::endl;
+            Logger::getLogger().error("Provider '" + m->getName() + "' has not a map yet." , "NormalSampling:" + name_);
             continue;
         }
 
@@ -38,10 +38,6 @@ void Normal2D::update(const std::string &frame)
             min = min.cwiseMin(w_T_map * map->getMin());
             max = max.cwiseMax(w_T_map * map->getMax());
 
-        } else {
-            std::cerr << "[Normal2D]: Could not lookup transform '"
-                      << frame << " -> " << map->getFrame()
-                      << std::endl;
         }
     }
 }
@@ -59,6 +55,7 @@ void Normal2D::apply(const math::Pose       &pose,
 
     if(sample_size_ < particle_set.getSampleSizeMinimum() &&
             sample_size_ > particle_set.getSampleSizeMaximum()) {
+        Logger::getLogger().error("Initialization sample size invalid.", "NormalSampling:" + name_);
         throw std::runtime_error("Initialization sample size invalid!");
     }
 
@@ -73,7 +70,7 @@ void Normal2D::apply(const math::Pose       &pose,
         while(!valid) {
             ros::Time now = ros::Time::now();
             if(sampling_start + sampling_timeout_ < now) {
-                std::cerr << "[Normal2D]: Sampling timed out!" << std::endl;
+                Logger::getLogger().error("Sampling timed out.", "NormalSampling:" + name_);
                 return;
             }
 

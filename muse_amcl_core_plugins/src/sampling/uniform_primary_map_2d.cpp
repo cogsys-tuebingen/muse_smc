@@ -14,13 +14,12 @@ bool UniformPrimaryMap2D::update(const std::string &frame)
 
     primary_map  = primary_map_provider_->getMap();
     if(!primary_map) {
-        std::cerr << "[UniformPrimaryMap2D]: Could not retrieve primary map from '" << primary_map_provider_->getName() << "'!" << std::endl;
+        Logger::getLogger().error("Primary provider '" + primary_map_provider_->getName() + "' has not a map yet." , "UniformSampling:" + name_);
         return false;
     }
 
     primary_T_o_ = primary_map->getOrigin().getPose();
     if(!tf_provider_->lookupTransform(frame, primary_map->getFrame(), now, w_T_primary_, tf_timeout_)) {
-        std::cerr << "[UniformPrimaryMap2D]: Could not get primary map transform!" << std::endl;
         return false;
     }
 
@@ -28,16 +27,13 @@ bool UniformPrimaryMap2D::update(const std::string &frame)
     for(std::size_t i = 0 ; i < map_provider_count ; ++i) {
         Map::ConstPtr map = map_providers_[i]->getMap();
         if(!map) {
-            std::cerr << "[UniformPrimaryMap2D]: " + map_providers_[i]->getName() + " returned nullptr!" << std::endl;
+            Logger::getLogger().error("Secondary provider '" + map_providers_[i]->getName() + "' has not a map yet." , "UniformSampling:" + name_);
             return false;
         }
 
         if(tf_provider_->lookupTransform(map->getFrame(), frame, now, secondary_maps_T_w_[i], tf_timeout_)) {
             secondary_maps_[i] = map;
         } else {
-            std::cerr << "[UniformPrimaryMap2D]: Could not lookup transform '"
-                      << frame << " -> " << map->getFrame()
-                      << std::endl;
             return false;
         }
     }
@@ -65,6 +61,7 @@ void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
 {
     if(sample_size_ < particle_set.getSampleSizeMinimum() ||
             sample_size_ > particle_set.getSampleSizeMaximum()) {
+        Logger::getLogger().error("Initialization sample size invalid.", "UniformSampling:" + name_);
         throw std::runtime_error("Initialization sample size invalid!");
     }
 
@@ -81,7 +78,7 @@ void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
         while(!valid) {
             ros::Time now = ros::Time::now();
             if(sampling_start + sampling_timeout_ < now) {
-                std::cerr << "[UniformPrimaryMap2D]: Sampling timed out!" << std::endl;
+                Logger::getLogger().error("Sampling timed out.", "UniformSampling:" + name_);
                 break;
             }
 
@@ -106,7 +103,7 @@ void UniformPrimaryMap2D::apply(Particle &particle)
     while(!valid) {
         ros::Time now = ros::Time::now();
         if(sampling_start + sampling_timeout_ < now) {
-            std::cerr << "[UniformPrimaryMap2D]: Sampling timed out!" << std::endl;
+            Logger::getLogger().error("Sampling timed out.", "UniformSampling:" + name_);
             break;
         }
 

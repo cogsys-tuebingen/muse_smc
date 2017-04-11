@@ -28,8 +28,8 @@ bool UniformAllMaps2D::update(const std::string &frame)
     for(std::size_t i = 0 ; i < map_provider_count ; ++i) {
         Map::ConstPtr map = map_providers_[i]->getMap();
         if(!map) {
-            std::cerr << "[UniformAllMaps2D]: " + map_providers_[i]->getName() + " returned nullptr!" << std::endl;
-            return false;
+            Logger::getLogger().error("Provider '" + map_providers_[i]->getName() + "' has not a map yet." , "UniformSampling:" + name_);
+            continue;
         }
         if(tf_provider_->lookupTransform(map->getFrame(), frame, now, maps_T_w_[i], tf_timeout_)) {
             maps_[i] = map;
@@ -37,11 +37,7 @@ bool UniformAllMaps2D::update(const std::string &frame)
             tf::Transform w_T_map = maps_T_w_[i].inverse();
             min = min.cwiseMin(w_T_map * map->getMin());
             max = max.cwiseMax(w_T_map * map->getMax());
-
         } else {
-            std::cerr << "[UniformAllMaps2D]: Could not lookup transform '"
-                      << frame << " -> " << map->getFrame()
-                      << "'!" << std::endl;
             return false;
         }
     }
@@ -58,6 +54,7 @@ void UniformAllMaps2D::apply(ParticleSet &particle_set)
 {
     if(sample_size_ < particle_set.getSampleSizeMinimum() ||
             sample_size_ > particle_set.getSampleSizeMaximum()) {
+        Logger::getLogger().error("Initialization sample size invalid.", "UniformSampling:" + name_);
         throw std::runtime_error("Initialization sample size invalid!");
     }
 
@@ -74,7 +71,7 @@ void UniformAllMaps2D::apply(ParticleSet &particle_set)
         while(!valid) {
             ros::Time now = ros::Time::now();
             if(sampling_start + sampling_timeout_ < now) {
-                std::cerr << "[UniformAllMaps2D]: Sampling timed out!" << std::endl;
+                Logger::getLogger().error("Sampling timed out.", "UniformSampling:" + name_);
                 return;
             }
 
@@ -97,7 +94,7 @@ void UniformAllMaps2D::apply(Particle &particle)
     while(!valid) {
         ros::Time now = ros::Time::now();
         if(sampling_start + sampling_timeout_ < now) {
-            std::cerr << "[UniformAllMaps2D]: Sampling timed out!" << std::endl;
+            Logger::getLogger().error("Sampling timed out.", "UniformSampling:" + name_);
             break;
         }
 
