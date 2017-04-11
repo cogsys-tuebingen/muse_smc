@@ -11,6 +11,8 @@
 #include <muse_amcl/data_sources/tf_provider.hpp>
 #include <muse_amcl/math/covariance.hpp>
 
+#include <muse_amcl/utils/logger.hpp>
+
 namespace muse_amcl {
 class UniformSampling {
 public:
@@ -41,15 +43,17 @@ public:
                       const TFProvider::Ptr                         &tf_provider,
                       ros::NodeHandle                               &nh_private)
     {
-        double sampling_timeout;
-        double tf_timeout;
         name_              = name;
         sample_size_       = nh_private.param(parameter("sample_size"), 500);
-        sampling_timeout   = nh_private.param(parameter("timeout"), 10.0);
-        tf_timeout         = nh_private.param(parameter("tf_timeout"), 0.1);
-        sampling_timeout_  = ros::Duration(sampling_timeout);
-        tf_timeout_        = ros::Duration(tf_timeout);
+        sampling_timeout_  = ros::Duration(nh_private.param(parameter("timeout"), 10.0));
+        tf_timeout_        = ros::Duration(nh_private.param(parameter("tf_timeout"), 0.1));
         tf_provider_       = tf_provider;
+
+        Logger &l = Logger::getLogger();
+        l.info("Setup", "UniformSampling:" + name_);
+        l.info("sample_size_='" + std::to_string(sample_size_) + "'", "UniformSampling:" + name_);
+        l.info("sampling_timeout_='" + std::to_string(sampling_timeout_.toSec()) + "'", "UniformSampling:" + name_);
+        l.info("tf_timeout_='" + std::to_string(tf_timeout_.toSec()) + "'", "UniformSampling:" + name_);
 
         doSetup(nh_private);
         doSetupMapProviders(nh_private, map_providers);
@@ -91,9 +95,17 @@ protected:
             throw std::runtime_error("[UniformSampling]: No map providers were found!");
         }
 
+        std::string ms ="[";
         for(auto m : map_provider_ids) {
+
             map_providers_.emplace_back(map_providers.at(m));
+            ms += m + ",";
         }
+        ms.back() = ']';
+
+        Logger &l = Logger::getLogger();
+        l.info("maps='" + ms + "'", "UniformSampling:" + name_);
+
     }
 
     inline std::string parameter (const std::string &name)

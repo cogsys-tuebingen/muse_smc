@@ -42,10 +42,15 @@ public:
                       const UniformSampling::Ptr &uniform_pose_sampler,
                       ros::NodeHandle            &nh_private)
     {
-        name_ = name;
+        name_                 = name;
         uniform_pose_sampler_ = uniform_pose_sampler;
-        recovery_alpha_fast_ = nh_private.param(parameter("recovery_alpha_fast"), 0.0);
-        recovery_alpha_slow_ = nh_private.param(parameter("recovery_alpha_slow"), 0.0);
+        recovery_alpha_fast_  = nh_private.param(parameter("recovery_alpha_fast"), 0.0);
+        recovery_alpha_slow_  = nh_private.param(parameter("recovery_alpha_slow"), 0.0);
+
+        Logger &l = Logger::getLogger();
+        l.info("Setup", "Resampling:" + name_);
+        l.info("recovery_alpha_fast_='" + std::to_string(recovery_alpha_fast_) + "'", "Resampling:" + name_);
+        l.info("recovery_alpha_slow_='" + std::to_string(recovery_alpha_slow_) + "'", "Resampling:" + name_);
 
     }
 

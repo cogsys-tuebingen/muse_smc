@@ -10,6 +10,7 @@
 #include <muse_amcl/utils/delegate.hpp>
 #include <muse_amcl/data_types/data.hpp>
 
+#include <muse_amcl/utils/logger.hpp>
 
 namespace muse_amcl {
 class DataProvider {
@@ -43,6 +44,9 @@ public:
     {
         name_ = name;
         tf_provider_ = tf_provider;
+
+        Logger &l = Logger::getLogger();
+        l.info("Setup", "DataProvider:" + name_);
         doSetup(nh_private);
     }
 

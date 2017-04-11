@@ -25,6 +25,12 @@ void MapProviderBinaryGridMap::doSetup(ros::NodeHandle &nh_private)
     binarization_threshold_ = nh_private.param<double>(privateParameter("threshold"), 0.5);
     source_= nh_private.subscribe(topic_, 1, &MapProviderBinaryGridMap::callback, this);
     blocking_ = nh_private.param<bool>(privateParameter("blocking"), false);
+
+    Logger &l = Logger::getLogger();
+    l.info("topic_='" + topic_ + "'", "UpdateModel:" + name_);
+    l.info("binarization_threshold_='" + std::to_string(binarization_threshold_) + "'", "UpdateModel:" + name_);
+    l.info("blocking_='" + std::to_string(blocking_) + "'", "UpdateModel:" + name_);
+
 }
 
 void MapProviderBinaryGridMap::callback(const nav_msgs::OccupancyGridConstPtr &msg)

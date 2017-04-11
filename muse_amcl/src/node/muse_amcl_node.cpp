@@ -128,12 +128,12 @@ bool MuseAMCLNode::setup()
     }
     loader.load<NormalSampling, MapProviders, TFProvider::Ptr, ros::NodeHandle&>(normal_sampling_, map_providers_,  tf_provider_backend_, nh_private_);
     if(!normal_sampling_) {
-        l.error("No normal sampling algorithm was found!", "MuseAMCL");
+        l.error("No normal sampling algorithm was found!", "MuseAMCLNode");
         return false;
     }
     loader.load<Resampling, UniformSampling::Ptr, ros::NodeHandle&>(resampling_, uniform_sampling_, nh_private_);
     if(!resampling_) {
-        l.error("No resampling algorithm was found!", "MuseAMCL");
+        l.error("No resampling algorithm was found!", "MuseAMCLNode");
         return false;
     }
 

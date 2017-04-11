@@ -25,12 +25,12 @@
             <param name="base_class" value="muse_amcl::UpdateModel" />
             <param name="data_provider" value="front_laser" />
             <param name="map_provider" value="sand" />
-            <param name="z_hit" value="0.7"/>
-            <param name="z_short" value="0.1"/>
-            <param name="z_max" value="0.05"/>
-            <param name="z_rand" value="0.15"/>
-            <param name="sigma_hit" value="0.05"/>
-            <param name="lambda_short" value="0.1"/>
+            <param name="z_hit" value="0.725"/>
+            <param name="z_short" value="0.075"/>
+            <param name="z_max" value="0.025"/>
+            <param name="z_rand" value="0.175"/>
+            <param name="sigma_hit" value="0.075"/>
+            <param name="lambda_short" value="0.11"/>
         </group>
         <group ns="differential_drive_model">
             <param name="class" value="muse_amcl::DifferentialDrive" />

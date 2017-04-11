@@ -7,6 +7,8 @@
 #include <muse_amcl/data_types/map.hpp>
 #include <muse_amcl/particle_filter/particle_set.hpp>
 
+#include <muse_amcl/utils/logger.hpp>
+
 namespace muse_amcl {
 class UpdateModel {
 public:
@@ -34,11 +36,19 @@ public:
                       const TFProvider::Ptr &tf_provider,
                       ros::NodeHandle       &nh_private)
     {
+
         name_             = name;
         world_frame_      = nh_private.param<std::string>("world_frame", "world");
         robot_base_frame_ = nh_private.param<std::string>("robot_base_frame", "base_link");
         tf_timeout_       = ros::Duration(nh_private.param<double>(privateParameter("tf_timeout"), 0.1));
         tf_provider_      = tf_provider;
+
+        Logger &l = Logger::getLogger();
+        l.info("Setup", "UpdateModel:" + name_);
+        l.info("world_frame_='" + world_frame_ + "'", "UpdateModel:" + name_);
+        l.info("robot_base_frame_='" + robot_base_frame_ + "'.", "UpdateModel:" + name_);
+        l.info("tf_timeout_=" + std::to_string(tf_timeout_.toSec()), "UpdateModel:" + name_);
+
         doSetup(nh_private);
     }
 

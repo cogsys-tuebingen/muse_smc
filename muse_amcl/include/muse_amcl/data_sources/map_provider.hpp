@@ -5,6 +5,8 @@
 #include <muse_amcl/data_types/map.hpp>
 #include <ros/ros.h>
 
+#include <muse_amcl/utils/logger.hpp>
+
 namespace muse_amcl {
 class MapProvider {
 public:
@@ -28,6 +30,9 @@ public:
                       ros::NodeHandle   &nh_private)
     {
             name_ = name;
+            Logger &l = Logger::getLogger();
+            l.info("Setup", "MapProvider:" + name_);
+
             doSetup(nh_private);
     }
 

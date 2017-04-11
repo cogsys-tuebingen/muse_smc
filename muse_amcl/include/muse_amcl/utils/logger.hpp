@@ -10,6 +10,7 @@ namespace muse_amcl {
 class Logger {
 public:
     enum Level {ALL = 0, WARN = 1, ERROR = 2};
+    const std::size_t ms_digits = 3;
 
     void info(const std::string &msg,
               const std::string &sender = "")
@@ -17,15 +18,17 @@ public:
         if(enabled_ && level_ == ALL) {
             long s, ms;
             getTime(s,ms);
+
+            const std::string ms_off = ms >= 100 ? "" : (ms >= 10 ? "00" : "0");
             if(sender == "") {
-                std::cout << "[" << s << "." << ms << "][INFO] " << msg << std::endl;
+                std::cout << "[" << s << "." << ms_off << ms << "][INFO] " << msg << std::endl;
                 if(write_to_disk_) {
-                    out_ << "[" << s << "." << ms << "][INFO] " << msg << std::endl;
+                    out_ << "[" << s  << "." << ms_off << ms << "][INFO] " << msg << std::endl;
                 }
             } else {
-                std::cout << "[" << s << "." << ms << "][INFO][" << sender << "]:" << msg << std::endl;
+                std::cout << "[" << s << "." << ms_off << ms << "][INFO][" << sender << "]:" << msg << std::endl;
                 if(write_to_disk_) {
-                     out_ << "[INFO][" << sender << "]:" << msg << std::endl;
+                     out_ << "[" << s << "." << ms_off << ms << "][INFO][" << sender << "]:" << msg << std::endl;
                 }
             }
         }
@@ -37,14 +40,16 @@ public:
         if(enabled_) {
             long s, ms;
             getTime(s,ms);
+
+            const std::string ms_off = ms >= 100 ? "" : (ms >= 10 ? "00" : "0");
             if(sender == "") {
-                std::cerr << "[" << s << "." << ms << "][ERROR] " << msg << std::endl;
+                std::cerr << "[" << s << "." << ms_off << ms << "][ERROR] " << msg << std::endl;
                 if(write_to_disk_)
-                     out_ << "[" << s << "." << ms << "][ERROR] " << msg << std::endl;
+                     out_ << "[" << s << "." << ms_off << ms << "][ERROR] " << msg << std::endl;
             } else {
-                std::cerr << "[" << s << "." << ms << "]ERROR][" << sender << "]:" << msg << std::endl;
+                std::cerr << "[" << s << "." << ms_off << ms << "]ERROR][" << sender << "]:" << msg << std::endl;
                 if(write_to_disk_)
-                     out_ << "[" << s << "." << ms << "][ERROR][" << sender << "]:" << msg << std::endl;
+                     out_ << "[" << s << "." << ms_off << ms << "][ERROR][" << sender << "]:" << msg << std::endl;
             }
         }
     }
@@ -55,14 +60,16 @@ public:
         if(enabled_ && level_ <= WARN) {
             long s, ms;
             getTime(s,ms);
+
+            const std::string ms_off = ms >= 100 ? "" : (ms >= 10 ? "00" : "0");
             if(sender == "") {
-                std::cout << "[" << s << "." << ms << "][WARN] " << msg << std::endl;
+                std::cout << "[" << s << "." << ms_off << ms << "][WARN] " << msg << std::endl;
                 if(write_to_disk_)
-                     out_ << "[" << s << "." << ms << "][WARN] " << msg << std::endl;
+                     out_ << "[" << s << "." << ms_off << ms << "][WARN] " << msg << std::endl;
             } else {
-                std::cout << "[" << s << "." << ms << "][WARN][" << sender << "]:" << msg << std::endl;
+                std::cout << "[" << s << "." << ms_off << ms << "][WARN][" << sender << "]:" << msg << std::endl;
                 if(write_to_disk_)
-                     out_ << "[" << s << "." << ms << "][WARN][" << sender << "]:" << msg << std::endl;
+                     out_ << "[" << s << "." << ms_off << ms << "][WARN][" << sender << "]:" << msg << std::endl;
             }
         }
     }

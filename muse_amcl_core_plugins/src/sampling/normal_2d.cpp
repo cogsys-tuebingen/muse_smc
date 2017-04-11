@@ -26,7 +26,7 @@ void Normal2D::update(const std::string &frame)
         tf::Transform map_T_w;
         Map::ConstPtr map = m->getMap();
         if(!map) {
-            std::cerr << "[UniformAllMaps2D]: " + m->getName() + " return nullptr!" << std::endl;
+            std::cerr << "[Normal2D]: " + m->getName() + " return nullptr!" << std::endl;
             continue;
         }
 
@@ -39,7 +39,7 @@ void Normal2D::update(const std::string &frame)
             max = max.cwiseMax(w_T_map * map->getMax());
 
         } else {
-            std::cerr << "[UniformAllMaps2D]: Could not lookup transform '"
+            std::cerr << "[Normal2D]: Could not lookup transform '"
                       << frame << " -> " << map->getFrame()
                       << std::endl;
         }
