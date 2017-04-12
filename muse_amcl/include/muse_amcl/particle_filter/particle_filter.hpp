@@ -9,6 +9,7 @@
 #include <muse_amcl/particle_filter/prediction.hpp>
 #include <muse_amcl/particle_filter/update.hpp>
 #include <muse_amcl/utils/logger.hpp>
+#include <muse_amcl/utils/filterstate_logger.hpp>
 
 #include <geometry_msgs/PoseArray.h>
 #include <ros/ros.h>
@@ -70,6 +71,10 @@ protected:
     TFProvider::Ptr          tf_provider_;
     tf::TransformBroadcaster tf_broadcaster_;
     tf::Transform            tf_last_b_T_w_;
+    tf::StampedTransform     tf_latest_w_T_b_;
+
+
+
     ros::Time                particle_set_stamp_;
     ParticleSet::Ptr         particle_set_;
 
@@ -117,6 +122,14 @@ protected:
     std::string privateParameter(const std::string &name)
     {
         return name_ + "/" + name;
+    }
+
+    inline void saveFilterState() const
+    {
+        FilterStateLogger::getLogger().writeState(prediction_queue_.size(),
+                                                  update_queue_.size(),
+                                                  prediction_linear_distance_,
+                                                  prediction_angular_distance_);
     }
 
 

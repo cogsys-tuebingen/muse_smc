@@ -168,7 +168,7 @@ bool MuseAMCLNode::setup()
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "muse_amcl");
-    Logger &l = Logger::getLogger(true);
+    Logger &l = Logger::getLogger(false, Logger::ALL, false);
 
     MuseAMCLNode node;
     if(node.setup()) {

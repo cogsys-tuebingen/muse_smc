@@ -74,6 +74,11 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     particle_set_.reset(new ParticleSet(world_frame_, sample_size_minimum, sample_size_maximum, indexation, array_extent));
     particle_set_stamp_ = ros::Time::now(); /// the first time the particle set is touched is the first time it is valid
 
+    tf_latest_w_T_b_ = tf::StampedTransform(tf::Transform::getIdentity(),
+                                            particle_set_stamp_,
+                                            base_frame_,
+                                            world_frame_);
+
     l.info("sample_size='"  + std::to_string(sample_size) +"'", "ParticleFilter");
     l.info("sample_size_maximum='"  + std::to_string(sample_size) +"'", "ParticleFilter");
     l.info("sample_size_minimum='"  + std::to_string(sample_size) +"'", "ParticleFilter");
@@ -93,6 +98,10 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
 
     l.info("Set up.", "ParticleFilter");
 
+    FilterStateLogger::getLogger().writeState(prediction_queue_.size(),
+                                              update_queue_.size(),
+                                              prediction_linear_distance_,
+                                              prediction_angular_distance_);
 }
 
 void ParticleFilter::setUniformSampling(const UniformSampling::Ptr &sampling_uniform)
@@ -132,8 +141,10 @@ void ParticleFilter::addPrediction(Prediction::Ptr &prediction)
 {
     std::unique_lock<std::mutex> l(prediction_queue_mutex_);
     prediction_queue_.emplace(prediction);
-    Logger::getLogger().info("Got prediction.", "ParticleFilter");
     //    notify_event_.notify_one();   <--- main trigger should be the sensor measurements
+
+    Logger::getLogger().info("Got prediction.", "ParticleFilter");
+    saveFilterState();
 }
 
 void ParticleFilter::addUpdate(Update::Ptr &update)
@@ -141,7 +152,9 @@ void ParticleFilter::addUpdate(Update::Ptr &update)
     std::unique_lock<std::mutex> l(update_queue_mutex_);
     update_queue_.emplace(update);
     notify_event_.notify_one();
+
     Logger::getLogger().info("Got update.", "ParticleFilter");
+    saveFilterState();
 }
 
 void ParticleFilter::requestPoseInitialization(const math::Pose &pose,
@@ -152,9 +165,9 @@ void ParticleFilter::requestPoseInitialization(const math::Pose &pose,
         initialization_pose_ = pose;
         initialization_covariance_ = covariance;
         request_pose_initilization_ = true;
-        particle_set_stamp_ = ros::Time::now();
         notify_event_.notify_one();
     }
+
     Logger::getLogger().info("Got pose initialization request.", "ParticleFilter");
 }
 
@@ -217,6 +230,9 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
 {
     Logger::getLogger().info("Starting to propagate the samples.", "ParticleFilter");
     Logger::getLogger().info("Before, '" + std::to_string(prediction_queue_.size()) + "' samples in queue.", "ParticleFilter");
+
+    saveFilterState();
+
     while(until > particle_set_stamp_) {
         Prediction::Ptr prediction;
         {
@@ -227,12 +243,14 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
             prediction = prediction_queue_.top();
             prediction_queue_.pop();
         }
+
+        saveFilterState();
+
         /// remove too old predction messages
         if(prediction->getStamp() < particle_set_stamp_)
             continue;
 
         /// mutate time stamp
-
         PredictionModel::Movement movement = prediction->apply(until, particle_set_->getPoses());
         prediction_linear_distance_       += movement.linear_distance;
         prediction_angular_distance_      += movement.angular_distance;
@@ -246,7 +264,9 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
         }
     }
 
+    saveFilterState();
     Logger::getLogger().info("After, '" + std::to_string(prediction_queue_.size()) + "' samples in queue.", "ParticleFilter");
+
     return prediction_linear_distance_ > 0.0 || prediction_angular_distance_ > 0.0;
 }
 
@@ -277,11 +297,16 @@ void ParticleFilter::publishPoses(const bool force)
 
 void ParticleFilter::publishTF()
 {
-    const ros::Time now = ros::Time::now();
     tf::Transform o_T_b;
-    if(tf_provider_->lookupTransform(odom_frame_, base_frame_, now, o_T_b, ros::Duration(0.1))) {
-        tf::StampedTransform o_T_w((o_T_b * tf_last_b_T_w_).inverse(), now, world_frame_, odom_frame_);
+    if(tf_provider_->lookupTransform(odom_frame_, base_frame_, particle_set_stamp_, o_T_b, ros::Duration(0.1))) {
+        tf::StampedTransform o_T_w(o_T_b * tf_latest_w_T_b_.inverse(), particle_set_stamp_, world_frame_, odom_frame_);
         tf_broadcaster_.sendTransform(o_T_w);
+
+        std::cout << "publishing tf " << o_T_w.stamp_ << std::endl;
+
+        if(o_T_w.getRotation().length() != 1.0)
+             std::cout << "My name is staff sergeant montgomery hartmann" << std::endl;
+
         Logger::getLogger().info("Published TF.", "ParticleFilter");
     }
 }
@@ -306,6 +331,7 @@ void ParticleFilter::loop()
             sampling_uniform_->apply(*particle_set_);
         }
         /// 2. check for new update in the queue
+        saveFilterState();
         if(!update_queue_.empty()) {
             Update::Ptr update = update_queue_.top();
             update_queue_.pop();
@@ -319,6 +345,8 @@ void ParticleFilter::loop()
                 Logger::getLogger().info("Processed update.", "ParticleFilter");
             }
         }
+
+        saveFilterState();
 
         /// 6. check if its time for resampling
         if(prediction_linear_distance_ > resampling_offset_linear_ ||
@@ -360,14 +388,19 @@ void ParticleFilter::loop()
                 Logger::getLogger().error("Clustering has failed.", "ParticleFilter");
             } else {
                 Eigen::Vector3d mean = distributions.at(max_cluster_id).getMean();
-                math::Pose w_T_b(mean);
-                tf_last_b_T_w_ = w_T_b.inverse().getPose(), particle_set_stamp_;
+                std::cout << mean << std::endl;
+                tf_latest_w_T_b_ = tf::StampedTransform(math::Pose(mean).getPose(), particle_set_stamp_, base_frame_, world_frame_);
             }
         }
+
+        saveFilterState();
+
         publishPoses(true);
         publishTF();
     }
     working_ = false;
+
+    saveFilterState();
 
 }
 

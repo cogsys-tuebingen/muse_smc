@@ -13,6 +13,12 @@
    <class type="muse_amcl::DifferentialDrive" base_class_type="muse_amcl::PredictionModel">
      <description>Differential drive propagation model.</description>
    </class>
+   <class type="muse_amcl::DifferentialDriveAbs" base_class_type="muse_amcl::PredictionModel">
+     <description>
+        Differential drive propagation model using only absolute values in the terms,
+        instead of quadratic ones.
+   </description>
+   </class>
    <class type="muse_amcl::OmniDrive" base_class_type="muse_amcl::PredictionModel">
      <description>Omnidirectional drive propagation model.</description>
    </class>

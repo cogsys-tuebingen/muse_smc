@@ -33,12 +33,12 @@
             <param name="lambda_short" value="0.11"/>
         </group>
         <group ns="differential_drive_model">
-            <param name="class" value="muse_amcl::DifferentialDrive" />
+            <param name="class" value="muse_amcl::DifferentialDriveAbs" />
             <param name="base_class" value="muse_amcl::PredictionModel"/>
             <param name="data_provider" value="odometry" />
-            <param name="alpha1" value="0.4"/>
-            <param name="alpha2" value="0.3"/>
-            <param name="alpha3" value="0.0"/>
+            <param name="alpha1" value="0.01"/>
+            <param name="alpha2" value="0.01"/>
+            <param name="alpha3" value="0.2"/>
             <param name="alpha4" value="0.0"/>
             <param name="alpha5" value="0.0"/>
  

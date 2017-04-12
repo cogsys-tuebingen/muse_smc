@@ -40,6 +40,7 @@ add_library(${PROJECT_NAME} SHARED
     src/maps_2d/map_provider_probability_gridmap_service.cpp
 
     src/odometry/differential_drive.cpp
+    src/odometry/differential_drive_abs.cpp
     src/odometry/omni_drive.cpp
     src/odometry/data_provider_odometry.cpp
 
