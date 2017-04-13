@@ -26,7 +26,7 @@ public:
         ms += 1000 * s - start_time_;
 
         out_ << static_cast<double>(ms) / 1e3 << ",";
-        write<Types...>(ts...);
+        write(ts...);
     }
 
     static inline FilterStateLogger& getLogger(const bool relative_time = true) {
@@ -79,10 +79,11 @@ private:
     void write(const WT &t, WTypes ... ts)
     {
         out_ << t << ",";
+        write(ts...);
     }
 
-    template<typename WT>
-    void write(const WT &t)
+    template<typename T>
+    void write(const T &t)
     {
         out_ << t << std::endl;
     }
