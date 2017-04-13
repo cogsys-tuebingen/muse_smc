@@ -98,10 +98,10 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
 
     l.info("Set up.", "ParticleFilter");
 
-    FilterStateLogger::getLogger().writeState(prediction_queue_.size(),
-                                              update_queue_.size(),
-                                              prediction_linear_distance_,
-                                              prediction_angular_distance_);
+    FilterStateLoggerDefault::getLogger().writeState(prediction_queue_.size(),
+                                                     update_queue_.size(),
+                                                     prediction_linear_distance_,
+                                                     prediction_angular_distance_);
 }
 
 void ParticleFilter::setUniformSampling(const UniformSampling::Ptr &sampling_uniform)

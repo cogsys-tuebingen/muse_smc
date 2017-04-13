@@ -126,10 +126,10 @@ protected:
 
     inline void saveFilterState() const
     {
-        FilterStateLogger::getLogger().writeState(prediction_queue_.size(),
-                                                  update_queue_.size(),
-                                                  prediction_linear_distance_,
-                                                  prediction_angular_distance_);
+        FilterStateLoggerDefault::getLogger().writeState(prediction_queue_.size(),
+                                                         update_queue_.size(),
+                                                         prediction_linear_distance_,
+                                                         prediction_angular_distance_);
     }
 
 

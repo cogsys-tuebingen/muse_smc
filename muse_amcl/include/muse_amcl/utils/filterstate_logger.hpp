@@ -8,19 +8,16 @@
 #include <mutex>
 
 namespace muse_amcl {
+template<typename ... Types>
 class FilterStateLogger {
 public:
-
     virtual ~FilterStateLogger()
     {
         if(out_.is_open())
             out_.close();
     }
 
-    inline void writeState(const std::size_t predictions_in_q,
-                           const std::size_t updates_in_q,
-                           const double driven_linear_distance,
-                           const double driven_angular_distance)
+    inline void writeState(const Types ... ts)
     {
         std::unique_lock<std::mutex> l(mutex_);
 
@@ -28,12 +25,8 @@ public:
         getTime(s, ms);
         ms += 1000 * s - start_time_;
 
-        out_ << static_cast<double>(ms) / 1e3 << ","
-             << predictions_in_q << ","
-             << updates_in_q << ","
-             << driven_linear_distance << ","
-             << driven_angular_distance
-             << std::endl;
+        out_ << static_cast<double>(ms) / 1e3 << ",";
+        write<Types...>(ts...);
     }
 
     static inline FilterStateLogger& getLogger(const bool relative_time = true) {
@@ -82,7 +75,22 @@ private:
         time = std::to_string(s) + "." + ms_off + std::to_string(ms);
     }
 
+    template<typename WT, typename ... WTypes>
+    void write(const WT &t, WTypes ... ts)
+    {
+        out_ << t << ",";
+    }
+
+    template<typename WT>
+    void write(const WT &t)
+    {
+        out_ << t << std::endl;
+    }
+
 };
+
+using FilterStateLoggerDefault = FilterStateLogger<std::size_t, std::size_t, double, double>;
+
 }
 
 #endif // FILTERSTATELOGGER_HPP
