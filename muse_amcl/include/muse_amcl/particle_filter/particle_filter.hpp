@@ -70,7 +70,6 @@ protected:
 
     TFProvider::Ptr          tf_provider_;
     tf::TransformBroadcaster tf_broadcaster_;
-    tf::Transform            tf_last_b_T_w_;
     tf::StampedTransform     tf_latest_w_T_b_;
 
 

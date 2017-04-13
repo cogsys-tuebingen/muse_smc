@@ -225,7 +225,9 @@ void ParticleFilter::processRequests()
         request_pose_initilization_ = false;
         sampling_normal_pose_->apply(initialization_pose_, initialization_covariance_, *particle_set_);
         particle_set_stamp_ = ros::Time::now();
+        tf_latest_w_T_b_ = tf::StampedTransform(initialization_pose_.getPose(), particle_set_stamp_, base_frame_, world_frame_);
         publishPoses(true);
+        publishTF();
         Logger::getLogger().info("Pose localization request has been processed", "ParticleFilter");
     }
 }
@@ -302,6 +304,8 @@ void ParticleFilter::publishPoses(const bool force)
 void ParticleFilter::publishTF()
 {
     tf::Transform o_T_b;
+    std::cout << particle_set_stamp_ << " " << ros::Time::now() << std::endl;
+
     if(tf_provider_->lookupTransform(odom_frame_, base_frame_, particle_set_stamp_, o_T_b, ros::Duration(0.1))) {
         tf::StampedTransform o_T_w(o_T_b * tf_latest_w_T_b_.inverse(), particle_set_stamp_, world_frame_, odom_frame_);
         tf_broadcaster_.sendTransform(o_T_w);
@@ -320,6 +324,9 @@ void ParticleFilter::loop()
     Logger::getLogger().info("Starting loop.", "ParticleFilter");
     std::unique_lock<std::mutex> lock_updates(update_queue_mutex_);
     while(!stop_working_) {
+        if(particle_set_stamp_.isZero())
+            particle_set_stamp_ = ros::Time::now();
+
         /// 0. wait for new tasks
         notify_event_.wait(lock_updates);
 
@@ -392,7 +399,6 @@ void ParticleFilter::loop()
                 Logger::getLogger().error("Clustering has failed.", "ParticleFilter");
             } else {
                 Eigen::Vector3d mean = distributions.at(max_cluster_id).getMean();
-                std::cout << mean << std::endl;
                 tf_latest_w_T_b_ = tf::StampedTransform(math::Pose(mean).getPose(), particle_set_stamp_, base_frame_, world_frame_);
             }
         }
