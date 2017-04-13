@@ -129,7 +129,9 @@ protected:
         FilterStateLoggerDefault::getLogger().writeState(prediction_queue_.size(),
                                                          update_queue_.size(),
                                                          prediction_linear_distance_,
-                                                         prediction_angular_distance_);
+                                                         prediction_angular_distance_,
+                                                         ros::Time::now().toSec(),
+                                                         particle_set_stamp_.toSec());
     }
 
 

@@ -11,6 +11,9 @@ namespace muse_amcl {
 template<typename ... Types>
 class FilterStateLogger {
 public:
+    static constexpr std::size_t size = sizeof ... (Types);
+    using Header = std::array<std::string, size>;
+
     virtual ~FilterStateLogger()
     {
         if(out_.is_open())
@@ -29,8 +32,9 @@ public:
         write(ts...);
     }
 
-    static inline FilterStateLogger& getLogger(const bool relative_time = true) {
-        static FilterStateLogger l(relative_time);
+    static inline FilterStateLogger& getLogger(const Header &header = Header(),
+                                               const bool relative_time = true) {
+        static FilterStateLogger l(header, relative_time);
         return l;
     }
 
@@ -39,7 +43,8 @@ private:
     std::ofstream out_;
     long          start_time_;
 
-    FilterStateLogger(const bool relative_time) :
+    FilterStateLogger(const Header &header,
+                      const bool relative_time) :
         start_time_(0)
     {
         std::stringstream ss;
@@ -48,7 +53,16 @@ private:
         ss << "/tmp/muse_filter_state" << s << "." << ms << ".log";
         out_.open(ss.str());
 
-        out_ << "time, predictions, updates, driven_linear, driven_angular" << std::endl;
+        if(size > 0) {
+            out_ << "time,";
+            for(std::size_t i = 0 ; i < size - 1 ; ++i) {
+                out_ << header[i];
+            }
+            out_ << header[size - 1];
+        } else {
+            out_ << "time";
+        }
+        out_ << std::endl;
 
         if(relative_time) {
             start_time_ = ms + 1000 * s;
@@ -64,7 +78,6 @@ private:
         milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count()
                 - 1000 * seconds;
     }
-
 
     inline void getTime(std::string &time)
     {
@@ -90,7 +103,7 @@ private:
 
 };
 
-using FilterStateLoggerDefault = FilterStateLogger<std::size_t, std::size_t, double, double>;
+using FilterStateLoggerDefault = FilterStateLogger<std::size_t, std::size_t, double, double, double, double>;
 
 }
 
