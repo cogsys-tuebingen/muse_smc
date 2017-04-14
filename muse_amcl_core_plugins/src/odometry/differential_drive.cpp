@@ -28,7 +28,7 @@ PredictionModel::Result DifferentialDrive::doPredict(const Data::ConstPtr &data,
 
     if(delta_trans < eps_zero_linear_ &&
             delta_rot2 < eps_zero_angular_)
-        return PredictionModel::Result(0.0, 0.0, odometry.getTimeFrame().end - odometry.getTimeFrame().begin);
+        return PredictionModel::Result(0.0, 0.0, data);
 
 
     const double delta_rot_noise1 = std::min(std::abs(math::angle::difference(delta_rot1, 0.0)),
@@ -76,7 +76,7 @@ PredictionModel::Result DifferentialDrive::doPredict(const Data::ConstPtr &data,
         sample.setEigen3D(pose);
     }
 
-    return PredictionModel::Result(delta_trans, delta_rot2, odometry.getTimeFrame().end - odometry.getTimeFrame().begin);
+    return PredictionModel::Result(delta_trans, delta_rot2, data);
 }
 
 void DifferentialDrive::doSetup(ros::NodeHandle &nh_private)

@@ -258,13 +258,18 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
             continue;
 
         /// mutate time stamp
-        PredictionModel::Movement movement = prediction->apply(until, particle_set_->getPoses());
-        prediction_linear_distance_       += movement.linear_distance;
-        prediction_angular_distance_      += movement.angular_distance;
-        particle_set_stamp_               += movement.prediction_duration;
-
-        if(!prediction->isDone()) {
-            /// if prediction is not fully finished, push it back onto the queue
+        PredictionModel::Result movement = prediction->apply(until, particle_set_->getPoses());
+        if(movement.success()) {
+            prediction_linear_distance_ += movement.linear_distance_abs;
+            prediction_angular_distance_+= movement.angular_distance_abs;
+            particle_set_stamp_ = movement.applied->getTimeFrame().end;
+            if(movement.left_to_apply) {
+                Prediction::Ptr prediction_left_to_apply
+                        (new Prediction(movement.left_to_apply, prediction->getPredictionModel()));
+                std::unique_lock<std::mutex> l(prediction_queue_mutex_);
+                prediction_queue_.emplace(prediction_left_to_apply);
+            }
+        } else {
             std::unique_lock<std::mutex> l(prediction_queue_mutex_);
             prediction_queue_.emplace(prediction);
             break;
