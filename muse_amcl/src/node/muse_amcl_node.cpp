@@ -28,7 +28,15 @@ void MuseAMCLNode::start()
     l.info("Started particle filter.", "MuseAMCLNode");
     l.markNewLogSection();
 
-    ros::spin();
+    ros::WallRate r(60);
+    ros::Time last = ros::Time::now();
+    while(ros::ok()) {
+        ros::spinOnce();
+        ros::Time now = ros::Time::now();
+        ROS_ERROR_STREAM((now - last).toNSec() * 1e-9);
+        last = now;
+        r.sleep();
+    }
 }
 
 bool MuseAMCLNode::requestGlobalInitialization(muse_amcl::GlobalInitialization::Request &req,

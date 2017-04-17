@@ -149,6 +149,7 @@ void ParticleFilter::addPrediction(Prediction::Ptr &prediction)
 
     Logger::getLogger().info("Got prediction.", "ParticleFilter");
     saveFilterState();
+    publishTF(prediction->getStamp());
 }
 
 void ParticleFilter::addUpdate(Update::Ptr &update)
@@ -227,7 +228,7 @@ void ParticleFilter::processRequests()
         particle_set_stamp_ = ros::Time::now();
         tf_latest_w_T_b_ = tf::StampedTransform(initialization_pose_.getPose(), particle_set_stamp_, base_frame_, world_frame_);
         publishPoses(true);
-        publishTF();
+        publishTF(particle_set_stamp_);
         Logger::getLogger().info("Pose localization request has been processed", "ParticleFilter");
     }
 }
@@ -306,12 +307,12 @@ void ParticleFilter::publishPoses(const bool force)
     };
 }
 
-void ParticleFilter::publishTF()
+void ParticleFilter::publishTF(const ros::Time &t)
 {
-    tf::Transform o_T_b;
-    if(tf_provider_->lookupTransform(odom_frame_, base_frame_, particle_set_stamp_, o_T_b, ros::Duration(0.1))) {
-        tf::StampedTransform o_T_w((o_T_b * tf_latest_w_T_b_.inverse()).inverse(), particle_set_stamp_, world_frame_, odom_frame_);
-        tf_broadcaster_.sendTransform(o_T_w);
+    tf::Transform b_T_o;
+    if(tf_provider_->lookupTransform(base_frame_, odom_frame_, particle_set_stamp_, b_T_o, ros::Duration(0.1))) {
+        tf::StampedTransform w_T_o(static_cast<tf::Transform>(tf_latest_w_T_b_)* b_T_o, t, world_frame_, odom_frame_);
+        tf_broadcaster_.sendTransform(w_T_o);
         Logger::getLogger().info("Published TF.", "ParticleFilter");
     }
 }
@@ -396,16 +397,6 @@ void ParticleFilter::loop()
                 Logger::getLogger().error("Clustering has failed.", "ParticleFilter");
             } else {
                 Eigen::Vector3d mean = distributions.at(max_cluster_id).getMean();
-
-//                geometry_msgs::PoseStamped p;
-//                p.header.stamp = particle_set_stamp_;
-//                p.header.frame_id  = world_frame_;
-//                p.pose.position.x = mean(0);
-//                p.pose.position.y = mean(1);
-//                p.pose.orientation = tf::createQuaternionMsgFromYaw(mean(2));
-//                pub_single_pose_.publish(p);
-
-
                 tf_latest_w_T_b_ = tf::StampedTransform(math::Pose(mean).getPose(), particle_set_stamp_, base_frame_, world_frame_);
             }
         }
@@ -413,7 +404,7 @@ void ParticleFilter::loop()
         saveFilterState();
 
         publishPoses(true);
-        publishTF();
+        publishTF(particle_set_stamp_);
     }
     working_ = false;
 

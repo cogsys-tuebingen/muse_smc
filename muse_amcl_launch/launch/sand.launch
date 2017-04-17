@@ -2,11 +2,11 @@
 <launch>
     <group ns="muse_amcl">
         <param name="world_frame" value="/world" />
-        <param name="odom_frame" value="/odom" />
+        <param name="odom_frame"  value="/odom" />
         <param name="base_frame"  value="/base_link" />
         <param name="topic_poses" value="/muse_amcl/poses"/>
-        <param name="rate_poses" value="30.0" />
-        <param name="rate_tf" 	 value="30.0" />
+        <param name="rate_poses"  value="30.0" />
+        <param name="rate_tf" 	  value="30.0" />
         
         <group ns="front_laser">
           <param name="class" value="muse_amcl::DataProviderLaser2D" />
@@ -75,7 +75,7 @@
           </rosparam>
           <param name="timeout"   value="10.0" />
           <param name="tf_timeout"  value="0.1" />
-          <param name="sample_size" value="1000" />
+          <param name="sample_size" value="500" />
           <param name="class"     value="muse_amcl::Normal2D" />
           <param name="base_class"  value="muse_amcl::NormalPoseGeneration" />
           <param name="seed"    value="0" />

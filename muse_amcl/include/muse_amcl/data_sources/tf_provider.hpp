@@ -223,7 +223,7 @@ protected:
     {
         tf::StampedTransform stamped;
         std::string error;
-        if(tf_.waitForTransform(target_frame, source_frame, time, timeout, ros::Duration(0.01), &error)) {
+        if(tf_.canTransform(target_frame, source_frame, time, &error)) {
             tf_.lookupTransform(target_frame, source_frame, time, stamped);
             transform = stamped;
             return true;

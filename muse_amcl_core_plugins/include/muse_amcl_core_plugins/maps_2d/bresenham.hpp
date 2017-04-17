@@ -58,7 +58,7 @@ public:
 
     inline Bresenham& operator++()
     {
-        if(done())
+        if(done() || invalid())
             return *this;
 
         index[0] += step_x;
@@ -73,15 +73,17 @@ public:
         return *this;
     }
 
-    inline bool done()
+    inline bool done() const
     {
-        const bool reached_end = index[0] == end[0] && index[1] == end[1];
-        const bool outer_limits = index[0] < 0 ||
-                index[1] < 0 ||
-                index[0] >= size[0] ||
-                index[1] >= size[1];
+        return index[0] == end[0] && index[1] == end[1];
+    }
 
-        return reached_end || outer_limits;
+    inline bool invalid() const
+    {
+        return index[0] < 0 ||
+               index[1] < 0 ||
+               index[0] >= size[0] ||
+               index[1] >= size[1];
     }
 
     inline T& operator *() const

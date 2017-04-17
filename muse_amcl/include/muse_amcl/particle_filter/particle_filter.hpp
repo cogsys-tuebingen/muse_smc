@@ -117,7 +117,7 @@ protected:
     void processRequests();
     bool processPredictions(const ros::Time &until);
     void publishPoses(const bool force = false);
-    void publishTF();
+    void publishTF(const ros::Time &t);
     void loop();
 
     std::string privateParameter(const std::string &name)

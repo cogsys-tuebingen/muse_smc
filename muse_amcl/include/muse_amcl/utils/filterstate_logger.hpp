@@ -22,14 +22,14 @@ public:
 
     inline void writeState(const Types ... ts)
     {
-        std::unique_lock<std::mutex> l(mutex_);
+//        std::unique_lock<std::mutex> l(mutex_);
 
-        long s, ms;
-        getTime(s, ms);
-        ms += 1000 * s - start_time_;
+//        long s, ms;
+//        getTime(s, ms);
+//        ms += 1000 * s - start_time_;
 
-        out_ << static_cast<double>(ms) / 1e3 << ",";
-        write(ts...);
+//        out_ << static_cast<double>(ms) / 1e3 << ",";
+//        write(ts...);
     }
 
     static inline FilterStateLogger& getLogger(const Header &header = Header(),
@@ -91,14 +91,14 @@ private:
     template<typename WT, typename ... WTypes>
     void write(const WT &t, WTypes ... ts)
     {
-        out_ << t << ",";
-        write(ts...);
+//        out_ << t << ",";
+//        write(ts...);
     }
 
     template<typename T>
     void write(const T &t)
     {
-        out_ << t << std::endl;
+//        out_ << t << std::endl;
     }
 
 };
