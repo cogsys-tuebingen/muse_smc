@@ -63,6 +63,7 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     resampling_offset_linear_  = nh_private.param(privateParameter("resampling_offset_linear"), 0.25);
     resampling_offset_angular_ = nh_private.param(privateParameter("resampling_offset_angular"), M_PI / 10.0);
     pub_poses_                 = nh_private.advertise<geometry_msgs::PoseArray>(topic_poses, 1);
+    pub_single_pose_                  = nh_private.advertise<geometry_msgs::PoseStamped>("/muse_amcl/mean", 1);
     pub_poses_delay_           = ros::Rate(pub_pose_rate).cycleTime();
     pub_tf_delay_              = ros::Rate(pub_tf_rate).cycleTime();
 
@@ -257,13 +258,18 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
             continue;
 
         /// mutate time stamp
-        PredictionModel::Movement movement = prediction->apply(until, particle_set_->getPoses());
-        prediction_linear_distance_       += movement.linear_distance;
-        prediction_angular_distance_      += movement.angular_distance;
-        particle_set_stamp_               += movement.prediction_duration;
-
-        if(!prediction->isDone()) {
-            /// if prediction is not fully finished, push it back onto the queue
+        PredictionModel::Result movement = prediction->apply(until, particle_set_->getPoses());
+        if(movement.success()) {
+            prediction_linear_distance_ += movement.linear_distance_abs;
+            prediction_angular_distance_+= movement.angular_distance_abs;
+            particle_set_stamp_ = movement.applied->getTimeFrame().end;
+            if(movement.left_to_apply) {
+                Prediction::Ptr prediction_left_to_apply
+                        (new Prediction(movement.left_to_apply, prediction->getPredictionModel()));
+                std::unique_lock<std::mutex> l(prediction_queue_mutex_);
+                prediction_queue_.emplace(prediction_left_to_apply);
+            }
+        } else {
             std::unique_lock<std::mutex> l(prediction_queue_mutex_);
             prediction_queue_.emplace(prediction);
             break;
@@ -307,7 +313,10 @@ void ParticleFilter::publishTF()
     std::cout << particle_set_stamp_ << " " << ros::Time::now() << std::endl;
 
     if(tf_provider_->lookupTransform(odom_frame_, base_frame_, particle_set_stamp_, o_T_b, ros::Duration(0.1))) {
-        tf::StampedTransform o_T_w(o_T_b * tf_latest_w_T_b_.inverse(), particle_set_stamp_, world_frame_, odom_frame_);
+//    if(tf_provider_->lookupTransform(odom_frame_, base_frame_, ros::Time::now(), o_T_b, ros::Duration(0.1))) {
+        tf::StampedTransform o_T_w((o_T_b * tf_latest_w_T_b_.inverse()).inverse(), particle_set_stamp_, world_frame_, odom_frame_);
+//        tf::StampedTransform o_T_w((o_T_b * tf_latest_w_T_b_.inverse()).inverse(), ros::Time::now(), world_frame_, odom_frame_);
+
         tf_broadcaster_.sendTransform(o_T_w);
 
         std::cout << "publishing tf " << o_T_w.stamp_ << std::endl;
@@ -399,6 +408,16 @@ void ParticleFilter::loop()
                 Logger::getLogger().error("Clustering has failed.", "ParticleFilter");
             } else {
                 Eigen::Vector3d mean = distributions.at(max_cluster_id).getMean();
+
+//                geometry_msgs::PoseStamped p;
+//                p.header.stamp = particle_set_stamp_;
+//                p.header.frame_id  = world_frame_;
+//                p.pose.position.x = mean(0);
+//                p.pose.position.y = mean(1);
+//                p.pose.orientation = tf::createQuaternionMsgFromYaw(mean(2));
+//                pub_single_pose_.publish(p);
+
+
                 tf_latest_w_T_b_ = tf::StampedTransform(math::Pose(mean).getPose(), particle_set_stamp_, base_frame_, world_frame_);
             }
         }

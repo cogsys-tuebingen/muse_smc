@@ -65,6 +65,7 @@ protected:
     const std::string        name_;
 
     ros::Publisher           pub_poses_;
+    ros::Publisher           pub_single_pose_;
     ros::Time                pub_poses_last_time_;
     ros::Time                pub_tf_last_time_;
 

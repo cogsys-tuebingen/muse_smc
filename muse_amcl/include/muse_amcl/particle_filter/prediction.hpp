@@ -44,30 +44,26 @@ public:
     {
     }
 
-    inline PredictionModel::Movement operator ()
+    inline PredictionModel::Result operator ()
         (const ros::Time &until, ParticleSet::Poses poses)
     {
-        PredictionModel::Result model_response = model_->predict(data_, until, poses);
-        data_ = model_response.left_over;
-        return model_response.movement;
+        return model_->predict(data_, until, poses);
     }
 
-    inline PredictionModel::Movement
-        apply(const ros::Time &until, ParticleSet::Poses poses)
+    inline PredictionModel::Result apply(const ros::Time &until,
+                                         ParticleSet::Poses poses)
     {
-        PredictionModel::Result model_response = model_->predict(data_, until, poses);
-        data_ = model_response.left_over;
-        return model_response.movement;
-    }
-
-    inline bool isDone() const
-    {
-        return data_.get() == nullptr;
+        return model_->predict(data_, until, poses);
     }
 
     inline const ros::Time & getStamp() const
     {
         return data_->getTimeFrame().begin;
+    }
+
+    inline PredictionModel::Ptr getPredictionModel() const
+    {
+        return model_;
     }
 
 private:

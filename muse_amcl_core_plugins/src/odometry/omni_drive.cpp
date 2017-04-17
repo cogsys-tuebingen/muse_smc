@@ -27,7 +27,7 @@ PredictionModel::Result OmniDrive::doPredict(const Data::ConstPtr &data,
 
     if(delta_trans < eps_zero_linear_ &&
             delta_rot < eps_zero_angular_)
-        return PredictionModel::Result(0.0, 0.0, odometry.getTimeFrame().end - odometry.getTimeFrame().begin);
+        return PredictionModel::Result(0.0, 0.0, data);
 
 
 
@@ -60,7 +60,7 @@ PredictionModel::Result OmniDrive::doPredict(const Data::ConstPtr &data,
         sample.setEigen3D(pose);
     }
 
-    return PredictionModel::Result(delta_trans, delta_rot, odometry.getTimeFrame().end - odometry.getTimeFrame().begin);
+    return PredictionModel::Result(delta_trans, delta_rot, data);
 }
 
 void OmniDrive::doSetup(ros::NodeHandle &nh_private)

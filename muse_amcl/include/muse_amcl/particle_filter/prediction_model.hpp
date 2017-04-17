@@ -13,51 +13,44 @@ class PredictionModel {
 public:
     using Ptr = std::shared_ptr<PredictionModel>;
 
-    struct Movement {
-        Movement(const double linear_distance,
-                 const double angular_distance,
-                 const ros::Duration &duration) :
-            linear_distance(linear_distance),
-            angular_distance(angular_distance),
-            prediction_duration(duration)
-        {
-        }
-
-        Movement() :
-            linear_distance(0.0),
-            angular_distance(0.0),
-            prediction_duration(0.0)
-
-        {
-        }
-        const double        linear_distance;
-        const double        angular_distance;
-        const ros::Duration prediction_duration;
-    };
-
     struct Result {
-        Result(const double linear_distance_moved,
-               const double angular_distance_moved,
-               const ros::Duration &prediction_duration,
-               const Data::ConstPtr &left_over) :
-            movement(linear_distance_moved, angular_distance_moved, prediction_duration),
-            left_over(left_over)
+        Result() :
+            linear_distance_abs(0.0),
+            angular_distance_abs(0.0)
         {
         }
 
-        Result(const double linear_distance_moved,
-               const double angular_distance_moved,
-               const ros::Duration &prediction_duration) :
-            movement(linear_distance_moved, angular_distance_moved, prediction_duration)
+        Result(const double linear_distance_abs,
+               const double angular_distance_abs,
+               const Data::ConstPtr &applied) :
+            linear_distance_abs(linear_distance_abs),
+            angular_distance_abs(angular_distance_abs),
+            applied(applied)
         {
         }
 
-        Result() = default;
+        Result(const double linear_distance_abs,
+                const double angular_distance_abs,
+                const Data::ConstPtr &applied,
+                const Data::ConstPtr &left_to_apply) :
+            linear_distance_abs(linear_distance_abs),
+            angular_distance_abs(angular_distance_abs),
+            applied(applied),
+            left_to_apply(left_to_apply)
+        {
+        }
 
-        const Movement       movement;
-        const Data::ConstPtr left_over;  /// leftover for prediction, either it could not be
-                                         /// predicted until time or there is just a part still
-                                         /// open to be used for prediction
+        inline bool success() const
+        {
+            return static_cast<bool>(applied);
+        }
+
+        const double linear_distance_abs;
+        const double angular_distance_abs;
+
+        const Data::ConstPtr applied;
+        const Data::ConstPtr left_to_apply;
+
     };
 
     PredictionModel()
@@ -100,8 +93,9 @@ public:
                    const ros::Time      &until,
                    ParticleSet::Poses    poses)
     {
+
         if(until < data->getTimeFrame().end) {
-            return Result(0, 0, ros::Duration(0.0), data);
+            return Result();
         } else {
             return doPredict(data, until, poses);
         }
