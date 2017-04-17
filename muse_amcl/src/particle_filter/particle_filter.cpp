@@ -146,7 +146,6 @@ void ParticleFilter::addPrediction(Prediction::Ptr &prediction)
 {
     std::unique_lock<std::mutex> l(prediction_queue_mutex_);
     prediction_queue_.emplace(prediction);
-    //    notify_event_.notify_one();   <--- main trigger should be the sensor measurements
 
     Logger::getLogger().info("Got prediction.", "ParticleFilter");
     saveFilterState();
@@ -313,10 +312,6 @@ void ParticleFilter::publishTF()
     if(tf_provider_->lookupTransform(odom_frame_, base_frame_, particle_set_stamp_, o_T_b, ros::Duration(0.1))) {
         tf::StampedTransform o_T_w((o_T_b * tf_latest_w_T_b_.inverse()).inverse(), particle_set_stamp_, world_frame_, odom_frame_);
         tf_broadcaster_.sendTransform(o_T_w);
-
-        if(o_T_w.getRotation().length() != 1.0)
-             std::cout << "My name is staff sergeant montgomery hartmann" << std::endl;
-
         Logger::getLogger().info("Published TF.", "ParticleFilter");
     }
 }

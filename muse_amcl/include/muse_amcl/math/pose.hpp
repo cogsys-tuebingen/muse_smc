@@ -3,6 +3,7 @@
 
 #include <tf/tf.h>
 #include <eigen3/Eigen/Core>
+#include "angle.hpp"
 
 namespace muse_amcl {
 namespace math {
@@ -45,11 +46,11 @@ public:
     }
 
     /**
-     * @brief Pose constructor for the 6D Eigen representation.
+     * @brief Pose constructor for the 3D Eigen representation.
      * @param p
      */
     Pose(const Vector3d &p) :
-        pose_(tf::createQuaternionFromYaw(p(2)),
+        pose_(tf::createQuaternionFromYaw(angle::normalize(p(2))),
               tf::Vector3(p(0),p(1), 0))
     {
     }

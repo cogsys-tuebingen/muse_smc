@@ -84,6 +84,7 @@ protected:
 
     std::mutex               worker_thread_mutex_;
     std::thread              worker_thread_;
+
     std::atomic_bool         working_;
     std::atomic_bool         stop_working_;
     std::condition_variable  notify_event_;
