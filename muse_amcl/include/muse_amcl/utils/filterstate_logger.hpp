@@ -91,14 +91,14 @@ private:
     template<typename WT, typename ... WTypes>
     void write(const WT &t, WTypes ... ts)
     {
-//        out_ << t << ",";
-//        write(ts...);
+        out_ << t << ",";
+        write(ts...);
     }
 
     template<typename T>
     void write(const T &t)
     {
-//        out_ << t << std::endl;
+        out_ << t << "\n";
     }
 
 };

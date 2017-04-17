@@ -5,8 +5,8 @@
         <param name="odom_frame"  value="/odom" />
         <param name="base_frame"  value="/base_link" />
         <param name="topic_poses" value="/muse_amcl/poses"/>
-        <param name="rate_poses"  value="30.0" />
         <param name="rate_tf" 	  value="30.0" />
+        <param name="node_rate"   value="60.0" />
         
         <group ns="front_laser">
           <param name="class" value="muse_amcl::DataProviderLaser2D" />
@@ -25,12 +25,12 @@
             <param name="base_class" value="muse_amcl::UpdateModel" />
             <param name="data_provider" value="front_laser" />
             <param name="map_provider" value="sand" />
-            <param name="z_hit" value="0.725"/>
-            <param name="z_short" value="0.075"/>
-            <param name="z_max" value="0.025"/>
-            <param name="z_rand" value="0.175"/>
-            <param name="sigma_hit" value="0.075"/>
-            <param name="lambda_short" value="0.11"/>
+            <param name="z_hit" value="0.7"/>
+            <param name="z_short" value="0.1"/>
+            <param name="z_max" value="0.05"/>
+            <param name="z_rand" value="0.15"/>
+            <param name="sigma_hit" value="0.05"/>
+            <param name="lambda_short" value="0.1"/>
         </group>
         <group ns="differential_drive_model">
             <param name="class" value="muse_amcl::DifferentialDriveAbs" />
@@ -93,7 +93,7 @@
             <param name="array_extent" value="10.0" /> 			<!-- use array if possible, higher speed -->
         </group>
     </group>
-    <node pkg="tf" type="static_transform_publisher" name="sand_T_w" args="0 0 0 0 0 0 map world 100"/>
+    <node pkg="tf" type="static_transform_publisher" name="sand_T_w" args="0 0 0 0 0 0 map world 10"/>
     <node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(find muse_amcl_core_plugins)/res/gridmaps/sand_0.05.yaml" respawn="true" />
     <node type="muse_amcl_node" name="muse_amcl" pkg="muse_amcl" output="screen" />
 </launch>

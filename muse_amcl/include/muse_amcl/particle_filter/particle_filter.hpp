@@ -70,10 +70,9 @@ protected:
     ros::Time                pub_tf_last_time_;
 
     TFProvider::Ptr          tf_provider_;
+
     tf::TransformBroadcaster tf_broadcaster_;
     tf::StampedTransform     tf_latest_w_T_b_;
-
-
 
     ros::Time                particle_set_stamp_;
     ParticleSet::Ptr         particle_set_;
@@ -84,6 +83,7 @@ protected:
 
     std::mutex               worker_thread_mutex_;
     std::thread              worker_thread_;
+    std::thread              tf_broadcaster_thread_;
 
     std::atomic_bool         working_;
     std::atomic_bool         stop_working_;
@@ -119,6 +119,7 @@ protected:
     void publishPoses(const bool force = false);
     void publishTF(const ros::Time &t);
     void loop();
+    void loopTF();
 
     std::string privateParameter(const std::string &name)
     {

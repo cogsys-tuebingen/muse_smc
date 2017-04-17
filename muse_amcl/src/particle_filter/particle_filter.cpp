@@ -149,7 +149,6 @@ void ParticleFilter::addPrediction(Prediction::Ptr &prediction)
 
     Logger::getLogger().info("Got prediction.", "ParticleFilter");
     saveFilterState();
-    publishTF(prediction->getStamp());
 }
 
 void ParticleFilter::addUpdate(Update::Ptr &update)
@@ -310,8 +309,8 @@ void ParticleFilter::publishPoses(const bool force)
 void ParticleFilter::publishTF(const ros::Time &t)
 {
     tf::Transform b_T_o;
-    if(tf_provider_->lookupTransform(base_frame_, odom_frame_, particle_set_stamp_, b_T_o, ros::Duration(0.1))) {
-        tf::StampedTransform w_T_o(static_cast<tf::Transform>(tf_latest_w_T_b_)* b_T_o, t, world_frame_, odom_frame_);
+    if(tf_provider_->lookupTransform(base_frame_, odom_frame_, particle_set_stamp_, b_T_o)) {
+        tf::StampedTransform w_T_o(static_cast<tf::Transform>(tf_latest_w_T_b_) * b_T_o, t, world_frame_, odom_frame_);
         tf_broadcaster_.sendTransform(w_T_o);
         Logger::getLogger().info("Published TF.", "ParticleFilter");
     }

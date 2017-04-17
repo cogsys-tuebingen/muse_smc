@@ -28,13 +28,9 @@ void MuseAMCLNode::start()
     l.info("Started particle filter.", "MuseAMCLNode");
     l.markNewLogSection();
 
-    ros::WallRate r(60);
-    ros::Time last = ros::Time::now();
+    ros::WallRate r(nh_private_.param<double>("node_rate", 60.0));
     while(ros::ok()) {
         ros::spinOnce();
-        ros::Time now = ros::Time::now();
-        ROS_ERROR_STREAM((now - last).toNSec() * 1e-9);
-        last = now;
         r.sleep();
     }
 }
