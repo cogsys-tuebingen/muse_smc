@@ -68,20 +68,19 @@ void DataProviderLaser2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
 
         const ros::Time end_time = msg->header.stamp;
         const ros::Time start_time = end_time - ros::Duration(msg->scan_time);
-        TFProvider::LockedTFProvider tf_provider = tf_provider_->getLockedTFProvider();
 
         tf::StampedTransform fixed_T_end;
-        if(!tf_provider.lookupTransform(undistortion_fixed_frame_,
-                                        sensor_frame,
-                                        end_time,
-                                        fixed_T_end,
-                                        undistortion_tf_timeout_)) {
+        if(!tf_provider_->lookupTransform(undistortion_fixed_frame_,
+                                          sensor_frame,
+                                          end_time,
+                                          fixed_T_end,
+                                          undistortion_tf_timeout_)) {
             return false;
         }
-        if(!tf_provider.waitForTransform(undistortion_fixed_frame_,
-                                         sensor_frame,
-                                         start_time,
-                                         undistortion_tf_timeout_)) {
+        if(!tf_provider_->waitForTransform(undistortion_fixed_frame_,
+                                           sensor_frame,
+                                           start_time,
+                                           undistortion_tf_timeout_)) {
             return false;
         }
 
@@ -102,7 +101,7 @@ void DataProviderLaser2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
             if(range >= range_min && range <= range_max &&
                     angle >= angle_min_ && angle <= angle_max_) {
                 tf::StampedTransform fixed_T_current;
-                tf_provider.lookupTransform(undistortion_fixed_frame_,sensor_frame, stamp, fixed_T_current);
+                tf_provider_->lookupTransform(undistortion_fixed_frame_,sensor_frame, stamp, fixed_T_current);
 
                 tf::Transform end_T_current = end_T_fixed * fixed_T_current;
                 math::Point pt = end_T_current * math::Point(std::cos(angle) * range, std::sin(angle) * range);

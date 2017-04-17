@@ -36,10 +36,10 @@
             <param name="class" value="muse_amcl::DifferentialDriveAbs" />
             <param name="base_class" value="muse_amcl::PredictionModel"/>
             <param name="data_provider" value="odometry" />
-            <param name="alpha1" value="0.01"/>
-            <param name="alpha2" value="0.01"/>
-            <param name="alpha3" value="0.2"/>
-            <param name="alpha4" value="0.0"/>
+            <param name="alpha1" value="0.001"/>
+            <param name="alpha2" value="0.001"/>
+            <param name="alpha3" value="0.002"/>
+            <param name="alpha4" value="0.001"/>
             <param name="alpha5" value="0.0"/>
  
          </group>
@@ -66,7 +66,7 @@
           <param name="seed"    value="2" />
           <param name="timeout"   value="10.0" />
           <param name="tf_timeout"  value="0.1" />
-          <param name="sample_size" value="1000" />
+          <param name="sample_size" value="500" />
           <param name="primary_map" value="map0" />
         </group>
         <group ns="normal_pose_generation">
@@ -81,9 +81,9 @@
           <param name="seed"    value="0" />
         </group>
         <group ns="particle_filter">
-         	<param name="resampling_offset_linear" value="0.2" />
-        	<param name="resampling_offset_angular" value="0.314" />
-            <param name="sample_size"     value="1000" /> 		<!-- if set, maximum and minimum are this value -->
+                <param name="resampling_offset_linear" value="0.075" />
+                <param name="resampling_offset_angular" value="0.0872665" />
+            <param name="sample_size"     value="500" /> 		<!-- if set, maximum and minimum are this value -->
             <param name="sample_size_min" value="" /> 			<!-- if not sample_size is already set -->
             <param name="sample_size_max" value="" /> 			<!-- if not sample_size is already set -->
             
