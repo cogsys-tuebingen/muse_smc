@@ -10,6 +10,7 @@
 #include <muse_amcl/particle_filter/update.hpp>
 #include <muse_amcl/utils/logger.hpp>
 #include <muse_amcl/utils/filterstate_logger.hpp>
+#include <muse_amcl/utils/transform_publisher.hpp>
 
 #include <geometry_msgs/PoseArray.h>
 #include <ros/ros.h>
@@ -26,9 +27,9 @@ class ParticleFilter {
 public:
     using Ptr = std::shared_ptr<ParticleFilter>;
     using UpdateQueue     =
-    std::priority_queue<Update::Ptr, std::vector<Update::Ptr>, Update::Greater>;
+    std::priority_queue<Update::Ptr, std::deque<Update::Ptr>, Update::Greater>;
     using PredictionQueue =
-    std::priority_queue<Prediction::Ptr, std::vector<Prediction::Ptr>, Prediction::Greater>;
+    std::priority_queue<Prediction::Ptr, std::deque<Prediction::Ptr>, Prediction::Greater>;
 
     ParticleFilter();
     virtual ~ParticleFilter();
@@ -71,8 +72,9 @@ protected:
 
     TFProvider::Ptr          tf_provider_;
 
-    tf::TransformBroadcaster tf_broadcaster_;
+
     tf::StampedTransform     tf_latest_w_T_b_;
+    TransformPublisher::Ptr  tf_publisher_;
 
     ros::Time                particle_set_stamp_;
     ParticleSet::Ptr         particle_set_;
@@ -83,7 +85,6 @@ protected:
 
     std::mutex               worker_thread_mutex_;
     std::thread              worker_thread_;
-    std::thread              tf_broadcaster_thread_;
 
     std::atomic_bool         working_;
     std::atomic_bool         stop_working_;
@@ -93,7 +94,6 @@ protected:
     double                   resampling_offset_linear_;
     double                   resampling_offset_angular_;
     ros::Duration            pub_poses_delay_;
-    ros::Duration            pub_tf_delay_;
     std::string              world_frame_;
     std::string              odom_frame_;
     std::string              base_frame_;
@@ -119,9 +119,8 @@ protected:
     void publishPoses(const bool force = false);
     void publishTF(const ros::Time &t);
     void loop();
-    void loopTF();
 
-    std::string privateParameter(const std::string &name)
+    inline std::string privateParameter(const std::string &name)
     {
         return name_ + "/" + name;
     }

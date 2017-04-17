@@ -21,6 +21,8 @@ ParticleFilter::~ParticleFilter()
     notify_event_.notify_one();
     if(worker_thread_.joinable())
         worker_thread_.join();
+
+    tf_publisher_->end();
 }
 
 void ParticleFilter::setup(ros::NodeHandle &nh_private,
@@ -59,13 +61,13 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     }
 
     tf_provider_               = tf_provider;
+    tf_publisher_.reset(new TransformPublisher(pub_tf_rate));
 
     resampling_offset_linear_  = nh_private.param(privateParameter("resampling_offset_linear"), 0.25);
     resampling_offset_angular_ = nh_private.param(privateParameter("resampling_offset_angular"), M_PI / 10.0);
     pub_poses_                 = nh_private.advertise<geometry_msgs::PoseArray>(topic_poses, 1);
     pub_single_pose_                  = nh_private.advertise<geometry_msgs::PoseStamped>("/muse_amcl/mean", 1);
     pub_poses_delay_           = ros::Rate(pub_pose_rate).cycleTime();
-    pub_tf_delay_              = ros::Rate(pub_tf_rate).cycleTime();
 
     world_frame_   = nh_private.param<std::string>("world_frame", "/world");
     odom_frame_    = nh_private.param<std::string>("odom_frame", "/odom");
@@ -191,6 +193,8 @@ void ParticleFilter::start()
         worker_thread_ = std::thread([this](){loop();});
         worker_thread_.detach();
         working_ = true;
+
+        tf_publisher_->start();
     } else {
         Logger::getLogger().error("Worker thread already running!", "ParticleFilter");
         throw std::runtime_error("[ParticleFilter]: Worker thread already running!");
@@ -205,6 +209,8 @@ void ParticleFilter::end()
         notify_event_.notify_one();
         if(worker_thread_.joinable())
             worker_thread_.join();
+
+        tf_publisher_->end();
     } else{
         Logger::getLogger().error("Cannot end worker thread which is not running!", "ParticleFilter");
         throw std::runtime_error("[ParticleFilter]: Cannot end worker thread which is not running!");
@@ -214,17 +220,33 @@ void ParticleFilter::end()
 void ParticleFilter::processRequests()
 {
     if(request_global_initialization_) {
+        const ros::Time now = ros::Time::now();
         request_global_initialization_ = false;
         sampling_uniform_->apply(*particle_set_);
-        particle_set_stamp_ = ros::Time::now();
+
+        if(particle_set_stamp_ > now) {
+           update_queue_ = UpdateQueue();
+           prediction_queue_ = PredictionQueue();
+        }
+
+        particle_set_stamp_ = now;
+
         publishPoses(true);
         Logger::getLogger().info("Global localization request has been processed", "ParticleFilter");
     }
     if(request_pose_initilization_) {
+        const ros::Time now = ros::Time::now();
         std::unique_lock<std::mutex> l(request_pose_mutex_);
         request_pose_initilization_ = false;
         sampling_normal_pose_->apply(initialization_pose_, initialization_covariance_, *particle_set_);
-        particle_set_stamp_ = ros::Time::now();
+
+        if(particle_set_stamp_ > now) {
+            update_queue_ = UpdateQueue();
+            prediction_queue_ = PredictionQueue();
+        }
+
+        particle_set_stamp_ = now;
+
         tf_latest_w_T_b_ = tf::StampedTransform(initialization_pose_.getPose(), particle_set_stamp_, base_frame_, world_frame_);
         publishPoses(true);
         publishTF(particle_set_stamp_);
@@ -311,7 +333,7 @@ void ParticleFilter::publishTF(const ros::Time &t)
     tf::Transform b_T_o;
     if(tf_provider_->lookupTransform(base_frame_, odom_frame_, particle_set_stamp_, b_T_o)) {
         tf::StampedTransform w_T_o(static_cast<tf::Transform>(tf_latest_w_T_b_) * b_T_o, t, world_frame_, odom_frame_);
-        tf_broadcaster_.sendTransform(w_T_o);
+        tf_publisher_->setTransform(w_T_o);
         Logger::getLogger().info("Published TF.", "ParticleFilter");
     }
 }
