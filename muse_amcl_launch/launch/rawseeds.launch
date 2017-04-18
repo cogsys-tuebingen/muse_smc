@@ -3,12 +3,28 @@
 	<!--- muse amcl parameters -->
     <group ns="muse_amcl">
         <param name="world_frame" value="/world" />
-        <param name="odom_frame" value="/odom" />
+        <param name="odom_frame"  value="/odom" />
         <param name="base_frame"  value="/base_link" />
         <param name="topic_poses" value="/muse_amcl/poses"/>
-        <param name="rate_poses" value="30.0" />
-        <param name="rate_tf" 	 value="30.0" />
+        <param name="rate_poses"  value="30.0" />
+        <param name="rate_tf" 	  value="60.0" />
         
+        <group ns="initialization">
+            <!-- x y z qx qy qz qw -->
+            <rosparam param="pose">
+                [-1.37, -7.28, 0.0, 0.0, 0.0, 0.679567344219, 0.733613130111]
+            </rosparam>
+            <!-- (x y z theta psi phi)² -->
+            <rosparam param="covariance">
+                [0.25, 0.0, 0.0, 0.0, 0.0, 0.0,
+                 0.0, 0.25, 0.0, 0.0, 0.0, 0.0,
+                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                 0.0, 0.0, 0.0, 0.0, 0.0, 0.06853891945200942]
+            </rosparam>
+        </group>
+
         <group ns="front_laser">
           <param name="class" value="muse_amcl::DataProviderLaser2D" />
           <param name="base_class" value="muse_amcl::DataProvider" />
