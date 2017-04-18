@@ -432,4 +432,3 @@ void ParticleFilter::loop()
     saveFilterState();
 
 }
-
