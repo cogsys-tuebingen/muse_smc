@@ -74,6 +74,7 @@ private:
 
 
 
+    void checkPoseInitialization();
 };
 }
 

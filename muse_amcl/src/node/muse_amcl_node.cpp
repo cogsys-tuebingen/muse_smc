@@ -28,6 +28,9 @@ void MuseAMCLNode::start()
     l.info("Started particle filter.", "MuseAMCLNode");
     l.markNewLogSection();
 
+    /// check if there is an initial pose set
+    checkPoseInitialization();
+
     ros::WallRate r(nh_private_.param<double>("node_rate", 60.0));
     while(ros::ok()) {
         ros::spinOnce();
@@ -167,6 +170,44 @@ bool MuseAMCLNode::setup()
     l.info("All subscribers and services set up.", "MuseAMCLNode");
     l.info("Setup has been finished.", "MuseAMCLNode");
     l.markNewLogSection();
+}
+
+void MuseAMCLNode::checkPoseInitialization()
+{
+    if(nh_private_.hasParam("initialization/pose") &&
+            nh_private_.hasParam("initialization/covariance")) {
+
+
+        std::vector<double> p_v;
+        std::vector<double> c_v;
+        nh_private_.getParam("initialization/pose", p_v);
+        nh_private_.getParam("initialization/covariance",c_v);
+
+        math::Pose pose;
+        bool valid_pose = true;
+        switch(p_v.size()) {
+        case 6:
+            pose = math::Pose(p_v[0], p_v[1], p_v[2],
+                    p_v[3], p_v[4], p_v[5]);
+            break;
+        case 7:
+            pose = math::Pose(p_v[0], p_v[1], p_v[2],
+                              p_v[3], p_v[4], p_v[5], p_v[6]);
+            break;
+        default:
+            valid_pose = false;
+            std::cerr << "[MuseAMCLNode]: Got intial_pose, but invalid count of values." << std::endl;
+        }
+
+        if(valid_pose) {
+            if(c_v.size() == 36) {
+                math::Covariance covariance = math::Covariance(c_v);
+                particle_filter_->requestPoseInitialization(pose, covariance);
+            } else {
+                std::cerr << "[MuseAMCLNode]: Got intial_pose, but invalid count of values." << std::endl;
+            }
+        }
+    }
 }
 
 int main(int argc, char *argv[])

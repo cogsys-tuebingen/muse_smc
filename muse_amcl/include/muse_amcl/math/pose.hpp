@@ -16,12 +16,55 @@ public:
     using Vector6d = Eigen::Matrix<double,6,1>;
     using Vector3d = Eigen::Matrix<double,3,1>;
 
+
     /**
      * @brief Pose default contstructor.
      */
     Pose() :
         pose_(tf::createQuaternionFromRPY(0,0,0),
               tf::Vector3(0,0,0))
+    {
+    }
+
+    /**
+     * @brief Pose constructor using explicit values.
+     * @param x     - the x coordinate
+     * @param y     - the y coordinate
+     * @param z     - the z coordinate
+     * @param roll  - the roll angle
+     * @param pitch - the pitch angle
+     * @param yaw   - the yaw angle
+     */
+    Pose(const double x,
+         const double y,
+         const double z,
+         const double roll,
+         const double pitch,
+         const double yaw) :
+        pose_(tf::createQuaternionFromRPY(roll, pitch, yaw),
+              tf::Vector3(x,y,z))
+    {
+    }
+
+    /**
+     * @brief Pose constructor using explicit values.
+     * @param x     - the x coordinate
+     * @param y     - the y coordinate
+     * @param z     - the z coordinate
+     * @param qx    - the 1st component of the quaternion
+     * @param qy    - the 2nd component of the quaternion
+     * @param qz    - the 3rd component of the quaternion
+     * @param qw    - the 4th component of the quaternion
+     */
+    Pose(const double x,
+         const double y,
+         const double z,
+         const double qx,
+         const double qy,
+         const double qz,
+         const double qw) :
+        pose_(tf::Quaternion(qx,qy,qz,qw),
+              tf::Vector3(x,y,z))
     {
     }
 
