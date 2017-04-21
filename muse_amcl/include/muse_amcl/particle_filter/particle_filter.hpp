@@ -12,6 +12,7 @@
 #include <muse_amcl/utils/filterstate_logger.hpp>
 #include <muse_amcl/utils/transform_publisher.hpp>
 #include <muse_amcl/utils/transform_publisher_anchored.hpp>
+#include <muse_amcl/utils/filterstate_publisher.hpp>
 
 #include <geometry_msgs/PoseArray.h>
 #include <ros/ros.h>
@@ -66,16 +67,13 @@ public:
 protected:
     const std::string        name_;
 
-    ros::Publisher           pub_poses_;
-    ros::Publisher           pub_single_pose_;
-    ros::Time                pub_poses_last_time_;
-    ros::Time                pub_tf_last_time_;
-
     TFProvider::Ptr          tf_provider_;
 
 
     tf::StampedTransform             tf_latest_w_T_b_;
     TransformPublisherAnchored::Ptr  tf_publisher_;
+
+    FilterStatePublisher::Ptr        filter_state_publisher_;
 
     ros::Time                particle_set_stamp_;
     ParticleSet::Ptr         particle_set_;
@@ -119,7 +117,7 @@ protected:
 
     void processRequests();
     bool processPredictions(const ros::Time &until);
-    void publishPoses(const bool force = false);
+    void publishPoses();
     void publishTF();
     void loop();
     void tryToResample();

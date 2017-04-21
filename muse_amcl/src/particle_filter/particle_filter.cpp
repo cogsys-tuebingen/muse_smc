@@ -5,8 +5,6 @@ using namespace muse_amcl;
 
 ParticleFilter::ParticleFilter()  :
     name_("particle_filter"),
-    pub_poses_last_time_(ros::Time::now()),
-    pub_tf_last_time_(ros::Time::now()),
     resampling_cycle_(0),
     working_(false),
     stop_working_(true),
@@ -71,8 +69,6 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     resampling_cycle_             = nh_private.param(privateParameter("resampling_cycle"), 2);
 
     //// FILTER STATE PUBLICATION
-    pub_poses_                    = nh_private.advertise<geometry_msgs::PoseArray>(topic_poses, 1);
-    pub_single_pose_              = nh_private.advertise<geometry_msgs::PoseStamped>("/muse_amcl/mean", 1);
     pub_poses_delay_              = ros::Rate(pub_rate_poses).cycleTime();
 
     //// FRAMES
@@ -83,6 +79,9 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     //// SETUP TF
     tf_provider_               = tf_provider;
     tf_publisher_.reset(new TransformPublisherAnchored(pub_rate_tf, odom_frame_, base_frame_, world_frame_));
+
+    //// FILTER STATE
+    filter_state_publisher_.reset(new FilterStatePublisher(world_frame_));
 
     muse_amcl::Indexation indexation ({resolution_linear, resolution_linear, resolution_angular});
     particle_set_.reset(new ParticleSet(world_frame_, sample_size_minimum, sample_size_maximum, indexation, array_extent));
@@ -245,7 +244,7 @@ void ParticleFilter::processRequests()
 
         particle_set_stamp_ = now;
 
-        publishPoses(true);
+        publishPoses();
         Logger::getLogger().info("Global localization request has been processed", "ParticleFilter");
     }
     if(request_pose_initilization_) {
@@ -262,7 +261,7 @@ void ParticleFilter::processRequests()
         particle_set_stamp_ = now;
 
         tf_latest_w_T_b_ = tf::StampedTransform(initialization_pose_.getPose(), particle_set_stamp_, base_frame_, world_frame_);
-        publishPoses(true);
+        publishPoses();
         publishTF();
         Logger::getLogger().info("Pose localization request has been processed", "ParticleFilter");
     }
@@ -317,29 +316,9 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
     return prediction_linear_distance_ > 0.0 || prediction_angular_distance_ > 0.0;
 }
 
-void ParticleFilter::publishPoses(const bool force)
+void ParticleFilter::publishPoses()
 {
-    const ros::Time now = ros::Time::now();
-    if(pub_poses_last_time_ + pub_poses_delay_ < now || force) {
-        geometry_msgs::PoseArray poses;
-        poses.header.frame_id = particle_set_->getFrame();
-        poses.header.stamp = now;
-
-        auto pose_to_msg = [] (const Particle &particle)
-        {
-            geometry_msgs::Pose pose;
-            tf::poseTFToMsg(particle.pose_.getPose(), pose);
-            return pose;
-        };
-
-        for(auto &sample : particle_set_->getSamples()) {
-            poses.poses.emplace_back(pose_to_msg(sample));
-        }
-        pub_poses_.publish(poses);
-        pub_poses_last_time_ = now;
-
-        Logger::getLogger().info("Published poses.", "ParticleFilter");
-    };
+    filter_state_publisher_->addState(particle_set_->getSamples());
 }
 
 void ParticleFilter::publishTF()
@@ -355,22 +334,28 @@ void ParticleFilter::loop()
         if(particle_set_stamp_.isZero())
             particle_set_stamp_ = ros::Time::now();
 
-        /// 0. wait for new tasks
+        ///// [0]: Wait for udpates to come in
         notify_event_.wait(lock_updates);
+
+        ///// [1]: Unlock the update queue, while processing requests
+        // lock_updates.unlock();
 
         Logger::getLogger().info("Woke up to process events.", "ParticleFilter");
 
-        /// 1. check if we want to terminate the filter
+        ///// [2]: Check for termination
         if(stop_working_) {
             break;
         }
-        /// 1. process requests if possible
+        ///// [3]: Process pending requests
         processRequests();
         if(particle_set_->getSampleSize() == 0) {
             sampling_uniform_->apply(*particle_set_);
         }
-        /// 2. check for new update in the queue
+
         saveFilterState();
+
+        ///// [4]: Check for new updates
+        // lock_updates.lock();
         if(!update_queue_.empty()) {
             Update::Ptr update = update_queue_.top();
             update_queue_.pop();
@@ -392,7 +377,7 @@ void ParticleFilter::loop()
 
         saveFilterState();
 
-        publishPoses(true);
+        publishPoses();
     }
     working_ = false;
 

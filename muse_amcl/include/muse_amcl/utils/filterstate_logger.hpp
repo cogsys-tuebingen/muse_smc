@@ -42,8 +42,8 @@ private:
     Header        header_;
     long          start_time_;
 
-    std::mutex              q_mutex_;
     std::thread             worker_thread_;
+    std::mutex              q_mutex_;
     std::queue<std::string> q_;
     std::condition_variable notify_log_;
 
@@ -65,6 +65,7 @@ private:
     {
         if(running_) {
             stop_ = true;
+            notify_log_.notify_one();
             if(worker_thread_.joinable())
                 worker_thread_.join();
         }
@@ -92,20 +93,23 @@ private:
         out_ << std::endl;
 
         std::unique_lock<std::mutex> q_lock(q_mutex_);
+        auto dumpQ = [this, &q_lock] () {
+            while(!q_.empty()) {
+                auto f = q_.front();
+                q_.pop();
+
+                q_lock.unlock();
+                out_ << f << std::endl;
+                q_lock.lock();
+            }
+        };
+
         while(!stop_) {
             notify_log_.wait(q_lock);
             dumpQ();
         }
         dumpQ();
         running_ = false;
-    }
-
-    inline void dumpQ()
-    {
-        while(!q_.empty()) {
-            out_ << q_.front() << std::endl;
-            q_.pop();
-        }
     }
 
     inline void getTime(long &seconds,
