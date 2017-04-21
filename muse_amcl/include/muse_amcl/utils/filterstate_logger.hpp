@@ -6,6 +6,10 @@
 #include <sstream>
 #include <chrono>
 #include <mutex>
+#include <thread>
+#include <atomic>
+#include <condition_variable>
+#include <queue>
 
 namespace muse_amcl {
 template<typename ... Types>
@@ -14,22 +18,18 @@ public:
     static constexpr std::size_t size = sizeof ... (Types);
     using Header = std::array<std::string, size>;
 
-    virtual ~FilterStateLogger()
-    {
-        if(out_.is_open())
-            out_.close();
-    }
-
     inline void writeState(const Types ... ts)
     {
-//        std::unique_lock<std::mutex> l(mutex_);
+        long s, ms;
+        getTime(s, ms);
+        ms += 1000 * s - start_time_;
 
-//        long s, ms;
-//        getTime(s, ms);
-//        ms += 1000 * s - start_time_;
+        std::string string_build = std::to_string(static_cast<double>(ms) / 1e3) + "," +
+                    buildString(ts...);
 
-//        out_ << static_cast<double>(ms) / 1e3 << ",";
-//        write(ts...);
+        std::unique_lock<std::mutex> q_lock;
+        q_.push(string_build);
+        notify_log_.notify_one();
     }
 
     static inline FilterStateLogger& getLogger(const Header &header = Header(),
@@ -39,13 +39,47 @@ public:
     }
 
 private:
-    std::mutex    mutex_;
     std::ofstream out_;
     long          start_time_;
+    Header        header_;
+
+    std::mutex              mutex_q_;
+    std::thread             worker_thread_;
+    std::queue<std::string> q_;
+    std::condition_variable notify_log_;
+
+    std::atomic_bool running_;
+    std::atomic_bool stop_;
 
     FilterStateLogger(const Header &header,
                       const bool relative_time) :
-        start_time_(0)
+        header_(header),
+        start_time_(0),
+        stop_(false)
+    {
+        long s, ms;
+        getTime(s, ms);
+        if(relative_time) {
+            start_time_ = ms + 1000 * s;
+        }
+
+        running_ = true;
+        worker_thread_ = std::thread([this]{loop();});
+        worker_thread_.detach();
+    }
+
+    virtual ~FilterStateLogger()
+    {
+        if(running_) {
+            stop_ = true;
+            if(worker_thread_.joinable())
+                worker_thread_.join();
+        }
+        if(out_.is_open())
+            out_.close();
+    }
+
+    void loop()
     {
         std::stringstream ss;
         long s, ms;
@@ -56,19 +90,31 @@ private:
         if(size > 0) {
             out_ << "time,";
             for(std::size_t i = 0 ; i < size - 1 ; ++i) {
-                out_ << header[i];
+                out_ << header_[i];
             }
-            out_ << header[size - 1];
+            out_ << header_[size - 1];
         } else {
             out_ << "time";
         }
         out_ << std::endl;
 
-        if(relative_time) {
-            start_time_ = ms + 1000 * s;
+        std::unique_lock<std::mutex> q_lock;
+        while(!stop_) {
+            notify_log_.wait(q_lock);
+            dumpQ();
         }
+        dumpQ();
+        out_ << std::endl;
+        running_ = false;
     }
 
+    inline void dumpQ()
+    {
+        while(!q_.empty()) {
+            out_ << q_.front();
+            q_.pop();
+        }
+    }
 
     inline void getTime(long &seconds,
                         long &milliseconds)
@@ -89,16 +135,15 @@ private:
     }
 
     template<typename WT, typename ... WTypes>
-    void write(const WT &t, WTypes ... ts)
+    inline std::string buildString(const WT &t, WTypes ... ts) const
     {
-        out_ << t << ",";
-        write(ts...);
+        return std::to_string(t) + "," + buildString(ts...);
     }
 
     template<typename T>
-    void write(const T &t)
+    inline std::string buildString(const T &t) const
     {
-        out_ << t << "\n";
+        return std::to_string(t) + "\n";
     }
 
 };
