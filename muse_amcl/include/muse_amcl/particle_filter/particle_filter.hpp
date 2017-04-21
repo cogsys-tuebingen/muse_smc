@@ -131,12 +131,12 @@ protected:
 
     inline void saveFilterState() const
     {
+        const double now = ros::Time::now().toSec();
         FilterStateLoggerDefault::getLogger().writeState(prediction_queue_.size(),
                                                          update_queue_.size(),
                                                          prediction_linear_distance_,
                                                          prediction_angular_distance_,
-                                                         ros::Time::now().toSec(),
-                                                         particle_set_stamp_.toSec());
+                                                         particle_set_stamp_.toSec() / now);
     }
 
 

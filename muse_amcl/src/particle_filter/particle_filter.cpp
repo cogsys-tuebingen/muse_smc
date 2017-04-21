@@ -113,15 +113,16 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     l.info("base_frame_='" + base_frame_ + "'", "ParticleFilter");
 
     l.info("Set up.", "ParticleFilter");
-    ////////////////
 
-    FilterStateLoggerDefault::Header header = {"predictions, updates, driven_linear, driven_angular, ros_time, filter_time"};
+    const double now = ros::Time::now().toSec();
+    FilterStateLoggerDefault::Header header = {"predictions, updates, driven_linear, driven_angular, time_ratio"};
     FilterStateLoggerDefault::getLogger(header).writeState(prediction_queue_.size(),
                                                            update_queue_.size(),
                                                            prediction_linear_distance_,
                                                            prediction_angular_distance_,
-                                                           ros::Time::now().toSec(),
-                                                           particle_set_stamp_.toSec());
+                                                           particle_set_stamp_.toSec() / now);
+    ////////////////
+
 }
 
 void ParticleFilter::setUniformSampling(const UniformSampling::Ptr &sampling_uniform)

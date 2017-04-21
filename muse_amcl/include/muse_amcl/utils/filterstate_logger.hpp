@@ -27,23 +27,22 @@ public:
         std::string string_build = std::to_string(static_cast<double>(ms) / 1e3) + "," +
                     buildString(ts...);
 
-        std::unique_lock<std::mutex> q_lock;
+        std::unique_lock<std::mutex> q_lock(q_mutex_);
         q_.push(string_build);
         notify_log_.notify_one();
     }
 
-    static inline FilterStateLogger& getLogger(const Header &header = Header(),
-                                               const bool relative_time = true) {
-        static FilterStateLogger l(header, relative_time);
+    static inline FilterStateLogger& getLogger(const Header &header = Header()) {
+        static FilterStateLogger l(header);
         return l;
     }
 
 private:
     std::ofstream out_;
-    long          start_time_;
     Header        header_;
+    long          start_time_;
 
-    std::mutex              mutex_q_;
+    std::mutex              q_mutex_;
     std::thread             worker_thread_;
     std::queue<std::string> q_;
     std::condition_variable notify_log_;
@@ -51,18 +50,12 @@ private:
     std::atomic_bool running_;
     std::atomic_bool stop_;
 
-    FilterStateLogger(const Header &header,
-                      const bool relative_time) :
+    FilterStateLogger(const Header &header) :
         header_(header),
-        start_time_(0),
         stop_(false)
     {
         long s, ms;
         getTime(s, ms);
-        if(relative_time) {
-            start_time_ = ms + 1000 * s;
-        }
-
         running_ = true;
         worker_thread_ = std::thread([this]{loop();});
         worker_thread_.detach();
@@ -98,20 +91,19 @@ private:
         }
         out_ << std::endl;
 
-        std::unique_lock<std::mutex> q_lock;
+        std::unique_lock<std::mutex> q_lock(q_mutex_);
         while(!stop_) {
             notify_log_.wait(q_lock);
             dumpQ();
         }
         dumpQ();
-        out_ << std::endl;
         running_ = false;
     }
 
     inline void dumpQ()
     {
         while(!q_.empty()) {
-            out_ << q_.front();
+            out_ << q_.front() << std::endl;
             q_.pop();
         }
     }
@@ -120,9 +112,9 @@ private:
                         long &milliseconds)
     {
         auto now = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
-        seconds = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
-        milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count()
-                - 1000 * seconds;
+        milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+        seconds = milliseconds / 1000;
+        milliseconds = milliseconds % 1000;
     }
 
     inline void getTime(std::string &time)
@@ -143,12 +135,12 @@ private:
     template<typename T>
     inline std::string buildString(const T &t) const
     {
-        return std::to_string(t) + "\n";
+        return std::to_string(t);
     }
 
 };
 
-using FilterStateLoggerDefault = FilterStateLogger<std::size_t, std::size_t, double, double, double, double>;
+using FilterStateLoggerDefault = FilterStateLogger<std::size_t, std::size_t, double, double, double>;
 
 }
 

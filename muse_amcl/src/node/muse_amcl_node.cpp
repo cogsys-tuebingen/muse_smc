@@ -170,6 +170,8 @@ bool MuseAMCLNode::setup()
     l.info("All subscribers and services set up.", "MuseAMCLNode");
     l.info("Setup has been finished.", "MuseAMCLNode");
     l.markNewLogSection();
+
+    return true;
 }
 
 void MuseAMCLNode::checkPoseInitialization()
