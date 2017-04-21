@@ -4,17 +4,23 @@
 #include <muse_amcl/particle_filter/prediction_model.hpp>
 #include <muse_amcl/math/random.hpp>
 
+#include <fstream>
+
 namespace muse_amcl {
 class DifferentialDrive : public PredictionModel
 {
 public:
     DifferentialDrive();
 
+    virtual ~DifferentialDrive();
+
     virtual Result doPredict(const Data::ConstPtr &data,
                            const ros::Time &until,
                            ParticleSet::Poses set) override;
 
 protected:
+    std::ofstream dump;
+
     unsigned int seed_;
     double       alpha_1_;
     double       alpha_2_;

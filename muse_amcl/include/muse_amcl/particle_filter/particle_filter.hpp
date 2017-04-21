@@ -83,6 +83,7 @@ protected:
     UniformSampling::Ptr     sampling_uniform_;
     NormalSampling::Ptr      sampling_normal_pose_;
     Resampling::Ptr          resampling_;
+    std::size_t              resampling_cycle_;
 
     std::mutex               worker_thread_mutex_;
     std::thread              worker_thread_;
@@ -94,6 +95,7 @@ protected:
     //// ------------------ parameters ----------------------///
     double                   resampling_threshold_linear_;
     double                   resampling_threshold_angular_;
+    std::size_t              update_cycle_;
     ros::Duration            pub_poses_delay_;
     std::string              world_frame_;
     std::string              odom_frame_;
@@ -120,6 +122,7 @@ protected:
     void publishPoses(const bool force = false);
     void publishTF(const ros::Time &t);
     void loop();
+    void tryToResample();
 
     inline std::string privateParameter(const std::string &name)
     {

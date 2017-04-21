@@ -12,24 +12,24 @@ DifferentialDrive::DifferentialDrive()
 {
 }
 
+DifferentialDrive::~DifferentialDrive()
+{
+}
+
 PredictionModel::Result DifferentialDrive::doPredict(const Data::ConstPtr &data,
                                                      const ros::Time &until,
                                                      ParticleSet::Poses set)
 {
     const Odometry &odometry = data->as<Odometry>();
     const double delta_trans = odometry.getDeltaLinear();
-    const double delta_rot1  = delta_trans < 0.01 ? 0.0 :
-                                                    math::angle::difference(std::atan2(odometry.getDelta().getOrigin().y(),
-                                                                                       odometry.getDelta().getOrigin().x()),
-                                                                            odometry.getStartPose().yaw());
-
-
+    const double delta_rot1  = math::angle::difference(std::atan2(odometry.getDelta().getOrigin().y(),
+                                                                  odometry.getDelta().getOrigin().x()),
+                                                       odometry.getStartPose().yaw());
     const double delta_rot2 = math::angle::difference(odometry.getDeltaAngular(), delta_rot1);
 
     if(delta_trans < eps_zero_linear_ &&
-            delta_rot2 < eps_zero_angular_)
+            std::abs(delta_rot2) < eps_zero_angular_)
         return PredictionModel::Result(0.0, 0.0, data);
-
 
     const double delta_rot_noise1 = std::min(std::abs(math::angle::difference(delta_rot1, 0.0)),
                                              std::abs(math::angle::difference(delta_rot1, M_PI)));
@@ -38,31 +38,28 @@ PredictionModel::Result DifferentialDrive::doPredict(const Data::ConstPtr &data,
 
     auto sq = [](const double x) { return x * x; };
 
+    const double sigma_rot_hat1 = std::sqrt(alpha_1_ * sq(delta_rot_noise1) +
+                                            alpha_2_ * sq(delta_trans));
+    const double sigma_trans_hat = std::sqrt(alpha_3_ * sq(delta_trans) +
+                                             alpha_4_ * sq(delta_rot_noise1) +
+                                             alpha_4_ * sq(delta_rot_noise2));
+    const double sigma_rot_hat2 =  std::sqrt(alpha_1_ * sq(delta_rot_noise2) +
+                                             alpha_2_ * sq(delta_trans));
+
     if(!rng_delta_rot_hat1_) {
-        rng_delta_rot_hat1_.reset(new math::random::Normal<1>(0.0,  std::sqrt(alpha_1_ * sq(delta_rot_noise1) +
-                                                                              alpha_2_ * sq(delta_trans)),
-                                                              seed_));
+        rng_delta_rot_hat1_.reset(new math::random::Normal<1>(0.0,  sigma_rot_hat1, seed_));
     } else {
-        rng_delta_rot_hat1_->set(0.0,  std::sqrt(alpha_1_ * sq(delta_rot_noise1) +
-                                                 alpha_2_ * sq(delta_trans)));
+        rng_delta_rot_hat1_->set(0.0, sigma_rot_hat1);
     }
     if(!rng_delta_trans_hat_) {
-        rng_delta_trans_hat_.reset(new math::random::Normal<1>(0.0, std::sqrt(alpha_3_ * sq(delta_trans) +
-                                                                              alpha_4_ * sq(delta_rot_noise1) +
-                                                                              alpha_4_ * sq(delta_rot_noise2)),
-                                                              seed_));
+        rng_delta_trans_hat_.reset(new math::random::Normal<1>(0.0, sigma_trans_hat, seed_));
     } else {
-        rng_delta_trans_hat_->set(0.0, std::sqrt(alpha_3_ * sq(delta_trans) +
-                                                 alpha_4_ * sq(delta_rot_noise1) +
-                                                 alpha_4_ * sq(delta_rot_noise2)));
+        rng_delta_trans_hat_->set(0.0, sigma_trans_hat);
     }
     if(!rng_delta_rot_hat2_) {
-        rng_delta_rot_hat2_.reset(new math::random::Normal<1>(0.0,  std::sqrt(alpha_1_ * sq(delta_rot_noise2) +
-                                                                              alpha_2_ * sq(delta_trans)),
-                                                              seed_));
+        rng_delta_rot_hat2_.reset(new math::random::Normal<1>(0.0, sigma_rot_hat2, seed_));
     } else {
-        rng_delta_rot_hat2_->set(0.0,  std::sqrt(alpha_1_ * sq(delta_rot_noise2) +
-                                                 alpha_2_ * sq(delta_trans)));
+        rng_delta_rot_hat2_->set(0.0, sigma_rot_hat2);
     }
 
     for(math::Pose &sample : set) {
@@ -72,11 +69,11 @@ PredictionModel::Result DifferentialDrive::doPredict(const Data::ConstPtr &data,
         auto pose = sample.getEigen3D();
         pose(0) += delta_trans_hat * std::cos(pose(2) + delta_rot_hat1);
         pose(1) += delta_trans_hat * std::sin(pose(2) + delta_rot_hat1);
-        pose(2) += delta_rot_hat1 + delta_rot_hat2;
+        pose(2)  = math::angle::normalize(pose(2) + delta_rot_hat1 + delta_rot_hat2);
         sample.setEigen3D(pose);
     }
 
-    return PredictionModel::Result(delta_trans, delta_rot2, data);
+    return PredictionModel::Result(delta_trans, std::abs(delta_rot2), data);
 }
 
 void DifferentialDrive::doSetup(ros::NodeHandle &nh_private)

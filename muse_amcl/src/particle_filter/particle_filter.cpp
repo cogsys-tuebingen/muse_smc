@@ -11,8 +11,10 @@ ParticleFilter::ParticleFilter()  :
     stop_working_(true),
     request_global_initialization_(false),
     request_pose_initilization_(false),
+    resampling_cycle_(0),
     prediction_linear_distance_(0.0),
-    prediction_angular_distance_(0.0)
+    prediction_angular_distance_(0.0),
+    update_cycle_(0)
 {
 }
 
@@ -32,11 +34,13 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     Logger &l = Logger::getLogger();
 
     const std::string topic_poses   = nh_private.param<std::string>(privateParameter("topic_poses"), "/muse_amcl/poses");
-    const double pub_pose_rate      = nh_private.param<double>("pub_pose_rate", 30.0);
-    const double pub_tf_rate        = nh_private.param<double>("tf_rate", 30.0);
+    const double pub_rate_poses     = nh_private.param<double>("pub_rate_poses", 30.0);
+    const double pub_rate_tf        = nh_private.param<double>("pub_rate_tf", 30.0);
     const double resolution_linear  = nh_private.param<double>(privateParameter("resolution_linear"), 0.1);
     const double resolution_angular = math::angle::toRad(nh_private.param<double>(privateParameter("resolution_angular"), 10.0));
     const double array_extent       = nh_private.param<double>(privateParameter("array_extent"), 5.0);
+
+    //// SAMPLE SIZE SETUP
     const std::size_t sample_size   = nh_private.param<int>(privateParameter("sample_size"), 0);
     std::size_t sample_size_maximum = sample_size;
     std::size_t sample_size_minimum = sample_size;
@@ -61,19 +65,24 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
         throw std::runtime_error("[ParticleFilter]: The minimum sample size may not be greater than the maximum sample size!");
     }
 
-
+    //// RESAMPLING
     resampling_threshold_linear_  = nh_private.param(privateParameter("resampling_threshold_linear"), 0.075);
     resampling_threshold_angular_ = math::angle::toRad(nh_private.param(privateParameter("resampling_threshold_angular"), 5.0));
+    resampling_cycle_             = nh_private.param(privateParameter("resampling_cycle"), 2);
+
+    //// FILTER STATE PUBLICATION
     pub_poses_                    = nh_private.advertise<geometry_msgs::PoseArray>(topic_poses, 1);
     pub_single_pose_              = nh_private.advertise<geometry_msgs::PoseStamped>("/muse_amcl/mean", 1);
-    pub_poses_delay_              = ros::Rate(pub_pose_rate).cycleTime();
+    pub_poses_delay_              = ros::Rate(pub_rate_poses).cycleTime();
 
-    world_frame_   = nh_private.param<std::string>("world_frame", "/world");
-    odom_frame_    = nh_private.param<std::string>("odom_frame", "/odom");
-    base_frame_    = nh_private.param<std::string>("base_frame", "/base_link");
+    //// FRAMES
+    world_frame_                  = nh_private.param<std::string>("world_frame", "/world");
+    odom_frame_                   = nh_private.param<std::string>("odom_frame", "/odom");
+    base_frame_                   = nh_private.param<std::string>("base_frame", "/base_link");
 
+    //// SETUP TF
     tf_provider_               = tf_provider;
-    tf_publisher_.reset(new TransformPublisherAnchored(pub_tf_rate, odom_frame_, base_frame_, world_frame_));
+    tf_publisher_.reset(new TransformPublisherAnchored(pub_rate_tf, odom_frame_, base_frame_, world_frame_));
 
     muse_amcl::Indexation indexation ({resolution_linear, resolution_linear, resolution_angular});
     particle_set_.reset(new ParticleSet(world_frame_, sample_size_minimum, sample_size_maximum, indexation, array_extent));
@@ -97,8 +106,8 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     l.info("resampling_offset_linear_='"  + std::to_string(resampling_threshold_linear_) + "'", "ParticleFilter");
     l.info("resampling_offset_angular_='" + std::to_string(resampling_threshold_angular_) + "'", "ParticleFilter");
     l.info("topic_poses='" + topic_poses + "'", "ParticleFilter");
-    l.info("pub_rate '" + std::to_string(pub_pose_rate) + "'", "ParticleFilter");
-    l.info("pub_tf_rate='" + std::to_string(pub_tf_rate) + "'", "ParticleFilter");
+    l.info("pub_rate '" + std::to_string(pub_rate_poses) + "'", "ParticleFilter");
+    l.info("pub_tf_rate='" + std::to_string(pub_rate_tf) + "'", "ParticleFilter");
     l.info("world_frame_='" + world_frame_ + "'", "ParticleFilter");
     l.info("odom_frame_='" + odom_frame_ + "'", "ParticleFilter");
     l.info("base_frame_='" + base_frame_ + "'", "ParticleFilter");
@@ -378,55 +387,13 @@ void ParticleFilter::loop()
                     particle_set_->normalizeWeights();
                 }
                 Logger::getLogger().info("Processed update.", "ParticleFilter");
+                ++update_cycle_;
             }
         }
 
         saveFilterState();
 
-        /// 6. check if its time for resampling
-        if(prediction_linear_distance_ > resampling_threshold_linear_ ||
-                prediction_angular_distance_ > resampling_threshold_angular_){
-
-            Logger::getLogger().info("About to resample, prediction_linear_distance='" + std::to_string(prediction_linear_distance_) +
-                                     ", prediction_angular_distance='" + std::to_string(prediction_angular_distance_) + "'.",
-                                     "ParticleFilter");
-
-            particle_set_->normalizeWeights();
-            resampling_->apply(*particle_set_);
-
-            for(auto &weight : particle_set_->getWeights()) {
-                weight = 1.0;
-            }
-
-            prediction_linear_distance_  = 0.0;
-            prediction_angular_distance_ = 0.0;
-
-            /// 7. cluster the particle set an update the transformation
-            /// @todo allow mean method
-            particle_set_->cluster();
-            const ParticleSet::Clusters &clusters = particle_set_->getClusters();
-            const ParticleSet::Distributions &distributions = particle_set_->getClusterDistributions();
-            /// todo get the transformation odom -> world
-            double max_weight = std::numeric_limits<double>::lowest();
-            int    max_cluster_id = -1;
-            for(const auto &cluster : clusters) {
-                const int cluster_id = cluster.first;
-                const auto &distribution = distributions.at(cluster_id);
-                const double weight = distribution.getWeight() ;
-                if(weight > max_weight) {
-                    max_cluster_id = cluster_id;
-                    max_weight = weight;
-                }
-            }
-
-            if(max_cluster_id == -1) {
-                Logger::getLogger().error("Clustering has failed.", "ParticleFilter");
-            } else {
-                Eigen::Vector3d mean = distributions.at(max_cluster_id).getMean();
-                tf_latest_w_T_b_ = tf::StampedTransform(math::Pose(mean).getPose(), particle_set_stamp_, base_frame_, world_frame_);
-                publishTF(particle_set_stamp_);
-            }
-        }
+        tryToResample();
 
         saveFilterState();
 
@@ -435,5 +402,57 @@ void ParticleFilter::loop()
     working_ = false;
 
     saveFilterState();
+}
 
+void ParticleFilter::tryToResample()
+{
+    /// 6. check if its time for resampling
+    const bool motion_criterion = prediction_linear_distance_ > resampling_threshold_linear_ ||
+                                  prediction_angular_distance_ > resampling_threshold_angular_;
+    const bool cycle_criterion =  resampling_cycle_ > 0 && update_cycle_ >= resampling_cycle_ &&
+                                 (prediction_linear_distance_ > 0.0 || prediction_angular_distance_ > 0.0);
+
+    if(motion_criterion || cycle_criterion){
+        Logger::getLogger().info("About to resample, prediction_linear_distance='" + std::to_string(prediction_linear_distance_) +
+                                 ", prediction_angular_distance='" + std::to_string(prediction_angular_distance_) + "'.",
+                                 "ParticleFilter");
+
+        particle_set_->normalizeWeights();
+        resampling_->apply(*particle_set_);
+
+        for(auto &weight : particle_set_->getWeights()) {
+            weight = 1.0;
+        }
+
+        prediction_linear_distance_  = 0.0;
+        prediction_angular_distance_ = 0.0;
+
+        /// 7. cluster the particle set an update the transformation
+        /// @todo allow mean method
+        particle_set_->cluster();
+        const ParticleSet::Clusters &clusters = particle_set_->getClusters();
+        const ParticleSet::Distributions &distributions = particle_set_->getClusterDistributions();
+        /// todo get the transformation odom -> world
+        double max_weight = std::numeric_limits<double>::lowest();
+        int    max_cluster_id = -1;
+        for(const auto &cluster : clusters) {
+            const int cluster_id = cluster.first;
+            const auto &distribution = distributions.at(cluster_id);
+            const double weight = distribution.getWeight() ;
+            if(weight > max_weight) {
+                max_cluster_id = cluster_id;
+                max_weight = weight;
+            }
+        }
+
+        if(max_cluster_id == -1) {
+            Logger::getLogger().error("Clustering has failed.", "ParticleFilter");
+        } else {
+            Eigen::Vector3d mean = distributions.at(max_cluster_id).getMean();
+            tf_latest_w_T_b_ = tf::StampedTransform(math::Pose(mean).getPose(), particle_set_stamp_, base_frame_, world_frame_);
+            publishTF(particle_set_stamp_);
+        }
+
+        update_cycle_ = 0;
+    }
 }

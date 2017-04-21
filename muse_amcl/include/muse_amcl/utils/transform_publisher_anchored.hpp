@@ -35,10 +35,10 @@ public:
      * @param world_frame   - the world fram
      */
     TransformPublisherAnchored(const double rate,
-                       const std::string &odom_frame,
-                       const std::string &base_frame,
-                       const std::string &world_frame,
-                       const double timeout = 0.1) :
+                               const std::string &odom_frame,
+                               const std::string &base_frame,
+                               const std::string &world_frame,
+                               const double timeout = 0.1) :
         odom_frame_(odom_frame),
         base_frame_(base_frame),
         world_frame_(world_frame),
@@ -78,6 +78,14 @@ public:
     {
         std::unique_lock<std::mutex> l(tf_mutex_);
         tf_anchor_ = tf;
+        tf::StampedTransform b_T_o;
+        if(tf_listener_.waitForTransform(base_frame_, odom_frame_, tf.stamp_, timeout_)) {
+            tf_listener_.lookupTransform(base_frame_, odom_frame_, tf.stamp_, b_T_o);
+            tf::StampedTransform w_T_o(static_cast<tf::Transform>(tf_anchor_) * b_T_o,
+                                       tf.stamp_, world_frame_, odom_frame_);
+            tf_anchor_ = w_T_o;
+        }
+
         wait_for_transform_ = false;
     }
 
@@ -108,18 +116,10 @@ private:
         running_ = true;
         while(!stop_) {
             if(!wait_for_transform_) {
-                ros::Time now = ros::Time::now();
-                if(tf_listener_.waitForTransform(base_frame_, odom_frame_, now, timeout_)) {
-                    tf::StampedTransform b_T_o;
-                    tf_listener_.lookupTransform(base_frame_, odom_frame_, now, b_T_o);
-                  //
-                    now = ros::Time::now();
+                std::unique_lock<std::mutex> l(tf_mutex_);
+                tf_anchor_.stamp_ = ros::Time::now();
+                tf_broadcaster_.sendTransform(tf_anchor_);
 
-                    std::unique_lock<std::mutex> l(tf_mutex_);
-                    tf::StampedTransform w_T_o(static_cast<tf::Transform>(tf_anchor_) * b_T_o,
-                                               now, world_frame_, odom_frame_);
-                    tf_broadcaster_.sendTransform(w_T_o);
-                }
             }
             tf_rate_.sleep();
         }
