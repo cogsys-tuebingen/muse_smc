@@ -115,8 +115,10 @@
 
     <!-- setting up the testing environment -->
     <arg name="map_path" value="/home/hanten/Workspace/data/rawseeds/grid_maps/rawseeds_0.05.yaml" />
-	<arg name="bag_path" value="/home/hanten/Workspace/data/rawseeds/bags/Bicocca_2009-02-25b-static-full.bag" />
-	
+	  <!-- <arg name="bag_path" value="/home/hanten/Workspace/data/rawseeds/bags/Bicocca_2009-02-25b-static-full.bag" /> -->
+	  <arg name="bag_path" value="/home/hanten/Workspace/data/rawseeds/bags/Bicocca_2009-02-25b-static-artificial-light-sick_hokuyo_odom.bag" />
+  
+
     <!-- using only one map, the world and map frame can be collapsed -->
 	<node pkg="tf" type="static_transform_publisher" name="map_T_w" args="0 0 0 0 0 0 map world 100"/>
 	<node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(arg map_path)" />

@@ -68,7 +68,8 @@ public:
         running_(false),
         stop_(false),
         nh_private_("~"),
-        marker_count_(0)
+        marker_count_(0),
+        max_(std::numeric_limits<double>::lowest())
     {
         pub_markers_ = nh_private_.advertise<visualization_msgs::MarkerArray>("/muse_amcl/markers", 1);
         worker_thread_ = std::thread([this]{loop();});
@@ -107,6 +108,7 @@ private:
     ros::NodeHandle                         nh_private_;
     ros::Publisher                          pub_markers_;
     std::size_t                             marker_count_;
+    double                                  max_;
 
     inline void loop()
     {
@@ -158,10 +160,10 @@ private:
         }
 
         visualization_msgs::MarkerArray::Ptr marker_array_modify(new visualization_msgs::MarkerArray);
-        double max = std::numeric_limits<double>::lowest();
+
         for(std::size_t i = 0 ; i < sample_size ; ++i) {
-            if(samples->at(i).weight_ > max) {
-                max = samples->at(i).weight_;
+            if(samples->at(i).weight_ > max_) {
+                max_ = samples->at(i).weight_;
             }
         }
 
@@ -172,8 +174,8 @@ private:
             tf::poseTFToMsg(s.pose_.getPose(), m.pose);
 
             m.color.a = 1.f;
-            if(max > 0.0) {
-                __HSV2RGB__(120.0 * samples->at(i).weight_ / max, 1.0, 1.0, m.color.r, m.color.g, m.color.b);
+            if(max_ > 0.0) {
+                __HSV2RGB__(120.0 * samples->at(i).weight_ / max_, 1.0, 1.0, m.color.r, m.color.g, m.color.b);
             } else {
                 __HSV2RGB__(0.0, 1.0, 1.0, m.color.r, m.color.g, m.color.b);
             }
