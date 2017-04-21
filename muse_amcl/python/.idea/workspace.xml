@@ -131,7 +131,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="python" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/plot_filter_state_log.py" />
-      <option name="PARAMETERS" value="muse_filter_state0.0.log" />
+      <option name="PARAMETERS" value="muse_filter_state1492795173.838.log" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
     </configuration>
