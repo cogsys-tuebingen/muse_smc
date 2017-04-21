@@ -120,7 +120,7 @@ protected:
     void processRequests();
     bool processPredictions(const ros::Time &until);
     void publishPoses(const bool force = false);
-    void publishTF(const ros::Time &t);
+    void publishTF();
     void loop();
     void tryToResample();
 
