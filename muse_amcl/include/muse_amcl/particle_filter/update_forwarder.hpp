@@ -31,7 +31,14 @@ public:
             const std::string data_provider_name     = nh_private.param<std::string>(data_provider_param, "");
             const std::string map_provider_name      = nh_private.param<std::string>(map_provider_param, "");
 
-            UpdateModel::Ptr  model = models_.at(model_name);
+            UpdateModel::Ptr  model = u.second;
+
+            if(data_providers.find(data_provider_name) == data_providers.end())
+                throw std::runtime_error("[UpdateForwarder]: Cannot find data provider '" + data_provider_name + "'!");
+
+            if(map_providers.find(map_provider_name) == map_providers.end())
+                throw std::runtime_error("[UpdateForwarder]: Cannot find map provider '" + map_provider_name + "'!");
+
             const DataProvider::Ptr &data_provider= data_providers.at(data_provider_name);
             const MapProvider::Ptr  &map_provider = map_providers.at(map_provider_name);
 

@@ -21,6 +21,10 @@ public:
     {
         const std::string provider_param = model_->getName() + "/data_provider";
         const std::string provider_name = nh_private.param<std::string>(provider_param, "");
+
+        if(data_providers.find(provider_name) == data_providers.end())
+            throw std::runtime_error("[PredictionForwarder]: Cannot find data provider '" + provider_name + "'!");
+
         const DataProvider::Ptr &provider = data_providers.at(provider_name);
 
         auto callback = [this] (const Data::ConstPtr &data) {

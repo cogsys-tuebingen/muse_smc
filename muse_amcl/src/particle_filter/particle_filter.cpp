@@ -61,8 +61,6 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
         throw std::runtime_error("[ParticleFilter]: The minimum sample size may not be greater than the maximum sample size!");
     }
 
-    tf_provider_               = tf_provider;
-    tf_publisher_.reset(new TransformPublisher(pub_tf_rate));
 
     resampling_threshold_linear_  = nh_private.param(privateParameter("resampling_threshold_linear"), 0.075);
     resampling_threshold_angular_ = math::angle::toRad(nh_private.param(privateParameter("resampling_threshold_angular"), 5.0));
@@ -73,6 +71,9 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     world_frame_   = nh_private.param<std::string>("world_frame", "/world");
     odom_frame_    = nh_private.param<std::string>("odom_frame", "/odom");
     base_frame_    = nh_private.param<std::string>("base_frame", "/base_link");
+
+    tf_provider_               = tf_provider;
+    tf_publisher_.reset(new TransformPublisherAnchored(pub_tf_rate, odom_frame_, base_frame_, world_frame_));
 
     muse_amcl::Indexation indexation ({resolution_linear, resolution_linear, resolution_angular});
     particle_set_.reset(new ParticleSet(world_frame_, sample_size_minimum, sample_size_maximum, indexation, array_extent));
@@ -333,12 +334,13 @@ void ParticleFilter::publishPoses(const bool force)
 
 void ParticleFilter::publishTF(const ros::Time &t)
 {
-    tf::Transform b_T_o;
-    if(tf_provider_->lookupTransform(base_frame_, odom_frame_, particle_set_stamp_, b_T_o)) {
-        tf::StampedTransform w_T_o(static_cast<tf::Transform>(tf_latest_w_T_b_) * b_T_o, t, world_frame_, odom_frame_);
-        tf_publisher_->setTransform(w_T_o);
-        Logger::getLogger().info("Published TF.", "ParticleFilter");
-    }
+    tf_publisher_->setAnchor(tf_latest_w_T_b_);
+//    tf::Transform b_T_o;
+//    if(tf_provider_->lookupTransform(base_frame_, odom_frame_, particle_set_stamp_, b_T_o)) {
+//        tf::StampedTransform w_T_o(static_cast<tf::Transform>(tf_latest_w_T_b_) * b_T_o, t, world_frame_, odom_frame_);
+//        tf_publisher_->setTransform(w_T_o);
+//        Logger::getLogger().info("Published TF.", "ParticleFilter");
+//    }
 }
 
 void ParticleFilter::loop()
@@ -422,13 +424,13 @@ void ParticleFilter::loop()
             } else {
                 Eigen::Vector3d mean = distributions.at(max_cluster_id).getMean();
                 tf_latest_w_T_b_ = tf::StampedTransform(math::Pose(mean).getPose(), particle_set_stamp_, base_frame_, world_frame_);
+                publishTF(particle_set_stamp_);
             }
         }
 
         saveFilterState();
 
         publishPoses(true);
-        publishTF(particle_set_stamp_);
     }
     working_ = false;
 

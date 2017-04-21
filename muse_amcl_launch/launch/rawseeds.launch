@@ -77,7 +77,7 @@
         </group>
         <group ns="uniform_pose_generation">
           <rosparam param="maps">
-            ["sand"]
+            ["rawseeds"]
           </rosparam>
           <param name="class"     value="muse_amcl::UniformAllMaps2D" />
           <param name="base_class"  value="muse_amcl::UniformPoseGeneration" />
@@ -89,7 +89,7 @@
         </group>
         <group ns="normal_pose_generation">
           <rosparam param="maps">
-            ["sand"]
+            ["rawseeds"]
           </rosparam>
           <param name="timeout"   value="10.0" />
           <param name="tf_timeout"  value="0.1" />
@@ -123,5 +123,6 @@
 	<include file="$(find rawseeds_ros)/launch/transforms.launch" />
 	<!--	<node pkg="rawseeds_ros" type="log_trajectory.py" name="log_trajectory" /> -->
 
+	<node type="rviz" name="rviz" pkg="rviz" />
 	<node type="muse_amcl_node" name="muse_amcl" pkg="muse_amcl" output="screen" />
 </launch>

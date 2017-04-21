@@ -98,6 +98,9 @@ protected:
         std::string ms ="[";
         for(auto m : map_provider_ids) {
 
+            if(map_providers.find(m) == map_providers.end())
+                throw std::runtime_error("[UniformSampling]: Cannot find map provider '" + m + "'!");
+
             map_providers_.emplace_back(map_providers.at(m));
             ms += m + ",";
         }

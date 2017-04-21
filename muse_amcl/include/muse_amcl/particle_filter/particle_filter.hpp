@@ -11,6 +11,7 @@
 #include <muse_amcl/utils/logger.hpp>
 #include <muse_amcl/utils/filterstate_logger.hpp>
 #include <muse_amcl/utils/transform_publisher.hpp>
+#include <muse_amcl/utils/transform_publisher_anchored.hpp>
 
 #include <geometry_msgs/PoseArray.h>
 #include <ros/ros.h>
@@ -73,8 +74,8 @@ protected:
     TFProvider::Ptr          tf_provider_;
 
 
-    tf::StampedTransform     tf_latest_w_T_b_;
-    TransformPublisher::Ptr  tf_publisher_;
+    tf::StampedTransform             tf_latest_w_T_b_;
+    TransformPublisherAnchored::Ptr  tf_publisher_;
 
     ros::Time                particle_set_stamp_;
     ParticleSet::Ptr         particle_set_;
