@@ -1,5 +1,7 @@
 <?xml version="1.0" ?>
 <launch>
+	<param name="/use_sim_time" value="true" />
+
 	<!--- muse amcl parameters -->
     <group ns="muse_amcl">
         <param name="world_frame" value="/world" />
@@ -41,7 +43,7 @@
             <param name="class" value="muse_amcl::BeamModel" />
             <param name="base_class" value="muse_amcl::UpdateModel" />
             <param name="data_provider" value="front_laser" />
-            <param name="map_provider" value="rawsseds" />
+            <param name="map_provider" value="rawseeds" />
             <param name="z_hit" value="0.7"/>
             <param name="z_short" value="0.1"/>
             <param name="z_max" value="0.05"/>
@@ -59,7 +61,7 @@
   			<param name="odom_alpha4" value="0.3"/>
   			<param name="odom_alpha5" value="0.1"/>
         </group>
-        <group ns="rawsseds">
+        <group ns="rawseeds">
             <param name="class" value="muse_amcl::MapProviderBinaryGridMap" />
             <param name="base_class" value="muse_amcl::MapProvider" />
             <param name="topic" value="/map" />
@@ -97,14 +99,14 @@
           <param name="seed"    value="0" />
         </group>
         <group ns="particle_filter">
-         	<param name="resampling_offset_linear" value="0.2" />
-        	<param name="resampling_offset_angular" value="0.314" />
+         	<param name="resampling_threshold_linear" value="0.075" /> 
+         	<param name="resampling_threshold_angular" value="2.0" />
             <param name="sample_size"     value="500" /> 		<!-- if set, maximum and minimum are this value -->
             <param name="sample_size_min" value="" /> 			<!-- if not sample_size is already set -->
             <param name="sample_size_max" value="" /> 			<!-- if not sample_size is already set -->
             
-            <param name="resolution_linear" value="0.05" />     <!-- linear discretization resolution -->
-            <param name="resolution_radial" value="0.0314256"/> <!-- angular discretization resolution -->
+            <param name="resolution_linear" value="0.5" />     <!-- linear discretization resolution -->
+            <param name="resolution_radial" value="10.0"/>  <!-- angular discretization resolution -->
 
             <param name="array_extent" value="10.0" /> 			<!-- use array if possible, higher speed -->
         </group>
@@ -112,15 +114,14 @@
 
     <!-- setting up the testing environment -->
     <arg name="map_path" value="/home/hanten/Workspace/data/rawseeds/grid_maps/rawseeds_0.05.yaml" />
-	<arg name="bag_path" value="/home/hanten/Workspace/data/rawseeds/bags/Bicocca_2009-02-25b_odom_sick_front_gt.bag" />
+	<arg name="bag_path" value="/home/hanten/Workspace/data/rawseeds/bags/Bicocca_2009-02-25b-static-full.bag" />
 	
     <!-- using only one map, the world and map frame can be collapsed -->
 	<node pkg="tf" type="static_transform_publisher" name="map_T_w" args="0 0 0 0 0 0 map world 100"/>
 	<node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(arg map_path)" />
 	<node pkg="rosbag" type="play" name="player" output="screen" args="--clock --rate 1.0 -d 5 $(arg bag_path)" required="true" />
 	<include file="$(find rawseeds_ros)/launch/transforms.launch" />
-	<node pkg="rawseeds_ros" type="publish_initial_pose_v.sh" name="publish_initial_pose_v" />
-	<node pkg="rawseeds_ros" type="log_trajectory.py" name="log_trajectory" />
+	<!--	<node pkg="rawseeds_ros" type="log_trajectory.py" name="log_trajectory" /> -->
 
 	<node type="muse_amcl_node" name="muse_amcl" pkg="muse_amcl" output="screen" />
 </launch>

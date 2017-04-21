@@ -91,8 +91,8 @@ protected:
     std::condition_variable  notify_event_;
 
     //// ------------------ parameters ----------------------///
-    double                   resampling_offset_linear_;
-    double                   resampling_offset_angular_;
+    double                   resampling_threshold_linear_;
+    double                   resampling_threshold_angular_;
     ros::Duration            pub_poses_delay_;
     std::string              world_frame_;
     std::string              odom_frame_;

@@ -1,4 +1,5 @@
 #include <muse_amcl/particle_filter/particle_filter.hpp>
+#include <muse_amcl/math/angle.hpp>
 
 using namespace muse_amcl;
 
@@ -34,7 +35,7 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     const double pub_pose_rate      = nh_private.param<double>("pub_pose_rate", 30.0);
     const double pub_tf_rate        = nh_private.param<double>("tf_rate", 30.0);
     const double resolution_linear  = nh_private.param<double>(privateParameter("resolution_linear"), 0.1);
-    const double resolution_angular = nh_private.param<double>(privateParameter("resolution_angular"), M_PI / 18.0);
+    const double resolution_angular = math::angle::toRad(nh_private.param<double>(privateParameter("resolution_angular"), 10.0));
     const double array_extent       = nh_private.param<double>(privateParameter("array_extent"), 5.0);
     const std::size_t sample_size   = nh_private.param<int>(privateParameter("sample_size"), 0);
     std::size_t sample_size_maximum = sample_size;
@@ -63,11 +64,11 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     tf_provider_               = tf_provider;
     tf_publisher_.reset(new TransformPublisher(pub_tf_rate));
 
-    resampling_offset_linear_  = nh_private.param(privateParameter("resampling_offset_linear"), 0.25);
-    resampling_offset_angular_ = nh_private.param(privateParameter("resampling_offset_angular"), M_PI / 10.0);
-    pub_poses_                 = nh_private.advertise<geometry_msgs::PoseArray>(topic_poses, 1);
-    pub_single_pose_                  = nh_private.advertise<geometry_msgs::PoseStamped>("/muse_amcl/mean", 1);
-    pub_poses_delay_           = ros::Rate(pub_pose_rate).cycleTime();
+    resampling_threshold_linear_  = nh_private.param(privateParameter("resampling_threshold_linear"), 0.075);
+    resampling_threshold_angular_ = math::angle::toRad(nh_private.param(privateParameter("resampling_threshold_angular"), 5.0));
+    pub_poses_                    = nh_private.advertise<geometry_msgs::PoseArray>(topic_poses, 1);
+    pub_single_pose_              = nh_private.advertise<geometry_msgs::PoseStamped>("/muse_amcl/mean", 1);
+    pub_poses_delay_              = ros::Rate(pub_pose_rate).cycleTime();
 
     world_frame_   = nh_private.param<std::string>("world_frame", "/world");
     odom_frame_    = nh_private.param<std::string>("odom_frame", "/odom");
@@ -82,6 +83,8 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
                                             base_frame_,
                                             world_frame_);
 
+
+    //// LOGGING ////
     l.info("sample_size='"  + std::to_string(sample_size) +"'", "ParticleFilter");
     l.info("sample_size_maximum='"  + std::to_string(sample_size) +"'", "ParticleFilter");
     l.info("sample_size_minimum='"  + std::to_string(sample_size) +"'", "ParticleFilter");
@@ -90,8 +93,8 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     l.info("resolution_angular='"  + std::to_string(resolution_angular) +"'", "ParticleFilter");
     l.info("array_extent='"  + std::to_string(array_extent) +"'", "ParticleFilter");
 
-    l.info("resampling_offset_linear_='"  + std::to_string(resampling_offset_linear_) + "'", "ParticleFilter");
-    l.info("resampling_offset_angular_='" + std::to_string(resampling_offset_angular_) + "'", "ParticleFilter");
+    l.info("resampling_offset_linear_='"  + std::to_string(resampling_threshold_linear_) + "'", "ParticleFilter");
+    l.info("resampling_offset_angular_='" + std::to_string(resampling_threshold_angular_) + "'", "ParticleFilter");
     l.info("topic_poses='" + topic_poses + "'", "ParticleFilter");
     l.info("pub_rate '" + std::to_string(pub_pose_rate) + "'", "ParticleFilter");
     l.info("pub_tf_rate='" + std::to_string(pub_tf_rate) + "'", "ParticleFilter");
@@ -100,7 +103,7 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     l.info("base_frame_='" + base_frame_ + "'", "ParticleFilter");
 
     l.info("Set up.", "ParticleFilter");
-
+    ////////////////
 
     FilterStateLoggerDefault::Header header = {"predictions, updates, driven_linear, driven_angular, ros_time, filter_time"};
     FilterStateLoggerDefault::getLogger(header).writeState(prediction_queue_.size(),
@@ -379,8 +382,8 @@ void ParticleFilter::loop()
         saveFilterState();
 
         /// 6. check if its time for resampling
-        if(prediction_linear_distance_ > resampling_offset_linear_ ||
-                prediction_angular_distance_ > resampling_offset_angular_){
+        if(prediction_linear_distance_ > resampling_threshold_linear_ ||
+                prediction_angular_distance_ > resampling_threshold_angular_){
 
             Logger::getLogger().info("About to resample, prediction_linear_distance='" + std::to_string(prediction_linear_distance_) +
                                      ", prediction_angular_distance='" + std::to_string(prediction_angular_distance_) + "'.",
