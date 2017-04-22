@@ -4,6 +4,7 @@
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <opencv2/opencv.hpp>
 #include <tf/tf.h>
+#include <tf/transform_listener.h>
 #include <nav_msgs/GetMap.h>
 #include <mutex>
 #include <thread>
@@ -51,21 +52,19 @@ public:
         if(has_poses_) {
             const std::size_t sample_size = pose_origins_.size();
             for(std::size_t i = 0 ; i < sample_size ; ++i) {
-                auto &scan_ray_directions = scan_ray_directions_[i];
                 auto &scan_points = scan_points_[i];
                 auto &pose_origin = pose_origins_[i];
 
-                for(auto &d : scan_ray_directions) {
-                    cv::line(rendered_map, pose_origin, d, cv::Scalar(0,128,255), 1, CV_AA);
-                }
-
                 for(auto &p : scan_points) {
-                    cv::circle(rendered_map, p, 2, cv::Scalar(0,0,255), CV_FILLED, CV_AA);
-                    cv::line(rendered_map, pose_origin, p, cv::Scalar(0,0,255), 1, CV_AA);
+                    cv::circle(rendered_map, p, 2, cv::Scalar(0,0,255,255), CV_FILLED, CV_AA);
+                    cv::line(rendered_map, pose_origin, p, cv::Scalar(0,0,255,5), 1, CV_AA);
                 }
 
-                cv::circle(rendered_map, pose_origin, 5, cv::Scalar(255,0,0), 1, CV_AA);
-                cv::line(rendered_map, pose_origin, pose_directions_[i], cv::Scalar(0,255), 1, CV_AA);
+            }
+            for(std::size_t i = 0 ; i < sample_size ; ++i) {
+                auto &pose_origin = pose_origins_[i];
+                cv::circle(rendered_map, pose_origin, 5, cv::Scalar(255,0,0, 255), 1, CV_AA);
+                cv::line(rendered_map, pose_origin, pose_directions_[i], cv::Scalar(0,255, 255), 1, CV_AA);
             }
         }
         cv::flip(rendered_map, rendered_map, 0);
@@ -78,7 +77,7 @@ private:
     ros::Subscriber                     map_subscriber_;
     ros::Subscriber                     pose_subscriber_;
     ros::ServiceClient                  map_client_;
-
+    tf::TransformListener               tf_;
 
     muse_amcl::maps::BinaryGridMap::Ptr gridmap_;
 
@@ -90,7 +89,6 @@ private:
     std::vector<cv::Point>              pose_origins_;
     std::vector<cv::Point>              pose_directions_;
     std::vector<std::vector<cv::Point>> scan_points_;
-    std::vector<std::vector<cv::Point>> scan_ray_directions_;
 
     double                              scale_;
     double                              fov_;
@@ -99,12 +97,10 @@ private:
 
     void particles(const muse_amcl::ParticleSetMsg::ConstPtr &particles)
     {
-        std::cout << "got particles" << std::endl;
         if(gridmap_) {
             std::array<int, 2> index;
 
             scan_points_.clear();
-            scan_ray_directions_.clear();
             pose_origins_.clear();
             pose_directions_.clear();
 
@@ -123,7 +119,6 @@ private:
 
                     /// lets generate a virtual scan
                     std::vector<cv::Point> scan_points;
-                    std::vector<cv::Point> scan_ray_directions;
 
                     const std::size_t rays = fov_ / angular_resolution_;
                     double angle = yaw - 0.5 * fov_;
@@ -134,7 +129,6 @@ private:
                         scan_point.y() += std::sin(angle) * maximum_range_;
 
                         gridmap_->toIndex(scan_point, scan_index);
-                        scan_ray_directions.emplace_back(cv::Point(scan_index[0], scan_index[1]));
 
                         double range = gridmap_->getRange(position, scan_point);
                         if(range > 0.0) {
@@ -144,7 +138,6 @@ private:
                             scan_points.emplace_back(cv::Point(scan_index[0], scan_index[1]));
                         }
                     }
-                    scan_ray_directions_.emplace_back(scan_ray_directions);
                     scan_points_.emplace_back(scan_points);
                 }
                 has_poses_ = true;
@@ -160,8 +153,8 @@ private:
         const std::size_t cols = gridmap_->getWidth();
         const std::size_t rows = gridmap_->getHeight();
 
-        rendered_map_ = cv::Mat(rows, cols, CV_8UC3, cv::Scalar());
-        cv::Vec3b *render_map_ptr = rendered_map_.ptr<cv::Vec3b>();
+        rendered_map_ = cv::Mat(rows, cols, CV_8UC4, cv::Scalar());
+        cv::Vec4b *render_map_ptr = rendered_map_.ptr<cv::Vec4b>();
         for(std::size_t i = 0 ; i < rows ; ++i) {
             for(std::size_t j = 0 ; j < cols ; ++j) {
                 math::Point p;
@@ -172,7 +165,7 @@ private:
                 gridmap_->toIndex(p, index);
 
                 if(gridmap_->at(index[0],index[1]) == 0) {
-                    render_map_ptr[index[1] * cols + index[0]] = cv::Vec3b(255,255,255);
+                    render_map_ptr[index[1] * cols + index[0]] = cv::Vec4b(255,255,255);
                 }
             }
         }
@@ -250,13 +243,14 @@ int main(int argc, char *argv[])
     ros::init(argc, argv, "muse_amcl_test_gridmap");
 
     muse_amcl::GridmapTestNode gtn;
-    muse_amcl::Window window("map");
+    muse_amcl::Window window_map("map");
+  //  muse_amcl::Window window_weights("weights");
     while(ros::ok()) {
         ros::spinOnce();
 
         cv::Mat map;
         if(gtn.getRenderedMap(map)) {
-            window.setContent(map);
+            window_map.setContent(map);
         }
         ros::Rate(30.0).sleep();
     }
