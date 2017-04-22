@@ -85,8 +85,8 @@ public:
         i[0] = (x - tx_) / resolution_;
         i[1] = (y - ty_) / resolution_;
 
-        return i[0] >= 0 && i[0] <= max_index_[0] ||
-               i[1] >= 0 && i[1] <= max_index_[1];
+        return (i[0] >= 0 && i[0] <= max_index_[0]) ||
+               (i[1] >= 0 && i[1] <= max_index_[1]);
     }
 
     inline void fromIndex(const Index &i,

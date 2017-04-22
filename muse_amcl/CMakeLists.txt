@@ -79,6 +79,8 @@ add_library(${PROJECT_NAME}_particle_filter
     src/particle_filter/particle_filter.cpp
 )
 
+add_dependencies(${PROJECT_NAME}_particle_filter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 target_link_libraries(${PROJECT_NAME}_particle_filter
     ${catkin_LIBRARIES}
     ${tinyXML_LIBRARIES}
