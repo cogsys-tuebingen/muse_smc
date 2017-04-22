@@ -24,13 +24,12 @@ void Multinomial::doApply(ParticleSet &particle_set)
     Insertion i_p_t = particle_set.getInsertion();
 
     /// prepare ordered sequence of random numbers
-    std::size_t k = size;
     math::random::Uniform<1> rng(0.0, 1.0);
-    std::vector<double> u(size, std::pow(rng.get(), 1.0 / k));
+    std::vector<double> u(size, std::pow(rng.get(), 1.0 / static_cast<double>(size)));
     {
-        for(int k = u.size() - 2; k >= 0 ; --k) {
-            double u_ = std::pow(rng.get(), 1.0 / k);
-            u[k] = u[k+1] * u_;
+        for(std::size_t k = size - 1 ; k > 0 ; --k) {
+           const double u_ = std::pow(rng.get(), 1.0 / static_cast<double>(k));
+           u[k-1] = u[k] * u_;
         }
     }
     /// draw samples
@@ -64,15 +63,12 @@ void Multinomial::doApplyRecovery(ParticleSet &particle_set)
 
     /// prepare ordered sequence of random numbers
     const std::size_t size = p_t_1.size();
-    std::size_t k = size;
     math::random::Uniform<1> rng(0.0, 1.0);
-    std::vector<double> u(size, std::pow(rng.get(), 1.0 / k));
+    std::vector<double> u(size, std::pow(rng.get(), 1.0 / static_cast<double>(size)));
     {
-        auto u_it_last = u.rbegin();
-        for(auto u_it = u.rbegin()+1; u_it > u.rend() ; ++u_it) {
-            *u_it = *u_it_last * std::pow(rng.get(), 1.0 / k);
-             u_it_last = u_it;
-            --k;
+        for(std::size_t k = size - 1 ; k > 0 ; --k) {
+           const double u_ = std::pow(rng.get(), 1.0 / static_cast<double>(k));
+           u[k-1] = u[k] * u_;
         }
     }
     /// draw samples
