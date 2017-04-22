@@ -146,7 +146,7 @@ if(True)
         )
 
         add_executable(muse_amcl_test_node_gridmap_particles
-            test/test_node_gridmap.cpp
+            test/test_node_gridmap_particles.cpp
         )
 
         target_link_libraries(muse_amcl_test_node_gridmap_particles

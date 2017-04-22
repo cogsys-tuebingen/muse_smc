@@ -127,7 +127,7 @@
 	<!--	<node pkg="rawseeds_ros" type="log_trajectory.py" name="log_trajectory" /> -->
 
 
-	<node type="record" name="robag_record" pkg="rosbag" args="-o /tmp/particles /muse_macl/particles /muse_amcl/markers" />
+	<node type="record" name="robag_record" pkg="rosbag" args="-o /tmp/particles /muse_amcl/particles /muse_amcl/markers" />
 	<node type="rviz" name="rviz" pkg="rviz" />
 	<!-- <node type="rqt_tf_tree" name="rqt_tf_tree" pkg="rqt_tf_tree" /> -->
  	<node type="muse_amcl_node" name="muse_amcl" pkg="muse_amcl" output="screen" />
