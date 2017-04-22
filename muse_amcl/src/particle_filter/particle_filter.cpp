@@ -400,9 +400,9 @@ void ParticleFilter::tryToResample()
         particle_set_->normalizeWeights();
         resampling_->apply(*particle_set_);
 
-        for(auto &weight : particle_set_->getWeights()) {
-            weight = 1.0;
-        }
+//        for(auto &weight : particle_set_->getWeights()) {
+//            weight = 1.0;
+//        }
 
         prediction_linear_distance_  = 0.0;
         prediction_angular_distance_ = 0.0;

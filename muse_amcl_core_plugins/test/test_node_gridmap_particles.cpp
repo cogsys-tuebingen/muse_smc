@@ -117,13 +117,12 @@ private:
             for(const muse_amcl::ParticleMsg &p : particles->particles) {
                 tf::Pose      pose;
                 tf::poseMsgToTF(p.pose, pose);
-                std::cout << pose.getOrigin().x() << " " << pose.getOrigin().y() << " " << tf::getYaw(pose.getRotation()) << " -> ";
+
+                std::cout << p.weight << std::endl;
 
                 pose = static_cast<tf::Transform>(map_T_world) *
                        pose *
                        static_cast<tf::Transform>(base_T_laser);
-
-                std::cout << pose.getOrigin().x() << " " << pose.getOrigin().y() << " " << tf::getYaw(pose.getRotation()) << std::endl;
 
                 math::Point position(pose.getOrigin().x(), pose.getOrigin().y());
 
@@ -164,9 +163,14 @@ private:
                 }
             }
             has_poses_ = true;
-            std::cout << "--------------------------" << std::endl;
         }
+
+
+
     }
+
+
+
 
     void renderMap()
     {
