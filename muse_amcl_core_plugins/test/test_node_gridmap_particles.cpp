@@ -104,13 +104,35 @@ private:
             pose_origins_.clear();
             pose_directions_.clear();
 
+            //// lets get the transformations
+            tf::StampedTransform base_T_laser;
+            if(!tf_.waitForTransform("/base_link", "/sick_front", particles->header.stamp, ros::Duration(0.1)))
+                return;
+            tf_.lookupTransform("/base_link", "/sick_front",particles->header.stamp, base_T_laser);
+            tf::StampedTransform map_T_world;
+            if(!tf_.waitForTransform("/world", "/map", particles->header.stamp, ros::Duration(0.1)))
+                return;
+            tf_.lookupTransform("/world", "/map",particles->header.stamp, map_T_world);
+
             for(const muse_amcl::ParticleMsg &p : particles->particles) {
-                math::Point position(p.pose.position.x, p.pose.position.y);
+                tf::Pose      pose;
+                tf::poseMsgToTF(p.pose, pose);
+                std::cout << pose.getOrigin().x() << " " << pose.getOrigin().y() << " " << tf::getYaw(pose.getRotation()) << " -> ";
+
+                pose = static_cast<tf::Transform>(map_T_world) *
+                       pose *
+                       static_cast<tf::Transform>(base_T_laser);
+
+                std::cout << pose.getOrigin().x() << " " << pose.getOrigin().y() << " " << tf::getYaw(pose.getRotation()) << std::endl;
+
+                math::Point position(pose.getOrigin().x(), pose.getOrigin().y());
+
+
                 if(gridmap_->toIndex(position, index)) {
 
                     pose_origins_.emplace_back(cv::Point(index[0], index[1]));
 
-                    const double yaw = tf::getYaw(p.pose.orientation);
+                    const double yaw = tf::getYaw(pose.getRotation());
                     const int    len = 10; // px
 
                     pose_directions_.emplace_back(pose_origins_.back());
@@ -140,8 +162,9 @@ private:
                     }
                     scan_points_.emplace_back(scan_points);
                 }
-                has_poses_ = true;
             }
+            has_poses_ = true;
+            std::cout << "--------------------------" << std::endl;
         }
     }
 
