@@ -22,10 +22,15 @@ PredictionModel::Result DifferentialDrive::doPredict(const Data::ConstPtr &data,
 {
     const Odometry &odometry = data->as<Odometry>();
     const double delta_trans = odometry.getDeltaLinear();
-    const double delta_rot1  = math::angle::difference(std::atan2(odometry.getDelta().getOrigin().y(),
-                                                                  odometry.getDelta().getOrigin().x()),
-                                                       odometry.getStartPose().yaw());
+    double delta_rot1 = 0.0;
     const double delta_rot2 = math::angle::difference(odometry.getDeltaAngular(), delta_rot1);
+
+    if(delta_trans >= 0.01) {
+       delta_rot1  = math::angle::difference(std::atan2(odometry.getDelta().getOrigin().y(),
+                                                        odometry.getDelta().getOrigin().x()),
+                                                        odometry.getStartPose().yaw());
+    }
+
 
     if(delta_trans < eps_zero_linear_ &&
             std::abs(delta_rot2) < eps_zero_angular_)

@@ -114,11 +114,13 @@ private:
                 return;
             tf_.lookupTransform("/world", "/map",particles->header.stamp, map_T_world);
 
+            std::size_t i = 0 ;
             for(const muse_amcl::ParticleMsg &p : particles->particles) {
                 tf::Pose      pose;
                 tf::poseMsgToTF(p.pose, pose);
 
-                std::cout << p.weight << std::endl;
+                std::cout << "[" << i << "]:" << p.weight.data << std::endl;
+                ++i;
 
                 pose = static_cast<tf::Transform>(map_T_world) *
                        pose *
