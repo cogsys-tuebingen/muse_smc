@@ -71,6 +71,7 @@ protected:
 
 
     tf::StampedTransform             tf_latest_w_T_b_;
+//    tf::TransformBroadcaster         tf_broadcaster_;
     TransformPublisherAnchored::Ptr  tf_publisher_;
 
     FilterStatePublisher::Ptr        filter_state_publisher_;

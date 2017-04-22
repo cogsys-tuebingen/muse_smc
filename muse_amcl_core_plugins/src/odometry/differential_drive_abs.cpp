@@ -19,8 +19,7 @@ PredictionModel::Result DifferentialDriveAbs::doPredict(const Data::ConstPtr &da
     const Odometry &odometry = data->as<Odometry>();
     const double delta_trans = odometry.getDeltaLinear();
     const double delta_rot1  = delta_trans < 0.01 ? 0.0 :
-                                                    math::angle::difference(std::atan2(odometry.getDelta().getOrigin().y(),
-                                                                                       odometry.getDelta().getOrigin().x()),
+                                                    math::angle::difference(odometry.getDeltaAngularAbs(),
                                                                             odometry.getStartPose().yaw());
 
     const double delta_rot2 = math::angle::difference(odometry.getDeltaAngular(), delta_rot1);

@@ -123,8 +123,8 @@ private:
                 ++i;
 
                 pose = static_cast<tf::Transform>(map_T_world) *
-                       pose *
-                       static_cast<tf::Transform>(base_T_laser);
+                        pose *
+                        static_cast<tf::Transform>(base_T_laser);
 
                 math::Point position(pose.getOrigin().x(), pose.getOrigin().y());
 
@@ -250,11 +250,13 @@ private:
             cv::namedWindow(window_name_);
 
             std::unique_lock<std::mutex>(content_mutex_);
-            cv::imshow(window_name_, content_);
-            cv::waitKey(19);
-            int key = cv::waitKey(19) & 0xFF;
-            if(key == 27)
-                break;
+            if(!content_.empty()) {
+                cv::imshow(window_name_, content_);
+                cv::waitKey(19);
+                int key = cv::waitKey(19) & 0xFF;
+                if(key == 27)
+                    break;
+            }
         }
         running_ = false;
         cv::destroyAllWindows();
@@ -273,7 +275,7 @@ int main(int argc, char *argv[])
 
     muse_amcl::GridmapTestNode gtn;
     muse_amcl::Window window_map("map");
-  //  muse_amcl::Window window_weights("weights");
+    //  muse_amcl::Window window_weights("weights");
     while(ros::ok()) {
         ros::spinOnce();
 

@@ -74,18 +74,16 @@ public:
             worker_thread_.join();
     }
 
-    inline void setAnchor(const tf::StampedTransform &tf)
+    inline void setAnchor(const tf::StampedTransform &w_t_b)
     {
         std::unique_lock<std::mutex> l(tf_mutex_);
-        tf_anchor_ = tf;
         tf::StampedTransform b_T_o;
-        if(tf_listener_.waitForTransform(base_frame_, odom_frame_, tf.stamp_, timeout_)) {
-            tf_listener_.lookupTransform(base_frame_, odom_frame_, tf.stamp_, b_T_o);
-            tf::StampedTransform w_T_o(static_cast<tf::Transform>(tf_anchor_) * b_T_o,
-                                       tf.stamp_, world_frame_, odom_frame_);
-            tf_anchor_ = w_T_o;
-        }
+        if(tf_listener_.waitForTransform(base_frame_, odom_frame_, w_t_b.stamp_, timeout_)) {
+            tf_listener_.lookupTransform(base_frame_, odom_frame_, w_t_b.stamp_, b_T_o);
 
+            w_T_o_ = tf::StampedTransform(static_cast<tf::Transform>(w_t_b) * b_T_o,
+                                          w_t_b.stamp_, world_frame_, odom_frame_);
+        }
         wait_for_transform_ = false;
     }
 
@@ -105,7 +103,7 @@ private:
     std::atomic_bool         stop_;
     std::thread              worker_thread_;
     std::mutex               tf_mutex_;
-    tf::StampedTransform     tf_anchor_;
+    tf::StampedTransform     w_T_o_;
     std::atomic_bool         wait_for_transform_;
     tf::TransformBroadcaster tf_broadcaster_;
     tf::TransformListener    tf_listener_;
@@ -117,8 +115,8 @@ private:
         while(!stop_) {
             if(!wait_for_transform_) {
                 std::unique_lock<std::mutex> l(tf_mutex_);
-                tf_anchor_.stamp_ = ros::Time::now();
-                tf_broadcaster_.sendTransform(tf_anchor_);
+                w_T_o_.stamp_ = ros::Time::now();
+                tf_broadcaster_.sendTransform(w_T_o_);
 
             }
             tf_rate_.sleep();

@@ -31,8 +31,7 @@ PredictionModel::Result OmniDrive::doPredict(const Data::ConstPtr &data,
 
 
 
-    const double delta_angle = std::atan2(odometry.getDelta().getOrigin().y(),
-                                          odometry.getDelta().getOrigin().x());
+    const double delta_angle = odometry.getDeltaAngularAbs();
     const double delta_trans_hat_stddev = std::sqrt(alpha_3_ * sq(delta_trans) +
                                                     alpha_1_ * sq(delta_rot));
     const double delta_rot_hat_stddev = std::sqrt(alpha_4_ * sq(delta_rot) +

@@ -39,27 +39,53 @@
         	<!-- <param name="angle_min" value="-3.1425" /> -->
         	<!-- <param name="angle_max" value="3.1425" /> -->
         </group>
-        <group ns="beam_model">
+        <group ns="rear_laser">
+          <param name="class" value="muse_amcl::DataProviderLaser2D" />
+          <param name="base_class" value="muse_amcl::DataProvider" />
+          <param name="topic" value="/sicK_rear" />
+          <param name="undistortion" value="false" />
+          <param name="undistortion_fixed_frame" value="/odom" />
+          <param name="undistortion_tf_timeout" value="0.1" />
+          <param name="range_max" value="82.0" />
+          <param name="range_min" value="0.1" />
+          <!-- <param name="angle_min" value="-3.1425" /> -->
+          <!-- <param name="angle_max" value="3.1425" /> -->
+        </group>
+        <group ns="beam_model_front">
             <param name="class" value="muse_amcl::BeamModel" />
             <param name="base_class" value="muse_amcl::UpdateModel" />
             <param name="data_provider" value="front_laser" />
             <param name="map_provider" value="rawseeds" />
-            <param name="z_hit" value="0.7"/>
-            <param name="z_short" value="0.1"/>
+            <param name="z_hit" value="0.8"/>
+            <param name="z_short" value="0.05"/>
             <param name="z_max" value="0.05"/>
-            <param name="z_rand" value="0.15"/>
+            <param name="z_rand" value="0.1"/>
             <param name="sigma_hit" value="0.05"/>
             <param name="lambda_short" value="0.1"/>
+            <param name="max_beams" value="80" />
+        </group>
+        <group ns="beam_model_rear">
+            <param name="class" value="muse_amcl::BeamModel" />
+            <param name="base_class" value="muse_amcl::UpdateModel" />
+            <param name="data_provider" value="rear_laser" />
+            <param name="map_provider" value="rawseeds" />
+            <param name="z_hit" value="0.8"/>
+            <param name="z_short" value="0.05"/>
+            <param name="z_max" value="0.05"/>
+            <param name="z_rand" value="0.1"/>
+            <param name="sigma_hit" value="0.05"/>
+            <param name="lambda_short" value="0.1"/>
+            <param name="max_beams" value="80" />
         </group>
         <group ns="differential_drive_model">
             <param name="class" value="muse_amcl::DifferentialDrive" />
             <param name="base_class" value="muse_amcl::PredictionModel"/>
             <param name="data_provider" value="odometry" />
-  			<param name="alpha1" value="0.1"/>
-  			<param name="alpha2" value="0.0"/>
-  			<param name="alpha3" value="0.1"/>
-  			<param name="alpha4" value="0.1"/>
-  			<param name="alpha5" value="0.0"/>
+  			    <param name="alpha1" value="0.1"/>
+  		  	  <param name="alpha2" value="0.2"/>
+  	   		  <param name="alpha3" value="2.0"/>
+    			  <param name="alpha4" value="0.1"/>
+    			  <param name="alpha5" value="0.0"/>
         </group>
         <group ns="rawseeds">
             <param name="class" value="muse_amcl::MapProviderBinaryGridMap" />
@@ -98,9 +124,9 @@
           <param name="seed"    	value="0" />
         </group>
         <group ns="particle_filter">
-         	<param name="resampling_threshold_linear"  value="0.075" /> 
-         	<param name="resampling_threshold_angular" value="2.0" />
-         	<param name="resampling_cycle" 			   value="2" />
+         	  <param name="resampling_threshold_linear"  value="0.01" /> 
+          	<param name="resampling_threshold_angular" value="2.0" />
+          	<param name="resampling_cycle" 			       value="2" />
 
             <param name="sample_size"     value="500" /> 		<!-- if set, maximum and minimum are this value -->
             <param name="sample_size_min" value="" /> 			<!-- if not sample_size is already set -->
@@ -120,8 +146,9 @@
   
 
     <!-- using only one map, the world and map frame can be collapsed -->
-	<node pkg="tf" type="static_transform_publisher" name="map_T_w" args="0 0 0 0 0 0 map world 100"/>
-	<node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(arg map_path)" />
+	  <node pkg="tf" type="static_transform_publisher" name="map_T_w" args="0 0 0 0 0 0 map world 100"/>
+	
+  <node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(arg map_path)" />
 	<node pkg="rosbag" type="play" name="player" output="screen" args="--clock --rate 1.0 -d 5 $(arg bag_path)" required="true" />
 	<include file="$(find rawseeds_ros)/launch/transforms.launch" />
 	<!--	<node pkg="rawseeds_ros" type="log_trajectory.py" name="log_trajectory" /> -->

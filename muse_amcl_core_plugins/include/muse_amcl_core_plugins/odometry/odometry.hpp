@@ -28,13 +28,20 @@ public:
     inline void setPoses(const math::Pose &start,
                          const math::Pose &end)
     {
-        start_pose_ = start;
-        end_pose_ = end;
-        delta_.setEigen3D({end.x() - start.x(), end.y() - start.y(),
-                           math::angle::difference(end.yaw(), start.yaw())});
+        math::Pose delta = start.inverse() * end;
+        start_pose_      = start;
+        end_pose_        = end;
 
-        delta_linear_  = delta_.getOrigin().length();
-        delta_angular_ = delta_.yaw();
+        delta_ = end.getOrigin() - start.getOrigin();
+
+        delta_linear_  = delta.getOrigin().length();
+        delta_angular_ = delta.yaw();
+    }
+
+    inline double getDeltaAngularAbs() const
+    {
+        return std::atan2(delta_.y(),
+                          delta_.x());
     }
 
     inline const math::Pose& getStartPose() const
@@ -47,7 +54,7 @@ public:
         return end_pose_;
     }
 
-    inline const math::Pose &getDelta() const
+    inline const tf::Vector3 &getDelta() const
     {
         return delta_;
     }
@@ -63,11 +70,11 @@ public:
     }
 
 private:
-    math::Pose start_pose_;
-    math::Pose end_pose_;
-    math::Pose delta_;
-    double     delta_linear_;
-    double     delta_angular_;
+    math::Pose  start_pose_;
+    math::Pose  end_pose_;
+    tf::Vector3 delta_;
+    double      delta_linear_;
+    double      delta_angular_;
 
 
 

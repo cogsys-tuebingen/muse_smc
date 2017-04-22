@@ -400,10 +400,6 @@ void ParticleFilter::tryToResample()
         particle_set_->normalizeWeights();
         resampling_->apply(*particle_set_);
 
-//        for(auto &weight : particle_set_->getWeights()) {
-//            weight = 1.0;
-//        }
-
         prediction_linear_distance_  = 0.0;
         prediction_angular_distance_ = 0.0;
 
@@ -429,7 +425,7 @@ void ParticleFilter::tryToResample()
             Logger::getLogger().error("Clustering has failed.", "ParticleFilter");
         } else {
             Eigen::Vector3d mean = distributions.at(max_cluster_id).getMean();
-            tf_latest_w_T_b_ = tf::StampedTransform(math::Pose(mean).getPose(), particle_set_stamp_, base_frame_, world_frame_);
+            tf_latest_w_T_b_ = tf::StampedTransform(math::Pose(mean).getPose(), particle_set_stamp_, world_frame_, base_frame_);
             publishTF();
         }
 

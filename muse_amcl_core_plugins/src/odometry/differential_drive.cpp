@@ -23,14 +23,11 @@ PredictionModel::Result DifferentialDrive::doPredict(const Data::ConstPtr &data,
     const Odometry &odometry = data->as<Odometry>();
     const double delta_trans = odometry.getDeltaLinear();
     double delta_rot1 = 0.0;
-    const double delta_rot2 = math::angle::difference(odometry.getDeltaAngular(), delta_rot1);
-
     if(delta_trans >= 0.01) {
-       delta_rot1  = math::angle::difference(std::atan2(odometry.getDelta().getOrigin().y(),
-                                                        odometry.getDelta().getOrigin().x()),
-                                                        odometry.getStartPose().yaw());
+       delta_rot1  = math::angle::difference(odometry.getDeltaAngularAbs(),
+                                             odometry.getStartPose().yaw());
     }
-
+    const double delta_rot2 = math::angle::difference(odometry.getDeltaAngular(), delta_rot1);
 
     if(delta_trans < eps_zero_linear_ &&
             std::abs(delta_rot2) < eps_zero_angular_)
@@ -57,12 +54,12 @@ PredictionModel::Result DifferentialDrive::doPredict(const Data::ConstPtr &data,
         rng_delta_rot_hat1_->set(0.0, sigma_rot_hat1);
     }
     if(!rng_delta_trans_hat_) {
-        rng_delta_trans_hat_.reset(new math::random::Normal<1>(0.0, sigma_trans_hat, seed_));
+        rng_delta_trans_hat_.reset(new math::random::Normal<1>(0.0, sigma_trans_hat, seed_ + 1));
     } else {
         rng_delta_trans_hat_->set(0.0, sigma_trans_hat);
     }
     if(!rng_delta_rot_hat2_) {
-        rng_delta_rot_hat2_.reset(new math::random::Normal<1>(0.0, sigma_rot_hat2, seed_));
+        rng_delta_rot_hat2_.reset(new math::random::Normal<1>(0.0, sigma_rot_hat2, seed_ + 2));
     } else {
         rng_delta_rot_hat2_->set(0.0, sigma_rot_hat2);
     }
