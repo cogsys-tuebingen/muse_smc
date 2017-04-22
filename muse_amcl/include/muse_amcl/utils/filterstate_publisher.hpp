@@ -168,7 +168,7 @@ private:
         }
 
         for(std::size_t i = 0 ; i < sample_size ; ++i) {
-            auto m = marker_prototype;
+            visualization_msgs::Marker m = marker_prototype;
             auto &s = samples->at(i);
             m.id = i;
             tf::poseTFToMsg(s.pose_.getPose(), m.pose);
