@@ -43,6 +43,12 @@ add_service_files(
    PoseInitialization.srv
 )
 
+add_message_files(
+    FILES
+    Particle.msg
+    ParticleSet.msg
+)
+
 generate_messages(
    DEPENDENCIES
    std_msgs
@@ -89,8 +95,6 @@ target_link_libraries(${PROJECT_NAME}_node
     ${catkin_LIBRARIES}
     ${PROJECT_NAME}_particle_filter
 )
-
-
 
 if(${CATKIN_ENABLE_TESTING})
     add_unit_test_gtest(${PROJECT_NAME}_test_signals
