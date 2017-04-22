@@ -45,8 +45,8 @@ add_service_files(
 
 add_message_files(
     FILES
-    Particle.msg
-    ParticleSet.msg
+    ParticleMsg.msg
+    ParticleSetMsg.msg
 )
 
 generate_messages(

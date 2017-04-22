@@ -318,7 +318,7 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
 
 void ParticleFilter::publishPoses()
 {
-    filter_state_publisher_->addState(particle_set_->getSamples());
+    filter_state_publisher_->addState(particle_set_->getSamples(), particle_set_stamp_);
 }
 
 void ParticleFilter::publishTF()

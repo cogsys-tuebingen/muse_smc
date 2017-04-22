@@ -10,6 +10,7 @@
 #include <condition_variable>
 
 #include <muse_amcl/particle_filter/particle_set.hpp>
+#include <muse_amcl/ParticleSetMsg.h>
 
 namespace muse_amcl {
 namespace color {
@@ -74,6 +75,7 @@ public:
         max_(std::numeric_limits<double>::lowest())
     {
         pub_markers_ = nh_private_.advertise<visualization_msgs::MarkerArray>("/muse_amcl/markers", 1);
+        pub_particles_ = nh_private_.advertise<muse_amcl::ParticleSetMsg>("/muse_amcl/particles", 1);
         worker_thread_ = std::thread([this]{loop();});
         worker_thread_.detach();
     }
@@ -89,10 +91,12 @@ public:
             worker_thread_.join();
     }
 
-    void addState(const ParticleSet::Particles &particles)
+    void addState(const ParticleSet::Particles &particles,
+                  const ros::Time &time)
     {
         std::unique_lock<std::mutex> q_lock(q_mutex_);
         q_.push(ParticleSet::Particles::Ptr(new ParticleSet::Particles(particles)));
+        q_times_.push(time);
         notify_.notify_one();
     }
 
@@ -105,10 +109,12 @@ private:
 
     std::mutex                              q_mutex_;
     std::queue<ParticleSet::Particles::Ptr> q_;
+    std::queue<ros::Time>                   q_times_;
     std::condition_variable                 notify_;
 
     ros::NodeHandle                         nh_private_;
     ros::Publisher                          pub_markers_;
+    ros::Publisher                          pub_particles_;
     std::size_t                             marker_count_;
     double                                  max_;
 
@@ -118,11 +124,14 @@ private:
         std::unique_lock<std::mutex> q_lock(q_mutex_);
         auto dumpQ = [this, &q_lock] () {
             while(!q_.empty()) {
-                auto f = q_.front();
+                auto s = q_.front();
                 q_.pop();
+                auto t = q_times_.front();
+                q_times_.pop();
 
                 q_lock.unlock();
-                publisheMarkers(f);
+                publisheMarkers(s, t);
+                publishParticles(s, t);
                 q_lock.lock();
             }
         };
@@ -135,11 +144,12 @@ private:
         running_ = false;
     }
 
-    inline void publisheMarkers (const ParticleSet::Particles::Ptr &samples)
+    inline void publisheMarkers (const ParticleSet::Particles::Ptr &samples,
+                                 const ros::Time &time)
     {
         visualization_msgs::Marker marker_prototype;
         marker_prototype.header.frame_id = world_frame_;
-        marker_prototype.header.stamp = ros::Time::now();
+        marker_prototype.header.stamp = time;
         marker_prototype.ns      = "muse_amcl";
         marker_prototype.type    = visualization_msgs::Marker::ARROW;
         marker_prototype.action  = visualization_msgs::Marker::MODIFY;
@@ -188,6 +198,22 @@ private:
 
 
         marker_count_ = sample_size;
+    }
+
+    inline void publishParticles(const ParticleSet::Particles::Ptr &samples,
+                                 const ros::Time &time)
+    {
+        ParticleSetMsg::Ptr msg(new ParticleSetMsg);
+        msg->header.stamp = time;
+        const std::size_t sample_size = samples->size();
+        for(std::size_t i = 0 ; i < sample_size ; ++i) {
+            auto &s = samples->at(i);
+            ParticleMsg p;
+            tf::poseTFToMsg(s.pose_.getPose(), p.pose);
+            p.weight.data = s.weight_;
+            msg->particles.emplace_back(p);
+        }
+        pub_particles_.publish(msg);
     }
 };
 }
