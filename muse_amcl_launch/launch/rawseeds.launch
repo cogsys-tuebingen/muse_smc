@@ -124,9 +124,9 @@
           <param name="seed"    	value="0" />
         </group>
         <group ns="particle_filter">
-         	  <param name="resampling_threshold_linear"  value="0.01" /> 
-          	<param name="resampling_threshold_angular" value="2.0" />
-          	<param name="resampling_cycle" 			       value="2" />
+         	  <param name="resampling_threshold_linear"  value="0.075" /> 
+          	<param name="resampling_threshold_angular" value="5.0" />
+          	<param name="resampling_cycle" 			       value="5" />
 
             <param name="sample_size"     value="500" /> 		<!-- if set, maximum and minimum are this value -->
             <param name="sample_size_min" value="" /> 			<!-- if not sample_size is already set -->

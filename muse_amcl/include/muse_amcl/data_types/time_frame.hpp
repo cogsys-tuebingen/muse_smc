@@ -20,6 +20,12 @@ namespace muse_amcl {
             end(end)
         {
         }
+
+        inline bool within(const ros::Time &time)
+        {
+            return time >= begin && time <= end;
+        }
+
     };
 }
 

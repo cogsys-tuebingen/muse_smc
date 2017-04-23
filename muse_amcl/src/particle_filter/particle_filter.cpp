@@ -313,7 +313,7 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
     saveFilterState();
     Logger::getLogger().info("After, '" + std::to_string(prediction_queue_.size()) + "' samples in queue.", "ParticleFilter");
 
-    return prediction_linear_distance_ > 0.0 || prediction_angular_distance_ > 0.0;
+    return prediction_linear_distance_ > 0.0 || prediction_angular_distance_ > 0.0 || until <= particle_set_stamp_;
 }
 
 void ParticleFilter::publishPoses()
@@ -365,6 +365,8 @@ void ParticleFilter::loop()
                 if(processPredictions(update->getStamp())) {
                     update->apply(particle_set_->getWeights());
                     particle_set_->normalizeWeights();
+                } else {
+                    std::cerr << "[ParticleFilter]: Dropped update!" << std::endl;
                 }
                 Logger::getLogger().info("Processed update.", "ParticleFilter");
                 ++update_cycle_;

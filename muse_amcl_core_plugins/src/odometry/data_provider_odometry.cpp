@@ -18,8 +18,8 @@ void DataProviderOdometry::callback(const nav_msgs::OdometryConstPtr &msg)
 
     if(last_msg_) {
         TimeFrame time_frame(last_msg_->header.stamp, msg->header.stamp);
-        Odometry::Ptr odometry(new Odometry(msg->header.frame_id, time_frame));
-        odometry->setPoses(toPose(last_msg_), toPose(msg));
+        Odometry::Ptr odometry(new Odometry(msg->header.frame_id, time_frame,
+                                            toPose(last_msg_), toPose(msg)));
         data_received_(odometry);
     }
     last_msg_ = msg;

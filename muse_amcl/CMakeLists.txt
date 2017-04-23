@@ -168,6 +168,13 @@ if(${CATKIN_ENABLE_TESTING})
         "${catkin_LIBRARIES}"
     )
 
+    add_executable(${PROJECT_NAME}_tf_interpolation
+        src/examples/exam_tf_interpolation.cpp
+    )
+    target_link_libraries(${PROJECT_NAME}_tf_interpolation
+        ${catkin_LIBRARIES}
+    )
+
     add_executable(${PROJECT_NAME}_eval_particle_set_access_times
         src/examples/eval_particle_set_access_times.cpp
     )

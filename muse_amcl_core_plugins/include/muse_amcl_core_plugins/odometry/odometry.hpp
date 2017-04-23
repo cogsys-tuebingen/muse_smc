@@ -25,23 +25,19 @@ public:
     {
     }
 
-    inline void setPoses(const math::Pose &start,
-                         const math::Pose &end)
+    Odometry(const std::string &frame,
+             const TimeFrame &time_frame,
+             const math::Pose &start,
+             const math::Pose &end) :
+        Data(frame, time_frame)
     {
-        math::Pose delta = start.inverse() * end;
-        start_pose_      = start;
-        end_pose_        = end;
-
-        delta_ = end.getOrigin() - start.getOrigin();
-
-        delta_linear_  = delta.getOrigin().length();
-        delta_angular_ = delta.yaw();
+        setPoses(start, end);
     }
 
     inline double getDeltaAngularAbs() const
     {
-        return std::atan2(delta_.y(),
-                          delta_.x());
+        return std::atan2(delta_lin_abs_.y(),
+                          delta_lin_abs_.x());
     }
 
     inline const math::Pose& getStartPose() const
@@ -56,7 +52,7 @@ public:
 
     inline const tf::Vector3 &getDelta() const
     {
-        return delta_;
+        return delta_lin_abs_;
     }
 
     inline double getDeltaLinear() const
@@ -69,14 +65,36 @@ public:
         return delta_angular_;
     }
 
+    bool splitByLinearInterpolation(ros::Time &split_time,
+                                    Odometry  &a,
+                                    Odometry  &b)
+    {
+        if(!time_frame_.within(split_time))
+            return false;
+    }
+
+
 private:
     math::Pose  start_pose_;
     math::Pose  end_pose_;
-    tf::Vector3 delta_;
+
+    math::Pose  delta_rel_;
+
+    tf::Vector3 delta_lin_abs_;
     double      delta_linear_;
     double      delta_angular_;
 
+    inline void setPoses(const math::Pose &start,
+                         const math::Pose &end)
+    {
+        delta_rel_  = start.inverse() * end;
+        start_pose_ = start;
+        end_pose_   = end;
 
+        delta_lin_abs_ = end.getOrigin() - start.getOrigin();
+        delta_linear_  = delta_rel_.getOrigin().length();
+        delta_angular_ = delta_rel_.yaw();
+    }
 
 };
 }
