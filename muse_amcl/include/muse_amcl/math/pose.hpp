@@ -127,6 +127,15 @@ public:
     }
 
     /**
+     * @brief Set the rotation of the pose.
+     * @param q
+     */
+    inline void setRotation(const tf::Quaternion &q)
+    {
+        pose_.setRotation(q);
+    }
+
+    /**
      * @brief rotation returns a reference to the rotation quaternion.
      * @return
      */

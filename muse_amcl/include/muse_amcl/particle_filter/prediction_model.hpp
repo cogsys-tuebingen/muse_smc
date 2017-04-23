@@ -94,6 +94,7 @@ public:
                    ParticleSet::Poses    poses)
     {
 
+        //// drop if too old
         if(until < data->getTimeFrame().end) {
             return Result();
         } else {

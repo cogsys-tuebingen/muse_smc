@@ -58,7 +58,7 @@ public:
 
     inline const ros::Time & getStamp() const
     {
-        return data_->getTimeFrame().begin;
+        return data_->getTimeFrame().start;
     }
 
     inline PredictionModel::Ptr getPredictionModel() const

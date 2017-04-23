@@ -274,6 +274,7 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
 
     saveFilterState();
 
+    const ros::Time particle_set_stamp_pre = particle_set_stamp_;
     while(until > particle_set_stamp_) {
         Prediction::Ptr prediction;
         {
@@ -313,7 +314,7 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
     saveFilterState();
     Logger::getLogger().info("After, '" + std::to_string(prediction_queue_.size()) + "' samples in queue.", "ParticleFilter");
 
-    return prediction_linear_distance_ > 0.0 || prediction_angular_distance_ > 0.0 || until <= particle_set_stamp_;
+    return prediction_linear_distance_ > 0.0 || prediction_angular_distance_ > 0.0 || particle_set_stamp_pre < particle_set_stamp_;
 }
 
 void ParticleFilter::publishPoses()

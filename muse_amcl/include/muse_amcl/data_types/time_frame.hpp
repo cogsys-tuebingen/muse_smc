@@ -5,25 +5,36 @@
 
 namespace muse_amcl {
     struct TimeFrame {
-        const ros::Time begin;
+        const ros::Time start;
         const ros::Time end;
 
         TimeFrame() :
-            begin(ros::Time::now()),
-            end(begin)
+            start(ros::Time::now()),
+            end(start)
         {
         }
 
         TimeFrame(const ros::Time &start,
                   const ros::Time &end) :
-            begin(start),
+            start(start),
             end(end)
         {
         }
 
-        inline bool within(const ros::Time &time)
+        TimeFrame(const TimeFrame &other) :
+            start(other.start),
+            end(other.end)
         {
-            return time >= begin && time <= end;
+        }
+
+        inline bool within(const ros::Time &time) const
+        {
+            return time >= start && time <= end;
+        }
+
+        inline ros::Duration duration() const
+        {
+            return end - start;
         }
 
     };

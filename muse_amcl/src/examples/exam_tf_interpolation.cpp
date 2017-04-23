@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     std::cout << "b_1_T_b_2 ";
     to_string(b_1_T_b_2);
 
-    double alpha = 0.5;
+    double alpha = 0.25;
     tf::Vector3 trans_prime;
     trans_prime.setInterpolate3(w_T_b_1.getOrigin(), w_T_b_2.getOrigin(), alpha);
     tf::Quaternion rot_prime = tf::slerp(w_T_b_1.getRotation(), w_T_b_2.getRotation(), alpha);

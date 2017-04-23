@@ -20,7 +20,21 @@ PredictionModel::Result DifferentialDrive::doPredict(const Data::ConstPtr &data,
                                                      const ros::Time &until,
                                                      ParticleSet::Poses set)
 {
-    const Odometry &odometry = data->as<Odometry>();
+
+    Odometry::ConstPtr apply;
+    Odometry::ConstPtr leave;
+    if(until < data->getTimeFrame().end) {
+        Odometry::ConstPtr original = std::dynamic_pointer_cast<Odometry const>(data);
+        if(!original->split(until, apply, leave)) {
+            apply = original;
+        }
+    } else {
+        apply = std::dynamic_pointer_cast<Odometry const>(data);
+    }
+
+    const Odometry &odometry = *apply;
+
+
     const double delta_trans = odometry.getDeltaLinear();
     double delta_rot1 = 0.0;
     if(delta_trans >= 0.01) {

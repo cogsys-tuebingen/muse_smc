@@ -51,7 +51,8 @@ public:
 
 protected:
     Data() = delete;
-    Data(const Data &other) = delete;
+    Data(const Data &other) = default;
+    Data(Data &&other) = default;
 
     std::string frame_;
     TimeFrame   time_frame_;

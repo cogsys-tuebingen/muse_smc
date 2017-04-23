@@ -9,6 +9,7 @@ namespace muse_amcl {
 class Odometry : public Data {
 public:
     using Ptr = std::shared_ptr<Odometry>;
+    using ConstPtr = std::shared_ptr<const Odometry>;
 
     Odometry(const std::string &frame) :
         Data(frame),
@@ -65,14 +66,20 @@ public:
         return delta_angular_;
     }
 
-    bool splitByLinearInterpolation(ros::Time &split_time,
-                                    Odometry  &a,
-                                    Odometry  &b)
+    bool split(const ros::Time &split_time, Odometry::ConstPtr &a, Odometry::ConstPtr &b) const
     {
         if(!time_frame_.within(split_time))
             return false;
-    }
 
+        const double ratio = (split_time - time_frame_.start).toSec() /
+                              time_frame_.duration().toSec();
+        math::Pose split_pose;
+        split_pose.getOrigin().setInterpolate3(start_pose_.getOrigin(), end_pose_.getOrigin(), ratio);
+        split_pose.setRotation(tf::slerp(start_pose_.getRotation(), end_pose_.getRotation(), ratio));
+        a.reset(new Odometry(frame_, TimeFrame(time_frame_.start, split_time), start_pose_, split_pose));
+        b.reset(new Odometry(frame_, TimeFrame(split_time, time_frame_.end), split_pose, end_pose_));
+        return true;
+    }
 
 private:
     math::Pose  start_pose_;
@@ -95,7 +102,6 @@ private:
         delta_linear_  = delta_rel_.getOrigin().length();
         delta_angular_ = delta_rel_.yaw();
     }
-
 };
 }
 
