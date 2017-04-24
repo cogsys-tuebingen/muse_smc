@@ -9,8 +9,8 @@ ParticleFilter::ParticleFilter()  :
     working_(false),
     stop_working_(true),
     update_cycle_(0),
-    prediction_linear_distance_(0.0),
-    prediction_angular_distance_(0.0),
+    abs_motion_integral_linear_(0.0),
+    abs_motion_integral_angular_(0.0),
     request_pose_initilization_(false),
     request_global_initialization_(false)
 {
@@ -76,6 +76,8 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     odom_frame_                   = nh_private.param<std::string>("odom_frame", "/odom");
     base_frame_                   = nh_private.param<std::string>("base_frame", "/base_link");
 
+    integrate_all_measurement_    = nh_private.param<bool>(privateParameter("integrate_all_measurement"), false);
+
     //// SETUP TF
     tf_provider_               = tf_provider;
     tf_publisher_.reset(new TransformPublisherAnchored(pub_rate_tf, odom_frame_, base_frame_, world_frame_));
@@ -117,8 +119,8 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     FilterStateLoggerDefault::Header header = {"predictions, updates, driven_linear, driven_angular, time_ratio"};
     FilterStateLoggerDefault::getLogger(header).writeState(prediction_queue_.size(),
                                                            update_queue_.size(),
-                                                           prediction_linear_distance_,
-                                                           prediction_angular_distance_,
+                                                           abs_motion_integral_linear_,
+                                                           abs_motion_integral_angular_,
                                                            particle_set_stamp_.toSec() / now);
     ////////////////
 
@@ -275,6 +277,8 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
     saveFilterState();
 
     const ros::Time particle_set_stamp_pre = particle_set_stamp_;
+    double abs_motion_integral_linear = 0.0;       /// absolute integral over linear motion
+    double abs_motion_integral_angular = 0.0;      /// absolute integral over angular motion
     while(until > particle_set_stamp_) {
         Prediction::Ptr prediction;
         {
@@ -295,8 +299,8 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
         /// mutate time stamp
         PredictionModel::Result movement = prediction->apply(until, particle_set_->getPoses());
         if(movement.success()) {
-            prediction_linear_distance_ += movement.linear_distance_abs;
-            prediction_angular_distance_+= movement.angular_distance_abs;
+            abs_motion_integral_linear  += movement.linear_distance_abs;
+            abs_motion_integral_angular += movement.angular_distance_abs;
             particle_set_stamp_ = movement.applied->getTimeFrame().end;
             if(movement.left_to_apply) {
                 Prediction::Ptr prediction_left_to_apply
@@ -311,10 +315,14 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
         }
     }
 
+    abs_motion_integral_linear_  += abs_motion_integral_linear;
+    abs_motion_integral_angular_ += abs_motion_integral_angular;
+
     saveFilterState();
     Logger::getLogger().info("After, '" + std::to_string(prediction_queue_.size()) + "' samples in queue.", "ParticleFilter");
 
-    return prediction_linear_distance_ > 0.0 || prediction_angular_distance_ > 0.0 || particle_set_stamp_pre < particle_set_stamp_;
+    return abs_motion_integral_linear > 0.0 || abs_motion_integral_angular > 0.0 ||
+          (particle_set_stamp_pre < particle_set_stamp_ && integrate_all_measurement_);
 }
 
 void ParticleFilter::publishPoses()
@@ -390,21 +398,21 @@ void ParticleFilter::loop()
 void ParticleFilter::tryToResample()
 {
     /// 6. check if its time for resampling
-    const bool motion_criterion = prediction_linear_distance_ > resampling_threshold_linear_ ||
-                                  prediction_angular_distance_ > resampling_threshold_angular_;
+    const bool motion_criterion = abs_motion_integral_linear_ > resampling_threshold_linear_ ||
+                                  abs_motion_integral_angular_ > resampling_threshold_angular_;
     const bool cycle_criterion =  resampling_cycle_ > 0 && update_cycle_ >= resampling_cycle_ &&
-                                 (prediction_linear_distance_ > 0.0 || prediction_angular_distance_ > 0.0);
+                                 (abs_motion_integral_linear_ > 0.0 || abs_motion_integral_angular_ > 0.0);
 
     if(motion_criterion || cycle_criterion){
-        Logger::getLogger().info("About to resample, prediction_linear_distance='" + std::to_string(prediction_linear_distance_) +
-                                 ", prediction_angular_distance='" + std::to_string(prediction_angular_distance_) + "'.",
+        Logger::getLogger().info("About to resample, prediction_linear_distance='" + std::to_string(abs_motion_integral_linear_) +
+                                 ", prediction_angular_distance='" + std::to_string(abs_motion_integral_angular_) + "'.",
                                  "ParticleFilter");
 
         particle_set_->normalizeWeights();
         resampling_->apply(*particle_set_);
 
-        prediction_linear_distance_  = 0.0;
-        prediction_angular_distance_ = 0.0;
+        abs_motion_integral_linear_  = 0.0;
+        abs_motion_integral_angular_ = 0.0;
 
         /// 7. cluster the particle set an update the transformation
         /// @todo allow mean method

@@ -65,8 +65,8 @@ public:
 
 
 protected:
-    const std::string        name_;
 
+    const std::string        name_;
     TFProvider::Ptr          tf_provider_;
 
 
@@ -98,6 +98,7 @@ protected:
     std::string              world_frame_;
     std::string              odom_frame_;
     std::string              base_frame_;
+    bool                     integrate_all_measurement_;
 
     //// ------------------ working members ----------------///
     mutable std::mutex       update_queue_mutex_;
@@ -105,8 +106,8 @@ protected:
     UpdateQueue              update_queue_;                  /// this is for the weighting functions and therefore important
     PredictionQueue          prediction_queue_;              /// the predcition queue may not reach ovbersize.
 
-    double                   prediction_linear_distance_;    /// integrated movement from odometry
-    double                   prediction_angular_distance_;   /// integrated movement from odometry
+    double                   abs_motion_integral_linear_;    /// integrated movement from odometry
+    double                   abs_motion_integral_angular_;   /// integrated movement from odometry
 
     //// ------------------ requests -----------------------///
     std::mutex               request_pose_mutex_;
@@ -132,8 +133,8 @@ protected:
         const double now = ros::Time::now().toSec();
         FilterStateLoggerDefault::getLogger().writeState(prediction_queue_.size(),
                                                          update_queue_.size(),
-                                                         prediction_linear_distance_,
-                                                         prediction_angular_distance_,
+                                                         abs_motion_integral_linear_,
+                                                         abs_motion_integral_angular_,
                                                          particle_set_stamp_.toSec() / now);
     }
 
