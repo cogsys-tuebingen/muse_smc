@@ -190,7 +190,7 @@ void MuseAMCLNode::checkPoseInitialization()
         switch(p_v.size()) {
         case 6:
             pose = math::Pose(p_v[0], p_v[1], p_v[2],
-                    p_v[3], p_v[4], p_v[5]);
+                              p_v[3], p_v[4], p_v[5]);
             break;
         case 7:
             pose = math::Pose(p_v[0], p_v[1], p_v[2],
