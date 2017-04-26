@@ -38,9 +38,9 @@ public:
     }
 
 private:
-    std::ofstream out_;
-    Header        header_;
-    long          start_time_;
+    std::ofstream           out_;
+    Header                  header_;
+    long                    start_time_;
 
     std::thread             worker_thread_;
     std::mutex              q_mutex_;
@@ -69,8 +69,6 @@ private:
             if(worker_thread_.joinable())
                 worker_thread_.join();
         }
-        if(out_.is_open())
-            out_.close();
     }
 
     void loop()
@@ -109,6 +107,10 @@ private:
             dumpQ();
         }
         dumpQ();
+
+        if(out_.is_open())
+            out_.close();
+
         running_ = false;
     }
 
@@ -121,13 +123,14 @@ private:
         milliseconds = milliseconds % 1000;
     }
 
-    inline void getTime(std::string &time)
+    inline std::string getTime()
     {
         long s, ms;
         getTime(s, ms);
 
         const std::string ms_off = ms >= 100 ? "" : (ms >= 10 ? "00" : "0");
-        time = std::to_string(s) + "." + ms_off + std::to_string(ms);
+        const std::string time = std::to_string(s) + "." + ms_off + std::to_string(ms);
+        return time;
     }
 
     template<typename WT, typename ... WTypes>

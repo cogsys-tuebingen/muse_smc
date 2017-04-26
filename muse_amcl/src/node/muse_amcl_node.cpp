@@ -215,7 +215,7 @@ void MuseAMCLNode::checkPoseInitialization()
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "muse_amcl");
-    Logger &l = Logger::getLogger(true, Logger::ALL, false);
+    Logger &l = Logger::getLogger(Logger::ALL, false);
 
     MuseAMCLNode node;
     if(node.setup()) {
