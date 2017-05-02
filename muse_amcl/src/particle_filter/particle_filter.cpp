@@ -368,18 +368,22 @@ void ParticleFilter::loop()
         if(!update_queue_.empty()) {
             Update::Ptr update = update_queue_.top();
             update_queue_.pop();
+//            lock_updates.unlock();
             /// 4. drop it if it is too old
             if(update->getStamp() >= particle_set_stamp_) {
                 /// 5. drop it if there was no movement at all
+//                std::cerr << "+++ " << update->getStamp() << " " << particle_set_stamp_ << std::endl;
                 if(processPredictions(update->getStamp())) {
                     update->apply(particle_set_->getWeights());
                     particle_set_->normalizeWeights();
                 } else {
-                    std::cerr << "[ParticleFilter]: Dropped update!" << std::endl;
+//                    std::cerr << "[ParticleFilter]: Dropped update!" << std::endl;
+//                    std::cerr << "--- " << update->getStamp() << " " << particle_set_stamp_ << std::endl;
                 }
                 Logger::getLogger().info("Processed update.", "ParticleFilter");
                 ++update_cycle_;
             }
+//            lock_updates.lock();
         }
 
         saveFilterState();
@@ -408,8 +412,8 @@ void ParticleFilter::tryToResample()
                                  ", prediction_angular_distance='" + std::to_string(abs_motion_integral_angular_) + "'.",
                                  "ParticleFilter");
 
-        particle_set_->normalizeWeights();
         resampling_->apply(*particle_set_);
+        particle_set_->normalizeWeights();
 
         abs_motion_integral_linear_  = 0.0;
         abs_motion_integral_angular_ = 0.0;
@@ -431,6 +435,8 @@ void ParticleFilter::tryToResample()
                 max_weight = weight;
             }
         }
+
+//        particle_set_->resetWeights();
 
         if(max_cluster_id == -1) {
             Logger::getLogger().error("Clustering has failed.", "ParticleFilter");

@@ -40,10 +40,13 @@ public:
         ty_(origin_y_)
     {
         if(origin_phi_ != 0.0) {
-            tx_ =  cos_phi_ * origin_x +
-                   sin_phi_ * origin_y;
-            ty_ = -sin_phi_ * origin_x +
-                   cos_phi_ * origin_y;
+            tx_ =  -cos_phi_ * origin_x
+                   -sin_phi_ * origin_y;
+            ty_ =   sin_phi_ * origin_x
+                   -cos_phi_ * origin_y;
+        } else {
+            tx_ = -origin_x;
+            ty_ = -origin_y;
         }
     }
 
@@ -76,14 +79,14 @@ public:
         double y = _y;
 
         if(origin_phi_ != 0.0) {
-            x =  cos_phi_ * _x +
-                 sin_phi_ * _y;
-            y = -sin_phi_ * _x +
-                 cos_phi_ * _y;
+            x =   cos_phi_ * _x +
+                  sin_phi_ * _y;
+            y =  -sin_phi_ * _x +
+                  cos_phi_ * _y;
         }
 
-        i[0] = (x - tx_) / resolution_;
-        i[1] = (y - ty_) / resolution_;
+        i[0] = std::floor((x + tx_) / resolution_ + 0.5);
+        i[1] = std::floor((y + ty_) / resolution_ + 0.5);
 
         return (i[0] >= 0 && i[0] <= max_index_[0]) ||
                (i[1] >= 0 && i[1] <= max_index_[1]);
@@ -97,15 +100,16 @@ public:
         _x = i[0] * resolution_;
         _y = i[1] * resolution_;
         if(origin_phi_ != 0.0)  {
-            double x = cos_phi_ * _x -
-                    sin_phi_ * _y;
-            double y = sin_phi_ * _x +
-                    cos_phi_ * _y;
+            double x =  cos_phi_ * _x -
+                        sin_phi_ * _y;
+            double y =  sin_phi_ * _x +
+                        cos_phi_ * _y;
+
             _x = x;
             _y = y;
         }
-        _x += tx_;
-        _y += ty_;
+        _x += origin_x_;
+        _y += origin_y_;
     }
 
     inline T& at(const std::size_t idx,
@@ -196,6 +200,8 @@ protected:
     double      sin_phi_;
     double      tx_;
     double      ty_;
+    double      tx_inv_;
+    double      ty_inv_;
 
     /**
       * @todo: implement capping by inesection with bounding box implementation

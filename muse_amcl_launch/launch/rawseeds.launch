@@ -62,7 +62,7 @@
             <param name="z_rand" value="0.1"/>
             <param name="sigma_hit" value="0.2"/>
             <param name="lambda_short" value="0.1"/>
-            <param name="max_beams" value="80" />
+            <param name="max_beams" value="30" />
         </group>
         <group ns="beam_model_rear">
             <param name="class" value="muse_amcl::BeamModel" />
@@ -75,7 +75,7 @@
             <param name="z_rand" value="0.1"/>
             <param name="sigma_hit" value="0.2"/>
             <param name="lambda_short" value="0.1"/>
-            <param name="max_beams" value="80" />
+            <param name="max_beams" value="30" />
         </group>
         <group ns="differential_drive_model">
             <param name="class" value="muse_amcl::DifferentialDrive" />

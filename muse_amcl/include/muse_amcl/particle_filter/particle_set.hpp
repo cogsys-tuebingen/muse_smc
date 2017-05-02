@@ -133,7 +133,7 @@ public:
     {
         return Weights(*p_t_1,
                        Weights::notify_update::from<ParticleSet, &ParticleSet::updateWeight>(this),
-                       Weights::notify_touch::from<ParticleSet, &ParticleSet::resetWeights>(this));
+                       Weights::notify_touch::from<ParticleSet, &ParticleSet::resetWeightTracking>(this));
     }
 
     /**
@@ -196,6 +196,19 @@ public:
         sample_weight_maximum_ /= sample_weight_sum_;
         sample_weight_sum_ = 1.0;
 
+    }
+
+    inline void resetWeights()
+    {
+        if(p_t_1->size() == 0)
+            return;
+
+        for(auto &s : *p_t_1) {
+            s.weight_ = 1.0;
+        }
+        sample_weight_average_  = 1.0;
+        sample_weight_maximum_  = 1.0;
+        sample_weight_sum_      = static_cast<double>(p_t_1->size());
     }
 
     /**
@@ -355,7 +368,7 @@ private:
     Clusters                        p_t_1_clusters_;
     Distributions                   p_t_1_distributions_;
 
-    inline void resetWeights()
+    inline void resetWeightTracking()
     {
         sample_weight_maximum_ = 0.0;
         sample_weight_sum_     = 0.0;
