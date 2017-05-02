@@ -198,17 +198,27 @@ public:
 
     }
 
-    inline void resetWeights()
+    inline void resetWeights(const bool normalize = false)
     {
         if(p_t_1->size() == 0)
             return;
 
-        for(auto &s : *p_t_1) {
-            s.weight_ = 1.0;
+        if(normalize) {
+            double norm = p_t_1->size();
+            for(auto &s : *p_t_1) {
+                s.weight_ = 1.0 / norm;
+            }
+            sample_weight_average_  = norm;
+            sample_weight_maximum_  = norm;
+            sample_weight_sum_      = 1.0;
+        } else {
+            for(auto &s : *p_t_1) {
+                s.weight_ = 1.0;
+            }
+            sample_weight_average_  = 1.0;
+            sample_weight_maximum_  = 1.0;
+            sample_weight_sum_      = static_cast<double>(p_t_1->size());
         }
-        sample_weight_average_  = 1.0;
-        sample_weight_maximum_  = 1.0;
-        sample_weight_sum_      = static_cast<double>(p_t_1->size());
     }
 
     /**

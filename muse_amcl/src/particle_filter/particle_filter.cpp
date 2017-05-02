@@ -436,7 +436,8 @@ void ParticleFilter::tryToResample()
             }
         }
 
-//        particle_set_->resetWeights();
+//        particle_set_->resetWeights(true);
+
 
         if(max_cluster_id == -1) {
             Logger::getLogger().error("Clustering has failed.", "ParticleFilter");
