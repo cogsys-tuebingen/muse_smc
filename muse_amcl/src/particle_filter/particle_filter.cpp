@@ -238,8 +238,8 @@ void ParticleFilter::processRequests()
         sampling_uniform_->apply(*particle_set_);
 
         if(particle_set_stamp_ > now) {
-           update_queue_ = UpdateQueue();
-           prediction_queue_ = PredictionQueue();
+            update_queue_ = UpdateQueue();
+            prediction_queue_ = PredictionQueue();
         }
 
         particle_set_stamp_ = now;
@@ -317,7 +317,7 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
     Logger::getLogger().info("After, '" + std::to_string(prediction_queue_.size()) + "' samples in queue.", "ParticleFilter");
 
     return abs_motion_integral_linear > 0.0 || abs_motion_integral_angular > 0.0 ||
-          (particle_set_stamp_pre < particle_set_stamp_ && integrate_all_measurement_);
+            (particle_set_stamp_pre < particle_set_stamp_ && integrate_all_measurement_);
 }
 
 void ParticleFilter::publishPoses()
@@ -333,67 +333,91 @@ void ParticleFilter::publishTF()
 void ParticleFilter::loop()
 {
     Logger::getLogger().info("Starting loop.", "ParticleFilter");
-    std::unique_lock<std::mutex> lock_updates(update_queue_mutex_);
+    std::unique_lock<std::mutex> lock_notify(notify_mutex_);
+    while(particle_set_stamp_.isZero())
+        particle_set_stamp_ = ros::Time::now();
+
     while(!stop_working_) {
-        if(particle_set_stamp_.isZero())
-            particle_set_stamp_ = ros::Time::now();
-
         ///// [0]: Wait for udpates to come in
-        notify_event_.wait(lock_updates);
+        notify_event_.wait(lock_notify);
 
-        ///// [1]: Unlock the update queue, while processing requests
-        // lock_updates.unlock();
-
-        ///// [2]: Check for termination
-        if(stop_working_) {
+        ///// [1]: Check if loop should terminate
+        if(stop_working_)
             break;
-        }
-        ///// [3]: Process pending requests
-        processRequests();
+
+        ///// [2]: Initialize if necessary
         if(particle_set_->getSampleSize() == 0) {
             sampling_uniform_->apply(*particle_set_);
         }
 
-        saveFilterState();
-
-        ///// [4]: Check for new updates
-        // lock_updates.lock();
-        if(!update_queue_.empty()) {
-            Update::Ptr update = update_queue_.top();
+        ///// [3]: Check for updates in queue
+        Update::Ptr update;
+        {
+            std::unique_lock<std::mutex> l(update_queue_mutex_);
+            update = update_queue_.top();
             update_queue_.pop();
-//            lock_updates.unlock();
-            /// 4. drop it if it is too old
-            if(update->getStamp() >= particle_set_stamp_) {
-                /// 5. drop it if there was no movement at all
-                if(processPredictions(update->getStamp())) {
-                    update->apply(particle_set_->getWeights());
-                    particle_set_->normalizeWeights();
-                }
-                ++update_cycle_;
-            }
-//            lock_updates.lock();
         }
+        do {
+            ///// [4]: Check for termination
+            if(stop_working_) {
+                break;
+            }
+            ///// [5]: Check for requests
+            processRequests();
 
-        saveFilterState();
 
-        tryToResample();
+            std::unique_lock<std::mutex> l(update_queue_mutex_);
+            update = update_queue_.top();
+            update_queue_.pop();
+        } while (update);
 
-        saveFilterState();
 
-        publishPoses();
+
     }
-    working_ = false;
 
-    saveFilterState();
+
+    //        ///// [3]: Process pending requests
+
+    //        saveFilterState();
+
+    //        ///// [4]: Check for new updates
+    //        // lock_updates.lock();
+    //        if(!update_queue_.empty()) {
+    //            Update::Ptr update = update_queue_.top();
+    //            update_queue_.pop();
+    ////            lock_updates.unlock();
+    //            /// 4. drop it if it is too old
+    //            if(update->getStamp() >= particle_set_stamp_) {
+    //                /// 5. drop it if there was no movement at all
+    //                if(processPredictions(update->getStamp())) {
+    //                    update->apply(particle_set_->getWeights());
+    //                    particle_set_->normalizeWeights();
+    //                }
+    //                ++update_cycle_;
+    //            }
+    ////            lock_updates.lock();
+    //        }
+
+    //        saveFilterState();
+
+    //        tryToResample();
+
+    //        saveFilterState();
+
+    //        publishPoses();
+    //    }
+    //    working_ = false;
+
+    //    saveFilterState();
 }
 
 void ParticleFilter::tryToResample()
 {
     /// 6. check if its time for resampling
     const bool motion_criterion = abs_motion_integral_linear_ > resampling_threshold_linear_ ||
-                                  abs_motion_integral_angular_ > resampling_threshold_angular_;
+            abs_motion_integral_angular_ > resampling_threshold_angular_;
     const bool cycle_criterion =  resampling_cycle_ > 0 && update_cycle_ >= resampling_cycle_ &&
-                                 (abs_motion_integral_linear_ > 0.0 || abs_motion_integral_angular_ > 0.0);
+            (abs_motion_integral_linear_ > 0.0 || abs_motion_integral_angular_ > 0.0);
 
     if(motion_criterion || cycle_criterion){
         resampling_->apply(*particle_set_);
