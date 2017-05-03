@@ -164,7 +164,6 @@ void ParticleFilter::addPrediction(Prediction::Ptr &prediction)
     std::unique_lock<std::mutex> l(prediction_queue_mutex_);
     prediction_queue_.emplace(prediction);
 
-    Logger::getLogger().info("Got prediction.", "ParticleFilter");
     saveFilterState();
 }
 
@@ -174,7 +173,6 @@ void ParticleFilter::addUpdate(Update::Ptr &update)
     update_queue_.emplace(update);
     notify_event_.notify_one();
 
-    Logger::getLogger().info("Got update.", "ParticleFilter");
     saveFilterState();
 }
 
@@ -271,9 +269,6 @@ void ParticleFilter::processRequests()
 
 bool ParticleFilter::processPredictions(const ros::Time &until)
 {
-    Logger::getLogger().info("Starting to propagate the samples.", "ParticleFilter");
-    Logger::getLogger().info("Before, '" + std::to_string(prediction_queue_.size()) + "' samples in queue.", "ParticleFilter");
-
     saveFilterState();
 
     const ros::Time particle_set_stamp_pre = particle_set_stamp_;
@@ -284,7 +279,7 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
         {
             std::unique_lock<std::mutex> l(prediction_queue_mutex_);
             if(prediction_queue_.empty())
-                return false;
+                break;
 
             prediction = prediction_queue_.top();
             prediction_queue_.pop();
@@ -349,8 +344,6 @@ void ParticleFilter::loop()
         ///// [1]: Unlock the update queue, while processing requests
         // lock_updates.unlock();
 
-        Logger::getLogger().info("Woke up to process events.", "ParticleFilter");
-
         ///// [2]: Check for termination
         if(stop_working_) {
             break;
@@ -372,15 +365,10 @@ void ParticleFilter::loop()
             /// 4. drop it if it is too old
             if(update->getStamp() >= particle_set_stamp_) {
                 /// 5. drop it if there was no movement at all
-//                std::cerr << "+++ " << update->getStamp() << " " << particle_set_stamp_ << std::endl;
                 if(processPredictions(update->getStamp())) {
                     update->apply(particle_set_->getWeights());
                     particle_set_->normalizeWeights();
-                } else {
-//                    std::cerr << "[ParticleFilter]: Dropped update!" << std::endl;
-//                    std::cerr << "--- " << update->getStamp() << " " << particle_set_stamp_ << std::endl;
                 }
-                Logger::getLogger().info("Processed update.", "ParticleFilter");
                 ++update_cycle_;
             }
 //            lock_updates.lock();
@@ -408,10 +396,6 @@ void ParticleFilter::tryToResample()
                                  (abs_motion_integral_linear_ > 0.0 || abs_motion_integral_angular_ > 0.0);
 
     if(motion_criterion || cycle_criterion){
-        Logger::getLogger().info("About to resample, prediction_linear_distance='" + std::to_string(abs_motion_integral_linear_) +
-                                 ", prediction_angular_distance='" + std::to_string(abs_motion_integral_angular_) + "'.",
-                                 "ParticleFilter");
-
         resampling_->apply(*particle_set_);
         particle_set_->normalizeWeights();
 
@@ -436,12 +420,8 @@ void ParticleFilter::tryToResample()
             }
         }
 
-//        particle_set_->resetWeights(true);
-
-
-        if(max_cluster_id == -1) {
-            Logger::getLogger().error("Clustering has failed.", "ParticleFilter");
-        } else {
+        if(max_cluster_id != -1) {
+            particle_set_->resetWeights(true);
             Eigen::Vector3d mean = distributions.at(max_cluster_id).getMean();
             tf_latest_w_T_b_ = tf::StampedTransform(math::Pose(mean).getPose(), particle_set_stamp_, world_frame_, base_frame_);
             publishTF();

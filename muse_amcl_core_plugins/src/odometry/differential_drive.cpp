@@ -89,6 +89,9 @@ PredictionModel::Result DifferentialDrive::doPredict(const Data::ConstPtr &data,
         sample.setEigen3D(pose);
     }
 
+    Logger &l = Logger::getLogger();
+    l.info("delta_trans='" + std::to_string(delta_trans) + "', delta_rot2='" + std::to_string(delta_rot2) + "'", "DifferentialDrive");
+
     return PredictionModel::Result(delta_trans, std::abs(delta_rot2), data);
 }
 

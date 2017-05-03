@@ -104,6 +104,7 @@ private:
         level_(level),
         write_to_disk_(write_to_disk)
     {
+        worker_thread_ = std::thread([this](){loop();});
     }
 
 
@@ -165,7 +166,7 @@ private:
         long s, ms;
         getTime(s, ms);
 
-        const std::string ms_off = ms >= 100 ? "" : (ms >= 10 ? "00" : "0");
+        const std::string ms_off = ms >= 100 ? "" : (ms >= 10 ? "0" : "00");
         const std::string time = std::to_string(s) + "." + ms_off + std::to_string(ms);
         return time;
     }

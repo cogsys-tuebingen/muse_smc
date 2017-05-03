@@ -124,10 +124,10 @@
           <param name="seed"    	value="0" />
         </group>
         <group ns="particle_filter">
-         	<param name="resampling_threshold_linear"  value="0.1" /> 
+         	  <param name="resampling_threshold_linear"  value="0.1" /> 
           	<param name="resampling_threshold_angular" value="10.0" />
-          	<param name="resampling_cycle" 			   value="10" />
-          	<param name="integrate_all_measurement" value="false" />
+          	<param name="resampling_cycle" 			       value="10" />
+          	<param name="integrate_all_measurement"    value="false" />
 
             <param name="sample_size"     value="500" /> 		<!-- if set, maximum and minimum are this value -->
             <param name="sample_size_min" value="" /> 			<!-- if not sample_size is already set -->
@@ -150,7 +150,7 @@
 	  <node pkg="tf" type="static_transform_publisher" name="map_T_w" args="0 0 0 0 0 0 map world 100"/>
 	
   <node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(arg map_path)" />
-	<node pkg="rosbag" type="play" name="player" output="screen" args="--clock --rate 1.0 -d 5 $(arg bag_path)" required="true" />
+	<node pkg="rosbag" type="play" name="player" output="screen" args="--clock --rate .25 -d 5 $(arg bag_path)" required="true" />
 	<include file="$(find rawseeds_ros)/launch/transforms.launch" />
 	<!--	<node pkg="rawseeds_ros" type="log_trajectory.py" name="log_trajectory" /> -->
 
