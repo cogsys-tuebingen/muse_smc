@@ -110,7 +110,7 @@ void BeamModel::doSetup(ros::NodeHandle &nh_private)
     lambda_short_ = nh_private.param(privateParameter("lambda_short"), 0.01);
     chi_outlier_  = nh_private.param(privateParameter("chi_outlier"), 0.05);
 
-    pub_debug_ = nh_private.advertise<pcl::PointCloud<pcl::PointXYZ>>("/muse_amcl/beam_debug", 1);
+    pub_debug_ = nh_private.advertise<pcl::PointCloud<pcl::PointXYZ>>("/muse_amcl/" + name_, 1);
 
     Logger &l = Logger::getLogger();
     l.info("max_beams_=" + std::to_string(max_beams_), "UpdateModel:" + name_);

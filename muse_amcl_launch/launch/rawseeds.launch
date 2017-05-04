@@ -42,7 +42,7 @@
         <group ns="rear_laser">
           <param name="class" value="muse_amcl::DataProviderLaser2D" />
           <param name="base_class" value="muse_amcl::DataProvider" />
-          <param name="topic" value="/sicK_rear" />
+          <param name="topic" value="/sick_rear" />
           <param name="undistortion" value="false" />
           <param name="undistortion_fixed_frame" value="/odom" />
           <param name="undistortion_tf_timeout" value="0.1" />
