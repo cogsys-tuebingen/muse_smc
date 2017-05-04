@@ -164,6 +164,7 @@ void ParticleFilter::addPrediction(Prediction::Ptr &prediction)
     {
         std::unique_lock<std::mutex> l(prediction_queue_mutex_);
         prediction_queue_.emplace(prediction);
+        notify_prediction_.notify_one();
     }
     saveFilterState();
 }
@@ -268,11 +269,8 @@ void ParticleFilter::processRequests()
     }
 }
 
-bool ParticleFilter::processPredictions(const ros::Time &until)
+ParticleFilter::PredictionOutcome ParticleFilter::processPredictions(const ros::Time &until)
 {
-    saveFilterState();
-
-    const ros::Time particle_set_stamp_pre = particle_set_stamp_;
     double abs_motion_integral_linear = 0.0;       /// absolute integral over linear motion
     double abs_motion_integral_angular = 0.0;      /// absolute integral over angular motion
     while(until > particle_set_stamp_) {
@@ -317,8 +315,12 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
     saveFilterState();
     Logger::getLogger().info("After, '" + std::to_string(prediction_queue_.size()) + "' samples in queue.", "ParticleFilter");
 
-    return abs_motion_integral_linear > 0.0 || abs_motion_integral_angular > 0.0 ||
-            (particle_set_stamp_pre < particle_set_stamp_ && integrate_all_measurement_);
+//    if(until > particle_set_stamp_)
+//        return RETRY;
+    if(abs_motion_integral_linear > 0.0 || abs_motion_integral_angular > 0.0)
+        return MOTION;
+    else
+        return NO_MOTION;
 }
 
 void ParticleFilter::publishPoses()
@@ -342,7 +344,15 @@ void ParticleFilter::loop()
         return update;
 
     };
-
+    auto push_update = [this] (Update::Ptr &update) {
+        std::unique_lock<std::mutex> l(update_queue_mutex_);
+        update_queue_.emplace(update);
+    };
+    auto wait_for_prediction = [this] ()
+    {
+        std::unique_lock<std::mutex> l(notify_prediction_mutex_);
+        notify_prediction_.wait(l);
+    };
 
     Logger::getLogger().info("Starting loop.", "ParticleFilter");
     std::unique_lock<std::mutex> lock_notify(notify_mutex_);
@@ -373,12 +383,29 @@ void ParticleFilter::loop()
             ///// [6]: Process update
             if(update->getStamp() >= particle_set_stamp_) {
                 ///// [7]: Predict until update stamp
-                if(processPredictions(update->getStamp())) {
+                switch(processPredictions(update->getStamp())) {
+                case NO_MOTION:
+                    if(integrate_all_measurement_) {
+                        update->apply(particle_set_->getWeights());
+                        particle_set_->normalizeWeights();
+                        ++update_cycle_;
+                    }
+                    break;
+                case MOTION:
                     update->apply(particle_set_->getWeights());
                     particle_set_->normalizeWeights();
+                    ++update_cycle_;
+                    break;
+                case RETRY:
+                       push_update(update);
+                       wait_for_prediction();
+                       std::cerr << "retry" << std::endl;
+                    break;
+                default:
+                    break;
                 }
-                ++update_cycle_;
             }
+
             saveFilterState();
             tryToResample();
             saveFilterState();
@@ -429,6 +456,7 @@ void ParticleFilter::tryToResample()
             particle_set_->resetWeights(true);
             Eigen::Vector3d mean = distributions.at(max_cluster_id).getMean();
             tf_latest_w_T_b_ = tf::StampedTransform(math::Pose(mean).getPose(), particle_set_stamp_, world_frame_, base_frame_);
+            std::cerr << "tf" << std::endl;
             publishTF();
         }
 

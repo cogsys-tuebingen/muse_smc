@@ -65,6 +65,7 @@ public:
 
 
 protected:
+    enum PredictionOutcome {NO_MOTION, MOTION, RETRY};
 
     const std::string        name_;
     TFProvider::Ptr          tf_provider_;
@@ -90,6 +91,8 @@ protected:
     std::atomic_bool         stop_working_;
     std::condition_variable  notify_event_;
     mutable std::mutex       notify_mutex_;
+    std::condition_variable  notify_prediction_;
+    mutable std::mutex       notify_prediction_mutex_;
 
     //// ------------------ parameters ----------------------///
     double                   resampling_threshold_linear_;
@@ -118,7 +121,7 @@ protected:
     std::atomic_bool         request_global_initialization_;
 
     void processRequests();
-    bool processPredictions(const ros::Time &until);
+    PredictionOutcome processPredictions(const ros::Time &until);
     void publishPoses();
     void publishTF();
     void loop();
