@@ -89,7 +89,7 @@ protected:
     std::atomic_bool         working_;
     std::atomic_bool         stop_working_;
     std::condition_variable  notify_event_;
-    std::mutex               notify_mutex_;
+    mutable std::mutex       notify_mutex_;
 
     //// ------------------ parameters ----------------------///
     double                   resampling_threshold_linear_;

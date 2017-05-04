@@ -161,9 +161,10 @@ Resampling::Ptr ParticleFilter::getResampling() const
 
 void ParticleFilter::addPrediction(Prediction::Ptr &prediction)
 {
-    std::unique_lock<std::mutex> l(prediction_queue_mutex_);
-    prediction_queue_.emplace(prediction);
-
+    {
+        std::unique_lock<std::mutex> l(prediction_queue_mutex_);
+        prediction_queue_.emplace(prediction);
+    }
     saveFilterState();
 }
 
@@ -332,6 +333,17 @@ void ParticleFilter::publishTF()
 
 void ParticleFilter::loop()
 {
+    auto get_update = [this] () {
+        std::unique_lock<std::mutex> l(update_queue_mutex_);
+        if(update_queue_.empty())
+            return Update::Ptr();
+        auto update = update_queue_.top();
+        update_queue_.pop();
+        return update;
+
+    };
+
+
     Logger::getLogger().info("Starting loop.", "ParticleFilter");
     std::unique_lock<std::mutex> lock_notify(notify_mutex_);
     while(particle_set_stamp_.isZero())
@@ -351,64 +363,33 @@ void ParticleFilter::loop()
         }
 
         ///// [3]: Check for updates in queue
-        Update::Ptr update;
-        {
-            std::unique_lock<std::mutex> l(update_queue_mutex_);
-            update = update_queue_.top();
-            update_queue_.pop();
-        }
-        do {
-            ///// [4]: Check for termination
-            if(stop_working_) {
+        Update::Ptr update = get_update();
+        while(update) {
+            ///// [4]: Check for terminator requests
+            if(stop_working_)
                 break;
-            }
             ///// [5]: Check for requests
             processRequests();
+            ///// [6]: Process update
+            if(update->getStamp() >= particle_set_stamp_) {
+                ///// [7]: Predict until update stamp
+                if(processPredictions(update->getStamp())) {
+                    update->apply(particle_set_->getWeights());
+                    particle_set_->normalizeWeights();
+                }
+                ++update_cycle_;
+            }
+            saveFilterState();
+            tryToResample();
+            saveFilterState();
+            publishPoses();
 
-
-            std::unique_lock<std::mutex> l(update_queue_mutex_);
-            update = update_queue_.top();
-            update_queue_.pop();
-        } while (update);
-
-
-
+            update = get_update();
+        }
     }
 
-
-    //        ///// [3]: Process pending requests
-
-    //        saveFilterState();
-
-    //        ///// [4]: Check for new updates
-    //        // lock_updates.lock();
-    //        if(!update_queue_.empty()) {
-    //            Update::Ptr update = update_queue_.top();
-    //            update_queue_.pop();
-    ////            lock_updates.unlock();
-    //            /// 4. drop it if it is too old
-    //            if(update->getStamp() >= particle_set_stamp_) {
-    //                /// 5. drop it if there was no movement at all
-    //                if(processPredictions(update->getStamp())) {
-    //                    update->apply(particle_set_->getWeights());
-    //                    particle_set_->normalizeWeights();
-    //                }
-    //                ++update_cycle_;
-    //            }
-    ////            lock_updates.lock();
-    //        }
-
-    //        saveFilterState();
-
-    //        tryToResample();
-
-    //        saveFilterState();
-
-    //        publishPoses();
-    //    }
-    //    working_ = false;
-
-    //    saveFilterState();
+    working_ = false;
+    saveFilterState();
 }
 
 void ParticleFilter::tryToResample()
