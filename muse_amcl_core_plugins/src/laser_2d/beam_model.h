@@ -26,6 +26,9 @@ protected:
 
     virtual void doSetup(ros::NodeHandle &nh_private) override;
 
+    //// DEBUG
+    ros::Publisher pub_debug_;
+
 };
 }
 

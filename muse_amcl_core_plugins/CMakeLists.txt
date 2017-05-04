@@ -13,7 +13,10 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   rostest
   cslibs_indexed_storage
+  pcl_ros
 )
+
+find_package(PCL REQUIRED)
 
 catkin_package()
 
@@ -24,6 +27,7 @@ catkin_package()
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
 )
 
 add_library(${PROJECT_NAME} SHARED
@@ -58,6 +62,7 @@ add_library(${PROJECT_NAME} SHARED
 
 target_link_libraries(${PROJECT_NAME}
     ${catkin_LIBRARIES}
+    ${PCL_LIBRARIES}
     muse_amcl_maps
 )
 
