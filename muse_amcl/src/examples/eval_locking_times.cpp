@@ -90,7 +90,7 @@ void test_push_tbb_dual(const std::size_t iterations)
 int main(int argc, char *argv[])
 {
 
-    const std::size_t iterations = 10000;
+    const std::size_t iterations = 1000000;
     test_push_single(iterations);
     test_push_tbb_single(iterations);
     test_push_dual(iterations);
