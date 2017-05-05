@@ -121,7 +121,7 @@ protected:
     std::atomic_bool         request_global_initialization_;
 
     void processRequests();
-    PredictionOutcome processPredictions(const ros::Time &until);
+    bool processPredictions(const ros::Time &until);
     void publishPoses();
     void publishTF();
     void loop();

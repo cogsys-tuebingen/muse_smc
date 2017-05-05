@@ -269,17 +269,24 @@ void ParticleFilter::processRequests()
     }
 }
 
-ParticleFilter::PredictionOutcome ParticleFilter::processPredictions(const ros::Time &until)
+bool ParticleFilter::processPredictions(const ros::Time &until)
 {
+    auto wait_for_prediction = [this] ()
+    {
+        std::unique_lock<std::mutex> l(notify_prediction_mutex_);
+        notify_prediction_.wait(l);
+    };
+
     double abs_motion_integral_linear = 0.0;       /// absolute integral over linear motion
     double abs_motion_integral_angular = 0.0;      /// absolute integral over angular motion
     while(until > particle_set_stamp_) {
         Prediction::Ptr prediction;
         {
-            std::unique_lock<std::mutex> l(prediction_queue_mutex_);
-            if(prediction_queue_.empty())
-                break;
+            if(prediction_queue_.empty()) {
+                wait_for_prediction();
+            }
 
+            std::unique_lock<std::mutex> l(prediction_queue_mutex_);
             prediction = prediction_queue_.top();
             prediction_queue_.pop();
         }
@@ -315,12 +322,7 @@ ParticleFilter::PredictionOutcome ParticleFilter::processPredictions(const ros::
     saveFilterState();
     Logger::getLogger().info("After, '" + std::to_string(prediction_queue_.size()) + "' samples in queue.", "ParticleFilter");
 
-//    if(until > particle_set_stamp_)
-//        return RETRY;
-    if(abs_motion_integral_linear > 0.0 || abs_motion_integral_angular > 0.0)
-        return MOTION;
-    else
-        return NO_MOTION;
+    return abs_motion_integral_linear > 0.0 || abs_motion_integral_angular > 0.0;
 }
 
 void ParticleFilter::publishPoses()
@@ -335,24 +337,32 @@ void ParticleFilter::publishTF()
 
 void ParticleFilter::loop()
 {
-    auto get_update = [this] () {
+    auto queued = [this] () {
         std::unique_lock<std::mutex> l(update_queue_mutex_);
-        if(update_queue_.empty())
-            return Update::Ptr();
-        auto update = update_queue_.top();
-        update_queue_.pop();
-        return update;
+        return !update_queue_.empty();
+    };
 
-    };
-    auto push_update = [this] (Update::Ptr &update) {
+    auto drop = [this] {
         std::unique_lock<std::mutex> l(update_queue_mutex_);
-        update_queue_.emplace(update);
+        update_queue_.pop();
     };
-    auto wait_for_prediction = [this] ()
-    {
-        std::unique_lock<std::mutex> l(notify_prediction_mutex_);
-        notify_prediction_.wait(l);
+
+    auto get_time = [this] () {
+        std::unique_lock<std::mutex> l(update_queue_mutex_);
+        return update_queue_.top()->getStamp();
     };
+
+    auto apply_update = [this] () {
+        Update::Ptr update;
+        {
+            std::unique_lock<std::mutex> l(update_queue_mutex_);
+            update = update_queue_.top();
+            update_queue_.pop();
+        }
+        update->apply(particle_set_->getWeights());
+        particle_set_->normalizeWeights();
+    };
+
 
     Logger::getLogger().info("Starting loop.", "ParticleFilter");
     std::unique_lock<std::mutex> lock_notify(notify_mutex_);
@@ -360,58 +370,34 @@ void ParticleFilter::loop()
         particle_set_stamp_ = ros::Time::now();
 
     while(!stop_working_) {
-        ///// [0]: Wait for udpates to come in
         notify_event_.wait(lock_notify);
 
-        ///// [1]: Check if loop should terminate
         if(stop_working_)
             break;
 
-        ///// [2]: Initialize if necessary
         if(particle_set_->getSampleSize() == 0) {
             sampling_uniform_->apply(*particle_set_);
         }
 
-        ///// [3]: Check for updates in queue
-        Update::Ptr update = get_update();
-        while(update) {
-            ///// [4]: Check for terminator requests
+        while(queued()) {
             if(stop_working_)
                 break;
-            ///// [5]: Check for requests
+
             processRequests();
-            ///// [6]: Process update
-            if(update->getStamp() >= particle_set_stamp_) {
-                ///// [7]: Predict until update stamp
-                switch(processPredictions(update->getStamp())) {
-                case NO_MOTION:
-                    if(integrate_all_measurement_) {
-                        update->apply(particle_set_->getWeights());
-                        particle_set_->normalizeWeights();
-                        ++update_cycle_;
-                    }
-                    break;
-                case MOTION:
-                    update->apply(particle_set_->getWeights());
-                    particle_set_->normalizeWeights();
-                    ++update_cycle_;
-                    break;
-                case RETRY:
-                       push_update(update);
-                       wait_for_prediction();
-                       std::cerr << "retry" << std::endl;
-                    break;
-                default:
-                    break;
-                }
+
+            auto time = get_time();
+            if(time >= particle_set_stamp_ &&
+                    (processPredictions(time) || integrate_all_measurement_)) {
+                apply_update();
+                ++update_cycle_;
+            } else {
+                drop();
             }
 
             saveFilterState();
             tryToResample();
             saveFilterState();
             publishPoses();
-
-            update = get_update();
         }
     }
 
