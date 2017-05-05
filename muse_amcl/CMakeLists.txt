@@ -23,6 +23,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 ## get required dependencies
 find_package(Eigen3  REQUIRED)
 find_package(TinyXML REQUIRED)
+find_package(TBB REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
     geometry_msgs
     nav_msgs
@@ -71,6 +72,7 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
     ${Eigen_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
+    ${TBB_ICLUDE_DIRS}
 )
 
 add_library(${PROJECT_NAME}_particle_filter
@@ -189,6 +191,14 @@ if(${CATKIN_ENABLE_TESTING})
 
     add_executable(${PROJECT_NAME}_eval_functional
         src/examples/eval_functional.cpp
+    )
+
+    add_executable(${PROJECT_NAME}_eval_locking_times
+        src/examples/eval_locking_times.cpp
+    )
+
+    target_link_libraries(${PROJECT_NAME}_eval_locking_times
+        ${TBB_LIBRARIES}
     )
 
 endif()
