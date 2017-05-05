@@ -337,33 +337,6 @@ void ParticleFilter::publishTF()
 
 void ParticleFilter::loop()
 {
-    auto queued = [this] () {
-        std::unique_lock<std::mutex> l(update_queue_mutex_);
-        return !update_queue_.empty();
-    };
-
-    auto drop = [this] {
-        std::unique_lock<std::mutex> l(update_queue_mutex_);
-        update_queue_.pop();
-    };
-
-    auto get_time = [this] () {
-        std::unique_lock<std::mutex> l(update_queue_mutex_);
-        return update_queue_.top()->getStamp();
-    };
-
-    auto apply_update = [this] () {
-        Update::Ptr update;
-        {
-            std::unique_lock<std::mutex> l(update_queue_mutex_);
-            update = update_queue_.top();
-            update_queue_.pop();
-        }
-        update->apply(particle_set_->getWeights());
-        particle_set_->normalizeWeights();
-    };
-
-
     Logger::getLogger().info("Starting loop.", "ParticleFilter");
     std::unique_lock<std::mutex> lock_notify(notify_mutex_);
     while(particle_set_stamp_.isZero())
@@ -379,19 +352,19 @@ void ParticleFilter::loop()
             sampling_uniform_->apply(*particle_set_);
         }
 
-        while(queued()) {
+        while(updatesQueued()) {
             if(stop_working_)
                 break;
 
             processRequests();
 
-            auto time = get_time();
+            auto time = getUpdateTime();
             if(time >= particle_set_stamp_ &&
                     (processPredictions(time) || integrate_all_measurement_)) {
-                apply_update();
+                applyUpdate();
                 ++update_cycle_;
             } else {
-                drop();
+                dropUpdate();
             }
 
             saveFilterState();

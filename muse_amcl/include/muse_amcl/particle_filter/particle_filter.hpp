@@ -142,6 +142,35 @@ protected:
                                                          particle_set_stamp_.toSec() / now);
     }
 
+    inline bool updatesQueued() const
+    {
+        std::unique_lock<std::mutex> l(update_queue_mutex_);
+        return !update_queue_.empty();
+    }
+
+    inline void dropUpdate()
+    {
+        std::unique_lock<std::mutex> l(update_queue_mutex_);
+        update_queue_.pop();
+    }
+
+    inline ros::Time getUpdateTime() const
+    {
+        std::unique_lock<std::mutex> l(update_queue_mutex_);
+        return update_queue_.top()->getStamp();
+    }
+
+    inline void applyUpdate()
+    {
+        Update::Ptr update;
+        {
+            std::unique_lock<std::mutex> l(update_queue_mutex_);
+            update = update_queue_.top();
+            update_queue_.pop();
+        }
+        update->apply(particle_set_->getWeights());
+        particle_set_->normalizeWeights();
+    }
 
 };
 }
