@@ -31,10 +31,17 @@ void MuseAMCLNode::start()
     /// check if there is an initial pose set
     checkPoseInitialization();
 
-    ros::WallRate r(nh_private_.param<double>("node_rate", 60.0));
-    while(ros::ok()) {
-        ros::spinOnce();
-        r.sleep();
+    double node_rate = nh_private_.param<double>("node_rate", 60.0);
+    if(node_rate == 0.0) {
+        /// unlimited speed
+        ros::spin();
+    } else {
+        /// limited speed
+        ros::WallRate r(node_rate);
+        while(ros::ok()) {
+            ros::spinOnce();
+            r.sleep();
+        }
     }
 }
 

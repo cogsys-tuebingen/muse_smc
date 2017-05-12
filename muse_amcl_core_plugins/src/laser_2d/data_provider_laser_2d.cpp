@@ -9,8 +9,10 @@ using namespace muse_amcl;
 
 void DataProviderLaser2D::doSetup(ros::NodeHandle &nh_private)
 {
+    int queue_size = nh_private.param<int>(privateParameter("queue_size"), 1);
+
     topic_ = nh_private.param<std::string>(privateParameter("topic"), "/scan");
-    source_= nh_private.subscribe(topic_, 1, &DataProviderLaser2D::callback, this);
+    source_= nh_private.subscribe(topic_, queue_size, &DataProviderLaser2D::callback, this);
     undistortion_ = nh_private.param<bool>(privateParameter("undistortion"), true);
     undistortion_fixed_frame_ = nh_private.param<std::string>(privateParameter("undistortion_fixed_frame"), "");
     undistortion_tf_timeout_ = ros::Duration(nh_private.param(privateParameter("undistotion_tf_timeout"), 0.1));

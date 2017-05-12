@@ -30,7 +30,7 @@ def run(file_name):
     for i in range(1, columns):
         # data[i][-1] = 0.0
         # curves.append(ax.fill(data[0], data[i], linestyle='dashed', label=header[i], alpha=0.3))
-        curves.append(ax.plot(data[0], data[i], linewidth=1, label=header[i]))
+        curves.append(ax.plot(data[0], data[i], label=header[i], alpha=0.5))
 
     plt.legend()
     plt.show()

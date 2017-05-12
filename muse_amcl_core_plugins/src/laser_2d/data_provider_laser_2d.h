@@ -27,7 +27,6 @@ protected:
     virtual void doSetup(ros::NodeHandle &nh_private) override;
     void callback(const sensor_msgs::LaserScanConstPtr &msg);
 
-
 };
 }
 

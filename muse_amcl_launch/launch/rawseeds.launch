@@ -10,6 +10,7 @@
         <param name="topic_poses" 	  value="/muse_amcl/poses"/>
         <param name="pub_rate_poses"  value="30.0" />
         <param name="pub_rate_tf" 	  value="60.0" />
+        <param name="node_rate"       value="0.0" />
         
         <group ns="initialization">
             <!-- x y z qx qy qz qw -->
@@ -28,54 +29,56 @@
         </group>
 
         <group ns="front_laser">
-          <param name="class" value="muse_amcl::DataProviderLaser2D" />
-          <param name="base_class" value="muse_amcl::DataProvider" />
-        	<param name="topic" value="/sick_front" />
-        	<param name="undistortion" value="false" />
+          <param name="class"                    value="muse_amcl::DataProviderLaser2D" />
+          <param name="base_class"               value="muse_amcl::DataProvider" />
+        	<param name="topic"                    value="/sick_front" />
+        	<param name="undistortion"             value="false" />
         	<param name="undistortion_fixed_frame" value="/odom" />
-        	<param name="undistortion_tf_timeout" value="0.1" />
-        	<param name="range_max" value="82.0" />
-        	<param name="range_min" value="0.1" />
+        	<param name="undistortion_tf_timeout"  value="0.1" />
+        	<param name="range_max"                value="82.0" />
+        	<param name="range_min"                value="0.1" />
         	<!-- <param name="angle_min" value="-3.1425" /> -->
         	<!-- <param name="angle_max" value="3.1425" /> -->
+          <param name="queue_size"               value="10" />
         </group>
         <group ns="rear_laser">
-          <param name="class" value="muse_amcl::DataProviderLaser2D" />
-          <param name="base_class" value="muse_amcl::DataProvider" />
-          <param name="topic" value="/sick_rear" />
-          <param name="undistortion" value="false" />
+          <param name="class"                    value="muse_amcl::DataProviderLaser2D" />
+          <param name="base_class"               value="muse_amcl::DataProvider" />
+          <param name="topic"                    value="/sick_rear" />
+          <param name="undistortion"             value="false" />
           <param name="undistortion_fixed_frame" value="/odom" />
-          <param name="undistortion_tf_timeout" value="0.1" />
-          <param name="range_max" value="82.0" />
-          <param name="range_min" value="0.1" />
+          <param name="undistortion_tf_timeout"  value="0.1" />
+          <param name="range_max"                value="82.0" />
+          <param name="range_min"                value="0.1" />
+          <param name="queue_size"               value="10" />
           <!-- <param name="angle_min" value="-3.1425" /> -->
           <!-- <param name="angle_max" value="3.1425" /> -->
         </group>
         <group ns="beam_model_front">
-            <param name="class" value="muse_amcl::BeamModel" />
-            <param name="base_class" value="muse_amcl::UpdateModel" />
+            <param name="class"         value="muse_amcl::BeamModel" />
+            <param name="base_class"    value="muse_amcl::UpdateModel" />
             <param name="data_provider" value="front_laser" />
-            <param name="map_provider" value="rawseeds" />
-            <param name="z_hit" value="0.8"/>
-            <param name="z_short" value="0.05"/>
-            <param name="z_max" value="0.05"/>
-            <param name="z_rand" value="0.1"/>
-            <param name="sigma_hit" value="0.2"/>
-            <param name="lambda_short" value="0.1"/>
-            <param name="max_beams" value="30" />
+            <param name="map_provider"  value="rawseeds" />
+            <param name="z_hit"         value="0.8"/>
+            <param name="z_short"       value="0.05"/>
+            <param name="z_max"         value="0.05"/>
+            <param name="z_rand"        value="0.1"/>
+            <param name="sigma_hit"     value="0.2"/>
+            <param name="lambda_short"  value="0.1"/>
+            <param name="max_beams"     value="30" />
         </group>
         <group ns="beam_model_rear">
-            <param name="class" value="muse_amcl::BeamModel" />
-            <param name="base_class" value="muse_amcl::UpdateModel" />
+            <param name="class"         value="muse_amcl::BeamModel" />
+            <param name="base_class"    value="muse_amcl::UpdateModel" />
             <param name="data_provider" value="rear_laser" />
-            <param name="map_provider" value="rawseeds" />
-            <param name="z_hit" value="0.8"/>
-            <param name="z_short" value="0.05"/>
-            <param name="z_max" value="0.05"/>
-            <param name="z_rand" value="0.1"/>
-            <param name="sigma_hit" value="0.2"/>
-            <param name="lambda_short" value="0.1"/>
-            <param name="max_beams" value="30" />
+            <param name="map_provider"  value="rawseeds" />
+            <param name="z_hit"         value="0.8"/>
+            <param name="z_short"       value="0.05"/>
+            <param name="z_max"         value="0.05"/>
+            <param name="z_rand"        value="0.1"/>
+            <param name="sigma_hit"     value="0.2"/>
+            <param name="lambda_short"  value="0.1"/>
+            <param name="max_beams"     value="30" />
         </group>
         <group ns="differential_drive_model">
             <param name="class" value="muse_amcl::DifferentialDrive" />
@@ -147,15 +150,15 @@
   
 
     <!-- using only one map, the world and map frame can be collapsed -->
-	  <node pkg="tf" type="static_transform_publisher" name="map_T_w" args="0 0 0 0 0 0 map world 100"/>
+	  <node pkg="tf" type="static_transform_publisher" name="map_T_w" args="0 0 0 0 0 0 map world 10"/>
 	
-  <node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(arg map_path)" />
-	<node pkg="rosbag" type="play" name="player" output="screen" args="--clock --rate 1 -d 5 $(arg bag_path)" required="true" />
+  <node pkg="map_server" type="map_server" name="map_server" output="log" args="$(arg map_path)" />
+	<node pkg="rosbag" type="play" name="player" output="log" args="--clock --rate 1 -d 5 $(arg bag_path)" required="true" />
 	<include file="$(find rawseeds_ros)/launch/transforms.launch" />
 	<!--	<node pkg="rawseeds_ros" type="log_trajectory.py" name="log_trajectory" /> -->
 
 
-	<node type="record" name="robag_record" pkg="rosbag" args="-o /tmp/particles /muse_amcl/particles /muse_amcl/markers /tf" />
+	<!-- <node type="record" name="robag_record" pkg="rosbag" args="-o /tmp/particles /muse_amcl/particles /muse_amcl/markers /tf" /> -->
 	<node type="rviz" name="rviz" pkg="rviz" />
 	<!-- <node type="rqt_tf_tree" name="rqt_tf_tree" pkg="rqt_tf_tree" /> -->
  	<node type="muse_amcl_node" name="muse_amcl" pkg="muse_amcl" output="screen" />

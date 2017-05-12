@@ -415,7 +415,6 @@ void ParticleFilter::tryToResample()
             particle_set_->resetWeights(true);
             Eigen::Vector3d mean = distributions.at(max_cluster_id).getMean();
             tf_latest_w_T_b_ = tf::StampedTransform(math::Pose(mean).getPose(), particle_set_stamp_, world_frame_, base_frame_);
-            std::cerr << "tf" << std::endl;
             publishTF();
         }
 

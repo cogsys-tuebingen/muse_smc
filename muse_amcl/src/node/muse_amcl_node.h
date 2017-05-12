@@ -72,8 +72,6 @@ private:
     UpdateForwarder::Ptr        update_forwarder_;
     PredictionForwarder::Ptr    predicition_forwarder_;
 
-
-
     void checkPoseInitialization();
 };
 }

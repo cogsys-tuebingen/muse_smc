@@ -75,9 +75,9 @@ void BeamModel::update(const Data::ConstPtr  &data,
         return p_hit(z) + p_short(z, ray_range) + p_max(ray_range) + p_random(ray_range);
     };
 
-    pcl::PointCloud<pcl::PointXYZ>::Ptr debug(new pcl::PointCloud<pcl::PointXYZ>);
-    debug->header.frame_id = map->getFrame();
-    debug->header.stamp = data->getTimeFrame().end.toNSec() / 1000.0;
+//    pcl::PointCloud<pcl::PointXYZ>::Ptr debug(new pcl::PointCloud<pcl::PointXYZ>);
+//    debug->header.frame_id = map->getFrame();
+//    debug->header.stamp = data->getTimeFrame().end.toNSec() / 1000.0;
 
     for(auto it = set.begin() ; it != end ; ++it) {
         const math::Pose pose = m_T_w * it.getData().pose_ * b_T_l; /// laser scanner pose in map coordinates
@@ -88,14 +88,14 @@ void BeamModel::update(const Data::ConstPtr  &data,
             const double        map_range = gridmap.getRange(pose.getOrigin(), ray_end_point);
             const double pz = probability(ray_range, map_range);
             p += pz * pz * pz;  /// @todo : fix the inprobable thing ;)
-            debug->points.emplace_back(pcl::PointXYZ(ray_end_point.getX(),
-                                                     ray_end_point.getY(),
-                                                     ray_end_point.getZ()));
+//            debug->points.emplace_back(pcl::PointXYZ(ray_end_point.getX(),
+//                                                     ray_end_point.getY(),
+//                                                     ray_end_point.getZ()));
         }
         *it *= p;
     }
 
-    pub_debug_.publish(debug);
+//    pub_debug_.publish(debug);
 }
 
 void BeamModel::doSetup(ros::NodeHandle &nh_private)
