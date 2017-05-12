@@ -19,7 +19,6 @@ void BeamModel::update(const Data::ConstPtr  &data,
                        const Map::ConstPtr   &map,
                        ParticleSet::Weights   set)
 {
-
     const maps::BinaryGridMap &gridmap = map->as<maps::BinaryGridMap>();
     const LaserScan2D         &laser_data = data->as<LaserScan2D>();
     const LaserScan2D::Rays   &laser_rays = laser_data.getRays();
