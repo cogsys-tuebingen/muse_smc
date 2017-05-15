@@ -3,6 +3,8 @@
 
 #include <muse_amcl/particle_filter/update.hpp>
 
+#include <atomic>
+
 namespace muse_amcl {
 class BeamModelMLE : public UpdateModel
 {
@@ -26,8 +28,8 @@ protected:
 
     virtual void doSetup(ros::NodeHandle &nh_private) override;
 
-    //// DEBUG
-    ros::Publisher pub_debug_;
+
+
 
 };
 }
