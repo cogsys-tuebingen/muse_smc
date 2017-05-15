@@ -44,8 +44,8 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     std::size_t sample_size_minimum = sample_size;
 
     if(sample_size == 0) {
-        sample_size_maximum = nh_private.param<int>(privateParameter("sample_size_minimum"), 0);
-        sample_size_minimum = nh_private.param<int>(privateParameter("sample_size_maximum"), 0);
+        sample_size_minimum = nh_private.param<int>(privateParameter("sample_size_minimum"), 0);
+        sample_size_maximum = nh_private.param<int>(privateParameter("sample_size_maximum"), 0);
     }
 
     if(sample_size_minimum == 0 || sample_size_maximum == 0) {
@@ -388,7 +388,8 @@ void ParticleFilter::tryToResample()
 
     if(motion_criterion || cycle_criterion){
         resampling_->apply(*particle_set_);
-        particle_set_->normalizeWeights();
+        particle_set_->resetWeights();
+//        particle_set_->normalizeWeights();
 
         abs_motion_integral_linear_  = 0.0;
         abs_motion_integral_angular_ = 0.0;
