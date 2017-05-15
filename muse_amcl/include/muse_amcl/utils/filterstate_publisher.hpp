@@ -111,6 +111,7 @@ private:
     std::queue<ParticleSet::Particles::Ptr> q_;
     std::queue<ros::Time>                   q_times_;
     std::condition_variable                 notify_;
+    std::mutex                              notify_mutex_;
 
     ros::NodeHandle                         nh_private_;
     ros::Publisher                          pub_markers_;
@@ -121,23 +122,23 @@ private:
     inline void loop()
     {
         running_ = true;
-        std::unique_lock<std::mutex> q_lock(q_mutex_);
-        auto dumpQ = [this, &q_lock] () {
+        auto dumpQ = [this] () {
             while(!q_.empty()) {
+                std::unique_lock<std::mutex> q_lock(q_mutex_);
                 auto s = q_.front();
                 q_.pop();
                 auto t = q_times_.front();
                 q_times_.pop();
-
                 q_lock.unlock();
+
                 publisheMarkers(s, t);
                 publishParticles(s, t);
-                q_lock.lock();
             }
         };
 
+        std::unique_lock<std::mutex> notify_lock(notify_mutex_);
         while(!stop_) {
-            notify_.wait(q_lock);
+            notify_.wait(notify_lock);
             dumpQ();
         }
         dumpQ();

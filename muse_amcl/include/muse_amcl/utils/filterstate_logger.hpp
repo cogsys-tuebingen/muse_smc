@@ -45,10 +45,11 @@ private:
     std::thread             worker_thread_;
     std::mutex              q_mutex_;
     std::queue<std::string> q_;
+    std::mutex              notify_mutex_;
     std::condition_variable notify_log_;
 
-    std::atomic_bool running_;
-    std::atomic_bool stop_;
+    std::atomic_bool        running_;
+    std::atomic_bool        stop_;
 
     FilterStateLogger(const Header &header) :
         header_(header),
@@ -90,20 +91,20 @@ private:
         }
         out_ << std::endl;
 
-        std::unique_lock<std::mutex> q_lock(q_mutex_);
-        auto dumpQ = [this, &q_lock] () {
+        auto dumpQ = [this] () {
             while(!q_.empty()) {
+                std::unique_lock<std::mutex> q_lock(q_mutex_);
                 auto f = q_.front();
                 q_.pop();
-
                 q_lock.unlock();
+
                 out_ << f << std::endl;
-                q_lock.lock();
             }
         };
 
+        std::unique_lock<std::mutex> notify_lock(notify_mutex_);
         while(!stop_) {
-            notify_log_.wait(q_lock);
+            notify_log_.wait(notify_lock);
             dumpQ();
         }
         dumpQ();

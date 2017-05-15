@@ -19,6 +19,8 @@
 #include <muse_amcl/plugins/plugin_factory.hpp>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 
+#include <tf/time_cache.h>
+
 #include <ros/ros.h>
 
 namespace muse_amcl {

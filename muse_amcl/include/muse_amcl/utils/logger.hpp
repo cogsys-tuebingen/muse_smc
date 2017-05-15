@@ -93,6 +93,7 @@ private:
 
     std::mutex              q_mutex_;
     std::queue<std::string> q_;
+    std::mutex              notify_mutex_;
     std::condition_variable notify_log_;
 
     std::ofstream           out_;
@@ -127,20 +128,21 @@ private:
         std::cout << "[Logger]: Log path '" << ss.str() << "'" << std::endl;
         out_.open(ss.str());
 
-        std::unique_lock<std::mutex> q_lock(q_mutex_);
-        auto dumpQ = [this, &q_lock] () {
+        auto dumpQ = [this] () {
             while(!q_.empty()) {
+
+                std::unique_lock<std::mutex> q_lock(q_mutex_);
                 auto f = q_.front();
                 q_.pop();
-
                 q_lock.unlock();
+
                 out_ << f << std::endl;
-                q_lock.lock();
             }
         };
 
+        std::unique_lock<std::mutex> notify_lock(notify_mutex_);
         while(!stop_) {
-            notify_log_.wait(q_lock);
+            notify_log_.wait(notify_lock);
             dumpQ();
         }
         dumpQ();

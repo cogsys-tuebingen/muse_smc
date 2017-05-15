@@ -34,6 +34,9 @@ add_library(${PROJECT_NAME} SHARED
     src/laser_2d/beam_model.cpp
     src/laser_2d/likelihood_field_model.cpp
     src/laser_2d/likelihood_field_prob_model.cpp
+    src/laser_2d/beam_model_amcl.cpp
+    src/laser_2d/likelihood_field_model_amcl.cpp
+    src/laser_2d/likelihood_field_prob_model_amcl.cpp
     src/laser_2d/data_provider_laser_2d.cpp
 
     src/maps_2d/map_provider_binary_gridmap.cpp
