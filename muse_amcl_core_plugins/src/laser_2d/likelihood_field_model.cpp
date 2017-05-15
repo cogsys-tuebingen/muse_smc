@@ -50,13 +50,13 @@ void LikelihoodFieldModel::update(const Data::ConstPtr &data,
 
     for(auto it = set.begin() ; it != end ; ++it) {
         const math::Pose pose = map_T_world * it.getData().pose_ * base_T_laser; /// laser scanner pose in map coordinates
-        double p = 1.0;
+        double p = 0.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const math::Point   ray_end_point = pose.getPose() * laser_rays[i].point_;
             const double pz = p_hit(gridmap.at(ray_end_point)) + p_rand;
-            p += pz * pz * pz;  /// @todo : fix the inprobable thing ;)
+            p += std::log(pz);
         }
-        *it *= p;
+        *it *= std::exp(p);
     }
 }
 
