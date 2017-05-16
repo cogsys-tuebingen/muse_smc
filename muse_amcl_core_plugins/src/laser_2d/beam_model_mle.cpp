@@ -74,19 +74,20 @@ void BeamModelMLE::update(const Data::ConstPtr  &data,
         return p_hit(z) + p_short(z, ray_range) + p_max(ray_range) + p_random(ray_range);
     };
 
+
+
     for(auto it = set.begin() ; it != end ; ++it) {
         const math::Pose pose = m_T_w * it.getData().pose_ * b_T_l; /// laser scanner pose in map coordinates
-        double p = 1.0;
+        double p = 0.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const double        ray_range = laser_rays[i].range_;
             const math::Point   ray_end_point = pose.getPose() * laser_rays[i].point_;
             const double        map_range = gridmap.getRange(pose.getOrigin(), ray_end_point);
             const double pz = probability(ray_range, map_range);
-            p += pz * pz * pz;  /// @todo : fix the inprobable thing ;)
+            p += std::log(pz);  /// @todo : fix the inprobable thing ;)
         }
-        *it *= p;
+        *it *= std::exp(p);
     }
-
 }
 
 void BeamModelMLE::doSetup(ros::NodeHandle &nh_private)
