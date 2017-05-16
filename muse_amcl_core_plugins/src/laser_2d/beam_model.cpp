@@ -74,27 +74,18 @@ void BeamModel::update(const Data::ConstPtr  &data,
         return p_hit(z) + p_short(z, ray_range) + p_max(ray_range) + p_random(ray_range);
     };
 
-//    pcl::PointCloud<pcl::PointXYZ>::Ptr debug(new pcl::PointCloud<pcl::PointXYZ>);
-//    debug->header.frame_id = map->getFrame();
-//    debug->header.stamp = data->getTimeFrame().end.toNSec() / 1000.0;
-
     for(auto it = set.begin() ; it != end ; ++it) {
         const math::Pose pose = m_T_w * it.getData().pose_ * b_T_l; /// laser scanner pose in map coordinates
-        double p = 1.0;
+        double p = 0.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const double        ray_range = laser_rays[i].range_;
             const math::Point   ray_end_point = pose.getPose() * laser_rays[i].point_;
             const double        map_range = gridmap.getRange(pose.getOrigin(), ray_end_point);
             const double pz = probability(ray_range, map_range);
-            p += pz * pz * pz;  /// @todo : fix the inprobable thing ;)
-//            debug->points.emplace_back(pcl::PointXYZ(ray_end_point.getX(),
-//                                                     ray_end_point.getY(),
-//                                                     ray_end_point.getZ()));
+            p += std::log(pz);  /// @todo : fix the inprobable thing ;)
         }
-        *it *= p;
+        *it *= std::exp(p);
     }
-
-//    pub_debug_.publish(debug);
 }
 
 void BeamModel::doSetup(ros::NodeHandle &nh_private)
@@ -108,8 +99,6 @@ void BeamModel::doSetup(ros::NodeHandle &nh_private)
     denominator_hit_ = 0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
     lambda_short_ = nh_private.param(privateParameter("lambda_short"), 0.01);
     chi_outlier_  = nh_private.param(privateParameter("chi_outlier"), 0.05);
-
-    pub_debug_ = nh_private.advertise<pcl::PointCloud<pcl::PointXYZ>>("/muse_amcl/" + name_, 1);
 
     Logger &l = Logger::getLogger();
     l.info("max_beams_=" + std::to_string(max_beams_), "UpdateModel:" + name_);
