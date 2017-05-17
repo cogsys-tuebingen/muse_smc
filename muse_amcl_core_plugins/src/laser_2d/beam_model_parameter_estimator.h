@@ -17,14 +17,13 @@ public:
         double sigma_hit;
         double denominator_hit;
         double lambda_short;
-        double range_max;
     };
 
     BeamModelParameterEstimator(const Parameters &parameters,
                                 const std::size_t max_iterations = 0);
 
     void setMeasurements(const std::vector<double> z,
-                         const std::vector<double> z_bar);
+                         const std::vector<double> z_bar, const double max_range);
 
     void getParameters(Parameters &parameters) const;
 
@@ -36,6 +35,7 @@ private:
 
     std::vector<double>     z_;
     std::vector<double>     z_bar_;
+    double                  range_max_;
 
 
     Parameters              parameters_;
