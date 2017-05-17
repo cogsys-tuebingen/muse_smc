@@ -96,7 +96,7 @@ void BeamModelMLE::update(const Data::ConstPtr  &data,
 
 void BeamModelMLE::doSetup(ros::NodeHandle &nh_private)
 {
-    max_beams_              = nh_private.param(privateParameter("max_beams"), 30);
+    max_beams_                  = nh_private.param(privateParameter("max_beams"), 30);
     parameters_.z_hit           = nh_private.param(privateParameter("z_hit"), 0.8);
     parameters_.z_short         = nh_private.param(privateParameter("z_short"), 0.1);
     parameters_.z_max           = nh_private.param(privateParameter("z_max"), 0.05);
@@ -104,13 +104,19 @@ void BeamModelMLE::doSetup(ros::NodeHandle &nh_private)
     parameters_.sigma_hit       = nh_private.param(privateParameter("sigma_hit"), 0.15);
     parameters_.denominator_hit = 0.5 * 1.0 / (parameters_.sigma_hit * parameters_.sigma_hit);
     parameters_.lambda_short    = nh_private.param(privateParameter("lambda_short"), 0.01);
+    use_estimated_parameters_   = nh_private.param(privateParameter("use_estimated_parameters"), false);
+
+    std::size_t max_estimation_iterations =
+            static_cast<std::size_t>(nh_private.param<int>(privateParameter("max_estimation_iterations"), 0));
+
+    parameter_estimator_mle_.reset(new BeamModelParameterEstimator(parameters_, max_estimation_iterations));
 
     Logger &l = Logger::getLogger();
     l.info("max_beams_=" + std::to_string(max_beams_), "UpdateModel:" + name_);
-    l.info("z_hit_="    + std::to_string(parameters_.z_hit), "UpdateModel:" + name_);
-    l.info("z_short_=" + std::to_string(parameters_.z_short), "UpdateModel:" + name_);
-    l.info("z_max_=" + std::to_string(parameters_.z_max), "UpdateModel:" + name_);
-    l.info("z_rand_=" + std::to_string(parameters_.z_rand), "UpdateModel:" + name_);
+    l.info("z_hit_="     + std::to_string(parameters_.z_hit), "UpdateModel:" + name_);
+    l.info("z_short_="   + std::to_string(parameters_.z_short), "UpdateModel:" + name_);
+    l.info("z_max_="     + std::to_string(parameters_.z_max), "UpdateModel:" + name_);
+    l.info("z_rand_="    + std::to_string(parameters_.z_rand), "UpdateModel:" + name_);
     l.info("sigma_hit_=" + std::to_string(parameters_.sigma_hit), "UpdateModel:" + name_);
     l.info("lambda_short_=" + std::to_string(parameters_.lambda_short), "UpdateModel:" + name_);
 }

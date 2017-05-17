@@ -20,8 +20,9 @@ public:
 protected:
     std::size_t                             max_beams_;
 
-    BeamModelParameterEstimator::Ptr        est_;
+    BeamModelParameterEstimator::Ptr        parameter_estimator_mle_;
     BeamModelParameterEstimator::Parameters parameters_;
+    bool                                    use_estimated_parameters_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) override;
 
