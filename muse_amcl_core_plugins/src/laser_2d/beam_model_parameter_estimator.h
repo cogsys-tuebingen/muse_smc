@@ -3,24 +3,30 @@
 
 #include <atomic>
 #include <thread>
+#include <vector>
 
-
+namespace muse_amcl {
 class BeamModelParameterEstimator
 {
 public:
-    BeamModelParameterEstimator(const std::size_t max_iterations = 0);
+    struct Parameters {
+        double z_hit;
+        double z_max;
+        double z_short;
+        double z_rand;
+        double sigma_hit;
+        double denominator_hit;
+        double lambda_short;
+        double range_max;
+    };
 
-    bool isRunning() const;
+    BeamModelParameterEstimator(const Parameters &parameters,
+                                const std::size_t max_iterations = 0);
 
-    void setInitialParameters(const double z_hit,
-                              const double z_max,
-                              const double z_short,
-                              const double z_rand,
-                              const double sigma_hit,
-                              const double lambda_short);
+    void setMeasurements(const std::vector<double> z,
+                         const std::vector<double> z_bar);
 
-    void insert(const double z,
-                const double z_bar);
+    void getParameters(Parameters &parameters) const;
 
 private:
     std::atomic_bool        running_;
@@ -28,14 +34,16 @@ private:
     std::thread             worker_thread_;
     std::size_t             max_iterations_;
 
-    double z_hit_;
-    double z_short_;
-    double z_max_;
-    double z_rand_;
-    double sigma_hit_;
-    double lambda_short_;
+    std::vector<double>     z_;
+    std::vector<double>     z_bar_;
 
+
+    Parameters              parameters_;
+    Parameters              parameters_working_copy_;
+
+    void run();
 
 };
+}
 
 #endif // BEAM_MODEL_PARAMETER_ESTIMATOR_H

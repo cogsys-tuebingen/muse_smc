@@ -24,7 +24,6 @@ protected:
     double      sigma_hit_;
     double      denominator_hit_;
     double      lambda_short_;
-    double      chi_outlier_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) override;
 

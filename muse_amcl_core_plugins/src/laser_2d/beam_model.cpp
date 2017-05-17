@@ -48,12 +48,16 @@ void BeamModel::update(const Data::ConstPtr  &data,
 
 
     /// mixture distribution entries
-    auto p_hit = [this](const double z) {
-        return z_hit_ * std::exp(-z * z * denominator_hit_);
+    auto p_hit = [this](const double ray_range, const double map_range) {
+        const double dz = ray_range - map_range;
+        return z_hit_ * std::exp(-dz * dz * denominator_hit_);
     };
-    auto p_short = [this](const double z, const double ray_range) {
-        if(z < 0)
-            return z_short_ * lambda_short_ * exp(-lambda_short_ * ray_range);
+    auto p_short = [this](const double ray_range, const double map_range) {
+        if(ray_range < map_range) {
+            return z_short_ *
+                   (1.0 / (1.0 - std::exp(-lambda_short_  * map_range))) *
+                    lambda_short_ * exp(-lambda_short_ * ray_range);
+        }
         return 0.0;
     };
     auto p_max = [this, range_max](const double ray_range)
@@ -70,8 +74,7 @@ void BeamModel::update(const Data::ConstPtr  &data,
     };
     auto probability = [p_hit, p_short, p_max, p_random] (const double ray_range, const double map_range)
     {
-        const double z = ray_range - map_range;
-        return p_hit(z) + p_short(z, ray_range) + p_max(ray_range) + p_random(ray_range);
+        return p_hit(ray_range, map_range) + p_short(ray_range, map_range) + p_max(ray_range) + p_random(ray_range);
     };
 
     for(auto it = set.begin() ; it != end ; ++it) {

@@ -100,7 +100,6 @@ void BeamModelMLE::doSetup(ros::NodeHandle &nh_private)
     sigma_hit_    = nh_private.param(privateParameter("sigma_hit"), 0.15);
     denominator_hit_ = 0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
     lambda_short_ = nh_private.param(privateParameter("lambda_short"), 0.01);
-    chi_outlier_  = nh_private.param(privateParameter("chi_outlier"), 0.05);
 
     Logger &l = Logger::getLogger();
     l.info("max_beams_=" + std::to_string(max_beams_), "UpdateModel:" + name_);
@@ -110,5 +109,4 @@ void BeamModelMLE::doSetup(ros::NodeHandle &nh_private)
     l.info("z_rand_=" + std::to_string(z_rand_), "UpdateModel:" + name_);
     l.info("sigma_hit_=" + std::to_string(sigma_hit_), "UpdateModel:" + name_);
     l.info("lambda_short_=" + std::to_string(lambda_short_), "UpdateModel:" + name_);
-    l.info("chi_outlier_=" + std::to_string(chi_outlier_), "UpdateModel:" + name_);
 }
