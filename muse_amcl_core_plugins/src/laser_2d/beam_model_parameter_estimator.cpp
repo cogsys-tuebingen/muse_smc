@@ -26,6 +26,7 @@ void BeamModelParameterEstimator::setMeasurements(const std::vector<double> z,
     range_max_  = range_max;
 
     /// kick off the thread here
+    worker_thread_ = std::thread([this](){run();});
 
 }
 
@@ -37,6 +38,8 @@ void BeamModelParameterEstimator::getParameters(Parameters &parameters) const
 
 void BeamModelParameterEstimator::run()
 {
+    running_ = true;
+
     /// probabilities
     auto p_hit = [this](const double ray_range, const double map_range) {
         const double dz = ray_range - map_range;
@@ -81,6 +84,7 @@ void BeamModelParameterEstimator::run()
     const std::size_t measurements_size = z_.size();
     const double norm = 1.0 / measurements_size;
     std::size_t iteration = 0;
+    Parameters parameters_previous = parameters_working_copy_;
     while(!terminate(iteration)) {
         double e_hit    = 0.0;
         double e_short  = 0.0;
@@ -110,6 +114,9 @@ void BeamModelParameterEstimator::run()
         parameters_working_copy_.z_rand       = norm * e_rand;
         parameters_working_copy_.sigma_hit    = std::sqrt(1.0 / e_hit * e_sigma);
         parameters_working_copy_.lambda_short = e_short / e_lambda;
+
+        if(parameters_previous.compare(parameters_working_copy_))
+            break;
 
         ++iteration;
     }

@@ -4,6 +4,7 @@
 #include <atomic>
 #include <thread>
 #include <vector>
+#include <cmath>
 
 namespace muse_amcl {
 class BeamModelParameterEstimator
@@ -17,6 +18,22 @@ public:
         double sigma_hit;
         double denominator_hit;
         double lambda_short;
+
+        bool compare(const Parameters &other,
+                     const double epsilon = 1e-3)
+        {
+            auto eps = [epsilon](const double a,
+                                 const double b) {
+                return (std::abs(a - b)) >= epsilon;
+            };
+
+            return !(eps(z_hit, other.z_hit) ||
+                     eps(z_max, other.z_max) ||
+                     eps(z_short, other.z_short) ||
+                     eps(z_rand, other.z_rand) ||
+                     eps(sigma_hit, other.sigma_hit),
+                     eps(lambda_short, other.lambda_short));
+        }
     };
 
     BeamModelParameterEstimator(const Parameters &parameters,
