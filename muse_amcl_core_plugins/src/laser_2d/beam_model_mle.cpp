@@ -6,8 +6,6 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_amcl::BeamModelMLE, muse_amcl::UpdateModel)
 
-#include <pcl_ros/point_cloud.h>
-#include <sensor_msgs/PointCloud2.h>
 
 using namespace muse_amcl;
 
@@ -19,6 +17,9 @@ void BeamModelMLE::update(const Data::ConstPtr  &data,
                        const Map::ConstPtr   &map,
                        ParticleSet::Weights   set)
 {
+    if(use_estimated_parameters_)
+        parameter_estimator_mle_->getParameters(parameters_);
+
     const maps::BinaryGridMap &gridmap = map->as<maps::BinaryGridMap>();
     const LaserScan2D         &laser_data = data->as<LaserScan2D>();
     const LaserScan2D::Rays   &laser_rays = laser_data.getRays();
@@ -78,10 +79,13 @@ void BeamModelMLE::update(const Data::ConstPtr  &data,
         return p_hit(ray_range, map_range) + p_short(ray_range, map_range) + p_max(ray_range) + p_random(ray_range);
     };
 
-
+    std::vector<double> z;
+    std::vector<double> z_bar;
+    std::vector<double> prior_weight;
 
     for(auto it = set.begin() ; it != end ; ++it) {
         const math::Pose pose = m_T_w * it.getData().pose_ * b_T_l; /// laser scanner pose in map coordinates
+        const double prior = *it;
         double p = 0.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const double        ray_range = laser_rays[i].range_;
@@ -89,9 +93,15 @@ void BeamModelMLE::update(const Data::ConstPtr  &data,
             const double        map_range = gridmap.getRange(pose.getOrigin(), ray_end_point);
             const double pz = probability(ray_range, map_range);
             p += std::log(pz);  /// @todo : fix the inprobable thing ;)
-        }
+
+            z.emplace_back(ray_range);
+            z_bar.emplace_back(map_range);
+            prior_weight.emplace_back(prior);
+         }
         *it *= std::exp(p);
     }
+
+    parameter_estimator_mle_->setMeasurements(z, z_bar, range_max);
 }
 
 void BeamModelMLE::doSetup(ros::NodeHandle &nh_private)
