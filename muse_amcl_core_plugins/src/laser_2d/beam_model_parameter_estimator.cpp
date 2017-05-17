@@ -26,6 +26,8 @@ void BeamModelParameterEstimator::setMeasurements(const std::vector<double> z,
     range_max_  = range_max;
 
     /// kick off the thread here
+    if(worker_thread_.joinable())
+        worker_thread_.join();
     worker_thread_ = std::thread([this](){run();});
 
 }
@@ -120,6 +122,8 @@ void BeamModelParameterEstimator::run()
 
         ++iteration;
     }
+
+    parameters_.print();
 
     parameters_ = parameters_working_copy_;
     running_ = false;

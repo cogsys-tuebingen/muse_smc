@@ -3,10 +3,19 @@
    <class type="muse_amcl::BeamModel" base_class_type="muse_amcl::UpdateModel">
      <description>Beam model update function.</description>
    </class>
+   <class type="muse_amcl::BeamModelAMCL" base_class_type="muse_amcl::UpdateModel">
+     <description>Beam model update function.</description>
+   </class>
+   <class type="muse_amcl::BeamModelMLE" base_class_type="muse_amcl::UpdateModel">
+     <description>Beam model update function.</description>
+   </class>
    <class type="muse_amcl::LikelihoodFieldModel" base_class_type="muse_amcl::UpdateModel">
      <description>Likelihoodfield model update function.</description>
    </class>
-   <class type="muse_amcl::LikelihoodFieldProbModel" base_class_type="muse_amcl::UpdateModel">
+   <class type="muse_amcl::LikelihoodFieldModelAMCL" base_class_type="muse_amcl::UpdateModel">
+     <description>Likelihoodfield model update function.</description>
+   </class>
+   <class type="muse_amcl::LikelihoodFieldProbModelAMCL" base_class_type="muse_amcl::UpdateModel">
      <description>Likelihoodfield model update function with consistency check.</description>
    </class>
    <!-- Propagation Functions -->
