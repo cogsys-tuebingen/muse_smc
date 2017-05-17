@@ -5,6 +5,8 @@
 
 #include <atomic>
 
+#include "beam_model_parameter_estimator.h"
+
 namespace muse_amcl {
 class BeamModelMLE : public UpdateModel
 {
@@ -16,14 +18,10 @@ public:
                         ParticleSet::Weights set) override;
 
 protected:
-    std::size_t max_beams_;
-    double      z_hit_;
-    double      z_short_;
-    double      z_max_;
-    double      z_rand_;
-    double      sigma_hit_;
-    double      denominator_hit_;
-    double      lambda_short_;
+    std::size_t                             max_beams_;
+
+    BeamModelParameterEstimator::Ptr        est_;
+    BeamModelParameterEstimator::Parameters parameters_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) override;
 

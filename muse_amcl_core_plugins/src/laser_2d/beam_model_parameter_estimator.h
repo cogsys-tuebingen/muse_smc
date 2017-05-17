@@ -10,6 +10,8 @@ namespace muse_amcl {
 class BeamModelParameterEstimator
 {
 public:
+    using Ptr = std::shared_ptr<BeamModelParameterEstimator>;
+
     struct Parameters {
         double z_hit;
         double z_max;

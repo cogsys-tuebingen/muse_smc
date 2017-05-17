@@ -44,34 +44,38 @@ void BeamModelMLE::update(const Data::ConstPtr  &data,
     const std::size_t rays_size = rays.size();
     const std::size_t ray_step  = std::max(1ul, (rays_size) / max_beams_);
     const double range_max = laser_data.getRangeMax();
-    const double p_rand = z_rand_ * 1.0 / range_max;
+    const double p_rand = parameters_.z_rand * 1.0 / range_max;
 
 
-    /// mixture distribution entries
-    auto p_hit = [this](const double z) {
-        return z_hit_ * std::exp(-z * z * denominator_hit_);
+    /// Mixture distribution
+    auto p_hit = [this](const double ray_range, const double map_range) {
+        const double dz = ray_range - map_range;
+        return parameters_.z_hit * std::exp(-dz * dz * parameters_.denominator_hit);
     };
-    auto p_short = [this](const double z, const double ray_range) {
-        if(z < 0)
-            return z_short_ * lambda_short_ * exp(-lambda_short_ * ray_range);
+    auto p_short = [this](const double ray_range, const double map_range) {
+        if(ray_range < map_range) {
+            return parameters_.z_short *
+                    (1.0 / (1.0 - std::exp(-parameters_.lambda_short  * map_range))) *
+                    parameters_.lambda_short * exp(-parameters_.lambda_short * ray_range);
+        }
         return 0.0;
     };
     auto p_max = [this, range_max](const double ray_range)
     {
         if(ray_range >= range_max)
-            return z_max_ * 1.0;
+            return parameters_.z_max * 1.0;
         return 0.0;
     };
-    auto p_random = [this, range_max, p_rand](const double ray_range)
+    auto p_random = [this, p_rand, range_max](const double ray_range)
     {
-        if(ray_range < range_max)
+         if(ray_range < range_max)
             return p_rand;
         return 0.0;
     };
+
     auto probability = [p_hit, p_short, p_max, p_random] (const double ray_range, const double map_range)
     {
-        const double z = ray_range - map_range;
-        return p_hit(z) + p_short(z, ray_range) + p_max(ray_range) + p_random(ray_range);
+        return p_hit(ray_range, map_range) + p_short(ray_range, map_range) + p_max(ray_range) + p_random(ray_range);
     };
 
 
@@ -92,21 +96,21 @@ void BeamModelMLE::update(const Data::ConstPtr  &data,
 
 void BeamModelMLE::doSetup(ros::NodeHandle &nh_private)
 {
-    max_beams_    = nh_private.param(privateParameter("max_beams"), 30);
-    z_hit_        = nh_private.param(privateParameter("z_hit"), 0.8);
-    z_short_      = nh_private.param(privateParameter("z_short"), 0.1);
-    z_max_        = nh_private.param(privateParameter("z_max"), 0.05);
-    z_rand_       = nh_private.param(privateParameter("z_rand"), 0.05);
-    sigma_hit_    = nh_private.param(privateParameter("sigma_hit"), 0.15);
-    denominator_hit_ = 0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
-    lambda_short_ = nh_private.param(privateParameter("lambda_short"), 0.01);
+    max_beams_              = nh_private.param(privateParameter("max_beams"), 30);
+    parameters_.z_hit           = nh_private.param(privateParameter("z_hit"), 0.8);
+    parameters_.z_short         = nh_private.param(privateParameter("z_short"), 0.1);
+    parameters_.z_max           = nh_private.param(privateParameter("z_max"), 0.05);
+    parameters_.z_rand          = nh_private.param(privateParameter("z_rand"), 0.05);
+    parameters_.sigma_hit       = nh_private.param(privateParameter("sigma_hit"), 0.15);
+    parameters_.denominator_hit = 0.5 * 1.0 / (parameters_.sigma_hit * parameters_.sigma_hit);
+    parameters_.lambda_short    = nh_private.param(privateParameter("lambda_short"), 0.01);
 
     Logger &l = Logger::getLogger();
     l.info("max_beams_=" + std::to_string(max_beams_), "UpdateModel:" + name_);
-    l.info("z_hit_=" + std::to_string(z_hit_), "UpdateModel:" + name_);
-    l.info("z_short_=" + std::to_string(z_short_), "UpdateModel:" + name_);
-    l.info("z_max_=" + std::to_string(z_max_), "UpdateModel:" + name_);
-    l.info("z_rand_=" + std::to_string(z_rand_), "UpdateModel:" + name_);
-    l.info("sigma_hit_=" + std::to_string(sigma_hit_), "UpdateModel:" + name_);
-    l.info("lambda_short_=" + std::to_string(lambda_short_), "UpdateModel:" + name_);
+    l.info("z_hit_="    + std::to_string(parameters_.z_hit), "UpdateModel:" + name_);
+    l.info("z_short_=" + std::to_string(parameters_.z_short), "UpdateModel:" + name_);
+    l.info("z_max_=" + std::to_string(parameters_.z_max), "UpdateModel:" + name_);
+    l.info("z_rand_=" + std::to_string(parameters_.z_rand), "UpdateModel:" + name_);
+    l.info("sigma_hit_=" + std::to_string(parameters_.sigma_hit), "UpdateModel:" + name_);
+    l.info("lambda_short_=" + std::to_string(parameters_.lambda_short), "UpdateModel:" + name_);
 }

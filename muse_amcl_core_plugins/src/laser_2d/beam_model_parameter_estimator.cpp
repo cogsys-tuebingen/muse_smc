@@ -40,7 +40,9 @@ void BeamModelParameterEstimator::run()
 {
     running_ = true;
 
-    /// probabilities
+    const double p_rand = parameters_working_copy_.z_rand * 1.0 / range_max_;
+
+    /// Mixture distribution
     auto p_hit = [this](const double ray_range, const double map_range) {
         const double dz = ray_range - map_range;
         return parameters_working_copy_.z_hit * std::exp(-dz * dz * parameters_working_copy_.denominator_hit);
@@ -59,9 +61,8 @@ void BeamModelParameterEstimator::run()
             return parameters_working_copy_.z_max * 1.0;
         return 0.0;
     };
-    auto p_random = [this](const double ray_range)
+    auto p_random = [this, p_rand](const double ray_range)
     {
-        const double p_rand = parameters_working_copy_.z_rand * 1.0 / range_max_;
         if(ray_range < range_max_)
             return p_rand;
         return 0.0;
@@ -72,10 +73,6 @@ void BeamModelParameterEstimator::run()
     running_ = true;
     auto terminate = [this] (std::size_t iteration) {
         return stop_ || (max_iterations_ > 0 && iteration > max_iterations_);
-    };
-
-    auto converged = [this] () {
-
     };
 
     /// beam model functions
@@ -113,10 +110,13 @@ void BeamModelParameterEstimator::run()
         parameters_working_copy_.z_max        = norm * e_max;
         parameters_working_copy_.z_rand       = norm * e_rand;
         parameters_working_copy_.sigma_hit    = std::sqrt(1.0 / e_hit * e_sigma);
+        parameters_working_copy_.denominator_hit = 0.5 * 1.0 / sq(parameters_working_copy_.sigma_hit);
         parameters_working_copy_.lambda_short = e_short / e_lambda;
 
         if(parameters_previous.compare(parameters_working_copy_))
             break;
+
+        parameters_previous = parameters_working_copy_;
 
         ++iteration;
     }
