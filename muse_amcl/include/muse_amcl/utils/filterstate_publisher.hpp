@@ -133,7 +133,8 @@ private:
                 q_times_.pop();
                 q_lock.unlock();
 
-                publisheMarkers(s, t);
+                publishMarkers(s, t);
+                publishPoses(s, t);
                 publishParticles(s, t);
             }
         };
@@ -147,7 +148,7 @@ private:
         running_ = false;
     }
 
-    inline void publisheMarkers (const ParticleSet::Particles::Ptr &samples,
+    inline void publishMarkers (const ParticleSet::Particles::Ptr &samples,
                                  const ros::Time &time)
     {
         visualization_msgs::Marker marker_prototype;
