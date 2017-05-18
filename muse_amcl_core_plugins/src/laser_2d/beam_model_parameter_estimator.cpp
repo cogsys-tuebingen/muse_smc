@@ -137,13 +137,14 @@ void BeamModelParameterEstimator::run()
         ++iteration;
     }
 
-    parameters_.print();
 
     if(parameters_working_copy_.isNormal()) {
        parameters_ = parameters_working_copy_;
     } else {
         parameters_working_copy_ = parameters_;
     }
+
+    parameters_.print();
 
     running_ = false;
 }

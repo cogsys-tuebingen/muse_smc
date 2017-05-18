@@ -41,17 +41,14 @@ public:
 
         bool isNormal() const
         {
-            auto is_normal = [](const double value)
-            {
-                return !std::isinf(value) && !std::isnan(value);
-            };
-
-            return is_normal(z_hit) &&
-                   is_normal(z_max) &&
-                   is_normal(z_short) &&
-                   is_normal(z_rand) &&
-                   is_normal(sigma_hit) &&
-                   is_normal(lambda_short);
+            return std::isnormal(z_hit) &&
+                   std::isnormal(z_max) &&
+                   std::isnormal(z_short) &&
+                   std::isnormal(z_rand) &&
+                   std::isnormal(sigma_hit) &&
+                   sigma_hit > 0.0 &&
+                   std::isnormal(lambda_short) &&
+                   lambda_short > 0.0;
         }
 
         void print() const
