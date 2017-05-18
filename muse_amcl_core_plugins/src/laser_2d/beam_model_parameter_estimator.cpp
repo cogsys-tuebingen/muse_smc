@@ -103,8 +103,8 @@ void BeamModelParameterEstimator::run()
             e_short  += nu * p_short_i;
             e_rand   += nu * p_rand_i;
             e_max    += nu * p_max_i;
-            e_sigma  += e_hit * sq(z - z_bar);
-            e_lambda += e_short * z;
+            e_sigma  += nu * p_hit_i * sq(z - z_bar);
+            e_lambda += nu * p_short_i * z;
         }
 
         parameters_working_copy_.z_hit        = norm * e_hit;
