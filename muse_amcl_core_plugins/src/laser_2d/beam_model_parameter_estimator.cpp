@@ -96,7 +96,6 @@ void BeamModelParameterEstimator::run()
 
     /// here the estimation goes
     const std::size_t measurements_size = z_.size();
-    const double norm = 1.0 / measurements_size;
     std::size_t iteration = 0;
     Parameters parameters_previous = parameters_working_copy_;
     while(!terminate(iteration)) {
@@ -106,6 +105,7 @@ void BeamModelParameterEstimator::run()
         double e_max    = 0.0;
         double e_sigma  = 0.0;
         double e_lambda = 0.0;
+        double norm     = 0.0;
         for(std::size_t i = 0 ; i < measurements_size ; ++i) {
             const double z          = z_[i];
             const double z_bar      = z_bar_[i];
@@ -114,6 +114,7 @@ void BeamModelParameterEstimator::run()
             const double p_max_i    = p_max(z);
             const double p_rand_i   = p_random(z);
             const double nu = 1.0 / (p_hit_i + p_short_i + p_max_i + p_rand_i) * prior_[i];
+            norm     += prior_[i];
             e_hit    += nu * p_hit_i;
             e_short  += nu * p_short_i;
             e_rand   += nu * p_rand_i;
@@ -122,6 +123,7 @@ void BeamModelParameterEstimator::run()
             e_lambda += nu * p_short_i * z;
         }
 
+        norm = 1.0 / norm;
         parameters_working_copy_.z_hit        = norm * e_hit;
         parameters_working_copy_.z_short      = norm * e_short;
         parameters_working_copy_.z_max        = norm * e_max;
