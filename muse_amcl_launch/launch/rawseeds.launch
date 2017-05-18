@@ -66,7 +66,7 @@
             <param name="sigma_hit"     value="0.2"/>
             <param name="lambda_short"  value="0.1"/>
             <param name="max_beams"     value="30" />
-            <param name="use_estimated_parameters" value="false" />
+            <param name="use_estimated_parameters" value="true" />
             <param name="use_weights_for_estimation" value="true" />
         </group>
         <group ns="beam_model_rear">
@@ -81,7 +81,7 @@
             <param name="sigma_hit"     value="0.2"/>
             <param name="lambda_short"  value="0.1"/>
             <param name="max_beams"     value="30" />
-            <param name="use_estimated_parameters" value="false" />
+            <param name="use_estimated_parameters" value="true" />
             <param name="use_weights_for_estimation" value="true" />
         </group>
         <group ns="differential_drive_model">
