@@ -47,7 +47,7 @@ void BeamModelParameterEstimator::run()
     /// Mixture distribution
     auto p_hit = [this](const double ray_range, const double map_range) {
         const double dz = ray_range - map_range;
-        return parameters_working_copy_.z_hit * std::exp(-dz * dz * parameters_working_copy_.denominator_hit);
+        return parameters_working_copy_.z_hit * std::exp(-dz * dz * parameters_working_copy_.denominator_exponent_hit);
     };
     auto p_short = [this](const double ray_range, const double map_range) {
         if(ray_range < map_range) {
@@ -111,8 +111,7 @@ void BeamModelParameterEstimator::run()
         parameters_working_copy_.z_short      = norm * e_short;
         parameters_working_copy_.z_max        = norm * e_max;
         parameters_working_copy_.z_rand       = norm * e_rand;
-        parameters_working_copy_.sigma_hit    = std::sqrt(1.0 / e_hit * e_sigma);
-        parameters_working_copy_.denominator_hit = 0.5 * 1.0 / sq(parameters_working_copy_.sigma_hit);
+        parameters_working_copy_.setSigmaHit(std::sqrt(1.0 / e_hit * e_sigma));
         parameters_working_copy_.lambda_short = e_short / e_lambda;
 
         if(parameters_previous.compare(parameters_working_copy_))

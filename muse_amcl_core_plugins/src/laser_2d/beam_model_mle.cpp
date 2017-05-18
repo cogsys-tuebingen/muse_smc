@@ -47,11 +47,11 @@ void BeamModelMLE::update(const Data::ConstPtr  &data,
     const double range_max = laser_data.getRangeMax();
     const double p_rand = parameters_.z_rand * 1.0 / range_max;
 
-
     /// Mixture distribution
     auto p_hit = [this](const double ray_range, const double map_range) {
         const double dz = ray_range - map_range;
-        return parameters_.z_hit * std::exp(-dz * dz * parameters_.denominator_hit);
+        return parameters_.z_hit * parameters_.denominator_hit *
+                std::exp(-dz * dz * parameters_.denominator_exponent_hit);
     };
     auto p_short = [this](const double ray_range, const double map_range) {
         if(ray_range < map_range) {
@@ -111,8 +111,7 @@ void BeamModelMLE::doSetup(ros::NodeHandle &nh_private)
     parameters_.z_short         = nh_private.param(privateParameter("z_short"), 0.1);
     parameters_.z_max           = nh_private.param(privateParameter("z_max"), 0.05);
     parameters_.z_rand          = nh_private.param(privateParameter("z_rand"), 0.05);
-    parameters_.sigma_hit       = nh_private.param(privateParameter("sigma_hit"), 0.15);
-    parameters_.denominator_hit = 0.5 * 1.0 / (parameters_.sigma_hit * parameters_.sigma_hit);
+    parameters_.setSigmaHit(nh_private.param(privateParameter("sigma_hit"), 0.15));
     parameters_.lambda_short    = nh_private.param(privateParameter("lambda_short"), 0.01);
     use_estimated_parameters_   = nh_private.param(privateParameter("use_estimated_parameters"), false);
 

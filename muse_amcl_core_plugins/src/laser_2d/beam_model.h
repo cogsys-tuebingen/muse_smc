@@ -20,6 +20,7 @@ protected:
     double      z_max_;
     double      z_rand_;
     double      sigma_hit_;
+    double      denominator_exponenten_hit_;
     double      denominator_hit_;
     double      lambda_short_;
     double      chi_outlier_;

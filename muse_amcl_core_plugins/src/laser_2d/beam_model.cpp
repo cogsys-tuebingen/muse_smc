@@ -50,7 +50,7 @@ void BeamModel::update(const Data::ConstPtr  &data,
     /// mixture distribution entries
     auto p_hit = [this](const double ray_range, const double map_range) {
         const double dz = ray_range - map_range;
-        return z_hit_ * std::exp(-dz * dz * denominator_hit_);
+        return z_hit_ * denominator_hit_ * std::exp(-dz * dz * denominator_exponenten_hit_);
     };
     auto p_short = [this](const double ray_range, const double map_range) {
         if(ray_range < map_range) {
@@ -85,7 +85,7 @@ void BeamModel::update(const Data::ConstPtr  &data,
             const math::Point   ray_end_point = pose.getPose() * laser_rays[i].point_;
             const double        map_range = gridmap.getRange(pose.getOrigin(), ray_end_point);
             const double pz = probability(ray_range, map_range);
-            p += std::log(pz);  /// @todo : fix the inprobable thing ;)
+            p += std::log(pz);
         }
         *it *= std::exp(p);
     }
@@ -99,7 +99,8 @@ void BeamModel::doSetup(ros::NodeHandle &nh_private)
     z_max_        = nh_private.param(privateParameter("z_max"), 0.05);
     z_rand_       = nh_private.param(privateParameter("z_rand"), 0.05);
     sigma_hit_    = nh_private.param(privateParameter("sigma_hit"), 0.15);
-    denominator_hit_ = 0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
+    denominator_exponenten_hit_ = 0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
+    denominator_hit_            = 1.0 / std::sqrt(2.0 * M_PI * sigma_hit_);
     lambda_short_ = nh_private.param(privateParameter("lambda_short"), 0.01);
     chi_outlier_  = nh_private.param(privateParameter("chi_outlier"), 0.05);
 

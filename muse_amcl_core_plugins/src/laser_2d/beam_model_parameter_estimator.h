@@ -19,6 +19,7 @@ public:
         double z_short;
         double z_rand;
         double sigma_hit;
+        double denominator_exponent_hit;
         double denominator_hit;
         double lambda_short;
 
@@ -47,6 +48,14 @@ public:
             std::cerr << "BeamModelParameters: sigma_hit - " << sigma_hit << std::endl;
             std::cerr << "BeamModelParameters: lambda_short - " << lambda_short << std::endl;
         }
+
+        void setSigmaHit(const double s)
+        {
+            sigma_hit = s;
+            denominator_exponent_hit = 0.5 / (sigma_hit * sigma_hit);
+            denominator_hit  = 1.0 / std::sqrt(2.0 * M_PI * sigma_hit * sigma_hit);
+        }
+
 
     };
 
