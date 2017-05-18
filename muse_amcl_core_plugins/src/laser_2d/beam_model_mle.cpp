@@ -81,7 +81,7 @@ void BeamModelMLE::update(const Data::ConstPtr  &data,
 
     std::vector<double> z;
     std::vector<double> z_bar;
-    std::vector<double> prior_weight;
+    std::vector<double> particle_weights;
 
     for(auto it = set.begin() ; it != end ; ++it) {
         const math::Pose pose = m_T_w * it.getData().pose_ * b_T_l; /// laser scanner pose in map coordinates
@@ -96,12 +96,15 @@ void BeamModelMLE::update(const Data::ConstPtr  &data,
 
             z.emplace_back(ray_range);
             z_bar.emplace_back(map_range);
-            prior_weight.emplace_back(prior);
+            particle_weights.emplace_back(prior);
          }
         *it *= std::exp(p);
     }
 
-    parameter_estimator_mle_->setMeasurements(z, z_bar, range_max);
+    if(use_weights_for_estimation_)
+        parameter_estimator_mle_->setMeasurements(z, z_bar, particle_weights, range_max);
+    else
+        parameter_estimator_mle_->setMeasurements(z, z_bar, range_max);
 }
 
 void BeamModelMLE::doSetup(ros::NodeHandle &nh_private)
@@ -114,6 +117,7 @@ void BeamModelMLE::doSetup(ros::NodeHandle &nh_private)
     parameters_.setSigmaHit(nh_private.param(privateParameter("sigma_hit"), 0.15));
     parameters_.lambda_short    = nh_private.param(privateParameter("lambda_short"), 0.01);
     use_estimated_parameters_   = nh_private.param(privateParameter("use_estimated_parameters"), false);
+    use_weights_for_estimation_   = nh_private.param(privateParameter("use_weights_for_estimation"), false);
 
     std::size_t max_estimation_iterations =
             static_cast<std::size_t>(nh_private.param<int>(privateParameter("max_estimation_iterations"), 0));

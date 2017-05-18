@@ -23,6 +23,7 @@ protected:
     BeamModelParameterEstimator::Ptr        parameter_estimator_mle_;
     BeamModelParameterEstimator::Parameters parameters_;
     bool                                    use_estimated_parameters_;
+    bool                                    use_weights_for_estimation_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) override;
 
