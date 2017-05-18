@@ -146,7 +146,5 @@ void BeamModelParameterEstimator::run()
         parameters_working_copy_ = parameters_;
     }
 
-    parameters_.print();
-
     running_ = false;
 }

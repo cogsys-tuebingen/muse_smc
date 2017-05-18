@@ -2,7 +2,7 @@
 #define FILTERSTATE_PUBLISHER_HPP
 
 #include <visualization_msgs/MarkerArray.h>
-
+#include <geometry_msgs/PoseArray.h>
 
 #include <thread>
 #include <atomic>
@@ -75,6 +75,7 @@ public:
         max_(std::numeric_limits<double>::lowest())
     {
         pub_markers_   = nh_private_.advertise<visualization_msgs::MarkerArray>("/muse_amcl/markers", 1);
+        pub_poses_     = nh_private_.advertise<geometry_msgs::PoseArray>("/muse_amcl/poses", 1);
         pub_particles_ = nh_private_.advertise<muse_amcl::ParticleSetMsg>("/muse_amcl/particles", 1);
         worker_thread_ = std::thread([this]{loop();});
         worker_thread_.detach();
@@ -116,6 +117,7 @@ private:
     ros::NodeHandle                         nh_private_;
     ros::Publisher                          pub_markers_;
     ros::Publisher                          pub_particles_;
+    ros::Publisher                          pub_poses_;
     std::size_t                             marker_count_;
     double                                  max_;
 
@@ -206,6 +208,7 @@ private:
     {
         ParticleSetMsg::Ptr msg(new ParticleSetMsg);
         msg->header.stamp = time;
+        msg->header.frame_id = world_frame_;
         const std::size_t sample_size = samples->size();
         for(std::size_t i = 0 ; i < sample_size ; ++i) {
             auto &s = samples->at(i);
@@ -215,6 +218,22 @@ private:
             msg->particles.emplace_back(p);
         }
         pub_particles_.publish(msg);
+    }
+
+    inline void publishPoses(const ParticleSet::Particles::Ptr &samples,
+                             const ros::Time &time)
+    {
+        geometry_msgs::PoseArrayPtr msg(new geometry_msgs::PoseArray);
+        msg->header.stamp = time;
+        msg->header.frame_id = world_frame_;
+        const std::size_t sample_size = samples->size();
+        for(std::size_t i = 0 ; i < sample_size ; ++i) {
+            auto &s = samples->at(i);
+            geometry_msgs::Pose p;
+            tf::poseTFToMsg(s.pose_.getPose(), p);
+            msg->poses.emplace_back(p);
+        }
+        pub_poses_.publish(msg);
     }
 };
 }
