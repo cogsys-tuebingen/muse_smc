@@ -120,7 +120,7 @@ void BeamModelMLE::doSetup(ros::NodeHandle &nh_private)
     use_weights_for_estimation_   = nh_private.param(privateParameter("use_weights_for_estimation"), false);
 
     std::size_t max_estimation_iterations =
-            static_cast<std::size_t>(nh_private.param<int>(privateParameter("max_estimation_iterations"), 0));
+            static_cast<std::size_t>(nh_private.param<int>(privateParameter("max_estimation_iterations"), 20));
 
     parameter_estimator_mle_.reset(new BeamModelParameterEstimator(parameters_, max_estimation_iterations));
 

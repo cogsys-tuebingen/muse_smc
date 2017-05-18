@@ -39,6 +39,21 @@ public:
                      eps(lambda_short, other.lambda_short));
         }
 
+        bool isNormal() const
+        {
+            auto is_normal = [](const double value)
+            {
+                return !std::isinf(value) && !std::isnan(value);
+            };
+
+            return is_normal(z_hit) &&
+                   is_normal(z_max) &&
+                   is_normal(z_short) &&
+                   is_normal(z_rand) &&
+                   is_normal(sigma_hit) &&
+                   is_normal(lambda_short);
+        }
+
         void print() const
         {
             std::cerr << "BeamModelParameters: z_hit - " << z_hit << std::endl;

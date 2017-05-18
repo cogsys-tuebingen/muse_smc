@@ -3,6 +3,7 @@
 using namespace muse_amcl;
 
 #include <cmath>
+#include <assert.h>
 
 BeamModelParameterEstimator::BeamModelParameterEstimator(const Parameters &parameters,
                                                          const std::size_t max_iterations) :
@@ -36,7 +37,6 @@ void BeamModelParameterEstimator::setMeasurements(const std::vector<double> &z,
     z_          = z;
     z_bar_      = z_bar;
     prior_      = prior;
-
 
     range_max_  = range_max;
 
@@ -139,6 +139,11 @@ void BeamModelParameterEstimator::run()
 
     parameters_.print();
 
-    parameters_ = parameters_working_copy_;
+    if(parameters_working_copy_.isNormal()) {
+       parameters_ = parameters_working_copy_;
+    } else {
+        parameters_working_copy_ = parameters_;
+    }
+
     running_ = false;
 }
