@@ -1,0 +1,169 @@
+<?xml version="1.0" ?>
+<launch>
+	<param name="/use_sim_time" value="true" />
+
+	<!--- muse amcl parameters -->
+    <group ns="muse_mcl">
+        <param name="world_frame"     value="/world" />
+        <param name="odom_frame"      value="/odom" />
+        <param name="base_frame"      value="/base_link" />
+        <param name="topic_poses" 	  value="/muse_amcl/poses"/>
+        <param name="pub_rate_poses"  value="30.0" />
+        <param name="pub_rate_tf" 	  value="60.0" />
+        <param name="node_rate"       value="0.0" />
+        
+        <group ns="initialization">
+            <!-- x y z qx qy qz qw -->
+            <rosparam param="pose">
+                [-1.37, -7.28, 0.0, 0.0, 0.0, 0.679567344219, 0.733613130111]
+            </rosparam>
+            <!-- (x y z theta psi phi)² -->
+            <rosparam param="covariance">
+                [0.25, 0.0, 0.0, 0.0, 0.0, 0.0,
+                 0.0, 0.25, 0.0, 0.0, 0.0, 0.0,
+                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                 0.0, 0.0, 0.0, 0.0, 0.0, 0.06853891945200942]
+            </rosparam>
+        </group>
+
+        <group ns="front_laser">
+          <param name="class"                    value="muse_amcl::DataProviderLaser2D" />
+          <param name="base_class"               value="muse_amcl::DataProvider" />
+        	<param name="topic"                    value="/sick_front" />
+        	<param name="undistortion"             value="false" />
+        	<param name="undistortion_fixed_frame" value="/odom" />
+        	<param name="undistortion_tf_timeout"  value="0.1" />
+        	<param name="range_max"                value="82.0" />
+        	<param name="range_min"                value="0.1" />
+        	<!-- <param name="angle_min" value="-3.1425" /> -->
+        	<!-- <param name="angle_max" value="3.1425" /> -->
+          <param name="queue_size"               value="10" />
+        </group>
+        <group ns="rear_laser">
+          <param name="class"                    value="muse_amcl::DataProviderLaser2D" />
+          <param name="base_class"               value="muse_amcl::DataProvider" />
+          <param name="topic"                    value="/sick_rear" />
+          <param name="undistortion"             value="false" />
+          <param name="undistortion_fixed_frame" value="/odom" />
+          <param name="undistortion_tf_timeout"  value="0.1" />
+          <param name="range_max"                value="82.0" />
+          <param name="range_min"                value="0.1" />
+          <param name="queue_size"               value="10" />
+          <!-- <param name="angle_min" value="-3.1425" /> -->
+          <!-- <param name="angle_max" value="3.1425" /> -->
+        </group>
+        <group ns="beam_model_front">
+            <param name="class"         value="muse_amcl::BeamModelMLE" />
+            <param name="base_class"    value="muse_amcl::UpdateModel" />
+            <param name="data_provider" value="front_laser" />
+            <param name="map_provider"  value="rawseeds" />
+            <param name="z_hit"         value="0.8"/>
+            <param name="z_short"       value="0.05"/>
+            <param name="z_max"         value="0.05"/>
+            <param name="z_rand"        value="0.1"/>
+            <param name="sigma_hit"     value="0.2"/>
+            <param name="lambda_short"  value="0.1"/>
+            <param name="max_beams"     value="30" />
+            <param name="use_estimated_parameters" value="true" />
+            <param name="use_weights_for_estimation" value="true" />
+        </group>
+        <group ns="beam_model_rear">
+            <param name="class"         value="muse_amcl::BeamModelMLE" />
+            <param name="base_class"    value="muse_amcl::UpdateModel" />
+            <param name="data_provider" value="rear_laser" />
+            <param name="map_provider"  value="rawseeds" />
+            <param name="z_hit"         value="0.8"/>
+            <param name="z_short"       value="0.05"/>
+            <param name="z_max"         value="0.05"/>
+            <param name="z_rand"        value="0.1"/>
+            <param name="sigma_hit"     value="0.2"/>
+            <param name="lambda_short"  value="0.1"/>
+            <param name="max_beams"     value="30" />
+            <param name="use_estimated_parameters" value="true" />
+            <param name="use_weights_for_estimation" value="true" />
+        </group>
+        <group ns="differential_drive_model">
+            <param name="class" value="muse_amcl::DifferentialDrive" />
+            <param name="base_class" value="muse_amcl::PredictionModel"/>
+            <param name="data_provider" value="odometry" />
+  			<param name="alpha1" value="0.1"/>
+  		  	<param name="alpha2" value="0.2"/>
+  	   		<param name="alpha3" value="0.5"/>
+    		<param name="alpha4" value="0.1"/>
+    		<param name="alpha5" value="0.0"/>
+        </group>
+        <group ns="rawseeds">
+            <param name="class" value="muse_amcl::MapProviderBinaryGridMap" />
+            <param name="base_class" value="muse_amcl::MapProvider" />
+            <param name="topic" value="/map" />
+        </group>
+        <group ns="odometry">
+            <param name="base_class" value="muse_amcl::DataProvider" />
+            <param name="class"      value="muse_amcl::DataProviderOdometry" />
+            <param name="topic" 	 value="/odom" />
+        </group>
+        <group ns="resampling">
+            <param name="base_class" value="muse_amcl::Resampling" />
+            <param name="class"      value="muse_amcl::KLD2D" />
+        </group>
+        <group ns="uniform_pose_generation">
+          <rosparam param="maps">
+            ["rawseeds"]
+          </rosparam>
+          <param name="class"     	value="muse_amcl::UniformAllMaps2D" />
+          <param name="base_class"  value="muse_amcl::UniformPoseGeneration" />
+          <param name="seed"    	  value="2" />
+          <param name="timeout"   	value="10.0" />
+          <param name="tf_timeout"  value="0.1" />
+          <param name="sample_size" value="500" />
+        </group>
+        <group ns="normal_pose_generation">
+          <rosparam param="maps">
+            ["rawseeds"]
+          </rosparam>
+          <param name="timeout"   	value="10.0" />
+          <param name="tf_timeout"  value="0.1" />
+          <param name="sample_size" value="500" />
+          <param name="class"     	value="muse_amcl::Normal2D" />
+          <param name="base_class"  value="muse_amcl::NormalPoseGeneration" />
+          <param name="seed"    	value="0" />
+        </group>
+        <group ns="particle_filter">
+         	  <param name="resampling_threshold_linear"  value="0.1" /> 
+          	<param name="resampling_threshold_angular" value="10.0" />
+          	<param name="resampling_cycle" 			       value="10" />
+          	<param name="integrate_all_measurement"    value="false" />
+
+           <!-- <param name="sample_size"     value="" /> --> 		<!-- if set, maximum and minimum are this value -->
+            <param name="sample_size_minimum" value="250" /> 			<!-- if not sample_size is already set -->
+            <param name="sample_size_maximum" value="1000" /> 			<!-- if not sample_size is already set -->
+            
+            <param name="resolution_linear" value="0.5" />     <!-- linear discretization resolution -->
+            <param name="resolution_radial" value="10.0"/>  <!-- angular discretization resolution -->
+
+            <param name="array_extent" value="10.0" /> 			<!-- use array if possible, higher speed -->
+        </group>
+    </group>
+
+    <!-- setting up the testing environment -->
+    <arg name="map_path" value="/home/hanten/Workspace/data/rawseeds/grid_maps/rawseeds_0.05.yaml" />
+	  <arg name="bag_path" value="/home/hanten/Workspace/data/rawseeds/bags/Bicocca_2009-02-25b-static-full.bag" /> 
+	  <!-- <arg name="bag_path" value="/home/hanten/Workspace/data/rawseeds/bags/Bicocca_2009-02-25b-static-artificial-light-sick_hokuyo_odom.bag" /> -->
+  
+
+    <!-- using only one map, the world and map frame can be collapsed -->
+	  <node pkg="tf" type="static_transform_publisher" name="map_T_w" args="0 0 0 0 0 0 map world 10"/>
+	
+  <node pkg="map_server" type="map_server" name="map_server" output="log" args="$(arg map_path)" />
+	<node pkg="rosbag" type="play" name="player" output="log" args="--clock --rate 1 -d 5 $(arg bag_path)" required="true" />
+	<include file="$(find rawseeds_ros)/launch/transforms.launch" />
+  <node pkg="rawseeds_ros" type="log_trajectory.py" name="log_trajectory" />
+
+
+	<!-- <node type="record" name="robag_record" pkg="rosbag" args="-o /tmp/particles /muse_amcl/particles /muse_amcl/markers /tf" /> -->
+	<!-- <node type="rviz" name="rviz" pkg="rviz" /> -->
+	<!-- <node type="rqt_tf_tree" name="rqt_tf_tree" pkg="rqt_tf_tree" /> -->
+ 	<node type="muse_mcl_node" name="muse_mcl" pkg="muse_mcl" output="screen" />
+</launch>
