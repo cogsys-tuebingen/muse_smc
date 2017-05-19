@@ -7,7 +7,7 @@
         <param name="world_frame"     value="/world" />
         <param name="odom_frame"      value="/odom" />
         <param name="base_frame"      value="/base_link" />
-        <param name="topic_poses" 	  value="/muse_amcl/poses"/>
+        <param name="topic_poses" 	  value="/muse_mcl/poses"/>
         <param name="pub_rate_poses"  value="30.0" />
         <param name="pub_rate_tf" 	  value="60.0" />
         <param name="node_rate"       value="0.0" />
@@ -29,8 +29,8 @@
         </group>
 
         <group ns="front_laser">
-          <param name="class"                    value="muse_amcl::DataProviderLaser2D" />
-          <param name="base_class"               value="muse_amcl::DataProvider" />
+          <param name="class"                    value="muse_mcl::DataProviderLaser2D" />
+          <param name="base_class"               value="muse_mcl::DataProvider" />
         	<param name="topic"                    value="/sick_front" />
         	<param name="undistortion"             value="false" />
         	<param name="undistortion_fixed_frame" value="/odom" />
@@ -42,8 +42,8 @@
           <param name="queue_size"               value="10" />
         </group>
         <group ns="rear_laser">
-          <param name="class"                    value="muse_amcl::DataProviderLaser2D" />
-          <param name="base_class"               value="muse_amcl::DataProvider" />
+          <param name="class"                    value="muse_mcl::DataProviderLaser2D" />
+          <param name="base_class"               value="muse_mcl::DataProvider" />
           <param name="topic"                    value="/sick_rear" />
           <param name="undistortion"             value="false" />
           <param name="undistortion_fixed_frame" value="/odom" />
@@ -55,8 +55,8 @@
           <!-- <param name="angle_max" value="3.1425" /> -->
         </group>
         <group ns="beam_model_front">
-            <param name="class"         value="muse_amcl::BeamModelMLE" />
-            <param name="base_class"    value="muse_amcl::UpdateModel" />
+            <param name="class"         value="muse_mcl::BeamModelMLE" />
+            <param name="base_class"    value="muse_mcl::UpdateModel" />
             <param name="data_provider" value="front_laser" />
             <param name="map_provider"  value="rawseeds" />
             <param name="z_hit"         value="0.8"/>
@@ -70,8 +70,8 @@
             <param name="use_weights_for_estimation" value="true" />
         </group>
         <group ns="beam_model_rear">
-            <param name="class"         value="muse_amcl::BeamModelMLE" />
-            <param name="base_class"    value="muse_amcl::UpdateModel" />
+            <param name="class"         value="muse_mcl::BeamModelMLE" />
+            <param name="base_class"    value="muse_mcl::UpdateModel" />
             <param name="data_provider" value="rear_laser" />
             <param name="map_provider"  value="rawseeds" />
             <param name="z_hit"         value="0.8"/>
@@ -85,8 +85,8 @@
             <param name="use_weights_for_estimation" value="true" />
         </group>
         <group ns="differential_drive_model">
-            <param name="class" value="muse_amcl::DifferentialDrive" />
-            <param name="base_class" value="muse_amcl::PredictionModel"/>
+            <param name="class" value="muse_mcl::DifferentialDrive" />
+            <param name="base_class" value="muse_mcl::PredictionModel"/>
             <param name="data_provider" value="odometry" />
   			<param name="alpha1" value="0.1"/>
   		  	<param name="alpha2" value="0.2"/>
@@ -95,25 +95,25 @@
     		<param name="alpha5" value="0.0"/>
         </group>
         <group ns="rawseeds">
-            <param name="class" value="muse_amcl::MapProviderBinaryGridMap" />
-            <param name="base_class" value="muse_amcl::MapProvider" />
+            <param name="class" value="muse_mcl::MapProviderBinaryGridMap" />
+            <param name="base_class" value="muse_mcl::MapProvider" />
             <param name="topic" value="/map" />
         </group>
         <group ns="odometry">
-            <param name="base_class" value="muse_amcl::DataProvider" />
-            <param name="class"      value="muse_amcl::DataProviderOdometry" />
+            <param name="base_class" value="muse_mcl::DataProvider" />
+            <param name="class"      value="muse_mcl::DataProviderOdometry" />
             <param name="topic" 	 value="/odom" />
         </group>
         <group ns="resampling">
-            <param name="base_class" value="muse_amcl::Resampling" />
-            <param name="class"      value="muse_amcl::KLD2D" />
+            <param name="base_class" value="muse_mcl::Resampling" />
+            <param name="class"      value="muse_mcl::KLD2D" />
         </group>
         <group ns="uniform_pose_generation">
           <rosparam param="maps">
             ["rawseeds"]
           </rosparam>
-          <param name="class"     	value="muse_amcl::UniformAllMaps2D" />
-          <param name="base_class"  value="muse_amcl::UniformPoseGeneration" />
+          <param name="class"     	value="muse_mcl::UniformAllMaps2D" />
+          <param name="base_class"  value="muse_mcl::UniformPoseGeneration" />
           <param name="seed"    	  value="2" />
           <param name="timeout"   	value="10.0" />
           <param name="tf_timeout"  value="0.1" />
@@ -126,8 +126,8 @@
           <param name="timeout"   	value="10.0" />
           <param name="tf_timeout"  value="0.1" />
           <param name="sample_size" value="500" />
-          <param name="class"     	value="muse_amcl::Normal2D" />
-          <param name="base_class"  value="muse_amcl::NormalPoseGeneration" />
+          <param name="class"     	value="muse_mcl::Normal2D" />
+          <param name="base_class"  value="muse_mcl::NormalPoseGeneration" />
           <param name="seed"    	value="0" />
         </group>
         <group ns="particle_filter">
@@ -162,7 +162,7 @@
   <node pkg="rawseeds_ros" type="log_trajectory.py" name="log_trajectory" />
 
 
-	<!-- <node type="record" name="robag_record" pkg="rosbag" args="-o /tmp/particles /muse_amcl/particles /muse_amcl/markers /tf" /> -->
+	<!-- <node type="record" name="robag_record" pkg="rosbag" args="-o /tmp/particles /muse_mcl/particles /muse_mcl/markers /tf" /> -->
 	<!-- <node type="rviz" name="rviz" pkg="rviz" /> -->
 	<!-- <node type="rqt_tf_tree" name="rqt_tf_tree" pkg="rqt_tf_tree" /> -->
  	<node type="muse_mcl_node" name="muse_mcl" pkg="muse_mcl" output="screen" />

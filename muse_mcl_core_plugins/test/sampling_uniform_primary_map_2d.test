@@ -1,11 +1,11 @@
 <?xml version="1.0" ?>
 <launch>
-    <group ns="muse_amcl_core_plugins_test_node_sampling_uniform_primary_map_2d">
+    <group ns="muse_mcl_core_plugins_test_node_sampling_uniform_primary_map_2d">
         <group ns="particle_filter">
             <param name="frame_id" value="world" />
             <group ns="uniform_pose_generation">
-              <param name="class" value="muse_amcl::UniformAllMaps2D" />
-              <param name="base_class" value="muse_amcl::UniformPoseGeneration" />
+              <param name="class" value="muse_mcl::UniformAllMaps2D" />
+              <param name="base_class" value="muse_mcl::UniformPoseGeneration" />
               <param name="seed" value="2" />
 
               <rosparam param="secondary_maps">
@@ -22,6 +22,6 @@
     <node pkg="tf" type="static_transform_publisher" name="map1_T_w" args="1 1 0 3.14159265359 0 0 world map1 100"/>
     <node pkg="tf" type="static_transform_publisher" name="map0_T_w" args="0 0 0 0 0 0 world map0 100"/>
 
-    <test test-name="muse_amcl_core_plugins_test_node_sampling_uniform_primary_map_2d" pkg="muse_amcl_core_plugins" type="muse_amcl_core_plugins_test_node_sampling_uniform_primary_map_2d" />
+    <test test-name="muse_mcl_core_plugins_test_node_sampling_uniform_primary_map_2d" pkg="muse_mcl_core_plugins" type="muse_mcl_core_plugins_test_node_sampling_uniform_primary_map_2d" />
 
 </launch>

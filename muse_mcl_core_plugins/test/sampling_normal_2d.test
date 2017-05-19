@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <launch>
-    <group ns="muse_amcl_core_plugins_test_node_sampling_normal_2d">
+    <group ns="muse_mcl_core_plugins_test_node_sampling_normal_2d">
         <group ns="particle_filter">
             <param name="frame_id" value="world" />
             <group ns="normal_pose_generation">
@@ -10,8 +10,8 @@
               <param name="timeout" value="10.0" />
               <param name="tf_timeout" value="0.1" />
               <param name="sample_size" value="5000" />
-              <param name="class" value="muse_amcl::Normal2D" />
-              <param name="base_class" value="muse_amcl::NormalPoseGeneration" />
+              <param name="class" value="muse_mcl::Normal2D" />
+              <param name="base_class" value="muse_mcl::NormalPoseGeneration" />
               <param name="seed" value="0" />
             </group>
         </group>
@@ -19,6 +19,6 @@
     <node pkg="tf" type="static_transform_publisher" name="map1_T_w" args="1 1 0 3.14159265359 0 0 world map1 100"/>
     <node pkg="tf" type="static_transform_publisher" name="map0_T_w" args="0 0 0 0 0 0 world map0 100"/>
 
-    <test test-name="muse_amcl_core_plugins_test_node_sampling_normal_2d" pkg="muse_amcl_core_plugins" type="muse_amcl_core_plugins_test_node_sampling_normal_2d" />
+    <test test-name="muse_mcl_core_plugins_test_node_sampling_normal_2d" pkg="muse_mcl_core_plugins" type="muse_mcl_core_plugins_test_node_sampling_normal_2d" />
 
 </launch>

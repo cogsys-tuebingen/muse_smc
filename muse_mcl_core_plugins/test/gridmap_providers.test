@@ -1,53 +1,53 @@
 <?xml version="1.0" ?>
 <launch>
-    <group ns="muse_amcl_core_plugins_test_node_gridmap_providers">
+    <group ns="muse_mcl_core_plugins_test_node_gridmap_providers">
        <!-- BY TOPIC -->
         <group ns="binary_gridmap">
-            <param name="class" value="muse_amcl::MapProviderBinaryGridMap" />
-            <param name="base_class" value="muse_amcl::MapProvider" />
+            <param name="class" value="muse_mcl::MapProviderBinaryGridMap" />
+            <param name="base_class" value="muse_mcl::MapProvider" />
             <param name="topic" value="/map" />
             <param name="threshold" value="0.25"/>
             <param name="blocking" value="true" />
         </group>
         <group ns="distance_gridmap">
-            <param name="class" value="muse_amcl::MapProviderDistanceGridMap" />
-            <param name="base_class" value="muse_amcl::MapProvider" />
+            <param name="class" value="muse_mcl::MapProviderDistanceGridMap" />
+            <param name="base_class" value="muse_mcl::MapProvider" />
             <param name="topic" value="/map" />
             <param name="threshold" value="0.3"/>
             <param name="kernel_size" value="9" />
             <param name="blocking" value="true" />
         </group>
         <group ns="probability_gridmap">
-            <param name="class" value="muse_amcl::MapProviderProbabilityGridMap" />
-            <param name="base_class" value="muse_amcl::MapProvider" />
+            <param name="class" value="muse_mcl::MapProviderProbabilityGridMap" />
+            <param name="base_class" value="muse_mcl::MapProvider" />
             <param name="topic" value="/map" />
             <param name="blocking" value="true" />
         </group>
         <!-- BY SERVICE -->
         <group ns="binary_gridmap_service">
-            <param name="class" value="muse_amcl::MapProviderBinaryGridMapService" />
-            <param name="base_class" value="muse_amcl::MapProvider" />
+            <param name="class" value="muse_mcl::MapProviderBinaryGridMapService" />
+            <param name="base_class" value="muse_mcl::MapProvider" />
             <param name="service" value="/static_map" />
             <param name="threshold" value="0.25"/>
             <param name="blocking" value="true" />
         </group>
         <group ns="distance_gridmap_service">
-            <param name="class" value="muse_amcl::MapProviderDistanceGridMapService" />
-            <param name="base_class" value="muse_amcl::MapProvider" />
+            <param name="class" value="muse_mcl::MapProviderDistanceGridMapService" />
+            <param name="base_class" value="muse_mcl::MapProvider" />
             <param name="service" value="/static_map" />
             <param name="kernel_size" value="7" />
             <param name="blocking" value="true" />
         </group>
         <group ns="probability_gridmap_service">
-            <param name="class" value="muse_amcl::MapProviderProbabilityGridMapService" />
-            <param name="base_class" value="muse_amcl::MapProvider" />
+            <param name="class" value="muse_mcl::MapProviderProbabilityGridMapService" />
+            <param name="base_class" value="muse_mcl::MapProvider" />
             <param name="service" value="/static_map" />
             <param name="blocking" value="true" />
         </group>
     </group>
 
-    <node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(find muse_amcl_core_plugins)/res/gridmaps/sand_0.05.yaml" respawn="true" />
-    <test test-name="muse_amcl_core_plugins_test_node_gridmap_providers" pkg="muse_amcl_core_plugins" type="muse_amcl_core_plugins_test_node_gridmap_providers" required="true" />
+    <node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(find muse_mcl_core_plugins)/res/gridmaps/sand_0.05.yaml" respawn="true" />
+    <test test-name="muse_mcl_core_plugins_test_node_gridmap_providers" pkg="muse_mcl_core_plugins" type="muse_mcl_core_plugins_test_node_gridmap_providers" required="true" />
 
 
 </launch>
