@@ -74,9 +74,9 @@ public:
         marker_count_(0),
         max_(std::numeric_limits<double>::lowest())
     {
-        pub_markers_   = nh_private_.advertise<visualization_msgs::MarkerArray>("/muse_amcl/markers", 1);
-        pub_poses_     = nh_private_.advertise<geometry_msgs::PoseArray>("/muse_amcl/poses", 1);
-        pub_particles_ = nh_private_.advertise<muse_mcl::ParticleSetMsg>("/muse_amcl/particles", 1);
+        pub_markers_   = nh_private_.advertise<visualization_msgs::MarkerArray>("/muse_mcl/markers", 1);
+        pub_poses_     = nh_private_.advertise<geometry_msgs::PoseArray>("/muse_mcl/poses", 1);
+        pub_particles_ = nh_private_.advertise<muse_mcl::ParticleSetMsg>("/muse_mcl/particles", 1);
         worker_thread_ = std::thread([this]{loop();});
         worker_thread_.detach();
     }

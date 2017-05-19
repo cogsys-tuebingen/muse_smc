@@ -28,7 +28,7 @@ protected:
 
 protected:
     PluginManagerImp(const std::string& full_name)
-        : plugins_loaded_(false), full_name_(full_name), loader_("muse_amcl", full_name)
+        : plugins_loaded_(false), full_name_(full_name), loader_("muse_mcl", full_name)
     {
     }
 
