@@ -13,12 +13,14 @@
 
 namespace muse_mcl {
 template<typename ... Types>
-class FilterStateLogger {
+class CSVLogger {
 public:
+    using Ptr = std::shared_ptr<CSVLogger<Types ...>>;
+
     static constexpr std::size_t size = sizeof ... (Types);
     using Header = std::array<std::string, size>;
 
-    inline void writeState(const Types ... ts)
+    inline void log(const Types ... ts)
     {
         long s, ms;
         getTime(s, ms);
@@ -32,14 +34,33 @@ public:
         notify_log_.notify_one();
     }
 
-    static inline FilterStateLogger& getLogger(const Header &header = Header()) {
-        static FilterStateLogger l(header);
-        return l;
+    CSVLogger(const Header &header,
+              const std::string &path = "") :
+        header_(header),
+        path_(path),
+        stop_(false)
+    {
+        long s, ms;
+        getTime(s, ms);
+        running_ = true;
+        worker_thread_ = std::thread([this]{loop();});
+        worker_thread_.detach();
+    }
+
+    virtual ~CSVLogger()
+    {
+        if(running_) {
+            stop_ = true;
+            notify_log_.notify_one();
+            if(worker_thread_.joinable())
+                worker_thread_.join();
+        }
     }
 
 private:
     std::ofstream           out_;
     Header                  header_;
+    std::string             path_;
     long                    start_time_;
 
     std::thread             worker_thread_;
@@ -51,34 +72,16 @@ private:
     std::atomic_bool        running_;
     std::atomic_bool        stop_;
 
-    FilterStateLogger(const Header &header) :
-        header_(header),
-        stop_(false)
-    {
-        long s, ms;
-        getTime(s, ms);
-        running_ = true;
-        worker_thread_ = std::thread([this]{loop();});
-        worker_thread_.detach();
-    }
-
-    virtual ~FilterStateLogger()
-    {
-        if(running_) {
-            stop_ = true;
-            notify_log_.notify_one();
-            if(worker_thread_.joinable())
-                worker_thread_.join();
-        }
-    }
-
     void loop()
     {
-        std::stringstream ss;
-        long s, ms;
-        getTime(s, ms);
-        ss << "/tmp/muse_filter_state" << s << "." << ms << ".log";
-        out_.open(ss.str());
+        out_.open(path_);
+        if(!out_.is_open()) {
+            std::stringstream ss;
+            long s, ms;
+            getTime(s, ms);
+            ss << "/tmp/muse_filter_state" << s << "." << ms << ".log";
+            out_.open(ss.str());
+        }
 
         if(size > 0) {
             out_ << "time,";
@@ -148,7 +151,7 @@ private:
 
 };
 
-using FilterStateLoggerDefault = FilterStateLogger<std::size_t, std::size_t, double, double, double>;
+using FilterStateLoggerDefault = CSVLogger<std::size_t, std::size_t, double, double, double>;
 
 }
 

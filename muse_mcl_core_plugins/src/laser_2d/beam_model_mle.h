@@ -1,10 +1,9 @@
 #ifndef BEAM_MODEL_MLE_H
 #define BEAM_MODEL_MLE_H
 
-#include <muse_mcl/particle_filter/update.hpp>
-
 #include <atomic>
 
+#include <muse_mcl/particle_filter/update.hpp>
 #include "beam_model_parameter_estimator.h"
 
 namespace muse_mcl {
@@ -26,9 +25,6 @@ protected:
     bool                                    use_weights_for_estimation_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) override;
-
-
-
 
 };
 }

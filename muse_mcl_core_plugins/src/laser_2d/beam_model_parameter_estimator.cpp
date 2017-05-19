@@ -13,6 +13,14 @@ BeamModelParameterEstimator::BeamModelParameterEstimator(const Parameters &param
     parameters_(parameters),
     parameters_working_copy_(parameters)
 {
+    ParameterLogger::Header header = {"z_hit", "z_max", "z_short", "z_rand", "sigma_hit", "lambda_short"};
+    logger_.reset(new ParameterLogger(header));
+    logger_->log(parameters_working_copy_.z_hit,
+                 parameters_working_copy_.z_short,
+                 parameters_working_copy_.z_max,
+                 parameters_working_copy_.z_rand,
+                 parameters_working_copy_.sigma_hit,
+                 parameters_working_copy_.lambda_short);
 }
 
 void BeamModelParameterEstimator::setMeasurements(const std::vector<double> &z,
@@ -42,8 +50,8 @@ void BeamModelParameterEstimator::setMeasurements(const std::vector<double> &z,
 
     /// kick off the thread here
     if(worker_thread_.joinable())
-        worker_thread_.join();
-    worker_thread_ = std::thread([this](){run();});
+       worker_thread_.join();
+   worker_thread_ = std::thread([this](){run();});
 
 }
 
@@ -56,7 +64,6 @@ void BeamModelParameterEstimator::getParameters(Parameters &parameters) const
 void BeamModelParameterEstimator::run()
 {
     running_ = true;
-
     const double p_rand = parameters_working_copy_.z_rand * 1.0 / range_max_;
 
     /// Mixture distribution
@@ -145,6 +152,13 @@ void BeamModelParameterEstimator::run()
     } else {
         parameters_working_copy_ = parameters_;
     }
+
+    logger_->log(parameters_working_copy_.z_hit,
+                 parameters_working_copy_.z_max,
+                 parameters_working_copy_.z_short,
+                 parameters_working_copy_.z_rand,
+                 parameters_working_copy_.sigma_hit,
+                 parameters_working_copy_.lambda_short);
 
     running_ = false;
 }

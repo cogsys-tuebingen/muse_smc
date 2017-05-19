@@ -116,12 +116,13 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     l.info("Set up.", "ParticleFilter");
 
     const double now = ros::Time::now().toSec();
-    FilterStateLoggerDefault::Header header = {"predictions, updates, driven_linear, driven_angular, time_ratio"};
-    FilterStateLoggerDefault::getLogger(header).writeState(prediction_queue_.size(),
-                                                           update_queue_.size(),
-                                                           abs_motion_integral_linear_,
-                                                           abs_motion_integral_angular_,
-                                                           particle_set_stamp_.toSec() / now);
+    FilterStateLoggerDefault::Header header = {"predictions", "updates", "driven_linear", "driven_angular", "time_ratio"};
+    filter_state_logger_.reset(new FilterStateLoggerDefault(header));
+    filter_state_logger_->log(prediction_queue_.size(),
+                              update_queue_.size(),
+                              abs_motion_integral_linear_,
+                              abs_motion_integral_angular_,
+                              particle_set_stamp_.toSec() / now);
     ////////////////
 
 }

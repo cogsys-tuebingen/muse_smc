@@ -9,7 +9,7 @@
 #include <muse_mcl/particle_filter/prediction.hpp>
 #include <muse_mcl/particle_filter/update.hpp>
 #include <muse_mcl/utils/logger.hpp>
-#include <muse_mcl/utils/filterstate_logger.hpp>
+#include <muse_mcl/utils/csv_logger.hpp>
 #include <muse_mcl/utils/transform_publisher.hpp>
 #include <muse_mcl/utils/transform_publisher_anchored.hpp>
 #include <muse_mcl/utils/filterstate_publisher.hpp>
@@ -120,6 +120,9 @@ protected:
     std::atomic_bool         request_pose_initilization_;
     std::atomic_bool         request_global_initialization_;
 
+    //// ------------------ logger -------------------------///
+    FilterStateLoggerDefault::Ptr filter_state_logger_;
+
     void processRequests();
     bool processPredictions(const ros::Time &until);
     void publishPoses();
@@ -135,11 +138,11 @@ protected:
     inline void saveFilterState() const
     {
         const double now = ros::Time::now().toSec();
-        FilterStateLoggerDefault::getLogger().writeState(prediction_queue_.size(),
-                                                         update_queue_.size(),
-                                                         abs_motion_integral_linear_,
-                                                         abs_motion_integral_angular_,
-                                                         particle_set_stamp_.toSec() / now);
+        filter_state_logger_->log(prediction_queue_.size(),
+                                  update_queue_.size(),
+                                  abs_motion_integral_linear_,
+                                  abs_motion_integral_angular_,
+                                  particle_set_stamp_.toSec() / now);
     }
 
     inline bool updatesQueued() const

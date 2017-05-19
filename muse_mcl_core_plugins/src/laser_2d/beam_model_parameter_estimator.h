@@ -7,11 +7,14 @@
 #include <cmath>
 #include <iostream>
 
+#include <muse_mcl/utils/csv_logger.hpp>
+
 namespace muse_mcl {
 class BeamModelParameterEstimator
 {
 public:
     using Ptr = std::shared_ptr<BeamModelParameterEstimator>;
+    using ParameterLogger = CSVLogger<double,double,double,double,double,double>;
 
     struct Parameters {
         double z_hit;
@@ -100,6 +103,8 @@ private:
 
     Parameters              parameters_;
     Parameters              parameters_working_copy_;
+
+    ParameterLogger::Ptr    logger_;
 
     void run();
 
