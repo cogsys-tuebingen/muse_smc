@@ -10,7 +10,7 @@
 #include <muse_amcl/data_sources/map_provider.hpp>
 #include <muse_amcl_core_plugins/maps_2d/probability_gridmap.h>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class MapProviderProbabilityGridMapService : public MapProvider
 {
 public:

@@ -1,9 +1,9 @@
 #include "wof.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_amcl::WheelOfFortune, muse_amcl::Resampling)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::WheelOfFortune, muse_mcl::Resampling)
 
-using namespace muse_amcl;
+using namespace muse_mcl;
 
 void WheelOfFortune::doSetup(ros::NodeHandle &nh_private)
 {

@@ -6,7 +6,7 @@
 
 #include <muse_amcl/data_types/time_frame.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class Update {
 public:
     using Ptr = std::shared_ptr<Update>;

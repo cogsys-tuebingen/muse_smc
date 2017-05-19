@@ -3,7 +3,7 @@
 
 #include <muse_amcl/particle_filter/sampling_normal.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class Normal2D : public NormalSampling
 {
 public:

@@ -6,7 +6,7 @@
 
 #include <array>
 
-namespace muse_amcl {
+namespace muse_mcl {
 namespace maps {
 template<typename T>
 class Bresenham

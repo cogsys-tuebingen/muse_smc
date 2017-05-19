@@ -6,7 +6,7 @@
 #include <memory>
 #include <chrono>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class Map {
 public:
     typedef std::shared_ptr<Map> Ptr;

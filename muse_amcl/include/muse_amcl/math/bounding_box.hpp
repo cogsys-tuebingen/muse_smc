@@ -4,7 +4,7 @@
 #include "point.hpp"
 #include <array>
 
-namespace muse_amcl {
+namespace muse_mcl {
 namespace math {
 class BoundingBox {
 public:
@@ -268,10 +268,10 @@ private:
  * @brief operator * transforms the bounding box and returns a new instance.
  * @param transform - transformation to apply
  */
-inline muse_amcl::math::BoundingBox operator * (const tf::Transform &transform ,
-                                                const muse_amcl::math::BoundingBox &bb)
+inline muse_mcl::math::BoundingBox operator * (const tf::Transform &transform ,
+                                                const muse_mcl::math::BoundingBox &bb)
 {
-    return muse_amcl::math::BoundingBox(bb, transform);
+    return muse_mcl::math::BoundingBox(bb, transform);
 }
 
 #endif /* BOUNDING_BOX_HPP */

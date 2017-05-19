@@ -3,7 +3,7 @@
 
 #include <eigen3/Eigen/Geometry>
 
-namespace muse_amcl {
+namespace muse_mcl {
 
 inline void getRotation(const double yaw,
                         Eigen::Matrix2d &matrix)

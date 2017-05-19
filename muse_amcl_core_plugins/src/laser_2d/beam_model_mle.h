@@ -7,7 +7,7 @@
 
 #include "beam_model_parameter_estimator.h"
 
-namespace muse_amcl {
+namespace muse_mcl {
 class BeamModelMLE : public UpdateModel
 {
 public:

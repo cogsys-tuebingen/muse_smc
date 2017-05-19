@@ -5,8 +5,8 @@
 
 #include <muse_amcl/data_sources/data_provider.hpp>
 
-namespace muse_amcl {
-class DataProviderLaser2D : public muse_amcl::DataProvider
+namespace muse_mcl {
+class DataProviderLaser2D : public muse_mcl::DataProvider
 {
 public:
     DataProviderLaser2D() = default;

@@ -3,9 +3,9 @@
 #include <muse_amcl_core_plugins/laser_2d/laser_scan_2d.hpp>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_amcl::DataProviderLaser2D, muse_amcl::DataProvider)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::DataProviderLaser2D, muse_mcl::DataProvider)
 
-using namespace muse_amcl;
+using namespace muse_mcl;
 
 void DataProviderLaser2D::doSetup(ros::NodeHandle &nh_private)
 {

@@ -3,7 +3,7 @@
 
 #include <muse_amcl/particle_filter/prediction_model.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class OmniDrive : public PredictionModel
 {
 public:

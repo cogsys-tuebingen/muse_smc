@@ -9,7 +9,7 @@
 #include <muse_amcl/plugins/plugin_loader.hpp>
 #include <muse_amcl/data_sources/map_provider.hpp>
 
-using namespace muse_amcl;
+using namespace muse_mcl;
 
 std::map<std::string, MapProvider::Ptr>  map_providers;
 PluginLoader *loader;

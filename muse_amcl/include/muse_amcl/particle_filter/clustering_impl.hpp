@@ -10,7 +10,7 @@
 
 namespace cis = cslibs_indexed_storage;
 
-namespace muse_amcl {
+namespace muse_mcl {
 namespace clustering {
 /**
  * @brief The ClusteringImpl struct encodes the clustering strategy using the cslibs_index_storage

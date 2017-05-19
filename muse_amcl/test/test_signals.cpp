@@ -6,7 +6,7 @@
 TEST(TestMuseAMCL, testSignalVoidCallback)
 {
     using TestCallback = delegate<void(int,int)>;
-    using TestSignal = muse_amcl::Signal<TestCallback>;
+    using TestSignal = muse_mcl::Signal<TestCallback>;
 
     auto callback = [](int a, int b){return;};
     TestSignal signal;
@@ -17,7 +17,7 @@ TEST(TestMuseAMCL, testSignalVoidCallback)
 TEST(TestMuseAMCL, testSignalNonVoidCallback)
 {
     using TestCallback = delegate<int(int,int)>;
-    using TestSignal = muse_amcl::Signal<TestCallback>;
+    using TestSignal = muse_mcl::Signal<TestCallback>;
 
     auto callback = [](int a, int b){return 0;};
     TestSignal signal;
@@ -28,7 +28,7 @@ TEST(TestMuseAMCL, testSignalNonVoidCallback)
 TEST(TestMuseAMCL, enabling)
 {
     using TestCallback = delegate<void()>;
-    using TestSignal = muse_amcl::Signal<TestCallback>;
+    using TestSignal = muse_mcl::Signal<TestCallback>;
 
     auto callback = [](){;};
     TestSignal signal;
@@ -45,7 +45,7 @@ TEST(TestMuseAMCL, testSignalCallbackExecution)
 {
     int result = 0;
     using TestCallback = delegate<void(int)>;
-    using TestSignal = muse_amcl::Signal<TestCallback>;
+    using TestSignal = muse_mcl::Signal<TestCallback>;
 
     auto increment = [&result](int a){result += a;};
     TestSignal signal;
@@ -67,7 +67,7 @@ TEST(TestMuseAMCL, testSignalEnableDisable)
 {
     int result = 0;
     using TestCallback = delegate<void(int)>;
-    using TestSignal = muse_amcl::Signal<TestCallback>;
+    using TestSignal = muse_mcl::Signal<TestCallback>;
 
     auto increment = [&result](int a){result += a;};
     TestSignal signal;
@@ -97,7 +97,7 @@ TEST(TestMuseAMCL, testSignalDisconnectViaHandleReset)
 {
     int result = 0;
     using TestCallback = delegate<void(int)>;
-    using TestSignal = muse_amcl::Signal<TestCallback>;
+    using TestSignal = muse_mcl::Signal<TestCallback>;
 
     auto increment = [&result](int a){result += a;};
     TestSignal signal;
@@ -125,7 +125,7 @@ TEST(TestMuseAMCL, testSignalDisconnectViaMethod)
 {
     int result = 0;
     using TestCallback = delegate<void(int)>;
-    using TestSignal = muse_amcl::Signal<TestCallback>;
+    using TestSignal = muse_mcl::Signal<TestCallback>;
 
     auto increment = [&result](int a){result += a;};
     TestSignal signal;

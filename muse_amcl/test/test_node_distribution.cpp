@@ -6,11 +6,11 @@
 
 #include "test_distribution.hpp"
 
-muse_amcl::TestDistribution<2> test_distribution_a;
-muse_amcl::TestDistribution<2> test_distribution_b;
-muse_amcl::TestDistribution<2> test_distribution_5000;
+muse_mcl::TestDistribution<2> test_distribution_a;
+muse_mcl::TestDistribution<2> test_distribution_b;
+muse_mcl::TestDistribution<2> test_distribution_5000;
 
-namespace mms = muse_amcl::math::statistic;
+namespace mms = muse_mcl::math::statistic;
 
 TEST(TestMuseAMCL, testDistributionInsertion)
 {

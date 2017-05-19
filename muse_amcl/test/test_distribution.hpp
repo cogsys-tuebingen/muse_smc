@@ -5,7 +5,7 @@
 #include <fstream>
 #include <yaml-cpp/yaml.h>
 
-namespace muse_amcl {
+namespace muse_mcl {
 template<std::size_t Dim>
 struct TestDistribution {
     void write(const std::string &path)

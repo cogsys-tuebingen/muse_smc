@@ -4,7 +4,7 @@
 #include "test_map.hpp"
 #include <muse_amcl/data_sources/map_provider.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class TestMapProvider : public MapProvider {
 public:
     typedef std::shared_ptr<TestMapProvider> Ptr;

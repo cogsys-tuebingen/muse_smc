@@ -7,7 +7,7 @@
 
 #include <muse_amcl/utils/logger.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class MapProvider {
 public:
     typedef std::shared_ptr<MapProvider> Ptr;
@@ -18,7 +18,7 @@ public:
 
     inline const static std::string Type()
     {
-        return "muse_amcl::MapProvider";
+        return "muse_mcl::MapProvider";
     }
 
     inline std::string getName() const

@@ -11,7 +11,7 @@
 #include <muse_amcl/data_sources/tf_provider.hpp>
 #include <muse_amcl/math/covariance.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class NormalSampling {
 public:
     typedef std::shared_ptr<NormalSampling> Ptr;
@@ -28,7 +28,7 @@ public:
 
     inline const static std::string Type()
     {
-        return "muse_amcl::NormalPoseGeneration";
+        return "muse_mcl::NormalPoseGeneration";
     }
 
     inline std::string getName() const

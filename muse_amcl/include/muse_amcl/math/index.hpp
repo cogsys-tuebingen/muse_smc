@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <assert.h>
 
-namespace muse_amcl {
+namespace muse_mcl {
 namespace math {
 
 /**
@@ -116,10 +116,10 @@ struct Index : public std::array<int, _Nm>
 
 //// primitive mathematical operators
 template<std::size_t _Nm>
-inline muse_amcl::math::Index<_Nm> operator - (const muse_amcl::math::Index<_Nm>& __one,
-                                               const muse_amcl::math::Index<_Nm>& __two)
+inline muse_mcl::math::Index<_Nm> operator - (const muse_mcl::math::Index<_Nm>& __one,
+                                               const muse_mcl::math::Index<_Nm>& __two)
 {
-    muse_amcl::math::Index<_Nm> __res;
+    muse_mcl::math::Index<_Nm> __res;
     for(std::size_t i = 0 ; i < _Nm; ++i)
         __res[i] = __one[i] - __two[i];
 
@@ -127,10 +127,10 @@ inline muse_amcl::math::Index<_Nm> operator - (const muse_amcl::math::Index<_Nm>
 }
 
 template<std::size_t _Nm>
-inline muse_amcl::math::Index<_Nm> operator + (const muse_amcl::math::Index<_Nm>& __one,
-                                               const muse_amcl::math::Index<_Nm>& __two)
+inline muse_mcl::math::Index<_Nm> operator + (const muse_mcl::math::Index<_Nm>& __one,
+                                               const muse_mcl::math::Index<_Nm>& __two)
 {
-    muse_amcl::math::Index<_Nm> __res;
+    muse_mcl::math::Index<_Nm> __res;
     for(std::size_t i = 0 ; i < _Nm; ++i)
         __res[i] = __one[i] + __two[i];
 
@@ -138,10 +138,10 @@ inline muse_amcl::math::Index<_Nm> operator + (const muse_amcl::math::Index<_Nm>
 }
 
 template<std::size_t _Nm>
-inline muse_amcl::math::Index<_Nm> operator - (const muse_amcl::math::Index<_Nm>& __idx,
+inline muse_mcl::math::Index<_Nm> operator - (const muse_mcl::math::Index<_Nm>& __idx,
                                                const int __scalar)
 {
-    muse_amcl::math::Index<_Nm> __res;
+    muse_mcl::math::Index<_Nm> __res;
     for(std::size_t i = 0 ; i < _Nm; ++i)
         __res[i] = __idx[i] - __scalar;
 
@@ -149,10 +149,10 @@ inline muse_amcl::math::Index<_Nm> operator - (const muse_amcl::math::Index<_Nm>
 }
 
 template<std::size_t _Nm>
-inline muse_amcl::math::Index<_Nm> operator + (const muse_amcl::math::Index<_Nm>& __idx,
+inline muse_mcl::math::Index<_Nm> operator + (const muse_mcl::math::Index<_Nm>& __idx,
                                                const int __scalar)
 {
-    muse_amcl::math::Index<_Nm> __res;
+    muse_mcl::math::Index<_Nm> __res;
     for(std::size_t i = 0 ; i < _Nm; ++i)
         __res[i] = __idx[i] + __scalar;
 

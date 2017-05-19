@@ -9,7 +9,7 @@
 
 #include <muse_amcl/utils/logger.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class UpdateModel {
 public:
     using Ptr = std::shared_ptr<UpdateModel>;
@@ -24,7 +24,7 @@ public:
 
     inline const static std::string Type()
     {
-        return "muse_amcl::UpdateModel";
+        return "muse_mcl::UpdateModel";
     }
 
     inline const std::string& getName() const

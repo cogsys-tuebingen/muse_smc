@@ -1,9 +1,9 @@
 #include "map_provider_binary_gridmap.h"
 
-using namespace muse_amcl;
+using namespace muse_mcl;
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_amcl::MapProviderBinaryGridMap, muse_amcl::MapProvider)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::MapProviderBinaryGridMap, muse_mcl::MapProvider)
 
 MapProviderBinaryGridMap::MapProviderBinaryGridMap() :
     loading_(false)

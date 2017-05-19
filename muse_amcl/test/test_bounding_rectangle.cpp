@@ -3,11 +3,11 @@
 #include <muse_amcl/math/bounding_rectangle.hpp>
 #include <tf/tf.h>
 
-using Point = muse_amcl::math::Point;
+using Point = muse_mcl::math::Point;
 using Points = std::array<Point,4> ;
 using Edge   = std::array<Point,2>;
 using Edges  = std::array<Edge, 4>;
-using BoundingRectangle = muse_amcl::math::BoundingRectangle;
+using BoundingRectangle = muse_mcl::math::BoundingRectangle;
 
 
 TEST(TestMuseAMCL, testBoundingRectangleConstructorMinMax)

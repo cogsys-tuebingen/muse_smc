@@ -6,7 +6,7 @@
 #include <muse_amcl/math/random.hpp>
 #include "arguments.hpp"
 
-namespace muse_amcl {
+namespace muse_mcl {
 namespace pose_generation {
 template<typename... Types>
 class Uniform {

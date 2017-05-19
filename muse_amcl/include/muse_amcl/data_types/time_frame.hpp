@@ -3,7 +3,7 @@
 
 #include <ros/time.h>
 
-namespace muse_amcl {
+namespace muse_mcl {
     struct TimeFrame {
         const ros::Time start;
         const ros::Time end;

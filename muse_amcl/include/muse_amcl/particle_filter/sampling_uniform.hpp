@@ -13,7 +13,7 @@
 
 #include <muse_amcl/utils/logger.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class UniformSampling {
 public:
     typedef std::shared_ptr<UniformSampling> Ptr;
@@ -30,7 +30,7 @@ public:
 
     inline const static std::string Type()
     {
-        return "muse_amcl::UniformPoseGeneration";
+        return "muse_mcl::UniformPoseGeneration";
     }
 
     inline std::string getName() const

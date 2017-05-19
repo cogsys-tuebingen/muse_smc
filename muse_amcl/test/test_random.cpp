@@ -5,7 +5,7 @@
 TEST(TestMuseAMCL, testRandomUniform1d)
 {
     const std::size_t N = 1e6;
-    muse_amcl::math::random::Uniform<1> u1D(-10.0, 10.0, 0);
+    muse_mcl::math::random::Uniform<1> u1D(-10.0, 10.0, 0);
 
     double mu = 0.0;
     std::vector<double> vs;
@@ -38,7 +38,7 @@ TEST(TestMuseAMCL, testRandomUniform1d)
 TEST(TestMuseAMCL, testRandomNormal1d)
 {
     const std::size_t N = 1e6;
-    muse_amcl::math::random::Normal<1> n1D(0.0, 1.0, 0);
+    muse_mcl::math::random::Normal<1> n1D(0.0, 1.0, 0);
 
     /// checking the interval values should be in relies on statistical propereties of
     /// gaussian distributions. we can assume that most of our generated values should be
@@ -72,10 +72,10 @@ TEST(TestMuseAMCL, testRandomNormal1d)
 TEST(TestMuseAMCL, testRandomUniform2d)
 {
     const std::size_t N = 1e7;
-    muse_amcl::math::random::Uniform<2> u2D({-10.,-10.},
+    muse_mcl::math::random::Uniform<2> u2D({-10.,-10.},
     {10., 10.},
                                             0);
-    muse_amcl::math::statistic::Distribution<2> distribution;
+    muse_mcl::math::statistic::Distribution<2> distribution;
     for(std::size_t i = 0 ; i < N ; ++i) {
         auto v = u2D.get();
         distribution.add(Eigen::Vector2d(v[0],v[1]));
@@ -108,12 +108,12 @@ TEST(TestMuseAMCL, testRandomNormal2d)
 
     const std::size_t N = 1e7;
     {
-        muse_amcl::math::statistic::Distribution<2> distribution;
+        muse_mcl::math::statistic::Distribution<2> distribution;
 
         const Eigen::Vector2d mu = Eigen::Vector2d(0.0, 0.0);
         const Eigen::Matrix2d sigma = createMatrix({1.0, 0.0, 0.0, 1.0});
 
-        muse_amcl::math::random::Normal<2> u2D(mu, sigma, 0);
+        muse_mcl::math::random::Normal<2> u2D(mu, sigma, 0);
         for(std::size_t i = 0 ; i < N ; ++i) {
             auto v = u2D.get();
             distribution.add(Eigen::Vector2d(v[0],v[1]));
@@ -136,13 +136,13 @@ TEST(TestMuseAMCL, testRandomNormal2d)
     }
 
     {
-        muse_amcl::math::statistic::Distribution<2> distribution;
+        muse_mcl::math::statistic::Distribution<2> distribution;
 
         const Eigen::Vector2d mu = Eigen::Vector2d(0.0, 0.0);
         const Eigen::Matrix2d sigma = createMatrix({1.0, 0.5, 0.5, 0.5});
 
         /// here we only check for resulting moments of the distribution
-        muse_amcl::math::random::Normal<2> u2D(mu, sigma, 0);
+        muse_mcl::math::random::Normal<2> u2D(mu, sigma, 0);
         for(std::size_t i = 0 ; i < N ; ++i) {
             auto v = u2D.get();
             distribution.add(Eigen::Vector2d(v[0],v[1]));
@@ -159,13 +159,13 @@ TEST(TestMuseAMCL, testRandomNormal2d)
     }
 
     {
-        muse_amcl::math::statistic::Distribution<2> distribution;
+        muse_mcl::math::statistic::Distribution<2> distribution;
 
         const Eigen::Vector2d mu = Eigen::Vector2d(0.0, 0.0);
         const Eigen::Matrix2d sigma = createMatrix({1.0, -0.5, -0.5, 0.5});
 
         /// here we only check for resulting moments of the distribution
-        muse_amcl::math::random::Normal<2> u2D(mu, sigma, 0);
+        muse_mcl::math::random::Normal<2> u2D(mu, sigma, 0);
         for(std::size_t i = 0 ; i < N ; ++i) {
             auto v = u2D.get();
             distribution.add(Eigen::Vector2d(v[0],v[1]));
@@ -183,13 +183,13 @@ TEST(TestMuseAMCL, testRandomNormal2d)
 
 
     {
-        muse_amcl::math::statistic::Distribution<2> distribution;
+        muse_mcl::math::statistic::Distribution<2> distribution;
 
         const Eigen::Vector2d mu = Eigen::Vector2d(1.0, 2.0);
         const Eigen::Matrix2d sigma = createMatrix({1.0, -0.5, -0.5, 0.5});
 
         /// here we only check for resulting moments of the distribution
-        muse_amcl::math::random::Normal<2> u2D(mu, sigma, 0);
+        muse_mcl::math::random::Normal<2> u2D(mu, sigma, 0);
         for(std::size_t i = 0 ; i < N ; ++i) {
             auto v = u2D.get();
             distribution.add(Eigen::Vector2d(v[0],v[1]));

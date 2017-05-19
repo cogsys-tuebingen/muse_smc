@@ -11,7 +11,7 @@
 #include <muse_amcl_core_plugins/maps_2d/distance_gridmap.h>
 
 
-namespace muse_amcl {
+namespace muse_mcl {
 class MapProviderDistanceGridMap : public MapProvider
 {
 public:

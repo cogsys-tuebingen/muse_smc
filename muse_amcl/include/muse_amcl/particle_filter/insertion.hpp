@@ -5,7 +5,7 @@
 #include <muse_amcl/utils/buffered_vector.hpp>
 #include <muse_amcl/utils/delegate.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 /**
  * @brief The Insertion class is used to fill up a particle set.
  *        The insertion object notifies usage and changes.

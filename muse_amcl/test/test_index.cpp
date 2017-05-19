@@ -1,7 +1,7 @@
 #include <muse_amcl/math/index.hpp>
 #include <gtest/gtest.h>
 
-using namespace muse_amcl::math;
+using namespace muse_mcl::math;
 
 TEST(TestMuseAMCL, testInit)
 {

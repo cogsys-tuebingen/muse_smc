@@ -8,7 +8,7 @@
 #include "test_map_provider.hpp"
 #include "test_uniform_all_maps_2d.hpp"
 
-using namespace muse_amcl;
+using namespace muse_mcl;
 
 
 TEST(TestMuseAMCLCorePlugins, testSamplingUniformAllMaps2D)
@@ -24,7 +24,7 @@ TEST(TestMuseAMCLCorePlugins, testSamplingUniformAllMaps2D)
     /// setup the sampler
     ros::NodeHandle nh_private("~");
     TestUniformAllMaps2D::Ptr  uniform2d(new TestUniformAllMaps2D);
-    std::map<std::string, muse_amcl::MapProvider::Ptr> map_providers;
+    std::map<std::string, muse_mcl::MapProvider::Ptr> map_providers;
 
     /// prepare the maps
     TestMap::Ptr map0(new TestMap("map0", math::Point(-1, -1), math::Point(1,1)));

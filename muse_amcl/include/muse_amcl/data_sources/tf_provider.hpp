@@ -8,7 +8,7 @@
 
 #include <muse_amcl/utils/logger.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class TFProvider {
 public:
     typedef std::shared_ptr<TFProvider> Ptr;

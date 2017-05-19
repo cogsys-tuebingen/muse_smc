@@ -16,7 +16,7 @@
 
 namespace cis = cslibs_indexed_storage;
 
-namespace muse_amcl {
+namespace muse_mcl {
 namespace clustering {
 
 template<typename Storage>
@@ -50,19 +50,19 @@ using ArrayPtr = std::shared_ptr<Array>;
 }
 
 
-muse_amcl::TestDistribution<3> test_distribution_a;
-muse_amcl::TestDistribution<3> test_distribution_b;
-std::vector<muse_amcl::Particle> test_samples;
+muse_mcl::TestDistribution<3> test_distribution_a;
+muse_mcl::TestDistribution<3> test_distribution_b;
+std::vector<muse_mcl::Particle> test_samples;
 
 
-muse_amcl::clustering::KDTreeBuffered  kdtree_buffered;
-muse_amcl::clustering::KDTree          kdtree;
-muse_amcl::clustering::Array           array;
+muse_mcl::clustering::KDTreeBuffered  kdtree_buffered;
+muse_mcl::clustering::KDTree          kdtree;
+muse_mcl::clustering::Array           array;
 Eigen::Vector3d max = Eigen::Vector3d::Constant(std::numeric_limits<double>::min());
 Eigen::Vector3d min = Eigen::Vector3d::Constant(std::numeric_limits<double>::max());
 
 
-namespace mms = muse_amcl::math::statistic;
+namespace mms = muse_mcl::math::statistic;
 
 
 TEST(TestMuseAMCL, testTestDistributionRead)
@@ -90,7 +90,7 @@ TEST(TestMuseAMCL, testTestDistributionRead)
 
     const double weight = 1.0 / 2000.0;
     for(auto &s : test_distribution_a.data) {
-        muse_amcl::Particle p(s, weight);
+        muse_mcl::Particle p(s, weight);
         test_samples.emplace_back(p);
         /// in search for the minimum
         for(std::size_t i = 0 ; i < 3 ; ++i) {
@@ -101,7 +101,7 @@ TEST(TestMuseAMCL, testTestDistributionRead)
         }
     }
     for(auto &s : test_distribution_b.data) {
-        muse_amcl::Particle p(s, weight);
+        muse_mcl::Particle p(s, weight);
         test_samples.emplace_back(p);
         /// in search for the minimum
         for(std::size_t i = 0 ; i < 3 ; ++i) {
@@ -119,9 +119,9 @@ TEST(TestMuseAMCL, createStorage)
 {
     /// bins of 10 by 10 cm and and angular resolution of 10 degrees
     /// unbuffered kdtree implementation
-    muse_amcl::Indexation index({0.1, 0.1, 1. / 18. * M_PI});
+    muse_mcl::Indexation index({0.1, 0.1, 1. / 18. * M_PI});
 
-    using Index = muse_amcl::Indexation::IndexType;
+    using Index = muse_mcl::Indexation::IndexType;
     using Size  = std::array<std::size_t, 3>;
 
     Index exp_min_index      = {{-2, -3, -11}};
@@ -148,19 +148,19 @@ TEST(TestMuseAMCL, createStorage)
     EXPECT_NO_FATAL_FAILURE(array.set<cis::option::tags::array_size>(size[0], size[1], size[2]));
     array.set<cis::option::tags::array_offset>(min_index[0], min_index[1], min_index[2]);
     kdtree_buffered.set<cis::option::tags::node_allocator_chunk_size>(2 * test_samples.size() + 1);
-    EXPECT_NO_FATAL_FAILURE(muse_amcl::clustering::create(index, test_samples, kdtree_buffered));
-    EXPECT_NO_FATAL_FAILURE(muse_amcl::clustering::create(index, test_samples, kdtree));
-    EXPECT_NO_FATAL_FAILURE(muse_amcl::clustering::create(index, test_samples, array));
+    EXPECT_NO_FATAL_FAILURE(muse_mcl::clustering::create(index, test_samples, kdtree_buffered));
+    EXPECT_NO_FATAL_FAILURE(muse_mcl::clustering::create(index, test_samples, kdtree));
+    EXPECT_NO_FATAL_FAILURE(muse_mcl::clustering::create(index, test_samples, array));
 }
 
 TEST(TestMuseAMCL, testClustering)
 {
-    muse_amcl::clustering::ClusteringImpl clusters_kdtree_buffered;
-    muse_amcl::clustering::ClusteringImpl clusters_kdtree;
-    muse_amcl::clustering::ClusteringImpl clusters_array;
-    EXPECT_NO_FATAL_FAILURE(muse_amcl::clustering::cluster(kdtree_buffered, clusters_kdtree_buffered));
-    EXPECT_NO_FATAL_FAILURE(muse_amcl::clustering::cluster(kdtree, clusters_kdtree));
-    EXPECT_NO_FATAL_FAILURE(muse_amcl::clustering::cluster(array,  clusters_array));
+    muse_mcl::clustering::ClusteringImpl clusters_kdtree_buffered;
+    muse_mcl::clustering::ClusteringImpl clusters_kdtree;
+    muse_mcl::clustering::ClusteringImpl clusters_array;
+    EXPECT_NO_FATAL_FAILURE(muse_mcl::clustering::cluster(kdtree_buffered, clusters_kdtree_buffered));
+    EXPECT_NO_FATAL_FAILURE(muse_mcl::clustering::cluster(kdtree, clusters_kdtree));
+    EXPECT_NO_FATAL_FAILURE(muse_mcl::clustering::cluster(array,  clusters_array));
 
     EXPECT_EQ(2, clusters_kdtree_buffered.clusters_.size());
     EXPECT_EQ(2, clusters_kdtree.clusters_.size());
@@ -172,11 +172,11 @@ TEST(TestMuseAMCL, testClustering)
     /// kdtree buffered :
     {
         mms::Distribution<3> distribution_kdtree_buffered_a;
-        for(const muse_amcl::Particle *p : clusters_kdtree_buffered.clusters_[0]) {
+        for(const muse_mcl::Particle *p : clusters_kdtree_buffered.clusters_[0]) {
             distribution_kdtree_buffered_a.add(p->pose_.getEigen3D());
         }
         mms::Distribution<3> distribution_kdtree_buffered_b;
-        for(const muse_amcl::Particle *p : clusters_kdtree_buffered.clusters_[1]) {
+        for(const muse_mcl::Particle *p : clusters_kdtree_buffered.clusters_[1]) {
             distribution_kdtree_buffered_b.add(p->pose_.getEigen3D());
         }
 
@@ -250,11 +250,11 @@ TEST(TestMuseAMCL, testClustering)
     /// kdtree :
     {
         mms::Distribution<3> distribution_kdtree_a;
-        for(const muse_amcl::Particle *p : clusters_kdtree.clusters_[0]) {
+        for(const muse_mcl::Particle *p : clusters_kdtree.clusters_[0]) {
             distribution_kdtree_a.add(p->pose_.getEigen3D());
         }
         mms::Distribution<3> distribution_kdtree_b;
-        for(const muse_amcl::Particle *p : clusters_kdtree.clusters_[1]) {
+        for(const muse_mcl::Particle *p : clusters_kdtree.clusters_[1]) {
             distribution_kdtree_b.add(p->pose_.getEigen3D());
         }
 
@@ -328,11 +328,11 @@ TEST(TestMuseAMCL, testClustering)
     /// array :
     {
         mms::Distribution<3> distribution_array_a;
-        for(const muse_amcl::Particle *p : clusters_array.clusters_[0]) {
+        for(const muse_mcl::Particle *p : clusters_array.clusters_[0]) {
             distribution_array_a.add(p->pose_.getEigen3D());
         }
         mms::Distribution<3> distribution_array_b;
-        for(const muse_amcl::Particle *p : clusters_array.clusters_[1]) {
+        for(const muse_mcl::Particle *p : clusters_array.clusters_[1]) {
             distribution_array_b.add(p->pose_.getEigen3D());
         }
 

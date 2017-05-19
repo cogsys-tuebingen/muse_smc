@@ -1,9 +1,9 @@
 #include "map_provider_distance_gridmap.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_amcl::MapProviderDistanceGridMap, muse_amcl::MapProvider)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::MapProviderDistanceGridMap, muse_mcl::MapProvider)
 
-using namespace muse_amcl;
+using namespace muse_mcl;
 
 MapProviderDistanceGridMap::MapProviderDistanceGridMap() :
     loading_(false)

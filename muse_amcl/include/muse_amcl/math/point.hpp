@@ -4,7 +4,7 @@
 #include <eigen3/Eigen/Core>
 #include <tf/tf.h>
 
-namespace muse_amcl {
+namespace muse_mcl {
 namespace math {
 /**
  * @brief The Point class is an adapter class for Eigen and tf types.
@@ -193,10 +193,10 @@ public:
 }
 }
 
-inline muse_amcl::math::Point operator * (const muse_amcl::math::Point &p,
+inline muse_mcl::math::Point operator * (const muse_mcl::math::Point &p,
                                           const tf::Transform &t)
 {
-    return muse_amcl::math::Point(t * p);
+    return muse_mcl::math::Point(t * p);
 }
 
 #endif /* POINT_HPP */

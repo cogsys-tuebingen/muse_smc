@@ -3,8 +3,8 @@
 
 #include <muse_amcl/data_types/map.hpp>
 
-namespace muse_amcl {
-class TestMap : public muse_amcl::Map
+namespace muse_mcl {
+class TestMap : public muse_mcl::Map
 {
 public:
     TestMap(const std::string &frame,

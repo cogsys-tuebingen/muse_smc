@@ -15,7 +15,7 @@
 #include <muse_amcl_core_plugins/maps_2d/binary_gridmap.h>
 #include <muse_amcl/ParticleSetMsg.h>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class GridmapTestNode {
 public:
     GridmapTestNode() :
@@ -79,7 +79,7 @@ private:
     ros::ServiceClient                  map_client_;
     tf::TransformListener               tf_;
 
-    muse_amcl::maps::BinaryGridMap::Ptr gridmap_;
+    muse_mcl::maps::BinaryGridMap::Ptr gridmap_;
 
     cv::Mat                             rendered_map_;
     cv::Mat                             rendered_scan_;
@@ -95,7 +95,7 @@ private:
     double                              maximum_range_;
     double                              angular_resolution_;
 
-    void particles(const muse_amcl::ParticleSetMsg::ConstPtr &particles)
+    void particles(const muse_mcl::ParticleSetMsg::ConstPtr &particles)
     {
         if(gridmap_) {
             std::array<int, 2> index;
@@ -115,7 +115,7 @@ private:
             tf_.lookupTransform("/world", "/map",particles->header.stamp, map_T_world);
 
             std::size_t i = 0 ;
-            for(const muse_amcl::ParticleMsg &p : particles->particles) {
+            for(const muse_mcl::ParticleMsg &p : particles->particles) {
                 tf::Pose      pose;
                 tf::poseMsgToTF(p.pose, pose);
 
@@ -273,9 +273,9 @@ int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "muse_amcl_test_gridmap");
 
-    muse_amcl::GridmapTestNode gtn;
-    muse_amcl::Window window_map("map");
-    //  muse_amcl::Window window_weights("weights");
+    muse_mcl::GridmapTestNode gtn;
+    muse_mcl::Window window_map("map");
+    //  muse_mcl::Window window_weights("weights");
     while(ros::ok()) {
         ros::spinOnce();
 

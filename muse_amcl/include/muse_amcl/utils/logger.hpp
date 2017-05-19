@@ -11,7 +11,7 @@
 #include <condition_variable>
 #include <queue>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class Logger {
 public:
     enum Level {NONE = -1, ALL = 0, WARN = 1, ERROR = 2};

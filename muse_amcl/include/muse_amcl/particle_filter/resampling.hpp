@@ -11,7 +11,7 @@
 #include <tf/transform_listener.h>
 #include <ros/node_handle.h>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class Resampling {
 public:
     typedef std::shared_ptr<Resampling> Ptr;
@@ -30,7 +30,7 @@ public:
 
     inline const static std::string Type()
     {
-        return "muse_amcl::Resampling";
+        return "muse_mcl::Resampling";
     }
 
     inline std::string getName() const

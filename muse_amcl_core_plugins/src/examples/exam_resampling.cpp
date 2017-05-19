@@ -12,15 +12,15 @@
 #include <iostream>
 #include <vector>
 
-struct TestUniformAllMaps2D : public muse_amcl::UniformAllMaps2D
+struct TestUniformAllMaps2D : public muse_mcl::UniformAllMaps2D
 {
-    virtual void apply(muse_amcl::Particle &particle) override
+    virtual void apply(muse_mcl::Particle &particle) override
     {
 
     }
 };
 
-struct TestMultinomial : public muse_amcl::Multinomial
+struct TestMultinomial : public muse_mcl::Multinomial
 {
     TestMultinomial()
     {
@@ -29,7 +29,7 @@ struct TestMultinomial : public muse_amcl::Multinomial
 
 };
 
-struct TestStratified : public muse_amcl::Stratified
+struct TestStratified : public muse_mcl::Stratified
 {
     TestStratified()
     {
@@ -37,7 +37,7 @@ struct TestStratified : public muse_amcl::Stratified
     }
 };
 
-struct TestSystematic : public muse_amcl::Systematic
+struct TestSystematic : public muse_mcl::Systematic
 {
     TestSystematic()
     {
@@ -45,7 +45,7 @@ struct TestSystematic : public muse_amcl::Systematic
     }
 };
 
-struct TestResidual : public muse_amcl::Residual
+struct TestResidual : public muse_mcl::Residual
 {
     TestResidual()
     {
@@ -53,7 +53,7 @@ struct TestResidual : public muse_amcl::Residual
     }
 };
 
-struct TestKLD2D : public muse_amcl::KLD2D
+struct TestKLD2D : public muse_mcl::KLD2D
 {
     TestKLD2D()
     {
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
     const std::size_t size = 10;
     {
         std::cout << "multimodal: " << std::endl;
-        muse_amcl::math::random::Uniform<1> rng(0.0, 1.0);
+        muse_mcl::math::random::Uniform<1> rng(0.0, 1.0);
         std::size_t k = size;
         std::vector<double> u(size, std::pow(rng.get(), 1.0 / k));
         {
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
     {
         std::cout << "stratified: " << std::endl;
         std::vector<double> u(size);
-        muse_amcl::math::random::Uniform<1> rng(0.0, 1.0);
+        muse_mcl::math::random::Uniform<1> rng(0.0, 1.0);
         for(std::size_t i = 0 ; i < size ; ++i) {
             u[i] = (i + rng.get()) / size;
             std::cout << u[i] << " ";
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
     {
         std::cout << "systematic: " << std::endl;
         std::vector<double> u(size);
-        muse_amcl::math::random::Uniform<1> rng(0.0, 1.0);
+        muse_mcl::math::random::Uniform<1> rng(0.0, 1.0);
         double u_static = rng.get();
         for(std::size_t i = 0 ; i < size ; ++i) {
             u[i] = (i + u_static) / size;
@@ -111,16 +111,16 @@ int main(int argc, char *argv[])
     }
 
     /// test resampling
-    muse_amcl::Indexation index({0.1, 0.1, 1./18. * M_PI});
-    muse_amcl::ParticleSet set("frame", 10, index);
+    muse_mcl::Indexation index({0.1, 0.1, 1./18. * M_PI});
+    muse_mcl::ParticleSet set("frame", 10, index);
     {
-        muse_amcl::Insertion insert = set.getInsertion();
+        muse_mcl::Insertion insert = set.getInsertion();
         for(std::size_t i = 0 ; i < size ; ++i)
-            insert.insert(muse_amcl::Particle());
+            insert.insert(muse_mcl::Particle());
         insert.close();
 
         /// random weights for the particles
-        muse_amcl::math::random::Uniform<1> rng(0.0, 1.0);
+        muse_mcl::math::random::Uniform<1> rng(0.0, 1.0);
         for(auto &w : set.getWeights()) {
             w = rng.get();
         }
@@ -131,13 +131,13 @@ int main(int argc, char *argv[])
     }
     {
         /// multinomial
-        muse_amcl::ParticleSet ps_copy("frame", 10, index);
+        muse_mcl::ParticleSet ps_copy("frame", 10, index);
         auto insertion = ps_copy.getInsertion();
         for(const auto &p : set.getSamples())
             insertion.insert(p);
         insertion.close();
 
-        muse_amcl::Multinomial m;
+        muse_mcl::Multinomial m;
         m.apply(ps_copy);
         std::cout << "multinomial particle set" << std::endl;
         for(const auto &p : ps_copy.getSamples()) {
@@ -147,13 +147,13 @@ int main(int argc, char *argv[])
     }
     {
         /// stratified
-        muse_amcl::ParticleSet ps_copy("frame", 10, index);
+        muse_mcl::ParticleSet ps_copy("frame", 10, index);
         auto insertion = ps_copy.getInsertion();
         for(const auto &p : set.getSamples())
             insertion.insert(p);
         insertion.close();
 
-        muse_amcl::Stratified m;
+        muse_mcl::Stratified m;
         m.apply(ps_copy);
         std::cout << "stratified particle set" << std::endl;
         for(const auto &p : ps_copy.getSamples()) {
@@ -163,13 +163,13 @@ int main(int argc, char *argv[])
     }
     {
         /// systematic
-        muse_amcl::ParticleSet ps_copy("frame", 10, index);
+        muse_mcl::ParticleSet ps_copy("frame", 10, index);
         auto insertion = ps_copy.getInsertion();
         for(const auto &p : set.getSamples())
             insertion.insert(p);
         insertion.close();
 
-        muse_amcl::Systematic m;
+        muse_mcl::Systematic m;
         m.apply(ps_copy);
         std::cout << "systematic particle set" << std::endl;
         for(const auto &p : ps_copy.getSamples()) {
@@ -179,13 +179,13 @@ int main(int argc, char *argv[])
     }
     {
         /// residual
-        muse_amcl::ParticleSet ps_copy("frame", 10, index);
+        muse_mcl::ParticleSet ps_copy("frame", 10, index);
         auto insertion = ps_copy.getInsertion();
         for(const auto &p : set.getSamples())
             insertion.insert(p);
         insertion.close();
 
-        muse_amcl::Residual m;
+        muse_mcl::Residual m;
         m.apply(ps_copy);
         std::cout << "residual particle set" << std::endl;
         for(const auto &p : ps_copy.getSamples()) {
@@ -196,7 +196,7 @@ int main(int argc, char *argv[])
     {
         /// kld 2D
         /// residual
-        muse_amcl::ParticleSet ps_copy("frame", 10, 20, index);
+        muse_mcl::ParticleSet ps_copy("frame", 10, 20, index);
         auto insertion = ps_copy.getInsertion();
         for(const auto &p : set.getSamples())
             insertion.insert(p);
@@ -216,13 +216,13 @@ int main(int argc, char *argv[])
     {
         /// wheel of fortune
 
-        muse_amcl::ParticleSet ps_copy("frame", 10, index);
+        muse_mcl::ParticleSet ps_copy("frame", 10, index);
         auto insertion = ps_copy.getInsertion();
         for(const auto &p : set.getSamples())
             insertion.insert(p);
         insertion.close();
 
-        muse_amcl::WheelOfFortune m;
+        muse_mcl::WheelOfFortune m;
         m.apply(ps_copy);
         std::cout << "wheel of fortune particle set" << std::endl;
         for(const auto &p : ps_copy.getSamples()) {

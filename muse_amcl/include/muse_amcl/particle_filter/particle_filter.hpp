@@ -24,7 +24,7 @@
 #include <queue>
 #include <condition_variable>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class ParticleFilter {
 public:
     using Ptr = std::shared_ptr<ParticleFilter>;

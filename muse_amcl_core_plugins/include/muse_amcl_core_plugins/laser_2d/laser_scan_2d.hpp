@@ -4,8 +4,8 @@
 #include <muse_amcl/math/point.hpp>
 #include <muse_amcl/data_types/data.hpp>
 
-namespace muse_amcl {
-class LaserScan2D : public muse_amcl::Data
+namespace muse_mcl {
+class LaserScan2D : public muse_mcl::Data
 {
 public:
     struct Ray {

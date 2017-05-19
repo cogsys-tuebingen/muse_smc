@@ -6,7 +6,7 @@
 #include "plugin_manager.hpp"
 #include <muse_amcl/utils/logger.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 template<typename PluginType, typename ... Arguments>
 class PluginFactory {
 public:

@@ -11,7 +11,7 @@
 #include <condition_variable>
 #include <queue>
 
-namespace muse_amcl {
+namespace muse_mcl {
 template<typename ... Types>
 class FilterStateLogger {
 public:

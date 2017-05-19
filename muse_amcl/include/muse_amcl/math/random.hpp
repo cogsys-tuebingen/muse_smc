@@ -8,7 +8,7 @@
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Eigen>
 
-namespace muse_amcl {
+namespace muse_mcl {
 namespace math {
 namespace random {
 

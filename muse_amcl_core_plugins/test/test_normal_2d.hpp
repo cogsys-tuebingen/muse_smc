@@ -3,7 +3,7 @@
 
 #include "../src/sampling/normal_2d.h"
 
-namespace muse_amcl {
+namespace muse_mcl {
 /**
  * @brief The purpose TestNormal2D struct is to give constant
  *        access to member fields for testing.

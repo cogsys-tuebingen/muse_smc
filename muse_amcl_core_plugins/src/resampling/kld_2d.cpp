@@ -1,10 +1,10 @@
 #include "kld_2d.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_amcl::KLD2D, muse_amcl::Resampling)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::KLD2D, muse_mcl::Resampling)
 
 
-using namespace muse_amcl;
+using namespace muse_mcl;
 
 void KLD2D::doApply(ParticleSet &particle_set)
 {

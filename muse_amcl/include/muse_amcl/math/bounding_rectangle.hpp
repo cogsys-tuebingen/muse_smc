@@ -4,7 +4,7 @@
 #include "point.hpp"
 #include <array>
 
-namespace muse_amcl {
+namespace muse_mcl {
 namespace math {
 class BoundingRectangle {
 public:
@@ -310,10 +310,10 @@ private:
  * @brief operator * transforms the bounding rectangle and returns a new instance.
  * @param transform - transformation to apply
  */
-inline muse_amcl::math::BoundingRectangle operator * (const tf::Transform &transform ,
-                                                      const muse_amcl::math::BoundingRectangle &bb)
+inline muse_mcl::math::BoundingRectangle operator * (const tf::Transform &transform ,
+                                                      const muse_mcl::math::BoundingRectangle &bb)
 {
-    return muse_amcl::math::BoundingRectangle(bb, transform);
+    return muse_mcl::math::BoundingRectangle(bb, transform);
 }
 
 

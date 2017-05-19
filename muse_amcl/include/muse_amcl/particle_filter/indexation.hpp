@@ -7,7 +7,7 @@
 #include <muse_amcl/particle_filter/particle.hpp>
 #include <muse_amcl/math/index.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class Indexation {
     /// @todo: get to Nd
 public:

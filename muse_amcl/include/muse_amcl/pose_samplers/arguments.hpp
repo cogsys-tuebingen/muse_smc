@@ -6,7 +6,7 @@
 #include <array>
 #include <typeinfo>
 
-namespace muse_amcl {
+namespace muse_mcl {
 namespace pose_generation {
 /**
  * @brief The Radian struct represents a semantic type,

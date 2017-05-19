@@ -9,7 +9,7 @@
 
 #include "bresenham.hpp"
 
-namespace muse_amcl {
+namespace muse_mcl {
 namespace maps {
 template<typename T>
 class GridMap : public Map

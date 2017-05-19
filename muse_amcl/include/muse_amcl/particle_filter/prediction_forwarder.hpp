@@ -4,7 +4,7 @@
 #include "prediction.hpp"
 #include "particle_filter.hpp"
 
-namespace muse_amcl  {
+namespace muse_mcl  {
 class PredictionForwarder {
 public:
     using Ptr = std::shared_ptr<PredictionForwarder>;

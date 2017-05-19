@@ -3,7 +3,7 @@
 
 #include "../src/sampling/uniform_primary_map_2d.h"
 
-namespace muse_amcl {
+namespace muse_mcl {
 /**
  * @brief The purpose TestUniformPrimary2D struct is to give constant
  *        access to member fields for testing.

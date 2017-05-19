@@ -2,7 +2,7 @@
 #include "gridmap.hpp"
 #include <nav_msgs/OccupancyGrid.h>
 
-namespace muse_amcl {
+namespace muse_mcl {
 namespace maps {
 class BinaryGridMap : public GridMap<int8_t>
 {

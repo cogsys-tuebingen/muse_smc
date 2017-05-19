@@ -1,25 +1,25 @@
 #include "normal_2d.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_amcl::Normal2D, muse_amcl::NormalSampling)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::Normal2D, muse_mcl::NormalSampling)
 
 #include <ros/time.h>
 #include <muse_amcl/pose_samplers/normal.hpp>
 
-using namespace muse_amcl;
+using namespace muse_mcl;
 
-using Metric              = muse_amcl::pose_generation::Metric;
-using Radian              = muse_amcl::pose_generation::Radian;
-using RandomPoseGenerator = muse_amcl::pose_generation::Normal<Metric, Metric, Radian>;
+using Metric              = muse_mcl::pose_generation::Metric;
+using Radian              = muse_mcl::pose_generation::Radian;
+using RandomPoseGenerator = muse_mcl::pose_generation::Normal<Metric, Metric, Radian>;
 
 
 void Normal2D::update(const std::string &frame)
 {
     const ros::Time   now   = ros::Time::now();
 
-    muse_amcl::math::Point min(std::numeric_limits<double>::max(),
+    muse_mcl::math::Point min(std::numeric_limits<double>::max(),
                                std::numeric_limits<double>::max());
-    muse_amcl::math::Point max(std::numeric_limits<double>::lowest(),
+    muse_mcl::math::Point max(std::numeric_limits<double>::lowest(),
                                std::numeric_limits<double>::lowest());
 
     for(auto &m : map_providers_) {

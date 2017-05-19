@@ -1,9 +1,9 @@
 #include "map_provider_probability_gridmap_service.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_amcl::MapProviderProbabilityGridMapService, muse_amcl::MapProvider)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::MapProviderProbabilityGridMapService, muse_mcl::MapProvider)
 
-using namespace muse_amcl;
+using namespace muse_mcl;
 
 MapProviderProbabilityGridMapService::MapProviderProbabilityGridMapService() :
     loading_(false)

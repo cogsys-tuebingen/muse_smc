@@ -18,7 +18,7 @@
 #include <cslibs_indexed_storage/backend/array/array.hpp>
 #include <cslibs_indexed_storage/backend/kdtree/kdtree_buffered.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class ParticleSet {
 public:
     /// typedefs :

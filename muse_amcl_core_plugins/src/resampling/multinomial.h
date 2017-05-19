@@ -3,7 +3,7 @@
 
 #include <muse_amcl/particle_filter/resampling.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class Multinomial : public Resampling
 {
 public:

@@ -1,11 +1,11 @@
 #include "stratified.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_amcl::Stratified, muse_amcl::Resampling)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::Stratified, muse_mcl::Resampling)
 
 #include <muse_amcl/math/random.hpp>
 
-using namespace muse_amcl;
+using namespace muse_mcl;
 
 
 void Stratified::doSetup(ros::NodeHandle &nh_private)

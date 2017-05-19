@@ -13,7 +13,7 @@
 #include <muse_amcl/utils/delegate.hpp>
 #include <muse_amcl/utils/logger.hpp>
 
-namespace muse_amcl
+namespace muse_mcl
 {
 
 template <class M>

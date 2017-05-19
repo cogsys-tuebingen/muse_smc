@@ -4,9 +4,9 @@
 #include <muse_amcl/math/angle.hpp>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_amcl::DifferentialDrive, muse_amcl::PredictionModel)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::DifferentialDrive, muse_mcl::PredictionModel)
 
-using namespace muse_amcl;
+using namespace muse_mcl;
 
 DifferentialDrive::DifferentialDrive()
 {

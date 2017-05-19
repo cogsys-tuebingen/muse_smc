@@ -9,7 +9,7 @@
 #include <eigen3/Eigen/Eigen>
 #include <iostream>
 
-namespace muse_amcl {
+namespace muse_mcl {
 namespace math {
 namespace statistic {
 template<std::size_t Dim, bool limit_covariance = false>

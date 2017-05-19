@@ -30,12 +30,12 @@ int main(int argc, char *argv[])
                 cv::circle(display, e, 2, cv::Scalar(255,255),CV_FILLED, CV_AA);
                 mask.at<uchar>(e.y, e.x) = 255;
 
-                muse_amcl::maps::Bresenham<uchar> it({s.x, s.y},
+                muse_mcl::maps::Bresenham<uchar> it({s.x, s.y},
                                                      {e.x,e.y},
                                                      {mask.cols, mask.rows},
                                                      mask.ptr<uchar>() );
 
-                muse_amcl::maps::Bresenham<uchar> const_it({s.x, s.y},
+                muse_mcl::maps::Bresenham<uchar> const_it({s.x, s.y},
                                                            {e.x,e.y},
                                                            {mask.cols, mask.rows},
                                                            mask.ptr<uchar>() );

@@ -4,10 +4,10 @@
 
 #include <gtest/gtest.h>
 
-using Metric    = muse_amcl::pose_generation::Metric;
-using Radian    = muse_amcl::pose_generation::Radian;
-using Normal2D  = muse_amcl::pose_generation::Normal<Metric, Metric, Radian>;
-using Uniform2D = muse_amcl::pose_generation::Uniform<Metric, Metric, Radian>;
+using Metric    = muse_mcl::pose_generation::Metric;
+using Radian    = muse_mcl::pose_generation::Radian;
+using Normal2D  = muse_mcl::pose_generation::Normal<Metric, Metric, Radian>;
+using Uniform2D = muse_mcl::pose_generation::Uniform<Metric, Metric, Radian>;
 
 TEST(TestMuseAMCL, testPoseSamplingNormal2D)
 {
@@ -17,7 +17,7 @@ TEST(TestMuseAMCL, testPoseSamplingNormal2D)
     Eigen::Matrix3d sigma = Eigen::Matrix3d::Identity() * 0.5;
     Normal2D normal(mu, sigma);
 
-    muse_amcl::math::statistic::Distribution<3> distribution;
+    muse_mcl::math::statistic::Distribution<3> distribution;
     for(std::size_t i = 0 ; i < N ; ++i) {
         Eigen::Vector3d pose = normal.get();
         distribution.add(pose);
@@ -41,7 +41,7 @@ TEST(TestMuseAMCL, testPoseSamplingUniform2D)
     Uniform2D uniform({-10.,-10.,  0},
                        {10., 10.,  2 * M_PI}, 0);
 
-    muse_amcl::math::statistic::Distribution<3> distribution;
+    muse_mcl::math::statistic::Distribution<3> distribution;
     for(std::size_t i = 0 ; i < N ; ++i) {
         Eigen::Vector3d pose = uniform.get();
         EXPECT_LE(-10.0, pose(0));

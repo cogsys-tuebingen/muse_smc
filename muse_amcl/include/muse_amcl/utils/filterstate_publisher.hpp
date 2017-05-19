@@ -12,7 +12,7 @@
 #include <muse_amcl/particle_filter/particle_set.hpp>
 #include <muse_amcl/ParticleSetMsg.h>
 
-namespace muse_amcl {
+namespace muse_mcl {
 namespace color {
 #define __HSV2RGB__(H, S, V, R, G, B) \
     { \
@@ -76,7 +76,7 @@ public:
     {
         pub_markers_   = nh_private_.advertise<visualization_msgs::MarkerArray>("/muse_amcl/markers", 1);
         pub_poses_     = nh_private_.advertise<geometry_msgs::PoseArray>("/muse_amcl/poses", 1);
-        pub_particles_ = nh_private_.advertise<muse_amcl::ParticleSetMsg>("/muse_amcl/particles", 1);
+        pub_particles_ = nh_private_.advertise<muse_mcl::ParticleSetMsg>("/muse_amcl/particles", 1);
         worker_thread_ = std::thread([this]{loop();});
         worker_thread_.detach();
     }

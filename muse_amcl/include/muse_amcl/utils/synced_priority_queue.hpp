@@ -7,7 +7,7 @@
 #include <condition_variable>
 #include <atomic>
 
-namespace muse_amcl {
+namespace muse_mcl {
 template<typename T, typename Comparator>
 class SyncedPriorityQueue
 {

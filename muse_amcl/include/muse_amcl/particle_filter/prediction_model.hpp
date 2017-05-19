@@ -8,7 +8,7 @@
 #include <muse_amcl/utils/logger.hpp>
 #include <memory>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class PredictionModel {
 public:
     using Ptr = std::shared_ptr<PredictionModel>;
@@ -63,7 +63,7 @@ public:
 
     inline static const std::string Type()
     {
-        return "muse_amcl::PredictionModel";
+        return "muse_mcl::PredictionModel";
     }
 
     inline const std::string& getName() const

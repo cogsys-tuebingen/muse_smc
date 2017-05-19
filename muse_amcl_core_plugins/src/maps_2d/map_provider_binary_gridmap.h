@@ -11,7 +11,7 @@
 #include <muse_amcl_core_plugins/maps_2d/binary_gridmap.h>
 
 
-namespace muse_amcl {
+namespace muse_mcl {
 class MapProviderBinaryGridMap : public MapProvider
 {
 public:

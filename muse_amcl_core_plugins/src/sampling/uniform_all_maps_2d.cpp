@@ -1,13 +1,13 @@
 #include "uniform_all_maps_2d.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_amcl::UniformAllMaps2D, muse_amcl::UniformSampling)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::UniformAllMaps2D, muse_mcl::UniformSampling)
 
 
 #include <tf/tf.h>
 #include <eigen3/Eigen/Core>
 
-using namespace muse_amcl;
+using namespace muse_mcl;
 
 UniformAllMaps2D::UniformAllMaps2D()
 {
@@ -17,9 +17,9 @@ bool UniformAllMaps2D::update(const std::string &frame)
 {
     const ros::Time   now   = ros::Time::now();
 
-    muse_amcl::math::Point min(std::numeric_limits<double>::max(),
+    muse_mcl::math::Point min(std::numeric_limits<double>::max(),
                                std::numeric_limits<double>::max());
-    muse_amcl::math::Point max(std::numeric_limits<double>::lowest(),
+    muse_mcl::math::Point max(std::numeric_limits<double>::lowest(),
                                std::numeric_limits<double>::lowest());
 
     const std::size_t map_provider_count = map_providers_.size();

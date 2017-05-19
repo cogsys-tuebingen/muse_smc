@@ -8,7 +8,7 @@
 #include <queue>
 #include <array>
 
-namespace muse_amcl {
+namespace muse_mcl {
 namespace maps {
 namespace distance_transform {
 class Kernel {

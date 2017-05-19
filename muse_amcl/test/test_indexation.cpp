@@ -1,7 +1,7 @@
 #include <muse_amcl/particle_filter/indexation.hpp>
 #include <gtest/gtest.h>
 
-using namespace muse_amcl;
+using namespace muse_mcl;
 
 TEST(TestMuseAMCL, testResolution)
 {

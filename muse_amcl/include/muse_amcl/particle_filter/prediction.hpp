@@ -6,7 +6,7 @@
 #include <muse_amcl/particle_filter/particle_set.hpp>
 #include <muse_amcl/particle_filter/prediction_model.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class Prediction {
 public:
     using Ptr = std::shared_ptr<Prediction>;

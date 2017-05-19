@@ -3,7 +3,7 @@
 
 #include <eigen3/Eigen/Core>
 
-namespace muse_amcl {
+namespace muse_mcl {
 namespace math {
 /**
  * @brief The Covariance class is a helper class for representing

@@ -4,7 +4,7 @@
 #include <muse_amcl/utils/buffered_vector.hpp>
 #include <muse_amcl/utils/delegate.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 /**
  * @brief The MemberIterator class is used to make a certain member of a data
  *        class available, whereas the full data entry can only be accessed by

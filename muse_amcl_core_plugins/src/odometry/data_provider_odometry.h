@@ -5,8 +5,8 @@
 
 #include <muse_amcl/data_sources/data_provider.hpp>
 
-namespace muse_amcl {
-class DataProviderOdometry  : public muse_amcl::DataProvider
+namespace muse_mcl {
+class DataProviderOdometry  : public muse_mcl::DataProvider
 {
 public:
     DataProviderOdometry() = default;

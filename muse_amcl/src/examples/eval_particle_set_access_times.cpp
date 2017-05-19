@@ -4,7 +4,7 @@
 
 double sum_x = 0.0;
 
-void states(muse_amcl::ParticleSet& set)
+void states(muse_mcl::ParticleSet& set)
 {
     for(auto &state : set.getPoses()) {
         state.x() = 1.f;
@@ -12,7 +12,7 @@ void states(muse_amcl::ParticleSet& set)
 
 }
 
-void weights(muse_amcl::ParticleSet &set)
+void weights(muse_mcl::ParticleSet &set)
 {
     std::size_t iteration = 0;
     for(auto &weight : set.getWeights()) {
@@ -20,7 +20,7 @@ void weights(muse_amcl::ParticleSet &set)
     }
 }
 
-void particle(muse_amcl::ParticleSet &set)
+void particle(muse_mcl::ParticleSet &set)
 {
     std::size_t pos = 0;
     for(auto &p : set.getSamples()) {
@@ -33,16 +33,16 @@ void particle(muse_amcl::ParticleSet &set)
     }
 }
 
-void weight_const_state(muse_amcl::ParticleSet &set)
+void weight_const_state(muse_mcl::ParticleSet &set)
 {
     auto weights = set.getWeights();
-    for(muse_amcl::ParticleSet::Weights::iterator it = weights.begin() ; it != weights.end() ; ++it) {
+    for(muse_mcl::ParticleSet::Weights::iterator it = weights.begin() ; it != weights.end() ; ++it) {
         const auto &particle = it.getData();
         *it = 0.5;
     }
 }
 
-void state_const_weight(muse_amcl::ParticleSet &set)
+void state_const_weight(muse_mcl::ParticleSet &set)
 {
     auto poses = set.getPoses();
     for(auto it = poses.begin() ; it != poses.end() ; ++it) {
@@ -56,12 +56,12 @@ int main(int argc, char *argv[])
 
     const std::size_t iterations = 1;
 
-    muse_amcl::Indexation indexation ({0.1, 0.1, 1./18. * M_PI});
+    muse_mcl::Indexation indexation ({0.1, 0.1, 1./18. * M_PI});
 
-    muse_amcl::ParticleSet particles("frame", 500000, indexation);
+    muse_mcl::ParticleSet particles("frame", 500000, indexation);
     auto in = particles.getInsertion();
     while(in.canInsert()) {
-        in.insert(muse_amcl::Particle());
+        in.insert(muse_mcl::Particle());
     }
     in.close();
 

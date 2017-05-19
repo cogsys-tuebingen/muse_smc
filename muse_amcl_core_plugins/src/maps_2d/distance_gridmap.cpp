@@ -2,7 +2,7 @@
 #include <muse_amcl_core_plugins/maps_2d/distance_transform.hpp>
 #include <tf/tf.h>
 
-using namespace muse_amcl;
+using namespace muse_mcl;
 using namespace maps;
 
 DistanceGridMap::DistanceGridMap(const nav_msgs::OccupancyGrid &occupancy_grid,

@@ -10,18 +10,18 @@
 
 #include "test_distribution.hpp"
 
-muse_amcl::TestDistribution<3> test_distribution_a;
-muse_amcl::TestDistribution<3> test_distribution_b;
-std::vector<muse_amcl::Particle> test_samples;
+muse_mcl::TestDistribution<3> test_distribution_a;
+muse_mcl::TestDistribution<3> test_distribution_b;
+std::vector<muse_mcl::Particle> test_samples;
 
-using namespace muse_amcl;
+using namespace muse_mcl;
 using KDTreeBuffered = cis::Storage<clustering::Data, Indexation::IndexType::Base, cis::backend::kdtree::KDTreeBuffered>;
 using Array  = cis::Storage<clustering::Data, Indexation::IndexType::Base, cis::backend::array::Array>;
 Eigen::Vector3d max = Eigen::Vector3d::Constant(std::numeric_limits<double>::min());
 Eigen::Vector3d min = Eigen::Vector3d::Constant(std::numeric_limits<double>::max());
 
 
-namespace mms = muse_amcl::math::statistic;
+namespace mms = muse_mcl::math::statistic;
 
 
 TEST(TestMuseAMCL, testTestDistributionRead)
@@ -49,7 +49,7 @@ TEST(TestMuseAMCL, testTestDistributionRead)
 
     const double weight = 1.0 / 2000.0;
     for(auto &s : test_distribution_a.data) {
-        muse_amcl::Particle p(s, weight);
+        muse_mcl::Particle p(s, weight);
         test_samples.emplace_back(p);
         /// in search for the minimum
         for(std::size_t i = 0 ; i < 3 ; ++i) {
@@ -60,7 +60,7 @@ TEST(TestMuseAMCL, testTestDistributionRead)
         }
     }
     for(auto &s : test_distribution_b.data) {
-        muse_amcl::Particle p(s, weight);
+        muse_mcl::Particle p(s, weight);
         test_samples.emplace_back(p);
         /// in search for the minimum
         for(std::size_t i = 0 ; i < 3 ; ++i) {
@@ -79,11 +79,11 @@ TEST(TestMuseAMCL, testParticleSetConstructors)
     const std::size_t N = 500000;
     const std::size_t MIN = 10;
     const std::size_t MAX = N;
-    muse_amcl::Indexation indexation ({0.1, 0.1, 1./18. * M_PI});
-    muse_amcl::ParticleSet particle_set_a("frame", N, indexation);
+    muse_mcl::Indexation indexation ({0.1, 0.1, 1./18. * M_PI});
+    muse_mcl::ParticleSet particle_set_a("frame", N, indexation);
 
-    const muse_amcl::Indexation::IndexType minimum_index(std::numeric_limits<int>::max());
-    const muse_amcl::Indexation::IndexType maximum_index(std::numeric_limits<int>::min());
+    const muse_mcl::Indexation::IndexType minimum_index(std::numeric_limits<int>::max());
+    const muse_mcl::Indexation::IndexType maximum_index(std::numeric_limits<int>::min());
 
 
     EXPECT_EQ(particle_set_a.getSampleSize(), 0);
@@ -95,7 +95,7 @@ TEST(TestMuseAMCL, testParticleSetConstructors)
     EXPECT_EQ(particle_set_a.getSampleIndexMaximum(), maximum_index);
 
     particle_set_a =
-            muse_amcl::ParticleSet("frame", MIN, MAX, indexation);
+            muse_mcl::ParticleSet("frame", MIN, MAX, indexation);
 
     EXPECT_EQ(particle_set_a.getSampleSize(), 0);
     EXPECT_EQ(particle_set_a.getSampleSizeMinimum(), MIN);
@@ -108,11 +108,11 @@ TEST(TestMuseAMCL, testParticleSetConstructors)
 
 TEST(TestMuseAMCL, fillParticleSetA)
 {
-    using Index = muse_amcl::Indexation::IndexType;
+    using Index = muse_mcl::Indexation::IndexType;
     using Size  = std::array<std::size_t, 3>;
 
-    muse_amcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
-    muse_amcl::ParticleSet particle_set("world", 10, 2 * test_samples.size(), indexation);
+    muse_mcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
+    muse_mcl::ParticleSet particle_set("world", 10, 2 * test_samples.size(), indexation);
     auto inserter = particle_set.getInsertion();
     for(auto &s : test_samples) {
         if(inserter.canInsert())
@@ -144,11 +144,11 @@ TEST(TestMuseAMCL, fillParticleSetA)
 
 TEST(TestMuseAMCL, fillParticleSetB)
 {
-    using Index = muse_amcl::Indexation::IndexType;
+    using Index = muse_mcl::Indexation::IndexType;
     using Size  = std::array<std::size_t, 3>;
 
-    muse_amcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
-    muse_amcl::ParticleSet particle_set("world", 0, 2 * test_samples.size(), indexation);
+    muse_mcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
+    muse_mcl::ParticleSet particle_set("world", 0, 2 * test_samples.size(), indexation);
 
     {
         auto i = particle_set.getInsertion();
@@ -156,7 +156,7 @@ TEST(TestMuseAMCL, fillParticleSetB)
             i.insert(std::move(s));
         }
     }
-    std::vector<const muse_amcl::Particle*> particles_t_1;
+    std::vector<const muse_mcl::Particle*> particles_t_1;
     for(auto &p : particle_set.getSamples()) {
         particles_t_1.emplace_back(&p);
     }
@@ -167,7 +167,7 @@ TEST(TestMuseAMCL, fillParticleSetB)
             i.insert(std::move(s));
         }
     }
-    std::vector<const muse_amcl::Particle*> particles_t;
+    std::vector<const muse_mcl::Particle*> particles_t;
     for(auto &p : particle_set.getSamples()) {
         particles_t.emplace_back(&p);
     }
@@ -217,11 +217,11 @@ TEST(TestMuseAMCL, fillParticleSetB)
 
 TEST(TestMuseAMCL, testWeightIterator)
 {
-    using Index = muse_amcl::Indexation::IndexType;
+    using Index = muse_mcl::Indexation::IndexType;
     using Size  = std::array<std::size_t, 3>;
 
-    muse_amcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
-    muse_amcl::ParticleSet particle_set("world", 0, 2 * test_samples.size(), indexation);
+    muse_mcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
+    muse_mcl::ParticleSet particle_set("world", 0, 2 * test_samples.size(), indexation);
     auto i = particle_set.getInsertion();
     for(auto &s : test_samples) {
         i.insert(std::move(s));
@@ -242,11 +242,11 @@ TEST(TestMuseAMCL, testWeightIterator)
 
 TEST(TestMuseAMCL, testPoseIterator)
 {
-    using Index = muse_amcl::Indexation::IndexType;
+    using Index = muse_mcl::Indexation::IndexType;
     using Size  = std::array<std::size_t, 3>;
 
-    muse_amcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
-    muse_amcl::ParticleSet particle_set("world", 0, 2 * test_samples.size(), indexation);
+    muse_mcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
+    muse_mcl::ParticleSet particle_set("world", 0, 2 * test_samples.size(), indexation);
     auto i = particle_set.getInsertion();
     for(auto &s : test_samples) {
         i.insert(std::move(s));
@@ -282,11 +282,11 @@ TEST(TestMuseAMCL, testPoseIterator)
 
 TEST(TestMuseAMCL, testClustering)
 {
-    using Index = muse_amcl::Indexation::IndexType;
+    using Index = muse_mcl::Indexation::IndexType;
     using Size  = std::array<std::size_t, 3>;
 
-    muse_amcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
-    muse_amcl::ParticleSet particle_set("world", 0, 2 * test_samples.size(), indexation);
+    muse_mcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
+    muse_mcl::ParticleSet particle_set("world", 0, 2 * test_samples.size(), indexation);
     auto i = particle_set.getInsertion();
     for(auto &s : test_samples) {
         i.insert(std::move(s));
@@ -299,11 +299,11 @@ TEST(TestMuseAMCL, testClustering)
     EXPECT_EQ(2, clusters.size());
 
     mms::Distribution<3> distribution_a;
-    for(const muse_amcl::Particle *p : clusters[0]) {
+    for(const muse_mcl::Particle *p : clusters[0]) {
         distribution_a.add(p->pose_.getEigen3D());
     }
     mms::Distribution<3> distribution_b;
-    for(const muse_amcl::Particle *p : clusters[1]) {
+    for(const muse_mcl::Particle *p : clusters[1]) {
         distribution_b.add(p->pose_.getEigen3D());
     }
 

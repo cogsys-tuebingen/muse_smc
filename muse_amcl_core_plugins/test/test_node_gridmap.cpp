@@ -9,7 +9,7 @@
 /// PROJECT
 #include <muse_amcl_core_plugins/maps_2d/binary_gridmap.h>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class GridmapTestNode {
 public:
     GridmapTestNode() :
@@ -69,7 +69,7 @@ private:
     ros::ServiceClient                  map_client_;
 
 
-    muse_amcl::maps::BinaryGridMap::Ptr gridmap_;
+    muse_mcl::maps::BinaryGridMap::Ptr gridmap_;
 
     cv::Mat                             rendered_map_;
     cv::Mat                             rendered_scan_;
@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "muse_amcl_test_gridmap");
 
-    muse_amcl::GridmapTestNode gtn;
+    muse_mcl::GridmapTestNode gtn;
 
     while(ros::ok()) {
         ros::spinOnce();

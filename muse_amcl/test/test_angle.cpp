@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-namespace mm = muse_amcl::math;
+namespace mm = muse_mcl::math;
 
 TEST(TestMuseAMCL, testAngleNormalization)
 {

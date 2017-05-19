@@ -13,7 +13,7 @@
 #include <tf/transform_listener.h>
 #include <ros/time.h>
 
-namespace muse_amcl {
+namespace muse_mcl {
 /**
  * @brief The TransformPublisherAnchored class can be used to published
  *        transformations consisting of a relative transformation in a moving

@@ -4,7 +4,7 @@
 #include <muse_amcl/particle_filter/prediction_model.hpp>
 #include <muse_amcl/math/random.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class DifferentialDriveAbs : public PredictionModel
 {
 public:

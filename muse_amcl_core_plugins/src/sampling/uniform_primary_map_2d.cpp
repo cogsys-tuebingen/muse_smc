@@ -1,11 +1,11 @@
 #include "uniform_primary_map_2d.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_amcl::UniformPrimaryMap2D, muse_amcl::UniformSampling)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::UniformPrimaryMap2D, muse_mcl::UniformSampling)
 
 #include <tf/tf.h>
 
-using namespace muse_amcl;
+using namespace muse_mcl;
 
 
 bool UniformPrimaryMap2D::update(const std::string &frame)

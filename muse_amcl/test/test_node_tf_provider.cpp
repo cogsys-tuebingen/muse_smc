@@ -5,7 +5,7 @@
 
 TEST(TestMuseAMCL, testTFProviderSingleThreaded)
 {
-    muse_amcl::TFProvider tf_provider;
+    muse_mcl::TFProvider tf_provider;
     std::vector<std::string> frames;
     while(frames.size() != 3) {
         ros::Duration(0.5).sleep();
@@ -28,7 +28,7 @@ TEST(TestMuseAMCL, testTFProviderSingleThreaded)
 
 TEST(TestMuseAMCL, testTFProviderMultiThreaded)
 {
-    muse_amcl::TFProvider tf_provider;
+    muse_mcl::TFProvider tf_provider;
     std::vector<std::string> frames;
     while(frames.size() != 3) {
         ros::Duration(0.5).sleep();

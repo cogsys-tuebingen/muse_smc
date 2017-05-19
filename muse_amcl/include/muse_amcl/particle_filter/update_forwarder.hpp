@@ -7,7 +7,7 @@
 #include <muse_amcl/data_sources/map_provider.hpp>
 #include <muse_amcl/utils/logger.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class UpdateForwarder {
 public:
     using Ptr = std::shared_ptr<UpdateForwarder>;

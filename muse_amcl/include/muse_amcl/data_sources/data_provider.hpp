@@ -12,7 +12,7 @@
 
 #include <muse_amcl/utils/logger.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class DataProvider {
 public:
     typedef std::shared_ptr<DataProvider>              Ptr;
@@ -30,7 +30,7 @@ public:
 
     inline const static std::string Type()
     {
-        return "muse_amcl::DataProvider";
+        return "muse_mcl::DataProvider";
     }
 
     inline std::string getName() const

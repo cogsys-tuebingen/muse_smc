@@ -11,7 +11,7 @@
 #include <tf/transform_broadcaster.h>
 #include <ros/time.h>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class TransformPublisher {
 public:
     using Ptr = std::shared_ptr<TransformPublisher>;

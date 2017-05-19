@@ -4,7 +4,7 @@
 
 using Matrix6d = Eigen::Matrix<double, 6, 6>;
 using Matrix3d = Eigen::Matrix<double, 3, 3>;
-using Covariance = muse_amcl::math::Covariance;
+using Covariance = muse_mcl::math::Covariance;
 
 TEST(TestMuseAMCL, testDefaultConstructor)
 {

@@ -1,6 +1,6 @@
 #include "muse_amcl_node.h"
 
-using namespace muse_amcl;
+using namespace muse_mcl;
 
 MuseAMCLNode::MuseAMCLNode() :
     nh_private_("~"),
@@ -45,8 +45,8 @@ void MuseAMCLNode::start()
     }
 }
 
-bool MuseAMCLNode::requestGlobalInitialization(muse_amcl::GlobalInitialization::Request &req,
-                                               muse_amcl::GlobalInitialization::Response &res)
+bool MuseAMCLNode::requestGlobalInitialization(muse_mcl::GlobalInitialization::Request &req,
+                                               muse_mcl::GlobalInitialization::Response &res)
 {
     Logger& l = Logger::getLogger();
     l.info("Received a global initialization request.", "MuseAMCLNode");
@@ -58,8 +58,8 @@ bool MuseAMCLNode::requestGlobalInitialization(muse_amcl::GlobalInitialization::
     return true;
 }
 
-bool MuseAMCLNode::requestPoseInitialization(muse_amcl::PoseInitialization::Request &req,
-                                             muse_amcl::PoseInitialization::Response &res)
+bool MuseAMCLNode::requestPoseInitialization(muse_mcl::PoseInitialization::Request &req,
+                                             muse_mcl::PoseInitialization::Response &res)
 {
     Logger& l = Logger::getLogger();
     l.info("Received a pose initialization request.", "MuseAMCLNode");

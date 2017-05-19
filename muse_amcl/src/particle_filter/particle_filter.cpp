@@ -1,7 +1,7 @@
 #include <muse_amcl/particle_filter/particle_filter.hpp>
 #include <muse_amcl/math/angle.hpp>
 
-using namespace muse_amcl;
+using namespace muse_mcl;
 
 ParticleFilter::ParticleFilter()  :
     name_("particle_filter"),
@@ -85,7 +85,7 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     //// FILTER STATE
     filter_state_publisher_.reset(new FilterStatePublisher(world_frame_));
 
-    muse_amcl::Indexation indexation ({resolution_linear, resolution_linear, resolution_angular});
+    muse_mcl::Indexation indexation ({resolution_linear, resolution_linear, resolution_angular});
     particle_set_.reset(new ParticleSet(world_frame_, sample_size_minimum, sample_size_maximum, indexation, array_extent));
     particle_set_stamp_ = ros::Time::now(); /// the first time the particle set is touched is the first time it is valid
 

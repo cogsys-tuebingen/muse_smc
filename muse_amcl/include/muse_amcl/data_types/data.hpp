@@ -4,7 +4,7 @@
 #include <memory>
 #include <muse_amcl/data_types/time_frame.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class Data {
 public:
     typedef std::shared_ptr<Data> Ptr;

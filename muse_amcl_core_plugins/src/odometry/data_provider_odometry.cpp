@@ -3,9 +3,9 @@
 #include <muse_amcl_core_plugins/odometry/odometry.hpp>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_amcl::DataProviderOdometry, muse_amcl::DataProvider)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::DataProviderOdometry, muse_mcl::DataProvider)
 
-using namespace muse_amcl;
+using namespace muse_mcl;
 
 void DataProviderOdometry::callback(const nav_msgs::OdometryConstPtr &msg)
 {

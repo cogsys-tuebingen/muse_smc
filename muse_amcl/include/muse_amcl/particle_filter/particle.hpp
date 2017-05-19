@@ -5,7 +5,7 @@
 
 #include <vector>
 
-namespace muse_amcl {
+namespace muse_mcl {
 struct Particle {
     using PoseType   = math::Pose;
     using WeightType = double;

@@ -4,7 +4,7 @@
 #include <muse_amcl/pose_samplers/uniform.hpp>
 #include <muse_amcl/particle_filter/sampling_uniform.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class UniformPrimaryMap2D : public UniformSampling
 {
 public:
@@ -15,9 +15,9 @@ public:
     virtual void apply(Particle &particle) override;
 
 protected:
-    using Metric   = muse_amcl::pose_generation::Metric;
-    using Radian   = muse_amcl::pose_generation::Radian;
-    using RandomPoseGenerator = muse_amcl::pose_generation::Uniform<Metric, Metric, Radian>;
+    using Metric   = muse_mcl::pose_generation::Metric;
+    using Radian   = muse_mcl::pose_generation::Radian;
+    using RandomPoseGenerator = muse_mcl::pose_generation::Uniform<Metric, Metric, Radian>;
 
     MapProvider::Ptr primary_map_provider_;
     int              random_seed_;

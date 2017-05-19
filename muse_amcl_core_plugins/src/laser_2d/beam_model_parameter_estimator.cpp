@@ -1,6 +1,6 @@
 #include "beam_model_parameter_estimator.h"
 
-using namespace muse_amcl;
+using namespace muse_mcl;
 
 #include <cmath>
 #include <assert.h>

@@ -5,7 +5,7 @@
 #include <muse_amcl/data_types/data.hpp>
 #include <muse_amcl/math/angle.hpp>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class Odometry : public Data {
 public:
     using Ptr = std::shared_ptr<Odometry>;

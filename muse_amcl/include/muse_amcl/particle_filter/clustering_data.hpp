@@ -5,7 +5,7 @@
 #include <muse_amcl/particle_filter/particle.hpp>
 #include <vector>
 
-namespace muse_amcl {
+namespace muse_mcl {
 namespace clustering {
 /**
  * @brief The Data struct wraps sample information for clustering.

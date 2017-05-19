@@ -7,7 +7,7 @@
 #include <cmath>
 #include <iostream>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class BeamModelParameterEstimator
 {
 public:

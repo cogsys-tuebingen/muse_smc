@@ -5,7 +5,7 @@
 #include <eigen3/Eigen/Core>
 #include "angle.hpp"
 
-namespace muse_amcl {
+namespace muse_mcl {
 namespace math {
 /**
  * @brief The Pose class is a helper class to provide an interface
@@ -359,26 +359,26 @@ private:
 }
 }
 
-inline muse_amcl::math::Pose operator * (const muse_amcl::math::Pose &pose_a,
-                                         const muse_amcl::math::Pose &pose_b)
+inline muse_mcl::math::Pose operator * (const muse_mcl::math::Pose &pose_a,
+                                         const muse_mcl::math::Pose &pose_b)
 {
     return pose_b.transformed(pose_a.getPose());
 }
 
-inline muse_amcl::math::Pose operator * (const muse_amcl::math::Pose &pose_a,
+inline muse_mcl::math::Pose operator * (const muse_mcl::math::Pose &pose_a,
                                          const tf::Pose &pose_b)
 {
-    return muse_amcl::math::Pose(pose_a.getPose() * pose_b);
+    return muse_mcl::math::Pose(pose_a.getPose() * pose_b);
 }
 
-inline muse_amcl::math::Pose operator * (const tf::Transform &transform,
-                                         const muse_amcl::math::Pose &pose)
+inline muse_mcl::math::Pose operator * (const tf::Transform &transform,
+                                         const muse_mcl::math::Pose &pose)
 {
     return pose.transformed(transform);
 }
 
-inline muse_amcl::math::Pose operator * (const tf::StampedTransform &transform,
-                                         const muse_amcl::math::Pose &pose)
+inline muse_mcl::math::Pose operator * (const tf::StampedTransform &transform,
+                                         const muse_mcl::math::Pose &pose)
 {
     return pose.transformed(transform);
 }

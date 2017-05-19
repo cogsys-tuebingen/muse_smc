@@ -23,7 +23,7 @@
 
 #include <ros/ros.h>
 
-namespace muse_amcl {
+namespace muse_mcl {
 class MuseAMCLNode
 {
 public:
@@ -34,11 +34,11 @@ public:
 
     void start();
 
-    bool requestGlobalInitialization(muse_amcl::GlobalInitialization::Request &req,
-                                     muse_amcl::GlobalInitialization::Response &res);
+    bool requestGlobalInitialization(muse_mcl::GlobalInitialization::Request &req,
+                                     muse_mcl::GlobalInitialization::Response &res);
 
-    bool requestPoseInitialization(muse_amcl::PoseInitialization::Request &req,
-                                   muse_amcl::PoseInitialization::Response &res);
+    bool requestPoseInitialization(muse_mcl::PoseInitialization::Request &req,
+                                   muse_mcl::PoseInitialization::Response &res);
 
     void poseInitialization(const geometry_msgs::PoseWithCovarianceStampedConstPtr &msg);
 
