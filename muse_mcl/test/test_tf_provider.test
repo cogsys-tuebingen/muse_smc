@@ -2,5 +2,5 @@
 <launch>
     <node pkg="tf" type="static_transform_publisher" name="map1_T_w" args="1 1 0 3.14159265359 0 0 world map1 100"/>
     <node pkg="tf" type="static_transform_publisher" name="map0_T_w" args="0 0 0 0 0 0 world map0 100"/>
-    <test test-name="test_node_tf_provider" pkg="muse_amcl" type="muse_amcl_test_node_tf_provider" />
+    <test test-name="test_node_tf_provider" pkg="muse_mcl" type="muse_mcl_test_node_tf_provider" />
 </launch>

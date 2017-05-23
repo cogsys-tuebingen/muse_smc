@@ -11,7 +11,7 @@
 using namespace muse_mcl;
 
 
-TEST(TestMuseAMCLCorePlugins, testSamplingUniformAllMaps2D)
+TEST(TestMuseMCLCorePlugins, testSamplingUniformAllMaps2D)
 {
     TFProvider::Ptr tf_provider(new TFProvider);
 

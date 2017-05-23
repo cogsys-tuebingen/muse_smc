@@ -9,7 +9,7 @@ using Radian    = muse_mcl::pose_generation::Radian;
 using Normal2D  = muse_mcl::pose_generation::Normal<Metric, Metric, Radian>;
 using Uniform2D = muse_mcl::pose_generation::Uniform<Metric, Metric, Radian>;
 
-TEST(TestMuseAMCL, testPoseSamplingNormal2D)
+TEST(TestMuseMCL, testPoseSamplingNormal2D)
 {
     const std::size_t N = 1e6;
 
@@ -34,7 +34,7 @@ TEST(TestMuseAMCL, testPoseSamplingNormal2D)
 
 }
 
-TEST(TestMuseAMCL, testPoseSamplingUniform2D)
+TEST(TestMuseMCL, testPoseSamplingUniform2D)
 {
     const std::size_t N = 1e7;
     const double A = 3.04;

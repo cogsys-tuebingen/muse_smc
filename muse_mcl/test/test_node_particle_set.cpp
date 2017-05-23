@@ -24,7 +24,7 @@ Eigen::Vector3d min = Eigen::Vector3d::Constant(std::numeric_limits<double>::max
 namespace mms = muse_mcl::math::statistic;
 
 
-TEST(TestMuseAMCL, testTestDistributionRead)
+TEST(TestMuseMCL, testTestDistributionRead)
 {
     EXPECT_EQ(1000, test_distribution_a.data.size());
     EXPECT_EQ(1000, test_distribution_b.data.size());
@@ -74,7 +74,7 @@ TEST(TestMuseAMCL, testTestDistributionRead)
     EXPECT_EQ(test_samples.size(), 2000);
 }
 
-TEST(TestMuseAMCL, testParticleSetConstructors)
+TEST(TestMuseMCL, testParticleSetConstructors)
 {
     const std::size_t N = 500000;
     const std::size_t MIN = 10;
@@ -106,7 +106,7 @@ TEST(TestMuseAMCL, testParticleSetConstructors)
     EXPECT_EQ(particle_set_a.getSampleIndexMaximum(), maximum_index);
 }
 
-TEST(TestMuseAMCL, fillParticleSetA)
+TEST(TestMuseMCL, fillParticleSetA)
 {
     using Index = muse_mcl::Indexation::IndexType;
     using Size  = std::array<std::size_t, 3>;
@@ -142,7 +142,7 @@ TEST(TestMuseAMCL, fillParticleSetA)
     EXPECT_EQ(test_samples.size(), particle_set.getSampleSize());
 }
 
-TEST(TestMuseAMCL, fillParticleSetB)
+TEST(TestMuseMCL, fillParticleSetB)
 {
     using Index = muse_mcl::Indexation::IndexType;
     using Size  = std::array<std::size_t, 3>;
@@ -215,7 +215,7 @@ TEST(TestMuseAMCL, fillParticleSetB)
     EXPECT_EQ(test_samples.size(), particle_set.getSampleSize());
 }
 
-TEST(TestMuseAMCL, testWeightIterator)
+TEST(TestMuseMCL, testWeightIterator)
 {
     using Index = muse_mcl::Indexation::IndexType;
     using Size  = std::array<std::size_t, 3>;
@@ -240,7 +240,7 @@ TEST(TestMuseAMCL, testWeightIterator)
     EXPECT_EQ(s, particle_set.getSampleWeightSum());
 }
 
-TEST(TestMuseAMCL, testPoseIterator)
+TEST(TestMuseMCL, testPoseIterator)
 {
     using Index = muse_mcl::Indexation::IndexType;
     using Size  = std::array<std::size_t, 3>;
@@ -280,7 +280,7 @@ TEST(TestMuseAMCL, testPoseIterator)
     EXPECT_EQ(test_samples.size(), particle_set.getSampleSize());
 }
 
-TEST(TestMuseAMCL, testClustering)
+TEST(TestMuseMCL, testClustering)
 {
     using Index = muse_mcl::Indexation::IndexType;
     using Size  = std::array<std::size_t, 3>;

@@ -65,7 +65,7 @@ Eigen::Vector3d min = Eigen::Vector3d::Constant(std::numeric_limits<double>::max
 namespace mms = muse_mcl::math::statistic;
 
 
-TEST(TestMuseAMCL, testTestDistributionRead)
+TEST(TestMuseMCL, testTestDistributionRead)
 {
     EXPECT_EQ(1000, test_distribution_a.data.size());
     EXPECT_EQ(1000, test_distribution_b.data.size());
@@ -115,7 +115,7 @@ TEST(TestMuseAMCL, testTestDistributionRead)
     EXPECT_EQ(test_samples.size(), 2000);
 }
 
-TEST(TestMuseAMCL, createStorage)
+TEST(TestMuseMCL, createStorage)
 {
     /// bins of 10 by 10 cm and and angular resolution of 10 degrees
     /// unbuffered kdtree implementation
@@ -153,7 +153,7 @@ TEST(TestMuseAMCL, createStorage)
     EXPECT_NO_FATAL_FAILURE(muse_mcl::clustering::create(index, test_samples, array));
 }
 
-TEST(TestMuseAMCL, testClustering)
+TEST(TestMuseMCL, testClustering)
 {
     muse_mcl::clustering::ClusteringImpl clusters_kdtree_buffered;
     muse_mcl::clustering::ClusteringImpl clusters_kdtree;

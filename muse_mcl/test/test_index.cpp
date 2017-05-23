@@ -3,7 +3,7 @@
 
 using namespace muse_mcl::math;
 
-TEST(TestMuseAMCL, testInit)
+TEST(TestMuseMCL, testInit)
 {
     Index<3> i3;
     EXPECT_EQ(0, i3[0]);
@@ -24,7 +24,7 @@ TEST(TestMuseAMCL, testInit)
 
 }
 
-TEST(TestMuseAMCL, testMax)
+TEST(TestMuseMCL, testMax)
 {
     Index<3> ia({1,0,1});
     Index<3> ib({0,2,0});
@@ -42,7 +42,7 @@ TEST(TestMuseAMCL, testMax)
     EXPECT_EQ(-1, ic[2]);
 }
 
-TEST(TestMuseAMCL, testMin)
+TEST(TestMuseMCL, testMin)
 {
     Index<3> ia({2,0,2});
     Index<3> ib({0,1,0});
@@ -60,7 +60,7 @@ TEST(TestMuseAMCL, testMin)
     EXPECT_EQ(-2, ic[2]);
 }
 
-TEST(TestMuseAMCL, testMinus)
+TEST(TestMuseMCL, testMinus)
 {
     Index<3> ia({2,0,2});
     Index<3> ib({0,1,0});
@@ -79,7 +79,7 @@ TEST(TestMuseAMCL, testMinus)
     EXPECT_EQ( 1, ic[2]);
 }
 
-TEST(TestMuseAMCL, testPlus)
+TEST(TestMuseMCL, testPlus)
 {
     Index<3> ia({2,0,2});
     Index<3> ib({0,1,0});
