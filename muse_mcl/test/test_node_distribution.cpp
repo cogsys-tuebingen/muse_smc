@@ -318,7 +318,7 @@ TEST(TestMuseMCL, testWeightedDistribution)
 
 int main(int argc, char *argv[])
 {
-    ros::init(argc, argv, "muse_amcl_test_node_distribution");
+    ros::init(argc, argv, "muse_mcl_test_node_distribution");
     ros::NodeHandle nh_private("~");
 
     std::string test_distribution_200_path;

@@ -23,7 +23,7 @@ public:
         has_poses_(false)
     {
         const std::string service_map  = nh_private_.param<std::string>("service_map", "/static_map");
-        const std::string topic_particles   = nh_private_.param<std::string>("topic", "/muse_amcl/particles");
+        const std::string topic_particles   = nh_private_.param<std::string>("topic", "/muse_mcl/particles");
 
         scale_              = nh_private_.param<double>("scale", 0.5);
         fov_                = nh_private_.param<double>("field_of_view", 270.0) * M_PI / 180.0;
@@ -271,7 +271,7 @@ private:
 
 int main(int argc, char *argv[])
 {
-    ros::init(argc, argv, "muse_amcl_test_gridmap");
+    ros::init(argc, argv, "muse_mcl_test_gridmap");
 
     muse_mcl::GridmapTestNode gtn;
     muse_mcl::Window window_map("map");

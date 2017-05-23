@@ -102,7 +102,7 @@ TEST(TestMuseMCLCorePlugins, testGetMapsTopic)
 
 int main(int argc, char *argv[])
 {
-    ros::init(argc, argv, "muse_amcl_core_plugins_test_node_gridmap_providers");   /// It's essential to set the right name here !
+    ros::init(argc, argv, "muse_mcl_core_plugins_test_node_gridmap_providers");   /// It's essential to set the right name here !
     ros::Time::init();
 
     std::atomic_bool stop_ros_loop(false);

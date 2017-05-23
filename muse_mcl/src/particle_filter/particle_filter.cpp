@@ -31,7 +31,6 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
 {
     Logger &l = Logger::getLogger();
 
-    const std::string topic_poses   = nh_private.param<std::string>(privateParameter("topic_poses"), "/muse_amcl/poses");
     const double pub_rate_poses     = nh_private.param<double>("pub_rate_poses", 30.0);
     const double pub_rate_tf        = nh_private.param<double>("pub_rate_tf", 30.0);
     const double resolution_linear  = nh_private.param<double>(privateParameter("resolution_linear"), 0.1);
@@ -106,7 +105,6 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
 
     l.info("resampling_offset_linear_='"  + std::to_string(resampling_threshold_linear_) + "'", "ParticleFilter");
     l.info("resampling_offset_angular_='" + std::to_string(resampling_threshold_angular_) + "'", "ParticleFilter");
-    l.info("topic_poses='" + topic_poses + "'", "ParticleFilter");
     l.info("pub_rate '" + std::to_string(pub_rate_poses) + "'", "ParticleFilter");
     l.info("pub_tf_rate='" + std::to_string(pub_rate_tf) + "'", "ParticleFilter");
     l.info("world_frame_='" + world_frame_ + "'", "ParticleFilter");
@@ -388,7 +386,7 @@ void ParticleFilter::tryToResample()
             (abs_motion_integral_linear_ > 0.0 || abs_motion_integral_angular_ > 0.0);
 
     if(motion_criterion || cycle_criterion){
-        particle_set_->resetWeights();
+//        particle_set_->resetWeights();
         resampling_->apply(*particle_set_);
         particle_set_->normalizeWeights();
 

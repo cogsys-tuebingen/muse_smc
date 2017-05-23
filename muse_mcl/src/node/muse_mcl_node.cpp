@@ -2,21 +2,21 @@
 
 using namespace muse_mcl;
 
-MuseAMCLNode::MuseAMCLNode() :
+MuseMCLNode::MuseMCLNode() :
     nh_private_("~"),
     tf_provider_frontend_(new TFProvider),
     tf_provider_backend_(new TFProvider)
 {
 }
 
-MuseAMCLNode::~MuseAMCLNode()
+MuseMCLNode::~MuseMCLNode()
 {
     for(auto &d : data_providers_) {
         d.second->disable();
     }
 }
 
-void MuseAMCLNode::start()
+void MuseMCLNode::start()
 {
     for(auto &d : data_providers_) {
         d.second->enable();
@@ -45,7 +45,7 @@ void MuseAMCLNode::start()
     }
 }
 
-bool MuseAMCLNode::requestGlobalInitialization(muse_mcl::GlobalInitialization::Request &req,
+bool MuseMCLNode::requestGlobalInitialization(muse_mcl::GlobalInitialization::Request &req,
                                                muse_mcl::GlobalInitialization::Response &res)
 {
     Logger& l = Logger::getLogger();
@@ -58,7 +58,7 @@ bool MuseAMCLNode::requestGlobalInitialization(muse_mcl::GlobalInitialization::R
     return true;
 }
 
-bool MuseAMCLNode::requestPoseInitialization(muse_mcl::PoseInitialization::Request &req,
+bool MuseMCLNode::requestPoseInitialization(muse_mcl::PoseInitialization::Request &req,
                                              muse_mcl::PoseInitialization::Response &res)
 {
     Logger& l = Logger::getLogger();
@@ -83,7 +83,7 @@ bool MuseAMCLNode::requestPoseInitialization(muse_mcl::PoseInitialization::Reque
     return true;
 }
 
-void MuseAMCLNode::poseInitialization(const geometry_msgs::PoseWithCovarianceStampedConstPtr &msg)
+void MuseMCLNode::poseInitialization(const geometry_msgs::PoseWithCovarianceStampedConstPtr &msg)
 {
     Logger& l = Logger::getLogger();
     l.info("Received a global initial pose message.", "MuseAMCLNode");
@@ -106,7 +106,7 @@ void MuseAMCLNode::poseInitialization(const geometry_msgs::PoseWithCovarianceSta
 
 }
 
-bool MuseAMCLNode::setup()
+bool MuseMCLNode::setup()
 {
     Logger& l = Logger::getLogger();
     l.info("Setup started.", "MuseAMCLNode");
@@ -171,9 +171,9 @@ bool MuseAMCLNode::setup()
     update_forwarder_->bind(data_providers_, map_providers_, nh_private_);
     l.info("Equipped update forwarder with model.", "MuseAMCLNode");
 
-    initialization_service_pose_    = nh_private_.advertiseService("/muse_amcl/pose_initialization", &MuseAMCLNode::requestPoseInitialization, this);
-    initialization_service_global_  = nh_private_.advertiseService("/muse_amcl/global_initialization", &MuseAMCLNode::requestGlobalInitialization, this);
-    initialization_subscriber_pose_ = nh_private_.subscribe("/initialpose", 1, &MuseAMCLNode::poseInitialization, this);
+    initialization_service_pose_    = nh_private_.advertiseService("/muse_mcl/pose_initialization", &MuseMCLNode::requestPoseInitialization, this);
+    initialization_service_global_  = nh_private_.advertiseService("/muse_mcl/global_initialization", &MuseMCLNode::requestGlobalInitialization, this);
+    initialization_subscriber_pose_ = nh_private_.subscribe("/initialpose", 1, &MuseMCLNode::poseInitialization, this);
     l.info("All subscribers and services set up.", "MuseAMCLNode");
     l.info("Setup has been finished.", "MuseAMCLNode");
     l.markNewLogSection();
@@ -181,7 +181,7 @@ bool MuseAMCLNode::setup()
     return true;
 }
 
-void MuseAMCLNode::checkPoseInitialization()
+void MuseMCLNode::checkPoseInitialization()
 {
     if(nh_private_.hasParam("initialization/pose") &&
             nh_private_.hasParam("initialization/covariance")) {
@@ -221,10 +221,10 @@ void MuseAMCLNode::checkPoseInitialization()
 
 int main(int argc, char *argv[])
 {
-    ros::init(argc, argv, "muse_amcl");
+    ros::init(argc, argv, "muse_mcl");
     Logger &l = Logger::getLogger(Logger::ALL, true);
 
-    MuseAMCLNode node;
+    MuseMCLNode node;
     if(node.setup()) {
         node.start();
     } else {

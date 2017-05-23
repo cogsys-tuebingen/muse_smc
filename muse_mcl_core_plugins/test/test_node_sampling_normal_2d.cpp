@@ -94,7 +94,7 @@ TEST(TestMuseMCLCorePlugins, testNormalSampling2D)
 
 int main(int argc, char *argv[])
 {
-    ros::init(argc, argv, "muse_amcl_core_plugins_test_node_sampling_normal_2d");   /// It's essential to set the right name here !
+    ros::init(argc, argv, "muse_mcl_core_plugins_test_node_sampling_normal_2d");   /// It's essential to set the right name here !
     ros::Time::init();
 
     testing::InitGoogleTest(&argc, argv);

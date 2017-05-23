@@ -154,7 +154,7 @@ private:
         visualization_msgs::Marker marker_prototype;
         marker_prototype.header.frame_id = world_frame_;
         marker_prototype.header.stamp = time;
-        marker_prototype.ns      = "muse_amcl";
+        marker_prototype.ns      = "muse_mcl";
         marker_prototype.type    = visualization_msgs::Marker::ARROW;
         marker_prototype.action  = visualization_msgs::Marker::MODIFY;
         marker_prototype.scale.x = 0.25;

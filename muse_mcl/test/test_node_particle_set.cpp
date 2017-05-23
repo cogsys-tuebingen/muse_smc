@@ -377,7 +377,7 @@ TEST(TestMuseMCL, testClustering)
 
 int main(int argc, char *argv[])
 {
-    ros::init(argc, argv, "muse_amcl_test_node_particle_set");
+    ros::init(argc, argv, "muse_mcl_test_node_particle_set");
     ros::NodeHandle nh_private("~");
 
     std::string test_distribution_a_path;
