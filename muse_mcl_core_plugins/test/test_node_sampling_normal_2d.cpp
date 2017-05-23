@@ -15,7 +15,7 @@ using namespace muse_mcl;
 
 
 
-TEST(TestMuseMCLCorePlugins, testNormalSampling2D)
+TEST(muse_mcl_core_plugins, testNormalSampling2D)
 {
     TFProvider::Ptr tf_provider(new TFProvider);
 
@@ -31,8 +31,8 @@ TEST(TestMuseMCLCorePlugins, testNormalSampling2D)
     std::map<std::string, muse_mcl::MapProvider::Ptr> map_providers;
 
     /// prepare the maps
-    TestMap::Ptr map0(new TestMap("map0", math::Point(-1, -1), math::Point(1,1)));
-    TestMap::Ptr map1(new TestMap("map1", math::Point(-1, -1), math::Point(1,1)));
+    TestMap::Ptr map0(new TestMap("map0", math::Point(-10, -10), math::Point(10,10)));
+    TestMap::Ptr map1(new TestMap("map1", math::Point(-10, -10), math::Point(10,10)));
     map_providers["map0"] = TestMapProvider::Ptr(new TestMapProvider("map0", map0));
     map_providers["map1"] = TestMapProvider::Ptr(new TestMapProvider("map1", map1));
 
@@ -44,7 +44,7 @@ TEST(TestMuseMCLCorePlugins, testNormalSampling2D)
 
     EXPECT_EQ(0, normal2d.getRandomSeed());
     EXPECT_EQ("particle_filter/normal_pose_generation", normal2d.getName());
-    EXPECT_EQ(5000, normal2d.getSampleSize());
+    EXPECT_EQ(50000, normal2d.getSampleSize());
     EXPECT_EQ(ros::Duration(10.0), normal2d.getSamplingTimeout());
     EXPECT_EQ(ros::Duration(0.1),  normal2d.getTFTimeout());
     EXPECT_EQ(tf_provider,         normal2d.getTFProvider());
@@ -68,7 +68,7 @@ TEST(TestMuseMCLCorePlugins, testNormalSampling2D)
     math::Pose       mu(mu_vec);
     math::Covariance sigma(sigma_mat);
     Indexation       indexation({0.1, 0.1, M_PI / 18.0});
-    ParticleSet      particle_set("world", 10, 5000, indexation);
+    ParticleSet      particle_set("world", 10, 50000, indexation);
 
     normal2d.apply(mu, sigma, particle_set);
     math::statistic::Distribution<3> distribution;
@@ -81,7 +81,7 @@ TEST(TestMuseMCLCorePlugins, testNormalSampling2D)
     Eigen::Vector3d mu_est = distribution.getMean();
     Eigen::Matrix3d sigma_est = distribution.getCovariance();
 
-    EXPECT_EQ(5000, particles.size());
+    EXPECT_EQ(50000, particles.size());
     EXPECT_NEAR(mu.getEigen3D()(0), mu_est(0), 1e-1);
     EXPECT_NEAR(mu.getEigen3D()(1), mu_est(1), 1e-1);
     EXPECT_NEAR(mu.getEigen3D()(2), mu_est(2), 1e-1);

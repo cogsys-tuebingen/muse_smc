@@ -14,7 +14,7 @@ using namespace muse_mcl;
 std::map<std::string, MapProvider::Ptr>  map_providers;
 PluginLoader *loader;
 
-TEST(TestMuseMCLCorePlugins, testLoadMapProviders)
+TEST(muse_mcl_core_plugins, testLoadMapProviders)
 {
     ros::NodeHandle nh_private("~");
 
@@ -29,7 +29,7 @@ TEST(TestMuseMCLCorePlugins, testLoadMapProviders)
     EXPECT_TRUE(map_providers.find("probability_gridmap_service") != map_providers.end());
 }
 
-TEST(TestMuseMCLCorePlugins, testGetMapsTopic)
+TEST(muse_mcl_core_plugins, testGetMapsTopic)
 {
     /// binary gridmap provider
     MapProvider::Ptr map_provider = map_providers["binary_gridmap"];

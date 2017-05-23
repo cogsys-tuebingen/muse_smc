@@ -9,7 +9,7 @@
               </rosparam>
               <param name="timeout" value="10.0" />
               <param name="tf_timeout" value="0.1" />
-              <param name="sample_size" value="5000" />
+              <param name="sample_size" value="50000" />
               <param name="class" value="muse_mcl::Normal2D" />
               <param name="base_class" value="muse_mcl::NormalPoseGeneration" />
               <param name="seed" value="0" />
