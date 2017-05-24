@@ -79,7 +79,7 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
 
     //// SETUP TF
     tf_provider_               = tf_provider;
-    tf_publisher_.reset(new TransformPublisherAnchored(pub_rate_tf, odom_frame_, base_frame_, world_frame_));
+    tf_publisher_.reset(new TransformPublisher(pub_rate_tf, odom_frame_, base_frame_, world_frame_));
 
     //// FILTER STATE
     filter_state_publisher_.reset(new FilterStatePublisher(world_frame_));
@@ -331,7 +331,7 @@ void ParticleFilter::publishPoses()
 
 void ParticleFilter::publishTF()
 {
-    tf_publisher_->setAnchor(tf_latest_w_T_b_);
+    tf_publisher_->setTransform(tf_latest_w_T_b_);
 }
 
 void ParticleFilter::loop()

@@ -11,7 +11,6 @@
 #include <muse_mcl/utils/logger.hpp>
 #include <muse_mcl/utils/csv_logger.hpp>
 #include <muse_mcl/utils/transform_publisher.hpp>
-#include <muse_mcl/utils/transform_publisher_anchored.hpp>
 #include <muse_mcl/utils/filterstate_publisher.hpp>
 
 #include <geometry_msgs/PoseArray.h>
@@ -72,7 +71,7 @@ protected:
 
 
     tf::StampedTransform             tf_latest_w_T_b_;
-    TransformPublisherAnchored::Ptr  tf_publisher_;
+    TransformPublisher::Ptr  tf_publisher_;
 
     FilterStatePublisher::Ptr        filter_state_publisher_;
 
