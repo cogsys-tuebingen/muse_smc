@@ -18,7 +18,7 @@ class AngularDistribution {
 public:
     typedef std::shared_ptr<AngularDistribution<Dim, limit_covariance>> Ptr;
 
-    using PointType          = Eigen::Matrix<std::complex<double>, Dim, 1>;
+    using PointType          = Eigen::Matrix<std::complex<double>, Dim, 1>;     /// we assume that this is a tuple of angles
     using MatrixType         = Eigen::Matrix<std::complex<double>, Dim, Dim>;
     using EigenValueSetType  = Eigen::Matrix<std::complex<double>, Dim, 1>;
     using EigenVectorSetType = Eigen::Matrix<std::complex<double>, Dim, Dim>;
