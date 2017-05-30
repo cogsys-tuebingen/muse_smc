@@ -9,6 +9,8 @@
 #include <eigen3/Eigen/Eigen>
 #include <iostream>
 
+#include <muse_mcl/math/angle.hpp>
+
 namespace muse_mcl {
 namespace math {
 namespace statistic {
@@ -16,7 +18,8 @@ template<std::size_t Dim, bool limit_covariance = false>
 class WeightedAngularDistribution {
 public:
     using Ptr                = std::shared_ptr<WeightedAngularDistribution<Dim, limit_covariance>> ;
-    using PointType          = Eigen::Matrix<std::complex<double>, Dim, 1>                  ;
+    using PointType          = Eigen::Matrix<double, Dim, 1>;                   /// we assume that this is a tuple of angles
+    using ComplexPointType   = Eigen::Matrix<std::complex<double>, Dim, 1>;
     using MatrixType         = Eigen::Matrix<std::complex<double>, Dim, Dim>                ;
     using EigenValueSetType  = Eigen::Matrix<std::complex<double>, Dim, 1>                  ;
     using EigenVectorSetType = Eigen::Matrix<std::complex<double>, Dim, Dim>                ;

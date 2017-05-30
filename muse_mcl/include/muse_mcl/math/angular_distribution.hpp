@@ -9,6 +9,8 @@
 #include <eigen3/Eigen/Eigen>
 #include <iostream>
 
+#include <muse_mcl/math/angle.hpp>
+
 
 namespace muse_mcl {
 namespace math {
@@ -18,7 +20,8 @@ class AngularDistribution {
 public:
     typedef std::shared_ptr<AngularDistribution<Dim, limit_covariance>> Ptr;
 
-    using PointType          = Eigen::Matrix<std::complex<double>, Dim, 1>;     /// we assume that this is a tuple of angles
+    using PointType          = Eigen::Matrix<double, Dim, 1>;                   /// we assume that this is a tuple of angles
+    using ComplexPointType   = Eigen::Matrix<std::complex<double>, Dim, 1>;
     using MatrixType         = Eigen::Matrix<std::complex<double>, Dim, Dim>;
     using EigenValueSetType  = Eigen::Matrix<std::complex<double>, Dim, 1>;
     using EigenVectorSetType = Eigen::Matrix<std::complex<double>, Dim, Dim>;
@@ -48,7 +51,7 @@ public:
 
     inline void reset()
     {
-        mean_ = PointType::Zero();
+        mean_       = PointType::Zero();
         covariance_ = MatrixType::Zero();
         correlated_ = MatrixType::Zero();
         n_ = 1;
@@ -60,6 +63,8 @@ public:
     /// Modification
     inline void add(const PointType &p)
     {
+
+
         mean_ = (mean_ * n_1_ + p) / n_;
         for(std::size_t i = 0 ; i < Dim ; ++i) {
             for(std::size_t j = i ; j < Dim ; ++j) {
