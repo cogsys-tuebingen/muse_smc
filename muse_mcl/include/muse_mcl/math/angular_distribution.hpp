@@ -9,6 +9,7 @@
 #include <eigen3/Eigen/Eigen>
 #include <iostream>
 
+
 namespace muse_mcl {
 namespace math {
 namespace statistic {
@@ -17,11 +18,11 @@ class AngularDistribution {
 public:
     typedef std::shared_ptr<AngularDistribution<Dim, limit_covariance>> Ptr;
 
-    using PointType          = Eigen::Matrix<double, Dim, 1>;
-    using MatrixType         = Eigen::Matrix<double, Dim, Dim>;
-    using EigenValueSetType  = Eigen::Matrix<double, Dim, 1>;
-    using EigenVectorSetType = Eigen::Matrix<double, Dim, Dim>;
-    using ComplexVectorType  = Eigen::Matrix<double, Dim, 1>;
+    using PointType          = Eigen::Matrix<std::complex<double>, Dim, 1>;
+    using MatrixType         = Eigen::Matrix<std::complex<double>, Dim, Dim>;
+    using EigenValueSetType  = Eigen::Matrix<std::complex<double>, Dim, 1>;
+    using EigenVectorSetType = Eigen::Matrix<std::complex<double>, Dim, Dim>;
+    using ComplexVectorType  = Eigen::Matrix<std::complex<double>, Dim, 1>;
     using ComplexMatrixType  = Eigen::Matrix<std::complex<double>, Dim, Dim>;
 
     static constexpr double sqrt_2_M_PI = std::sqrt(2 * M_PI);
