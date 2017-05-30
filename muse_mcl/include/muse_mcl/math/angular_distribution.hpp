@@ -1,5 +1,5 @@
-#ifndef WEIGHTED_DISTRIBUTION_HPP
-#define WEIGHTED_DISTRIBUTION_HPP
+#ifndef ANGULAR_DISTRIBUTION_HPP
+#define ANGULAR_DISTRIBUTION_HPP
 
 #undef NDEBUG
 #include <assert.h>
@@ -13,24 +13,25 @@ namespace muse_mcl {
 namespace math {
 namespace statistic {
 template<std::size_t Dim, bool limit_covariance = false>
-class WeightedDistribution {
+class AngularDistribution {
 public:
-    using Ptr                = std::shared_ptr<WeightedDistribution<Dim, limit_covariance>> ;
-    using PointType          = Eigen::Matrix<double, Dim, 1>                                ;
-    using MatrixType         = Eigen::Matrix<double, Dim, Dim>                              ;
-    using EigenValueSetType  = Eigen::Matrix<double, Dim, 1>                                ;
-    using EigenVectorSetType = Eigen::Matrix<double, Dim, Dim>                              ;
-    using ComplexVectorType  = Eigen::Matrix<double, Dim, 1>                                ;
-    using ComplexMatrixType  = Eigen::Matrix<std::complex<double>, Dim, Dim>                ;
+    typedef std::shared_ptr<AngularDistribution<Dim, limit_covariance>> Ptr;
+
+    using PointType          = Eigen::Matrix<double, Dim, 1>;
+    using MatrixType         = Eigen::Matrix<double, Dim, Dim>;
+    using EigenValueSetType  = Eigen::Matrix<double, Dim, 1>;
+    using EigenVectorSetType = Eigen::Matrix<double, Dim, Dim>;
+    using ComplexVectorType  = Eigen::Matrix<double, Dim, 1>;
+    using ComplexMatrixType  = Eigen::Matrix<std::complex<double>, Dim, Dim>;
 
     static constexpr double sqrt_2_M_PI = std::sqrt(2 * M_PI);
     static constexpr double lambda_ratio = 1e-2;
 
-    WeightedDistribution() :
+    AngularDistribution() :
         mean_(PointType::Zero()),
         correlated_(MatrixType::Zero()),
-        W_(0.0),
-        W_1_(0.0),
+        n_(1),
+        n_1_(0),
         covariance_(MatrixType::Zero()),
         inverse_covariance_(MatrixType::Zero()),
         eigen_values_(EigenValueSetType::Zero()),
@@ -41,51 +42,59 @@ public:
     {
     }
 
-    WeightedDistribution(const WeightedDistribution &other)             = default;
-    WeightedDistribution& operator=(const WeightedDistribution &other)  = default;
+    AngularDistribution(const AngularDistribution &other) = default;
+    AngularDistribution& operator=(const AngularDistribution &other) = default;
 
     inline void reset()
     {
-        mean_       = PointType::Zero();
+        mean_ = PointType::Zero();
         covariance_ = MatrixType::Zero();
         correlated_ = MatrixType::Zero();
-        W_ = 1;
-        W_1_ = 0;
+        n_ = 1;
+        n_1_ = 0;
         dirty_ = true;
         dirty_eigen_ = true;
     }
 
     /// Modification
-    inline void add(const PointType &p, const double w)
+    inline void add(const PointType &p)
     {
-        W_  += w;
-        mean_ = (mean_ * W_1_ + w * p) / W_;
+        mean_ = (mean_ * n_1_ + p) / n_;
         for(std::size_t i = 0 ; i < Dim ; ++i) {
             for(std::size_t j = i ; j < Dim ; ++j) {
-                correlated_(i, j) = (correlated_(i, j) * W_1_ + w * p(i) * p(j)) / (double) W_;
+                correlated_(i, j) = (correlated_(i, j) * n_1_ + p(i) * p(j)) / (double) n_;
             }
         }
-        W_1_ = W_;
+        ++n_;
+        ++n_1_;
         dirty_ = true;
         dirty_eigen_ = true;
     }
 
-
-    inline WeightedDistribution& operator+=(const WeightedDistribution &other)
+    inline AngularDistribution& operator+=(const PointType &p)
     {
-        mean_ = (mean_ * W_ + other.mean_ * other.W_) / (W_ + other.W_);
-        correlated_ = (correlated_ * W_ +  other.correlated_ * other.W_) / (W_ + other.W_);
-        W_ += other.W_;
-        W_1_ = W_;
+        add(p);
+        return *this;
+    }
+
+    inline AngularDistribution& operator+=(const AngularDistribution &other)
+    {
+        std::size_t _n = n_1_ + other.n_1_;
+        PointType   _mean = (mean_ * n_1_ + other.mean_ * other.n_1_) / (double) _n;
+        MatrixType  _corr = (correlated_ * n_1_ + other.correlated_ * other.n_1_) / (double) _n;
+        n_   = _n + 1;
+        n_1_ = _n;
+        mean_ = _mean;
+        correlated_ = _corr;
         dirty_ = true;
         dirty_eigen_ = true;
         return *this;
     }
 
     /// Distribution properties
-    inline double getWeight() const
+    inline std::size_t getN() const
     {
-        return W_;
+        return n_1_;
     }
 
     inline PointType getMean() const
@@ -93,14 +102,14 @@ public:
         return mean_;
     }
 
-    inline void getMean(PointType &mean) const
+    inline void getMean(PointType &_mean) const
     {
-        mean = mean_;
+        _mean = mean_;
     }
 
     inline MatrixType getCovariance() const
     {
-        if(W_ > 0.0) {
+        if(n_1_ >= 2) {
             if(dirty_)
                 update();
             return covariance_;
@@ -110,7 +119,7 @@ public:
 
     inline void getCovariance(MatrixType &covariance) const
     {
-        if(W_ > 0.0) {
+        if(n_1_ >= 2) {
             if(dirty_)
                 update();
             covariance = covariance_;
@@ -121,7 +130,7 @@ public:
 
     inline MatrixType getInformationMatrix() const
     {
-        if(W_ > 0.0) {
+        if(n_1_ >= 2) {
             if(dirty_)
                 update();
             return inverse_covariance_;
@@ -131,7 +140,7 @@ public:
 
     inline void getInformationMatrix(MatrixType &inverse_covariance) const
     {
-        if(W_ > 0.0) {
+        if(n_1_ >= 2) {
             if(dirty_)
                 update();
             inverse_covariance = inverse_covariance_;
@@ -142,7 +151,7 @@ public:
 
     inline EigenValueSetType getEigenValues(const bool abs = false) const
     {
-        if(W_ > 0.0) {
+        if(n_1_ >= 2) {
             if(dirty_)
                 update();
             if(dirty_eigen_)
@@ -159,7 +168,7 @@ public:
     inline void getEigenValues(EigenValueSetType &eigen_values,
                                const double abs = false) const
     {
-        if(W_ > 0.0) {
+        if(n_1_ >= 2) {
             if(dirty_)
                 update();
             if(dirty_eigen_)
@@ -176,7 +185,7 @@ public:
 
     inline EigenVectorSetType getEigenVectors() const
     {
-        if(W_ > 0.0) {
+        if(n_1_ >= 2) {
             if(dirty_)
                 update();
             if(dirty_eigen_)
@@ -189,7 +198,7 @@ public:
 
     inline void getEigenVectors(EigenVectorSetType &eigen_vectors) const
     {
-        if(W_ > 0.0) {
+        if(n_1_ >= 2) {
             if(dirty_)
                 update();
             if(dirty_eigen_)
@@ -204,7 +213,7 @@ public:
     /// Evaluation
     inline double sample(const PointType &p) const
     {
-        if(W_ > 0.0) {
+        if(n_1_ >= 2) {
             if(dirty_)
                 update();
             PointType  q = p - mean_;
@@ -218,7 +227,7 @@ public:
     inline double sample(const PointType &p,
                          PointType &q) const
     {
-        if(W_ > 0.0) {
+        if(n_1_ >= 2) {
             if(dirty_)
                 update();
             q = p - mean_;
@@ -231,7 +240,7 @@ public:
 
     inline double sampleNonNormalized(const PointType &p) const
     {
-        if(W_ > 0.0) {
+        if(n_1_ >= 2) {
             if(dirty_)
                 update();
 
@@ -245,7 +254,7 @@ public:
     inline double sampleNonNormalized(const PointType &p,
                                       PointType &q) const
     {
-        if(W_1_ >= 2) {
+        if(n_1_ >= 2) {
             if(dirty_)
                 update();
             q = p - mean_;
@@ -258,8 +267,8 @@ public:
 private:
     PointType                    mean_;
     MatrixType                   correlated_;
-    double                       W_;
-    double                       W_1_;            /// actual amount of points in distribution
+    std::size_t                  n_;
+    std::size_t                  n_1_;            /// actual amount of points in distribution
 
     mutable MatrixType           covariance_;
     mutable MatrixType           inverse_covariance_;
@@ -272,9 +281,10 @@ private:
 
     inline void update() const
     {
+        double scale = n_1_ / (double)(n_1_ - 1);
         for(std::size_t i = 0 ; i < Dim ; ++i) {
             for(std::size_t j = i ; j < Dim ; ++j) {
-                covariance_(i, j) = (correlated_(i, j) - (mean_(i) * mean_(j))) / W_;
+                covariance_(i, j) = (correlated_(i, j) - (mean_(i) * mean_(j))) * scale;
                 covariance_(j, i) = covariance_(i, j);
             }
         }
@@ -321,4 +331,4 @@ private:
 }
 }
 
-#endif // WEIGHTED_DISTRIBUTION_HPP
+#endif // ANGULAR_DISTRIBUTION_HPP

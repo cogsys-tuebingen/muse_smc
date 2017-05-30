@@ -37,7 +37,6 @@ TEST(TestMuseMCL, testPoseSamplingNormal2D)
 TEST(TestMuseMCL, testPoseSamplingUniform2D)
 {
     const std::size_t N = 1e7;
-    const double A = 3.04;
     Uniform2D uniform({-10.,-10.,  0},
                        {10., 10.,  2 * M_PI}, 0);
 

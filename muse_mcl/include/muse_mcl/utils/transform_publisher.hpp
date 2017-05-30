@@ -78,6 +78,16 @@ public:
     {
         std::unique_lock<std::mutex> l(tf_mutex_);
         w_T_b_ = w_t_b;
+
+
+        tf::StampedTransform b_T_o;
+        if(tf_listener_.waitForTransform(base_frame_, odom_frame_, w_T_b_.stamp_, timeout_)) {
+            tf_listener_.lookupTransform(base_frame_, odom_frame_, w_T_b_.stamp_, b_T_o);
+
+            w_T_o_ = tf::StampedTransform(static_cast<tf::Transform>(w_T_b_) * b_T_o,
+                                          w_T_b_.stamp_, world_frame_, odom_frame_);
+        }
+
         wait_for_transform_ = false;
     }
 
@@ -109,16 +119,9 @@ private:
         running_ = true;
         while(!stop_) {
             if(!wait_for_transform_) {
-                tf::StampedTransform b_T_o;
-                if(tf_listener_.waitForTransform(base_frame_, odom_frame_, w_T_b_.stamp_, timeout_)) {
-                    tf_listener_.lookupTransform(base_frame_, odom_frame_, w_T_b_.stamp_, b_T_o);
-
-                    std::unique_lock<std::mutex> l(tf_mutex_);
-                    w_T_o_ = tf::StampedTransform(static_cast<tf::Transform>(w_T_b_) * b_T_o,
-                                                  w_T_b_.stamp_, world_frame_, odom_frame_);
-                    w_T_o_.stamp_ = ros::Time::now();
-                    tf_broadcaster_.sendTransform(w_T_o_);
-                }
+                std::unique_lock<std::mutex> l(tf_mutex_);
+                w_T_o_.stamp_ = ros::Time::now();
+                tf_broadcaster_.sendTransform(w_T_o_);
             }
             tf_rate_.sleep();
         }

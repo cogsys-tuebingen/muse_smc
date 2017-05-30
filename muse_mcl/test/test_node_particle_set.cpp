@@ -217,9 +217,6 @@ TEST(TestMuseMCL, fillParticleSetB)
 
 TEST(TestMuseMCL, testWeightIterator)
 {
-    using Index = muse_mcl::Indexation::IndexType;
-    using Size  = std::array<std::size_t, 3>;
-
     muse_mcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
     muse_mcl::ParticleSet particle_set("world", 0, 2 * test_samples.size(), indexation);
     auto i = particle_set.getInsertion();
@@ -282,9 +279,6 @@ TEST(TestMuseMCL, testPoseIterator)
 
 TEST(TestMuseMCL, testClustering)
 {
-    using Index = muse_mcl::Indexation::IndexType;
-    using Size  = std::array<std::size_t, 3>;
-
     muse_mcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
     muse_mcl::ParticleSet particle_set("world", 0, 2 * test_samples.size(), indexation);
     auto i = particle_set.getInsertion();

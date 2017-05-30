@@ -1,5 +1,5 @@
-#ifndef WEIGHTED_DISTRIBUTION_HPP
-#define WEIGHTED_DISTRIBUTION_HPP
+#ifndef WEIGHTED_ANGULAR_DISTRIBUTION_HPP
+#define WEIGHTED_ANGULAR_DISTRIBUTION_HPP
 
 #undef NDEBUG
 #include <assert.h>
@@ -13,20 +13,20 @@ namespace muse_mcl {
 namespace math {
 namespace statistic {
 template<std::size_t Dim, bool limit_covariance = false>
-class WeightedDistribution {
+class WeightedAngularDistribution {
 public:
-    using Ptr                = std::shared_ptr<WeightedDistribution<Dim, limit_covariance>> ;
-    using PointType          = Eigen::Matrix<double, Dim, 1>                                ;
-    using MatrixType         = Eigen::Matrix<double, Dim, Dim>                              ;
-    using EigenValueSetType  = Eigen::Matrix<double, Dim, 1>                                ;
-    using EigenVectorSetType = Eigen::Matrix<double, Dim, Dim>                              ;
-    using ComplexVectorType  = Eigen::Matrix<double, Dim, 1>                                ;
+    using Ptr                = std::shared_ptr<WeightedAngularDistribution<Dim, limit_covariance>> ;
+    using PointType          = Eigen::Matrix<std::complex<double>, Dim, 1>                  ;
+    using MatrixType         = Eigen::Matrix<std::complex<double>, Dim, Dim>                ;
+    using EigenValueSetType  = Eigen::Matrix<std::complex<double>, Dim, 1>                  ;
+    using EigenVectorSetType = Eigen::Matrix<std::complex<double>, Dim, Dim>                ;
+    using ComplexVectorType  = Eigen::Matrix<std::complex<double>, Dim, 1>                  ;
     using ComplexMatrixType  = Eigen::Matrix<std::complex<double>, Dim, Dim>                ;
 
     static constexpr double sqrt_2_M_PI = std::sqrt(2 * M_PI);
     static constexpr double lambda_ratio = 1e-2;
 
-    WeightedDistribution() :
+    WeightedAngularDistribution() :
         mean_(PointType::Zero()),
         correlated_(MatrixType::Zero()),
         W_(0.0),
@@ -41,8 +41,8 @@ public:
     {
     }
 
-    WeightedDistribution(const WeightedDistribution &other)             = default;
-    WeightedDistribution& operator=(const WeightedDistribution &other)  = default;
+    WeightedAngularDistribution(const WeightedAngularDistribution &other)             = default;
+    WeightedAngularDistribution& operator=(const WeightedAngularDistribution &other)  = default;
 
     inline void reset()
     {
@@ -71,7 +71,7 @@ public:
     }
 
 
-    inline WeightedDistribution& operator+=(const WeightedDistribution &other)
+    inline WeightedAngularDistribution& operator+=(const WeightedAngularDistribution &other)
     {
         mean_ = (mean_ * W_ + other.mean_ * other.W_) / (W_ + other.W_);
         correlated_ = (correlated_ * W_ +  other.correlated_ * other.W_) / (W_ + other.W_);
@@ -321,4 +321,4 @@ private:
 }
 }
 
-#endif // WEIGHTED_DISTRIBUTION_HPP
+#endif // WEIGHTED_ANGULAR_DISTRIBUTION_HPP
