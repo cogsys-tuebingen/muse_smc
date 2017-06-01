@@ -20,26 +20,28 @@ class AngularDistribution {
 public:
     typedef std::shared_ptr<AngularDistribution<Dim, limit_covariance>> Ptr;
 
-    using PointType          = Eigen::Matrix<double, Dim, 1>;                   /// we assume that this is a tuple of angles
-    using ComplexPointType   = Eigen::Matrix<std::complex<double>, Dim, 1>;
-    using MatrixType         = Eigen::Matrix<std::complex<double>, Dim, Dim>;
-    using EigenValueSetType  = Eigen::Matrix<std::complex<double>, Dim, 1>;
-    using EigenVectorSetType = Eigen::Matrix<std::complex<double>, Dim, Dim>;
-    using ComplexVectorType  = Eigen::Matrix<std::complex<double>, Dim, 1>;
-    using ComplexMatrixType  = Eigen::Matrix<std::complex<double>, Dim, Dim>;
+    using PointType                 = Eigen::Matrix<double, Dim, 1>;                   /// we assume that this is a tuple of angles
+    using ComplexPointType          = Eigen::Matrix<std::complex<double>, Dim, 1>;
+    using MatrixType                = Eigen::Matrix<double, Dim, Dim>;
+    using EigenValueSetType         = Eigen::Matrix<double, Dim, 1>;
+    using ComplexEigenValueSet      = Eigen::Matrix<std::complex<double>, Dim, 1>;
+    using EigenVectorSetType        = Eigen::Matrix<double, Dim, Dim>;
+    using ComplexEigenVectorSetType = Eigen::Matrix<std::complex<double>, Dim, Dim>;
+    using ComplexVectorType         = Eigen::Matrix<std::complex<double>, Dim, 1>;
+    using ComplexMatrixType         = Eigen::Matrix<std::complex<double>, Dim, Dim>;
 
     static constexpr double sqrt_2_M_PI = std::sqrt(2 * M_PI);
     static constexpr double lambda_ratio = 1e-2;
 
     AngularDistribution() :
         mean_(PointType::Zero()),
-        correlated_(MatrixType::Zero()),
+        correlated_(ComplexMatrixType::Zero()),
         n_(1),
         n_1_(0),
-        covariance_(MatrixType::Zero()),
-        inverse_covariance_(MatrixType::Zero()),
-        eigen_values_(EigenValueSetType::Zero()),
-        eigen_vectors_(EigenVectorSetType::Zero()),
+        covariance_(ComplexMatrixType::Zero()),
+        inverse_covariance_(ComplexMatrixType::Zero()),
+        eigen_values_(ComplexEigenValueSet::Zero()),
+        eigen_vectors_(ComplexEigenVectorSetType::Zero()),
         determinant_(0.0),
         dirty_(false),
         dirty_eigen_(false)
@@ -52,8 +54,8 @@ public:
     inline void reset()
     {
         mean_       = PointType::Zero();
-        covariance_ = MatrixType::Zero();
-        correlated_ = MatrixType::Zero();
+        covariance_ = ComplexMatrixType::Zero();
+        correlated_ = ComplexMatrixType::Zero();
         n_ = 1;
         n_1_ = 0;
         dirty_ = true;
@@ -63,12 +65,12 @@ public:
     /// Modification
     inline void add(const PointType &p)
     {
+        ComplexPointType cp = toComplex(p);
 
-
-        mean_ = (mean_ * n_1_ + p) / n_;
+        mean_ = (mean_ * n_1_ + cp) / n_;
         for(std::size_t i = 0 ; i < Dim ; ++i) {
             for(std::size_t j = i ; j < Dim ; ++j) {
-                correlated_(i, j) = (correlated_(i, j) * n_1_ + p(i) * p(j)) / (double) n_;
+                correlated_(i, j) = (correlated_(i, j) * n_1_ + cp(i) * cp(j)) / (double) n_;
             }
         }
         ++n_;
@@ -87,7 +89,7 @@ public:
     {
         std::size_t _n = n_1_ + other.n_1_;
         PointType   _mean = (mean_ * n_1_ + other.mean_ * other.n_1_) / (double) _n;
-        MatrixType  _corr = (correlated_ * n_1_ + other.correlated_ * other.n_1_) / (double) _n;
+        ComplexMatrixType  _corr = (correlated_ * n_1_ + other.correlated_ * other.n_1_) / (double) _n;
         n_   = _n + 1;
         n_1_ = _n;
         mean_ = _mean;
@@ -105,57 +107,67 @@ public:
 
     inline PointType getMean() const
     {
-        return mean_;
+        return fromComplex(mean_);
+    }
+
+    inline ComplexPointType getMeanComplex() const
+    {
+        return mena_;
     }
 
     inline void getMean(PointType &_mean) const
     {
+        _mean = fromComplex(mean_);
+    }
+
+    inline void getMeanComplex(ComplexPointType &_mean) const
+    {
         _mean = mean_;
     }
 
-    inline MatrixType getCovariance() const
+    inline ComplexMatrixType getCovariance() const
     {
         if(n_1_ >= 2) {
             if(dirty_)
                 update();
             return covariance_;
         }
-        return MatrixType::Zero();
+        return ComplexMatrixType::Zero();
     }
 
-    inline void getCovariance(MatrixType &covariance) const
+    inline void getCovariance(ComplexMatrixType &covariance) const
     {
         if(n_1_ >= 2) {
             if(dirty_)
                 update();
             covariance = covariance_;
         } else {
-            covariance = MatrixType::Zero();
+            covariance = ComplexMatrixType::Zero();
         }
     }
 
-    inline MatrixType getInformationMatrix() const
+    inline ComplexMatrixType getInformationMatrix() const
     {
         if(n_1_ >= 2) {
             if(dirty_)
                 update();
             return inverse_covariance_;
         }
-        return MatrixType::Zero();
+        return ComplexMatrixType::Zero();
     }
 
-    inline void getInformationMatrix(MatrixType &inverse_covariance) const
+    inline void getInformationMatrix(ComplexMatrixType &inverse_covariance) const
     {
         if(n_1_ >= 2) {
             if(dirty_)
                 update();
             inverse_covariance = inverse_covariance_;
         } else {
-            inverse_covariance = MatrixType::Zero();
+            inverse_covariance = ComplexMatrixType::Zero();
         }
     }
 
-    inline EigenValueSetType getEigenValues(const bool abs = false) const
+    inline ComplexEigenValueSet getEigenValues(const bool abs = false) const
     {
         if(n_1_ >= 2) {
             if(dirty_)
@@ -168,10 +180,10 @@ public:
             else
                 return eigen_values_;
         }
-        return EigenValueSetType::Zero();
+        return ComplexEigenValueSet::Zero();
     }
 
-    inline void getEigenValues(EigenValueSetType &eigen_values,
+    inline void getEigenValues(ComplexEigenValueSet &eigen_values,
                                const double abs = false) const
     {
         if(n_1_ >= 2) {
@@ -185,11 +197,11 @@ public:
             else
                 eigen_values = eigen_values_;
         } else {
-            eigen_values = EigenValueSetType::Zero();
+            eigen_values = ComplexEigenValueSet::Zero();
         }
     }
 
-    inline EigenVectorSetType getEigenVectors() const
+    inline ComplexEigenVectorSetType getEigenVectors() const
     {
         if(n_1_ >= 2) {
             if(dirty_)
@@ -199,10 +211,10 @@ public:
 
             return eigen_vectors_;
         }
-        return EigenVectorSetType::Zero();
+        return ComplexEigenVectorSetType::Zero();
     }
 
-    inline void getEigenVectors(EigenVectorSetType &eigen_vectors) const
+    inline void getEigenVectors(ComplexEigenVectorSetType &eigen_vectors) const
     {
         if(n_1_ >= 2) {
             if(dirty_)
@@ -212,7 +224,7 @@ public:
 
             eigen_vectors = eigen_vectors_;
         } else {
-            eigen_vectors = EigenVectorSetType::Zero();
+            eigen_vectors = ComplexEigenVectorSetType::Zero();
         }
     }
 
@@ -272,18 +284,34 @@ public:
 
 private:
     PointType                    mean_;
-    MatrixType                   correlated_;
+    ComplexMatrixType                   correlated_;
     std::size_t                  n_;
     std::size_t                  n_1_;            /// actual amount of points in distribution
 
-    mutable MatrixType           covariance_;
-    mutable MatrixType           inverse_covariance_;
-    mutable EigenValueSetType    eigen_values_;
-    mutable EigenVectorSetType   eigen_vectors_;
+    mutable ComplexMatrixType           covariance_;
+    mutable ComplexMatrixType           inverse_covariance_;
+    mutable ComplexEigenValueSet    eigen_values_;
+    mutable ComplexEigenVectorSetType   eigen_vectors_;
     mutable double               determinant_;
 
     mutable bool                 dirty_;
     mutable bool                 dirty_eigen_;
+
+    inline ComplexPointType toComplex(const PointType &p)
+    {
+        ComplexPointType cp;
+        for(std::size_t i = 0 ; i < Dim ; ++i)
+            cp(i) = angle::toComplex(p(i));
+        return cp;
+    }
+
+    inline PointType fromComplex(const ComplexPointType &cp)
+    {
+        PointType p;
+        for(std::size_t i = 0 ; i < Dim ; ++i)
+            p(i) = angle::fromComplex(cp(i));
+        return p;
+    }
 
     inline void update() const
     {
@@ -304,7 +332,7 @@ private:
                 if(eigen_values_(i) > max_lambda)
                     max_lambda = eigen_values_(i);
             }
-            MatrixType Lambda = MatrixType::Zero();
+            ComplexMatrixType Lambda = ComplexMatrixType::Zero();
             double l = max_lambda * lambda_ratio;
             for(std::size_t i = 0 ; i < Dim; ++i) {
                 if(fabs(eigen_values_(i)) < fabs(l)) {
@@ -326,7 +354,7 @@ private:
 
     inline void updateEigen() const
     {
-        Eigen::EigenSolver<MatrixType> solver;
+        Eigen::EigenSolver<ComplexMatrixType> solver;
         solver.compute(covariance_);
         eigen_vectors_ = solver.eigenvectors().real();
         eigen_values_  = solver.eigenvalues().real();
