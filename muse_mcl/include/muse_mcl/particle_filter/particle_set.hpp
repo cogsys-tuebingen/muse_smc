@@ -227,7 +227,7 @@ public:
     inline void cluster()
     {
         /// run clustering
-        ClusteringImpl impl;
+        ClusteringImpl impl(indexation_);
         if(array_to_be_used_) {
             ArrayClustering clustering(*array_);
             clustering.cluster(impl);

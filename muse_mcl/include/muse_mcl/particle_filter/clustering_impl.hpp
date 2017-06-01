@@ -23,6 +23,13 @@ struct ClusteringImpl {
     using neighborhood_t  = cis::operations::clustering::GridNeighborhoodStatic<std::tuple_size<Index::Base>::value, 3>;
     using visitor_index_t = neighborhood_t::offset_t;   //!< currently needed by the clustering API
 
+    ClusteringImpl(Indexation &indexation) :
+        indexation_(indexation)
+    {
+        auto resolution = indexation_.getResolution();
+        angular_bins_ = std::floor(2 * M_PI / resolution[2]);
+    }
+
     /**
      * @brief Open a new cluster if possible.
      * @param data - the data container currently processed
@@ -61,6 +68,7 @@ struct ClusteringImpl {
         return true;
     }
 
+
     /**
      * @brief Visitor for the neighbourhood.
      */
@@ -71,7 +79,15 @@ struct ClusteringImpl {
         neighborhood.visit(visitor);
     }
 
+    template<typename offset_t>
+    Index add(const Index& a, const offset_t& b) const
+    {
+        return Index({a[0] + b[0], a[1] + b[1], (a[2] + b[2]) % angular_bins_});
+    }
+
+    Indexation                                 &indexation_;
     int current_cluster_ = -1;
+    int angular_bins_;
     std::unordered_map<int, Data::ParticlePtrs> clusters_;
     std::unordered_map<int, Data::Distribution> distributions_;
 
