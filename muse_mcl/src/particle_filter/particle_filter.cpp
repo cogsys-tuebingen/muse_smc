@@ -398,6 +398,8 @@ void ParticleFilter::tryToResample()
         particle_set_->cluster();
         const ParticleSet::Clusters &clusters = particle_set_->getClusters();
         const ParticleSet::Distributions &distributions = particle_set_->getClusterDistributions();
+        const ParticleSet::AngularMeans &angular_means = particle_set_->getClusterAngularMeans();
+
         /// todo get the transformation odom -> world
         double max_weight = std::numeric_limits<double>::lowest();
         int    max_cluster_id = -1;
@@ -413,8 +415,9 @@ void ParticleFilter::tryToResample()
 
         if(max_cluster_id != -1) {
             particle_set_->resetWeights(true);
-            Eigen::Vector3d mean = distributions.at(max_cluster_id).getMean();
-            tf_latest_w_T_b_ = tf::StampedTransform(math::Pose(mean).getPose(), particle_set_stamp_, world_frame_, base_frame_);
+            tf_latest_w_T_b_ = tf::StampedTransform(math::Pose(distributions.at(max_cluster_id).getMean(),
+                                                               angular_means.at(max_cluster_id).getMean()).getPose(),
+                                                    particle_set_stamp_, world_frame_, base_frame_);
             publishTF();
         }
 

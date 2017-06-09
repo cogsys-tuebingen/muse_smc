@@ -44,6 +44,8 @@ struct ClusteringImpl {
 
         clusters_.emplace(current_cluster_, data.samples_);
         distributions_.emplace(current_cluster_, data.distribution_);
+        angular_means_.emplace(current_cluster_, data.angular_mean_);
+
         data.cluster_ = current_cluster_;
 
         return true;
@@ -59,10 +61,13 @@ struct ClusteringImpl {
         if (data.cluster_ != -1)
             return false;
 
-        auto& cluster       = clusters_[current_cluster_];
+        auto& cluster      = clusters_[current_cluster_];
         auto& distribution = distributions_[current_cluster_];
+        auto& angular_mean = angular_means_[current_cluster_];
+
         cluster.insert(cluster.end(), data.samples_.begin(), data.samples_.end());
         distribution += data.distribution_;
+        angular_mean += data.angular_mean_;
 
         data.cluster_ = current_cluster_;
         return true;
@@ -79,6 +84,12 @@ struct ClusteringImpl {
         neighborhood.visit(visitor);
     }
 
+    /**
+     * @brief add enables the clustering to deal with angle wrapping.
+     * @param a - the first index
+     * @param b - the second index
+     * @return
+     */
     template<typename offset_t>
     Index add(const Index& a, const offset_t& b) const
     {
@@ -90,6 +101,7 @@ struct ClusteringImpl {
     int angular_bins_;
     std::unordered_map<int, Data::ParticlePtrs> clusters_;
     std::unordered_map<int, Data::Distribution> distributions_;
+    std::unordered_map<int, Data::AngularMean>  angular_means_;
 
 };
 }

@@ -27,6 +27,8 @@ public:
     static constexpr double sqrt_2_M_PI = std::sqrt(2 * M_PI);
     static constexpr double lambda_ratio = 1e-2;
 
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     Distribution() :
         mean_(PointType::Zero()),
         correlated_(MatrixType::Zero()),

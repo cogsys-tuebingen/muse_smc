@@ -108,6 +108,12 @@ public:
     {
     }
 
+    Pose(const Eigen::Vector2d &pos, double yaw) :
+        pose_(tf::createQuaternionFromYaw(yaw),
+              tf::Vector3(pos(0),pos(1), 0.0))
+    {
+    }
+
     /**
      * @brief tf returns the TF pose as reference.
      * @return
@@ -160,6 +166,11 @@ public:
     inline const tf::Vector3 & getOrigin() const
     {
         return pose_.getOrigin();
+    }
+
+    inline Eigen::Vector2d getPosition2D() const
+    {
+        return Eigen::Vector2d(x(), y());
     }
 
     /**

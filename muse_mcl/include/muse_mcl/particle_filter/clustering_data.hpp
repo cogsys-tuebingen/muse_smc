@@ -2,6 +2,7 @@
 #define CLUSTERING_DATA_HPP
 
 #include <muse_mcl/math/weighted_distribution.hpp>
+#include <muse_mcl/math/weighted_angular_mean.hpp>
 #include <muse_mcl/particle_filter/particle.hpp>
 #include <vector>
 
@@ -14,17 +15,49 @@ namespace clustering {
  */
 struct Data {
     using ParticlePtrs = std::vector<const Particle*>;
-    using Distribution = math::statistic::WeightedDistribution<3>;
+    using Distribution = math::statistic::WeightedDistribution<2>;
+    using AngularMean  = math::statistic::WeightedAngularMean;
 
-    int              cluster_ = -1;    /// the cluster id
-    ParticlePtrs     samples_;         /// samples which belong to the cluster
-    Distribution     distribution_;    /// @TODO remove fixed dimension
-                                                               /// @TODO check what kind of sum
+    int              cluster_ = -1;           /// the cluster id
+    ParticlePtrs     samples_;                /// samples which belong to the cluster
+    Distribution     distribution_;           /// @TODO remove fixed dimension
+                                              /// @TODO check what kind of sum
+    AngularMean      angular_mean_;           /// angular mean
 
     /**
      *  @brief Default constructor.
      */
     Data() = default;
+    Data(const Data &other) :
+        cluster_(other.cluster_),
+        samples_((other.samples_)),
+        distribution_((other.distribution_)),
+        angular_mean_((other.angular_mean_))
+    {
+    }
+
+
+    Data(Data &&other) :
+        cluster_(other.cluster_),
+        samples_(std::move(other.samples_)),
+        distribution_(std::move(other.distribution_)),
+        angular_mean_(std::move(other.angular_mean_))
+    {
+    }
+
+    Data& operator = (const Data &other)
+    {
+        cluster_ = (other.cluster_);
+        samples_ = ((other.samples_));
+        distribution_ = ((other.distribution_));
+        angular_mean_ = ((other.angular_mean_));
+        return *this;
+    }
+
+    virtual ~Data()
+    {
+    }
+
 
     /**
      * @brief Data constructor.
@@ -33,7 +66,8 @@ struct Data {
     Data(const Particle &sample)
     {
         samples_.emplace_back(&sample);
-        distribution_.add(sample.pose_.getEigen3D(), sample.weight_);
+        distribution_.add(sample.pose_.getPosition2D(), sample.weight_);
+        angular_mean_.add(sample.pose_.yaw(), sample.weight_);
     }
 
     /**
@@ -45,6 +79,7 @@ struct Data {
     {
         samples_.insert(samples_.end(), other.samples_.begin(), other.samples_.end());
         distribution_ += other.distribution_;
+        angular_mean_ += other.angular_mean_;
     }
 };
 }

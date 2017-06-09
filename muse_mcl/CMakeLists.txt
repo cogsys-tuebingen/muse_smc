@@ -100,10 +100,6 @@ target_link_libraries(${PROJECT_NAME}_node
     ${PROJECT_NAME}_particle_filter
 )
 
-add_executable(${PROJECT_NAME}_exam_angle_distribution
-    src/examples/exam_angular_distribution.cpp
-)
-
 if(${CATKIN_ENABLE_TESTING})
     add_unit_test_gtest(${PROJECT_NAME}_test_signals
         test/test_signals.cpp
