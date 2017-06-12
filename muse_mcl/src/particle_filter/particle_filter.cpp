@@ -386,7 +386,6 @@ void ParticleFilter::tryToResample()
             (abs_motion_integral_linear_ > 0.0 || abs_motion_integral_angular_ > 0.0);
 
     if(motion_criterion || cycle_criterion){
-//        particle_set_->resetWeights();
         resampling_->apply(*particle_set_);
         particle_set_->normalizeWeights();
 
