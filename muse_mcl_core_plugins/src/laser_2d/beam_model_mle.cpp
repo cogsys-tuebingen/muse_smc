@@ -14,8 +14,8 @@ BeamModelMLE::BeamModelMLE()
 }
 
 void BeamModelMLE::update(const Data::ConstPtr  &data,
-                       const Map::ConstPtr   &map,
-                       ParticleSet::Weights   set)
+                          const Map::ConstPtr   &map,
+                          ParticleSet::Weights   set)
 {
     if(use_estimated_parameters_)
         parameter_estimator_mle_->getParameters(parameters_);
@@ -28,16 +28,16 @@ void BeamModelMLE::update(const Data::ConstPtr  &data,
     tf::Transform b_T_l;
     tf::Transform m_T_w;
     if(!tf_provider_->lookupTransform(robot_base_frame_,
-                                  laser_data.getFrame(),
-                                  laser_data.getTimeFrame().end,
-                                  b_T_l,
-                                  tf_timeout_))
+                                      laser_data.getFrame(),
+                                      laser_data.getTimeFrame().end,
+                                      b_T_l,
+                                      tf_timeout_))
         return;
     if(!tf_provider_->lookupTransform(world_frame_,
-                                  gridmap.getFrame(),
-                                  laser_data.getTimeFrame().end,
-                                  m_T_w,
-                                  tf_timeout_))
+                                      gridmap.getFrame(),
+                                      laser_data.getTimeFrame().end,
+                                      m_T_w,
+                                      tf_timeout_))
         return;
 
     const LaserScan2D::Rays rays = laser_data.getRays();
@@ -69,7 +69,7 @@ void BeamModelMLE::update(const Data::ConstPtr  &data,
     };
     auto p_random = [this, p_rand, range_max](const double ray_range)
     {
-         if(ray_range < range_max)
+        if(ray_range < range_max)
             return p_rand;
         return 0.0;
     };
@@ -89,19 +89,19 @@ void BeamModelMLE::update(const Data::ConstPtr  &data,
         double p = 0.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
-            if(!ray.valid_)
-                continue;
-
-            const double        ray_range = ray.range_;
-            const math::Point   ray_end_point = pose.getPose() * ray.point_;
-            const double        map_range = gridmap.getRange(pose.getOrigin(), ray_end_point);
-            const double pz = probability(ray_range, map_range);
-            p += std::log(pz);  /// @todo : fix the inprobable thing ;)
-
-            z.emplace_back(ray_range);
-            z_bar.emplace_back(map_range);
-            particle_weights.emplace_back(prior);
-         }
+            if(!ray.valid_) {
+                p += parameters_.z_max;
+            } else {
+                const double        ray_range = ray.range_;
+                const math::Point   ray_end_point = pose.getPose() * ray.point_;
+                const double        map_range = gridmap.getRange(pose.getOrigin(), ray_end_point);
+                const double pz = probability(ray_range, map_range);
+                p += std::log(pz);  /// @todo : fix the inprobable thing ;)
+                z.emplace_back(ray_range);
+                z_bar.emplace_back(map_range);
+                particle_weights.emplace_back(prior);
+            }
+        }
         *it *= std::exp(p);
     }
 

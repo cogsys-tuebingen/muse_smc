@@ -13,8 +13,8 @@ BeamModelAMCL::BeamModelAMCL()
 }
 
 void BeamModelAMCL::update(const Data::ConstPtr  &data,
-                       const Map::ConstPtr   &map,
-                       ParticleSet::Weights   set)
+                           const Map::ConstPtr   &map,
+                           ParticleSet::Weights   set)
 {
     const maps::BinaryGridMap &gridmap = map->as<maps::BinaryGridMap>();
     const LaserScan2D         &laser_data = data->as<LaserScan2D>();
@@ -24,16 +24,16 @@ void BeamModelAMCL::update(const Data::ConstPtr  &data,
     tf::Transform b_T_l;
     tf::Transform m_T_w;
     if(!tf_provider_->lookupTransform(robot_base_frame_,
-                                  laser_data.getFrame(),
-                                  laser_data.getTimeFrame().end,
-                                  b_T_l,
-                                  tf_timeout_))
+                                      laser_data.getFrame(),
+                                      laser_data.getTimeFrame().end,
+                                      b_T_l,
+                                      tf_timeout_))
         return;
     if(!tf_provider_->lookupTransform(world_frame_,
-                                  gridmap.getFrame(),
-                                  laser_data.getTimeFrame().end,
-                                  m_T_w,
-                                  tf_timeout_))
+                                      gridmap.getFrame(),
+                                      laser_data.getTimeFrame().end,
+                                      m_T_w,
+                                      tf_timeout_))
         return;
 
     const LaserScan2D::Rays rays = laser_data.getRays();
@@ -76,14 +76,15 @@ void BeamModelAMCL::update(const Data::ConstPtr  &data,
         double p = 1.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
-            if(!ray.valid_)
-                continue;
-
-            const double        ray_range = ray.range_;
-            const math::Point   ray_end_point = pose.getPose() * ray.point_;
-            const double        map_range = gridmap.getRange(pose.getOrigin(), ray_end_point);
-            const double pz = probability(ray_range, map_range);
-            p += pz * pz * pz;  /// @todo : fix the inprobable thing ;)
+            if(!ray.valid_) {
+                p += z_max_;
+            } else {
+                const double        ray_range = ray.range_;
+                const math::Point   ray_end_point = pose.getPose() * ray.point_;
+                const double        map_range = gridmap.getRange(pose.getOrigin(), ray_end_point);
+                const double pz = probability(ray_range, map_range);
+                p += pz * pz * pz;  /// @todo : fix the inprobable thing ;)
+            }
         }
         *it *= p;
     }

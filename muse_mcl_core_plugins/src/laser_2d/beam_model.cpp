@@ -79,8 +79,10 @@ void BeamModel::update(const Data::ConstPtr  &data,
         double p = 0.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
-            if(!ray.valid_)
+            if(!ray.valid_) {
+                p += z_max_;
                 continue;
+            }
 
             const double        ray_range = ray.range_;
             const math::Point   ray_end_point = m_T_l.getPose() * ray.point_;
