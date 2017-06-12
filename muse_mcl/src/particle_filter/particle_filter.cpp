@@ -396,9 +396,9 @@ void ParticleFilter::tryToResample()
         /// 7. cluster the particle set an update the transformation
         /// @todo allow mean method
         particle_set_->cluster();
-        const ParticleSet::Clusters &clusters = particle_set_->getClusters();
+        const ParticleSet::Clusters      &clusters      = particle_set_->getClusters();
         const ParticleSet::Distributions &distributions = particle_set_->getClusterDistributions();
-        const ParticleSet::AngularMeans &angular_means = particle_set_->getClusterAngularMeans();
+        const ParticleSet::AngularMeans  &angular_means = particle_set_->getClusterAngularMeans();
 
         /// todo get the transformation odom -> world
         double max_weight = std::numeric_limits<double>::lowest();
