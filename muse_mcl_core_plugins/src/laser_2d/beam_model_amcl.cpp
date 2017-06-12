@@ -6,9 +6,6 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl::BeamModelAMCL, muse_mcl::UpdateModel)
 
-#include <pcl_ros/point_cloud.h>
-#include <sensor_msgs/PointCloud2.h>
-
 using namespace muse_mcl;
 
 BeamModelAMCL::BeamModelAMCL()
