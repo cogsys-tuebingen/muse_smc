@@ -99,4 +99,7 @@
    <class type="muse_mcl::DataProviderOdometry" base_class_type="muse_mcl::DataProvider">
       <description>Data provider for standard odmetry messages.</description>
    </class>
+   <class type="muse_mcl::DataProviderOdometryTF" base_class_type="muse_mcl::DataProvider">
+      <description>Data provider for odometry input based on TF.</description>
+   </class>
 </library>

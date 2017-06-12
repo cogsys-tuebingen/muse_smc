@@ -77,6 +77,7 @@ protected:
 
     ros::Time                particle_set_stamp_;
     ParticleSet::Ptr         particle_set_;
+    math::Pose               particle_set_mean_;
 
     UniformSampling::Ptr     sampling_uniform_;
     NormalSampling::Ptr      sampling_normal_pose_;

@@ -326,7 +326,7 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
 
 void ParticleFilter::publishPoses()
 {
-    filter_state_publisher_->addState(particle_set_->getSamples(), particle_set_stamp_);
+    filter_state_publisher_->addState(particle_set_->getSamples(), particle_set_mean_, particle_set_stamp_);
 }
 
 void ParticleFilter::publishTF()
@@ -413,9 +413,11 @@ void ParticleFilter::tryToResample()
         }
 
         if(max_cluster_id != -1) {
-            particle_set_->resetWeights(true);
-            tf_latest_w_T_b_ = tf::StampedTransform(math::Pose(distributions.at(max_cluster_id).getMean(),
-                                                               angular_means.at(max_cluster_id).getMean()).getPose(),
+            particle_set_->resetWeights();
+            particle_set_mean_ = math::Pose(distributions.at(max_cluster_id).getMean(),
+                                            angular_means.at(max_cluster_id).getMean());
+
+            tf_latest_w_T_b_ = tf::StampedTransform(particle_set_mean_.getPose(),
                                                     particle_set_stamp_, world_frame_, base_frame_);
             publishTF();
         }
