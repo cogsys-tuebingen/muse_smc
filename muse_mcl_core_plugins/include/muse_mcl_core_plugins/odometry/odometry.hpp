@@ -4,6 +4,7 @@
 #include <muse_mcl/math/pose.hpp>
 #include <muse_mcl/data_types/data.hpp>
 #include <muse_mcl/math/angle.hpp>
+#include <ostream>
 
 namespace muse_mcl {
 class Odometry : public Data {
@@ -103,6 +104,14 @@ private:
         delta_angular_ = delta_rel_.yaw();
     }
 };
+}
+
+inline std::ostream & operator << (std::ostream &out, const muse_mcl::Odometry &odom)
+{
+    out << "[Odometry]: linear  " << odom.getDeltaLinear() << std::endl;
+    out << "            angular " << odom.getDeltaAngular() << std::endl;
+    out << "            delta   " << odom.getDelta().x() << " " << odom.getDelta().y() << std::endl;
+    return out;
 }
 
 #endif // ODOMETRY_POSE_2D_HPP
