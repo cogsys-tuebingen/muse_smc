@@ -31,7 +31,7 @@ void DataProviderOdometryTF::doSetup(ros::NodeHandle &nh_private)
 {
     odom_frame_ = nh_private.param<std::string>(privateParameter("odom_frame"), "/odom");
     base_frame_ = nh_private.param<std::string>(privateParameter("base_frame"), "/base_link");
-    rate_       = ros::Rate(nh_private.param<double>(privateParameter("rate"), 60.0));
+    rate_       = ros::Rate(nh_private.param<double>(privateParameter("rate"), 70.0));
     timeout_    = ros::Duration(nh_private.param<double>(privateParameter("timeout"), 0.1));
 
     if(!running_) {
@@ -55,8 +55,9 @@ void DataProviderOdometryTF::loop()
                                                     math::Pose(static_cast<tf::Transform>(o_T_b2))));
                 data_received_(odometry);
             } else {
-                o_T_b1_ = o_T_b2;
+                initialized_ = true;
             }
+            o_T_b1_ = o_T_b2;
         }
         rate_.sleep();
     }
