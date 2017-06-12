@@ -4,33 +4,46 @@
 #include <muse_mcl/math/point.hpp>
 #include <muse_mcl/data_types/data.hpp>
 
+#include <limits>
+
 namespace muse_mcl {
 class LaserScan2D : public muse_mcl::Data
 {
 public:
     struct Ray {
-        const double angle_;
-        const double range_;
-        math::Point  point_;
+        const double       angle_;
+        const double       range_;
+        const math::Point  point_;
+        const bool         valid_;
 
         Ray(const double angle,
             const double range) :
             angle_(angle),
             range_(range),
             point_(math::Point(std::cos(angle) * range_,
-                               std::sin(angle) * range_))
+                               std::sin(angle) * range_)),
+            valid_(true)
         {
         }
 
         Ray(const math::Point &pt) :
             angle_(std::atan2(pt.y(), pt.x())),
             range_(std::hypot(pt.y(), pt.x())),
-            point_(pt)
+            point_(pt),
+            valid_(true)
+        {
+        }
+
+        Ray() :
+            angle_(std::numeric_limits<double>::infinity()),
+            range_(std::numeric_limits<double>::infinity()),
+            point_(math::Point()),
+            valid_(false)
         {
         }
     };
 
-    using Ptr = std::shared_ptr<LaserScan2D>;
+    using Ptr  = std::shared_ptr<LaserScan2D>;
     using Rays = std::vector<Ray>;
 
     LaserScan2D(const std::string &frame) :

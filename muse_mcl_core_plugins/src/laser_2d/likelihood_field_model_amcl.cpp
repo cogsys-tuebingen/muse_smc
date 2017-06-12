@@ -38,7 +38,7 @@ void LikelihoodFieldModelAMCL::update(const Data::ConstPtr &data,
     const LaserScan2D::Rays rays = laser_data.getRays();
     const ParticleSet::Weights::iterator end = set.end();
     const std::size_t rays_size = rays.size();
-    const std::size_t ray_step  = std::max(1ul, (rays_size) / max_beams_);
+    const std::size_t ray_step  = std::max(1ul, rays_size / max_beams_);
     const double range_max = laser_data.getRangeMax();
     const double p_rand = z_rand_ * 1.0 / range_max;
 
@@ -52,7 +52,11 @@ void LikelihoodFieldModelAMCL::update(const Data::ConstPtr &data,
         const math::Pose pose = map_T_world * it.getData().pose_ * base_T_laser; /// laser scanner pose in map coordinates
         double p = 1.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
-            const math::Point   ray_end_point = pose.getPose() * laser_rays[i].point_;
+            const auto &ray = laser_rays[i];
+            if(!ray.valid_)
+                continue;
+
+            const math::Point   ray_end_point = pose.getPose() * ray.point_;
             const double pz = p_hit(gridmap.at(ray_end_point)) + p_rand;
             p += pz * pz * pz;  /// @todo : fix the inprobable thing ;)
         }

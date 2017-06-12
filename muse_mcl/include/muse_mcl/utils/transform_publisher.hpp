@@ -120,8 +120,7 @@ private:
         while(!stop_) {
             if(!wait_for_transform_) {
                 std::unique_lock<std::mutex> l(tf_mutex_);
-                // w_T_o_.stamp_ = ros::Time::now();
-                w_T_o_.stamp_ += tf_rate_.cycleTime();
+                w_T_o_.stamp_ = ros::Time::now();
                 tf_broadcaster_.sendTransform(w_T_o_);
             }
             tf_rate_.sleep();

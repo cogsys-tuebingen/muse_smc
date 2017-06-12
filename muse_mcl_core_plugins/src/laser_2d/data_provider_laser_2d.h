@@ -23,6 +23,8 @@ protected:
     double          range_max_;                 /// maximum range of laser beams to be provided
     double          angle_min_;                 /// minimum angle of the laser scanner field of view
     double          angle_max_;                 /// maximum angle of the laser scanner field of view
+    ros::Duration   time_offset_;
+    ros::Time       time_of_last_measurement_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) override;
     void callback(const sensor_msgs::LaserScanConstPtr &msg);

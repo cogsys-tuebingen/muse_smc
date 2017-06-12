@@ -88,8 +88,12 @@ void BeamModelMLE::update(const Data::ConstPtr  &data,
         const double prior = *it;
         double p = 0.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
-            const double        ray_range = laser_rays[i].range_;
-            const math::Point   ray_end_point = pose.getPose() * laser_rays[i].point_;
+            const auto &ray = laser_rays[i];
+            if(!ray.valid_)
+                continue;
+
+            const double        ray_range = ray.range_;
+            const math::Point   ray_end_point = pose.getPose() * ray.point_;
             const double        map_range = gridmap.getRange(pose.getOrigin(), ray_end_point);
             const double pz = probability(ray_range, map_range);
             p += std::log(pz);  /// @todo : fix the inprobable thing ;)

@@ -24,22 +24,22 @@ void BeamModel::update(const Data::ConstPtr  &data,
     tf::Transform b_T_l;
     tf::Transform m_T_w;
     if(!tf_provider_->lookupTransform(robot_base_frame_,
-                                  laser_data.getFrame(),
-                                  laser_data.getTimeFrame().end,
-                                  b_T_l,
-                                  tf_timeout_))
+                                      laser_data.getFrame(),
+                                      laser_data.getTimeFrame().end,
+                                      b_T_l,
+                                      tf_timeout_))
         return;
     if(!tf_provider_->lookupTransform(world_frame_,
-                                  gridmap.getFrame(),
-                                  laser_data.getTimeFrame().end,
-                                  m_T_w,
-                                  tf_timeout_))
+                                     gridmap.getFrame(),
+                                     laser_data.getTimeFrame().end,
+                                     m_T_w,
+                                     tf_timeout_))
         return;
 
     const LaserScan2D::Rays rays = laser_data.getRays();
     const ParticleSet::Weights::iterator end = set.end();
     const std::size_t rays_size = rays.size();
-    const std::size_t ray_step  = std::max(1ul, (rays_size) / max_beams_);
+    const std::size_t ray_step  = std::max(1ul, rays_size / max_beams_);
     const double range_max = laser_data.getRangeMax();
     const double p_rand = z_rand_ * 1.0 / range_max;
 
@@ -75,12 +75,16 @@ void BeamModel::update(const Data::ConstPtr  &data,
     };
 
     for(auto it = set.begin() ; it != end ; ++it) {
-        const math::Pose pose = m_T_w * it.getData().pose_ * b_T_l; /// laser scanner pose in map coordinates
+        const math::Pose m_T_l = m_T_w * it.getData().pose_ * b_T_l; /// laser scanner pose in map coordinates
         double p = 0.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
-            const double        ray_range = laser_rays[i].range_;
-            const math::Point   ray_end_point = pose.getPose() * laser_rays[i].point_;
-            const double        map_range = gridmap.getRange(pose.getOrigin(), ray_end_point);
+            const auto &ray = laser_rays[i];
+            if(!ray.valid_)
+                continue;
+
+            const double        ray_range = ray.range_;
+            const math::Point   ray_end_point = m_T_l.getPose() * ray.point_;
+            const double        map_range = gridmap.getRange(m_T_l.getOrigin(), ray_end_point);
             const double pz = probability(ray_range, map_range);
             p += std::log(pz);
         }

@@ -22,6 +22,8 @@ void DataProviderLaser2D::doSetup(ros::NodeHandle &nh_private)
     angle_max_ = nh_private.param<double>(privateParameter("angle_max"), M_PI);
     angle_min_ = nh_private.param<double>(privateParameter("angle_min"),-M_PI);
 
+    time_offset_ = ros::Rate(nh_private.param<double>(privateParameter("rate"), 0.0)).cycleTime();
+
     Logger &l = Logger::getLogger();
     l.info("topic_='" + topic_ + "'", "DataProvider:" + name_);
     l.info("undistortion_='" + std::to_string(undistortion_) + "'", "DataProvider:" + name_);
@@ -37,6 +39,12 @@ void DataProviderLaser2D::doSetup(ros::NodeHandle &nh_private)
 
 void DataProviderLaser2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
 {
+    if(!time_offset_.isZero() &&
+            time_of_last_measurement_.isZero()) {
+        if(msg->header.stamp <= (time_of_last_measurement_ + time_offset_))
+            return;
+    }
+
     LaserScan2D::Ptr laserscan(new LaserScan2D(msg->header.frame_id));
 
     auto convert = [&laserscan, &msg, this] () {
@@ -54,6 +62,8 @@ void DataProviderLaser2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
             if(range >= range_min && range <= range_max &&
                     angle >= angle_min_ && angle <= angle_max_) {
                 rays.emplace_back(LaserScan2D::Ray(angle, range));
+            } else {
+                rays.emplace_back(LaserScan2D::Ray());
             }
             angle += angle_increment;
         }
@@ -108,6 +118,8 @@ void DataProviderLaser2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
                 tf::Transform end_T_current = end_T_fixed * fixed_T_current;
                 math::Point pt = end_T_current * math::Point(std::cos(angle) * range, std::sin(angle) * range);
                 rays.emplace_back(LaserScan2D::Ray(pt));
+            } else {
+                rays.emplace_back(LaserScan2D::Ray());
             }
             angle += angle_increment;
             stamp += stamp_delta;
@@ -123,4 +135,5 @@ void DataProviderLaser2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
     }
 
     data_received_(laserscan);
+    time_of_last_measurement_ = msg->header.stamp;
 }

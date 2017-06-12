@@ -29,14 +29,15 @@
         </group>
 
         <group ns="front_laser">
-          <param name="class"                    value="muse_mcl::DataProviderLaser2D" />
-          <param name="base_class"               value="muse_mcl::DataProvider" />
+          <param name="class"                      value="muse_mcl::DataProviderLaser2D" />
+          <param name="base_class"                 value="muse_mcl::DataProvider" />
         	<param name="topic"                    value="/sick_front" />
         	<param name="undistortion"             value="false" />
         	<param name="undistortion_fixed_frame" value="/odom" />
         	<param name="undistortion_tf_timeout"  value="0.1" />
-        	<param name="range_max"                value="82.0" />
+        	<param name="range_max"                value="30.0" />
         	<param name="range_min"                value="0.1" />
+        	<param name="rate"					   value="30.0" />
         	<!-- <param name="angle_min" value="-3.1425" /> -->
         	<!-- <param name="angle_max" value="3.1425" /> -->
           <param name="queue_size"               value="10" />
@@ -52,7 +53,7 @@
             <param name="z_rand"        value="0.1"/>
             <param name="sigma_hit"     value="0.1"/>
             <param name="lambda_short"  value="0.1"/>
-            <param name="max_beams"     value="30" />
+            <param name="max_beams"     value="60" />
             <param name="use_estimated_parameters" value="true" />
             <param name="use_weights_for_estimation" value="true" />
         </group>
@@ -86,7 +87,7 @@
           </rosparam>
           <param name="class"     	value="muse_mcl::UniformAllMaps2D" />
           <param name="base_class"  value="muse_mcl::UniformPoseGeneration" />
-          <param name="seed"    	  value="2" />
+          <param name="seed"    	value="2" />
           <param name="timeout"   	value="10.0" />
           <param name="tf_timeout"  value="0.1" />
           <param name="sample_size" value="500" />
