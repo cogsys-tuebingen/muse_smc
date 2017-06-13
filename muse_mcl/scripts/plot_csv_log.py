@@ -24,7 +24,7 @@ def run(file_name):
     header, columns, data = read_file(file_name)
 
     fig, ax = plt.subplots()
-    ax.set_xlabel(header[0])
+    ax.set_xlabel(header[0])    
     curves = []
 
     for i in range(1, columns):
