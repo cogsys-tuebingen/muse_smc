@@ -61,10 +61,10 @@
             <param name="class" value="muse_mcl::DifferentialDrive" />
             <param name="base_class" value="muse_mcl::PredictionModel"/>
             <param name="data_provider" value="odometry" />
-  			<param name="alpha1" value="0.1"/>
-  		  	<param name="alpha2" value="0.1"/>
+  			<param name="alpha1" value="0.01"/>
+  		  	<param name="alpha2" value="0.0"/>
   	   		<param name="alpha3" value="0.1"/>
-    		<param name="alpha4" value="0.1"/>
+    		<param name="alpha4" value="0.0"/>
     		<param name="alpha5" value="0.0"/>
         </group>
         <group ns="rawseeds">

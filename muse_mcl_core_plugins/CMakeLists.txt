@@ -55,6 +55,7 @@ add_library(${PROJECT_NAME} SHARED
 
     src/odometry/differential_drive.cpp
     src/odometry/differential_drive_abs.cpp
+    src/odometry/differential_drive_amcl.cpp
     src/odometry/omni_drive.cpp
     src/odometry/data_provider_odometry.cpp
     src/odometry/data_provider_odometry_tf.cpp

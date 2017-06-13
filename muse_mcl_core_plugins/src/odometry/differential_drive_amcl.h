@@ -1,5 +1,5 @@
-#ifndef DIFFERENTIAL_DRIVE_H
-#define DIFFERENTIAL_DRIVE_H
+#ifndef DIFFERENTIAL_DRIVE_AMCL_H
+#define DIFFERENTIAL_DRIVE_AMCL_H
 
 #include <muse_mcl/particle_filter/prediction_model.hpp>
 #include <muse_mcl/math/random.hpp>
@@ -7,12 +7,12 @@
 #include <fstream>
 
 namespace muse_mcl {
-class DifferentialDrive : public PredictionModel
+class DifferentialDriveAMCL : public PredictionModel
 {
 public:
-    DifferentialDrive();
+    DifferentialDriveAMCL();
 
-    virtual ~DifferentialDrive();
+    virtual ~DifferentialDriveAMCL();
 
     virtual Result doPredict(const Data::ConstPtr &data,
                            const ros::Time &until,
@@ -34,4 +34,4 @@ protected:
 };
 }
 
-#endif /* DIFFERENTIAL_DRIVE_H */
+#endif // DIFFERENTIAL_DRIVE_AMCL_H

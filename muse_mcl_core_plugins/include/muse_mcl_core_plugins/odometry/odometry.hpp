@@ -69,6 +69,8 @@ public:
 
     bool split(const ros::Time &split_time, Odometry::ConstPtr &a, Odometry::ConstPtr &b) const
     {
+        std::cerr << "they see me splittin'" << std::endl;
+
         if(!time_frame_.within(split_time))
             return false;
 

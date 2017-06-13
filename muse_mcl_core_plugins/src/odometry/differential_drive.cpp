@@ -23,6 +23,7 @@ PredictionModel::Result DifferentialDrive::doPredict(const Data::ConstPtr &data,
 
     Odometry::ConstPtr apply;
     Odometry::ConstPtr leave;
+    std::cerr << until << " " << data->getTimeFrame().end << std::endl;
     if(until < data->getTimeFrame().end) {
         Odometry::ConstPtr original = std::dynamic_pointer_cast<Odometry const>(data);
         if(!original->split(until, apply, leave)) {
@@ -92,9 +93,7 @@ PredictionModel::Result DifferentialDrive::doPredict(const Data::ConstPtr &data,
     Logger &l = Logger::getLogger();
     l.info("delta_trans='" + std::to_string(delta_trans) + "', delta_rot2='" + std::to_string(delta_rot2) + "'", "DifferentialDrive");
 
-    std::cerr << odometry << std::endl;
-
-    return PredictionModel::Result(delta_trans, std::abs(delta_rot2), data);
+    return PredictionModel::Result(delta_trans, std::abs(delta_rot2), apply, leave);
 }
 
 void DifferentialDrive::doSetup(ros::NodeHandle &nh_private)
