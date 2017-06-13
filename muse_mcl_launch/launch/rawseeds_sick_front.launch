@@ -130,7 +130,7 @@
 	  <node pkg="tf" type="static_transform_publisher" name="map_T_w" args="0 0 0 0 0 0 map world 10"/>
 	
   <node pkg="map_server" type="map_server" name="map_server" output="log" args="$(arg map_path)" />
-	<node pkg="rosbag" type="play" name="player" output="log" args="--clock --rate 1 -d 5 $(arg bag_path)" required="true" />
+	<node pkg="rosbag" type="play" name="player" output="log" args="--clock --rate .25 -d 5 $(arg bag_path)" required="true" />
 	<include file="$(find rawseeds_ros)/launch/transforms.launch" />
   <node pkg="rawseeds_ros" type="log_trajectory.py" name="log_trajectory" />
 

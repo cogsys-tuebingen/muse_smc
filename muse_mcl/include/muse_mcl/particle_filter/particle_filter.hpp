@@ -124,7 +124,7 @@ protected:
     FilterStateLoggerDefault::Ptr filter_state_logger_;
 
     void processRequests();
-    bool processPredictions(const ros::Time &until);
+    PredictionOutcome processPredictions(const ros::Time &until);
     void publishPoses();
     void publishTF();
     void loop();

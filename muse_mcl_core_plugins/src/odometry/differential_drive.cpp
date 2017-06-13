@@ -23,7 +23,6 @@ PredictionModel::Result DifferentialDrive::doPredict(const Data::ConstPtr &data,
 
     Odometry::ConstPtr apply;
     Odometry::ConstPtr leave;
-    std::cerr << until << " " << data->getTimeFrame().end << std::endl;
     if(until < data->getTimeFrame().end) {
         Odometry::ConstPtr original = std::dynamic_pointer_cast<Odometry const>(data);
         if(!original->split(until, apply, leave)) {
@@ -45,8 +44,9 @@ PredictionModel::Result DifferentialDrive::doPredict(const Data::ConstPtr &data,
     const double delta_rot2 = math::angle::difference(odometry.getDeltaAngular(), delta_rot1);
 
     if(delta_trans < eps_zero_linear_ &&
-            std::abs(delta_rot2) < eps_zero_angular_)
+            std::abs(delta_rot2) < eps_zero_angular_) {
         return PredictionModel::Result(0.0, 0.0, data);
+    }
 
     const double delta_rot_noise1 = std::min(std::abs(math::angle::difference(delta_rot1, 0.0)),
                                              std::abs(math::angle::difference(delta_rot1, M_PI)));

@@ -268,7 +268,7 @@ void ParticleFilter::processRequests()
     }
 }
 
-bool ParticleFilter::processPredictions(const ros::Time &until)
+ParticleFilter::PredictionOutcome ParticleFilter::processPredictions(const ros::Time &until)
 {
     auto wait_for_prediction = [this] ()
     {
@@ -293,8 +293,9 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
         saveFilterState();
 
         /// remove too old predction messages
-        if(prediction->getStamp() < particle_set_stamp_)
+        if(prediction->getStamp() < particle_set_stamp_) {
             continue;
+        }
 
         /// mutate time stamp
         PredictionModel::Result movement = prediction->apply(until, particle_set_->getPoses());
@@ -311,7 +312,7 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
         } else {
             std::unique_lock<std::mutex> l(prediction_queue_mutex_);
             prediction_queue_.emplace(prediction);
-            break;
+            return RETRY;
         }
     }
 
@@ -321,7 +322,10 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
     saveFilterState();
     Logger::getLogger().info("After, '" + std::to_string(prediction_queue_.size()) + "' samples in queue.", "ParticleFilter");
 
-    return abs_motion_integral_linear > 0.0 || abs_motion_integral_angular > 0.0;
+    if(abs_motion_integral_linear > 0.0 || abs_motion_integral_angular > 0.0)
+        return MOTION;
+    else
+        return NO_MOTION;
 }
 
 void ParticleFilter::publishPoses()
@@ -358,11 +362,24 @@ void ParticleFilter::loop()
             processRequests();
 
             auto time = getUpdateTime();
-            if(time >= particle_set_stamp_ &&
-                    (processPredictions(time) || integrate_all_measurement_)) {
-                applyUpdate();
+            if(time >= particle_set_stamp_) {
+                switch(processPredictions(time)) {
+                case MOTION:
+                    applyUpdate();
+                    break;
+                case NO_MOTION:
+                    if(integrate_all_measurement_) {
+                        applyUpdate();
+                    } else {
+                        dropUpdate();
+                    }
+                    break;
+                default:
+                    break;
+                }
                 ++update_cycle_;
             } else {
+                /// drop old updates
                 dropUpdate();
             }
 
