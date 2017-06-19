@@ -17,6 +17,11 @@ void BeamModelMLE::update(const Data::ConstPtr  &data,
                           const Map::ConstPtr   &map,
                           ParticleSet::Weights   set)
 {
+    if(!map->isType<maps::BinaryGridMap>()) {
+        Logger::getLogger().error("The map is of incompatible type!", "UpdateModel:" + name_);
+        return;
+    }
+
     if(use_estimated_parameters_)
         parameter_estimator_mle_->getParameters(parameters_);
 

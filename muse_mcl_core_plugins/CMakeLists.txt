@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(PCL REQUIRED)
+find_package(OpenCV REQUIRED)
 
 catkin_package()
 
@@ -28,6 +29,7 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
 
 add_library(${PROJECT_NAME} SHARED
@@ -75,6 +77,7 @@ add_library(${PROJECT_NAME} SHARED
 target_link_libraries(${PROJECT_NAME}
     ${catkin_LIBRARIES}
     ${PCL_LIBRARIES}
+    ${OpenCV_LIBRARIES}
     muse_mcl_maps
 )
 
@@ -86,6 +89,7 @@ add_library(muse_mcl_maps
 
 target_link_libraries(muse_mcl_maps
     ${catkin_LIBRARIES}
+    ${OpenCV_LIBRARIES}
 )
 
 

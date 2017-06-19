@@ -49,8 +49,8 @@ public:
 
         Logger &l = Logger::getLogger();
         l.info("Setup", "Resampling:" + name_);
-        l.info("recovery_alpha_fast_='" + std::to_string(recovery_alpha_fast_) + "'", "Resampling:" + name_);
-        l.info("recovery_alpha_slow_='" + std::to_string(recovery_alpha_slow_) + "'", "Resampling:" + name_);
+        l.info("recovery_alpha_fast='" + std::to_string(recovery_alpha_fast_) + "'", "Resampling:" + name_);
+        l.info("recovery_alpha_slow='" + std::to_string(recovery_alpha_slow_) + "'", "Resampling:" + name_);
 
     }
 

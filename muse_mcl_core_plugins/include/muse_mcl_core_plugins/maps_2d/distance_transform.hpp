@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <limits>
 #include <queue>
+#include <deque>
 #include <array>
 
 namespace muse_mcl {
@@ -13,19 +14,18 @@ namespace maps {
 namespace distance_transform {
 class Kernel {
 public:
-    Kernel(const std::size_t size,
-           const double scale = 1.0) :
-        size(size),
+    Kernel(const std::size_t _size,
+           const double _scale = 1.0) :
+        size(_size + 1ul - (_size % 2)),
         margin(size / 2),
-        min(- (int) size / 2),
+        min(- static_cast<int>(size) / 2),
         max(size / 2),
         data(size *  size),
         data_ptr(data.data())
     {
-        assert(size % 2 != 0);
         for(int i = min ; i <= max ; ++i) {
             for(int j = min ; j <= max ; ++j) {
-                at(i,j) = scale * hypot(i,j);
+                at(i,j) = _scale * hypot(i, j);
             }
         }
     }
@@ -119,7 +119,7 @@ struct Borgefors {
             if(_src[i] < threshold) {
                 _dst[i] = max_distance;
             } else {
-                _dst[i] = 0;
+                _dst[i] = 0.0;
             }
         }
 

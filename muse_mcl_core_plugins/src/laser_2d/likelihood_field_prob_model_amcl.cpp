@@ -16,6 +16,11 @@ void LikelihoodFieldProbModelAMCL::update(const Data::ConstPtr &data,
                                       const Map::ConstPtr &map,
                                       ParticleSet::Weights set)
 {
+    if(!map->isType<maps::DistanceGridMap>()) {
+        Logger::getLogger().error("The map is of incompatible type!", "UpdateModel:" + name_);
+        return;
+    }
+
     const maps::DistanceGridMap &gridmap = map->as<maps::DistanceGridMap>();
     const LaserScan2D           &laser_data = data->as<LaserScan2D>();
     const LaserScan2D::Rays   &laser_rays = laser_data.getRays();

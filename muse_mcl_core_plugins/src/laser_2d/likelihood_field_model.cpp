@@ -17,23 +17,30 @@ void LikelihoodFieldModel::update(const Data::ConstPtr &data,
                                   const Map::ConstPtr  &map,
                                   ParticleSet::Weights  set)
 {
+    if(!map->isType<maps::DistanceGridMap>()) {
+        Logger::getLogger().error("The map is of incompatible type!", "UpdateModel:" + name_);
+        return;
+    }
+
     const maps::DistanceGridMap &gridmap = map->as<maps::DistanceGridMap>();
     const LaserScan2D           &laser_data = data->as<LaserScan2D>();
     const LaserScan2D::Rays   &laser_rays = laser_data.getRays();
 
     /// laser to base transform
-    tf::Transform base_T_laser;
-    tf::Transform map_T_world;
-    tf_provider_->lookupTransform(robot_base_frame_,
-                                  laser_data.getFrame(),
-                                  laser_data.getTimeFrame().end,
-                                  base_T_laser,
-                                  tf_timeout_);
-    tf_provider_->lookupTransform(world_frame_,
-                                  gridmap.getFrame(),
-                                  laser_data.getTimeFrame().end,
-                                  map_T_world,
-                                  tf_timeout_);
+    tf::Transform b_T_l;
+    tf::Transform m_T_w;
+    if(!tf_provider_->lookupTransform(robot_base_frame_,
+                                      laser_data.getFrame(),
+                                      laser_data.getTimeFrame().end,
+                                      b_T_l,
+                                      tf_timeout_))
+        return;
+    if(!tf_provider_->lookupTransform(world_frame_,
+                                     gridmap.getFrame(),
+                                     laser_data.getTimeFrame().end,
+                                     m_T_w,
+                                     tf_timeout_))
+        return;
 
     const LaserScan2D::Rays rays = laser_data.getRays();
     const ParticleSet::Weights::iterator end = set.end();
@@ -49,14 +56,14 @@ void LikelihoodFieldModel::update(const Data::ConstPtr &data,
 
 
     for(auto it = set.begin() ; it != end ; ++it) {
-        const math::Pose pose = map_T_world * it.getData().pose_ * base_T_laser; /// laser scanner pose in map coordinates
+        const math::Pose m_T_l = m_T_w * it.getData().pose_ * b_T_l; /// laser scanner pose in map coordinates
         double p = 0.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
             if(!ray.valid_)
                 continue;
 
-            const math::Point   ray_end_point = pose.getPose() * ray.point_;
+            const math::Point   ray_end_point = m_T_l.getPose() * ray.point_;
             const double pz = p_hit(gridmap.at(ray_end_point)) + p_rand;
             p += std::log(pz);
         }
