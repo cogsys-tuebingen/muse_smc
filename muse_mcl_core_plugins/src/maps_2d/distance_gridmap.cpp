@@ -1,5 +1,4 @@
 #include <muse_mcl_core_plugins/maps_2d/distance_gridmap.h>
-#include <muse_mcl_core_plugins/maps_2d/distance_transform.hpp>
 #include <tf/tf.h>
 #include <opencv2/opencv.hpp>
 

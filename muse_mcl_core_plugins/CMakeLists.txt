@@ -184,13 +184,6 @@ if(True)
             ${OpenCV_LIBRARIES}
             ${catkin_LIBRARIES}
         )
-
-        add_executable(muse_mcl_exam_distance_transform
-            src/examples/exam_distance_transform.cpp
-        )
-        target_link_libraries(muse_mcl_exam_distance_transform
-            ${OpenCV_LIBRARIES}
-        )
     endif()
 endif()
 
