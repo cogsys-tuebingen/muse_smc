@@ -31,7 +31,7 @@ public:
     using Weights   = MemberDecorator<Particle, Particle::WeightType, &Particle::weight_>;
     using Particles = std::buffered_vector<Particle>;
     using Clusters        = std::unordered_map<int, clustering::Data::ParticlePtrs>;
-    using Distributions   = std::unordered_map<int, clustering::Data::Distribution>;
+    using Distributions   = std::unordered_map<int, clustering::Data::Distribution, std::hash<int>, std::equal_to<int>, Eigen::aligned_allocator<std::pair<const int, clustering::Data::Distribution>>>;
     using AngularMeans    = std::unordered_map<int, clustering::Data::AngularMean>;
     using KDTreeBuffered  = cis::Storage<clustering::Data, Indexation::IndexType::Base, cis::backend::kdtree::KDTreeBuffered>;
     using Array           = cis::Storage<clustering::Data, Indexation::IndexType::Base, cis::backend::array::Array>;
