@@ -54,7 +54,10 @@ void DistanceGridMap::convert(const nav_msgs::OccupancyGrid &occupancy_grid, con
     }
 
     cv::Mat dst(height_, width_, CV_32FC1, cv::Scalar());
-    cv::distanceTransform(src, dst, CV_DIST_L2, 5);
+    cv::distanceTransform(src, dst, CV_DIST_L2, 3);
+
+    /// todo max distance
+    /// kernel size parameter
 
     for(std::size_t i = 0 ; i < size ; ++i) {
         data_ptr_[i] = dst.at<float>(i) * resolution_;

@@ -18,6 +18,17 @@ Map::ConstPtr MapProviderDistanceGridMap::getMap() const
     if(!map_ && blocking_) {
         map_loaded_.wait(l);
     }
+
+    cv::Mat display(map_->getHeight(), map_->getWidth(), CV_32FC1, cv::Scalar());
+    for(int i = 0 ; i < display.rows ; ++i) {
+        for(int j = 0 ; j < display.cols ; ++j) {
+            display.at<float>(i,j) = map_->at(j,i);
+        }
+    }
+
+    cv::imshow("map", display);
+    cv::waitKey(0);
+
     return map_;
 }
 
