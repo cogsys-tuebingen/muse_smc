@@ -1,6 +1,6 @@
 #include <muse_mcl_core_plugins/maps_2d/distance_gridmap.h>
-#include <muse_mcl_core_plugins/maps_2d/distance_transform.hpp>
 #include <tf/tf.h>
+#include <opencv2/opencv.hpp>
 
 using namespace muse_mcl;
 using namespace maps;
@@ -39,23 +39,26 @@ void DistanceGridMap::convert(const nav_msgs::OccupancyGrid &occupancy_grid, con
 {
     const std::size_t size = height_ * width_;
     const int8_t *occupancy_grid_ptr = occupancy_grid.data.data();
-    std::vector<double> buffer(size);
-    double * buffer_ptr = buffer.data();
     data_.resize(size, 0.0);
     data_ptr_ = data_.data();
 
+    cv::Mat src(height_, width_, CV_8UC1, cv::Scalar(1));
     for(std::size_t i = 0 ; i < size ; ++i) {
         int8_t occupancy = occupancy_grid_ptr[i];
         assert(occupancy <= 100);
         assert(occupancy >= -1);
 
-        if(occupancy == -1) {
-            buffer_ptr[i] = 0.5;
-        } else {
-            buffer_ptr[i] = occupancy / 100.0;
+        if(occupancy == -1 || occupancy >= threshold) {
+            src.at<uchar>(i) = 0;
         }
     }
 
-    distance_transform::Borgefors<double> bf(height_, width_, resolution_, threshold, kernel_size);
-    bf.apply(buffer, data_);
+    cv::Mat dst(height_, width_, CV_32FC1, cv::Scalar());
+    cv::distanceTransform(src, dst, CV_DIST_L2, 5);
+
+    for(std::size_t i = 0 ; i < size ; ++i) {
+        data_ptr_[i] = dst.at<float>(i) * resolution_;
+    }
+
+
 }

@@ -12,7 +12,7 @@ muse_mcl::TestDistribution<2> test_distribution_5000;
 
 namespace mms = muse_mcl::math::statistic;
 
-TEST(TestMuseAMCL, testDistributionInsertion)
+TEST(TestMuseMCL, testDistributionInsertion)
 {
     mms::Distribution<2> distribution;
     EXPECT_EQ(0, distribution.getN());
@@ -40,7 +40,7 @@ TEST(TestMuseAMCL, testDistributionInsertion)
 
 }
 
-TEST(TestMuseAMCL, testDistributionMean)
+TEST(TestMuseMCL, testDistributionMean)
 {
     const double tolerance = 1e-3;
 
@@ -74,7 +74,7 @@ TEST(TestMuseAMCL, testDistributionMean)
     EXPECT_NEAR(test_distribution_5000.mean(1), mean(1), tolerance);
 }
 
-TEST(TestMuseAMCL, testDistributionCovariance)
+TEST(TestMuseMCL, testDistributionCovariance)
 {
     const double tolerance = 1e-3;
 
@@ -114,7 +114,7 @@ TEST(TestMuseAMCL, testDistributionCovariance)
     EXPECT_NEAR(test_distribution_5000.covariance(1,1), cov(1,1), tolerance);
 }
 
-TEST(TestMuseAMCL, testDistributionEigenValues)
+TEST(TestMuseMCL, testDistributionEigenValues)
 {
     const double tolerance = 1e-3;
 
@@ -148,7 +148,7 @@ TEST(TestMuseAMCL, testDistributionEigenValues)
     EXPECT_NEAR(test_distribution_5000.eigen_values(1), eigen_values(1), tolerance);
 }
 
-TEST(TestMuseAMCL, testDistributionEigenVectors)
+TEST(TestMuseMCL, testDistributionEigenVectors)
 {
     auto equals = [] (const Eigen::Vector2d &a,
             const Eigen::Vector2d &b,
@@ -225,7 +225,7 @@ TEST(TestMuseAMCL, testDistributionEigenVectors)
 
 }
 
-TEST(TestMuseAMCL, testDistributionCopy)
+TEST(TestMuseMCL, testDistributionCopy)
 {
     mms::Distribution<2> distribution_a;
     mms::Distribution<2> distribution_b;
@@ -246,7 +246,7 @@ TEST(TestMuseAMCL, testDistributionCopy)
 }
 
 
-TEST(TestMuseAMCL, testDistributionAddition)
+TEST(TestMuseMCL, testDistributionAddition)
 {
     const double tolerance = 1e-6;
 
@@ -273,7 +273,7 @@ TEST(TestMuseAMCL, testDistributionAddition)
     EXPECT_NEAR((distribution_a.getEigenVectors() - distribution_b.getEigenVectors()).norm(), 0.0, tolerance);
 }
 
-TEST(TestMuseAMCL, testWeightedDistribution)
+TEST(TestMuseMCL, testWeightedDistribution)
 {
     mms::WeightedDistribution<2> wd;
     for(std::size_t i = 0 ; i < 10 ; ++i) {
@@ -318,7 +318,7 @@ TEST(TestMuseAMCL, testWeightedDistribution)
 
 int main(int argc, char *argv[])
 {
-    ros::init(argc, argv, "muse_amcl_test_node_distribution");
+    ros::init(argc, argv, "muse_mcl_test_node_distribution");
     ros::NodeHandle nh_private("~");
 
     std::string test_distribution_200_path;

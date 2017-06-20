@@ -1,5 +1,7 @@
 #include "map_provider_distance_gridmap.h"
 
+#include <opencv2/opencv.hpp>
+
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl::MapProviderDistanceGridMap, muse_mcl::MapProvider)
 
@@ -21,6 +23,7 @@ Map::ConstPtr MapProviderDistanceGridMap::getMap() const
 
 void MapProviderDistanceGridMap::doSetup(ros::NodeHandle &nh_private)
 {
+
     topic_ = nh_private.param<std::string>(privateParameter("topic"), "/map");
     binarization_threshold_ = nh_private.param<double>(privateParameter("threshold"), 0.5);
     kernel_size_ = std::max(nh_private.param<int>(privateParameter("kernel_size"), 5), 5);
@@ -55,6 +58,7 @@ void MapProviderDistanceGridMap::callback(const nav_msgs::OccupancyGridConstPtr 
                 maps::DistanceGridMap::Ptr map(new maps::DistanceGridMap(*msg, binarization_threshold_, kernel_size_));
                 map_ = map;
                 loading_ = false;
+
                 map_loaded_.notify_one();
             };
             if(blocking_) {

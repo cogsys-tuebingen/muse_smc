@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include  <thread>
 
-TEST(TestMuseAMCL, testTFProviderSingleThreaded)
+TEST(TestMuseMCL, testTFProviderSingleThreaded)
 {
     muse_mcl::TFProvider tf_provider;
     std::vector<std::string> frames;
@@ -26,7 +26,7 @@ TEST(TestMuseAMCL, testTFProviderSingleThreaded)
     }
 }
 
-TEST(TestMuseAMCL, testTFProviderMultiThreaded)
+TEST(TestMuseMCL, testTFProviderMultiThreaded)
 {
     muse_mcl::TFProvider tf_provider;
     std::vector<std::string> frames;

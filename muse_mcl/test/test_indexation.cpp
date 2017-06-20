@@ -3,7 +3,7 @@
 
 using namespace muse_mcl;
 
-TEST(TestMuseAMCL, testResolution)
+TEST(TestMuseMCL, testResolution)
 {
     Indexation ia;
     Indexation::ResolutionType res = ia.getResolution();
@@ -17,7 +17,7 @@ TEST(TestMuseAMCL, testResolution)
     EXPECT_EQ(65.0, res[2]);
 }
 
-TEST(TestMuseAMCL, testCreation)
+TEST(TestMuseMCL, testCreation)
 {
     Indexation ia({0.5, 0.25, 1.0});
     Indexation::IndexType i = ia.create({1.0, 1.0, 1.0});
@@ -38,7 +38,7 @@ TEST(TestMuseAMCL, testCreation)
     EXPECT_EQ(1.0, i[2]);
 }
 
-TEST(TestMuseAMCL, testSize)
+TEST(TestMuseMCL, testSize)
 {
     Indexation ia({0.5, 0.25, 1.0});
     Indexation::SizeType s = ia.size({1.0, 1.0, 1.0});

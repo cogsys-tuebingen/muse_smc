@@ -3,7 +3,7 @@
 
 #include <gtest/gtest.h>
 
-TEST(TestMuseAMCL, testSignalVoidCallback)
+TEST(TestMuseMCL, testSignalVoidCallback)
 {
     using TestCallback = delegate<void(int,int)>;
     using TestSignal = muse_mcl::Signal<TestCallback>;
@@ -14,7 +14,7 @@ TEST(TestMuseAMCL, testSignalVoidCallback)
     EXPECT_FALSE(!connection);
 }
 
-TEST(TestMuseAMCL, testSignalNonVoidCallback)
+TEST(TestMuseMCL, testSignalNonVoidCallback)
 {
     using TestCallback = delegate<int(int,int)>;
     using TestSignal = muse_mcl::Signal<TestCallback>;
@@ -25,7 +25,7 @@ TEST(TestMuseAMCL, testSignalNonVoidCallback)
     EXPECT_FALSE(!connection);
 }
 
-TEST(TestMuseAMCL, enabling)
+TEST(TestMuseMCL, enabling)
 {
     using TestCallback = delegate<void()>;
     using TestSignal = muse_mcl::Signal<TestCallback>;
@@ -41,7 +41,7 @@ TEST(TestMuseAMCL, enabling)
     EXPECT_FALSE(signal.isEnabled());
 }
 
-TEST(TestMuseAMCL, testSignalCallbackExecution)
+TEST(TestMuseMCL, testSignalCallbackExecution)
 {
     int result = 0;
     using TestCallback = delegate<void(int)>;
@@ -63,7 +63,7 @@ TEST(TestMuseAMCL, testSignalCallbackExecution)
     }
 }
 
-TEST(TestMuseAMCL, testSignalEnableDisable)
+TEST(TestMuseMCL, testSignalEnableDisable)
 {
     int result = 0;
     using TestCallback = delegate<void(int)>;
@@ -93,7 +93,7 @@ TEST(TestMuseAMCL, testSignalEnableDisable)
     }
 }
 
-TEST(TestMuseAMCL, testSignalDisconnectViaHandleReset)
+TEST(TestMuseMCL, testSignalDisconnectViaHandleReset)
 {
     int result = 0;
     using TestCallback = delegate<void(int)>;
@@ -121,7 +121,7 @@ TEST(TestMuseAMCL, testSignalDisconnectViaHandleReset)
     }
 }
 
-TEST(TestMuseAMCL, testSignalDisconnectViaMethod)
+TEST(TestMuseMCL, testSignalDisconnectViaMethod)
 {
     int result = 0;
     using TestCallback = delegate<void(int)>;

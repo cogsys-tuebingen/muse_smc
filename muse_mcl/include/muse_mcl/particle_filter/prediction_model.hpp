@@ -40,6 +40,14 @@ public:
         {
         }
 
+        Result(const Result &other) :
+            linear_distance_abs(other.linear_distance_abs),
+            angular_distance_abs(other.angular_distance_abs),
+            applied(other.applied),
+            left_to_apply(other.left_to_apply)
+        {
+        }
+
         inline bool success() const
         {
             return static_cast<bool>(applied);
@@ -93,13 +101,7 @@ public:
                    const ros::Time      &until,
                    ParticleSet::Poses    poses)
     {
-
-        //// drop if too old
-        if(until < data->getTimeFrame().end) {
-            return Result();
-        } else {
-            return doPredict(data, until, poses);
-        }
+        return doPredict(data, until, poses);
     }
 
 protected:

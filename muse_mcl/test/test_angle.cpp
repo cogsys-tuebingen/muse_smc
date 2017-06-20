@@ -4,7 +4,7 @@
 
 namespace mm = muse_mcl::math;
 
-TEST(TestMuseAMCL, testAngleNormalization)
+TEST(TestMuseMCL, testAngleNormalization)
 {
     for(std::size_t i = -10 ; i < 10 ; ++i) {
         double a = mm::angle::normalize(2 * M_PI * i);
@@ -30,7 +30,7 @@ TEST(TestMuseAMCL, testAngleNormalization)
     EXPECT_NEAR(0.0, mm::angle::normalize( 2 * M_PI), 1e-6);
 }
 
-TEST(TestMuseAMCL, testAngleDiff)
+TEST(TestMuseMCL, testAngleDiff)
 {
     EXPECT_NEAR(-M_PI / 2, mm::angle::difference(0, M_PI / 2), 1e-6);
     EXPECT_NEAR(M_PI / 2, mm::angle::difference(-M_PI / 2, M_PI), 1e-6);
@@ -39,7 +39,7 @@ TEST(TestMuseAMCL, testAngleDiff)
     EXPECT_NEAR(0.0, mm::angle::difference(2 * M_PI, 0), 1e-6);
 }
 
-TEST(TestMuseAMCL, testToRadianConversion)
+TEST(TestMuseMCL, testToRadianConversion)
 {
     // expclicit
     auto to_rad = [](double a){return a / 180.0 * M_PI;};
@@ -48,7 +48,7 @@ TEST(TestMuseAMCL, testToRadianConversion)
     }
 }
 
-TEST(TestMuseAMCL, testToDegreeConversion)
+TEST(TestMuseMCL, testToDegreeConversion)
 {
     // expclicit
     auto to_deg = [](double a){return a / M_PI * 180.0;};

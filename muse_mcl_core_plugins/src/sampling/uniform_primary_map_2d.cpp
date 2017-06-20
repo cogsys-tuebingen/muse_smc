@@ -34,10 +34,9 @@ bool UniformPrimaryMap2D::update(const std::string &frame)
         if(tf_provider_->lookupTransform(map->getFrame(), frame, now, secondary_maps_T_w_[i], tf_timeout_)) {
             secondary_maps_[i] = map;
         } else {
-            return false;
+             return false;
         }
     }
-
     /// particles are generated in the primary map frame, since formulation has
     /// to be axis-aligned, relative to the map origin
     /// but internal frames are already within calculation
@@ -143,6 +142,9 @@ void UniformPrimaryMap2D::doSetupMapProviders(ros::NodeHandle &nh_private,
         ms += m + ",";
     }
     ms.back() = ']';
+
+    secondary_maps_T_w_.resize(secondary_map_providers.size());
+    secondary_maps_.resize(secondary_map_providers.size());
 
     Logger &l = Logger::getLogger();
     l.info("primary_map_provider='" + primary_map_provider + "'", "UniformSampling:" + name_);

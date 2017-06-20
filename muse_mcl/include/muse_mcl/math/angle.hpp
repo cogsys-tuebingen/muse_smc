@@ -2,6 +2,7 @@
 #define ANGLE_HPP
 
 #include <cmath>
+#include <complex>
 
 namespace muse_mcl {
 namespace math {
@@ -71,6 +72,27 @@ inline double toRad(const double deg)
 inline double fromRad(const double rad)
 {
     return rad * A_T_R;
+}
+
+/**
+ * @brief toComplex converts an angle given in radian to its complex
+ *        representation.
+ * @param rad   - the angle in radian
+ * @return      - the angle in its complex representation
+ */
+inline std::complex<double> toComplex(const double rad)
+{
+    return std::complex<double>(std::cos(rad), std::sin(rad));
+}
+/**
+ * @brief fromComplex converts an angle from its complex representation to
+ *        radian, so it is geometrically interpretable again.
+ * @param complex - the complex representation of the angle
+ * @return        - the angle in radian
+ */
+inline double fromComplex(const std::complex<double> &complex)
+{
+    return std::atan2(complex.imag(), complex.real());
 }
 }
 }

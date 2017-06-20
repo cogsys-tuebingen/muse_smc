@@ -9,9 +9,8 @@
 #include <muse_mcl/particle_filter/prediction.hpp>
 #include <muse_mcl/particle_filter/update.hpp>
 #include <muse_mcl/utils/logger.hpp>
-#include <muse_mcl/utils/filterstate_logger.hpp>
+#include <muse_mcl/utils/csv_logger.hpp>
 #include <muse_mcl/utils/transform_publisher.hpp>
-#include <muse_mcl/utils/transform_publisher_anchored.hpp>
 #include <muse_mcl/utils/filterstate_publisher.hpp>
 
 #include <geometry_msgs/PoseArray.h>
@@ -72,12 +71,13 @@ protected:
 
 
     tf::StampedTransform             tf_latest_w_T_b_;
-    TransformPublisherAnchored::Ptr  tf_publisher_;
+    TransformPublisher::Ptr  tf_publisher_;
 
     FilterStatePublisher::Ptr        filter_state_publisher_;
 
     ros::Time                particle_set_stamp_;
     ParticleSet::Ptr         particle_set_;
+    math::Pose               particle_set_mean_;
 
     UniformSampling::Ptr     sampling_uniform_;
     NormalSampling::Ptr      sampling_normal_pose_;
@@ -120,8 +120,11 @@ protected:
     std::atomic_bool         request_pose_initilization_;
     std::atomic_bool         request_global_initialization_;
 
+    //// ------------------ logger -------------------------///
+    FilterStateLoggerDefault::Ptr filter_state_logger_;
+
     void processRequests();
-    bool processPredictions(const ros::Time &until);
+    PredictionOutcome processPredictions(const ros::Time &until);
     void publishPoses();
     void publishTF();
     void loop();
@@ -135,11 +138,11 @@ protected:
     inline void saveFilterState() const
     {
         const double now = ros::Time::now().toSec();
-        FilterStateLoggerDefault::getLogger().writeState(prediction_queue_.size(),
-                                                         update_queue_.size(),
-                                                         abs_motion_integral_linear_,
-                                                         abs_motion_integral_angular_,
-                                                         particle_set_stamp_.toSec() / now);
+        filter_state_logger_->log(prediction_queue_.size(),
+                                  update_queue_.size(),
+                                  abs_motion_integral_linear_,
+                                  abs_motion_integral_angular_,
+                                  particle_set_stamp_.toSec() / now);
     }
 
     inline bool updatesQueued() const

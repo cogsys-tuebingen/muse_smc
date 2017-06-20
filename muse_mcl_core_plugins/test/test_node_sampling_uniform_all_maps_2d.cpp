@@ -11,7 +11,7 @@
 using namespace muse_mcl;
 
 
-TEST(TestMuseAMCLCorePlugins, testSamplingUniformAllMaps2D)
+TEST(muse_mcl_core_plugins, testSamplingUniformAllMaps2D)
 {
     TFProvider::Ptr tf_provider(new TFProvider);
 
@@ -85,7 +85,7 @@ TEST(TestMuseAMCLCorePlugins, testSamplingUniformAllMaps2D)
 
 int main(int argc, char *argv[])
 {
-    ros::init(argc, argv, "muse_amcl_core_plugins_test_node_sampling_uniform_all_maps_2d");   /// It's essential to set the right name here !
+    ros::init(argc, argv, "muse_mcl_core_plugins_test_node_sampling_uniform_all_maps_2d");   /// It's essential to set the right name here !
     ros::Time::init();
 
     testing::InitGoogleTest(&argc, argv);

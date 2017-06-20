@@ -7,11 +7,14 @@
 #include <cmath>
 #include <iostream>
 
+#include <muse_mcl/utils/csv_logger.hpp>
+
 namespace muse_mcl {
 class BeamModelParameterEstimator
 {
 public:
     using Ptr = std::shared_ptr<BeamModelParameterEstimator>;
+    using ParameterLogger = CSVLogger<double,double,double,double,double,double>;
 
     struct Parameters {
         double z_hit;
@@ -41,14 +44,12 @@ public:
 
         bool isNormal() const
         {
-            return std::isnormal(z_hit) &&
-                   std::isnormal(z_max) &&
-                   std::isnormal(z_short) &&
-                   std::isnormal(z_rand) &&
-                   std::isnormal(sigma_hit) &&
-                   sigma_hit > 0.0 &&
-                   std::isnormal(lambda_short) &&
-                   lambda_short > 0.0;
+            return std::isnormal(z_hit)        && z_hit > 0.0 &&
+                   std::isnormal(z_max)        && z_max > 0.0 &&
+                   std::isnormal(z_short)      && z_short > 0.0 &&
+                   std::isnormal(z_rand)       && z_rand > 0.0 &&
+                   std::isnormal(sigma_hit)    && sigma_hit > 0.0 &&
+                   std::isnormal(lambda_short) && lambda_short > 0.0;
         }
 
         void print() const
@@ -100,6 +101,8 @@ private:
 
     Parameters              parameters_;
     Parameters              parameters_working_copy_;
+
+    ParameterLogger::Ptr    logger_;
 
     void run();
 

@@ -1,5 +1,5 @@
-#ifndef MUSE_AMCL_NODE_H
-#define MUSE_AMCL_NODE_H
+#ifndef MUSE_MCL_NODE_H
+#define MUSE_MCL_NODE_H
 
 #include <muse_mcl/particle_filter/particle_filter.hpp>
 
@@ -24,11 +24,11 @@
 #include <ros/ros.h>
 
 namespace muse_mcl {
-class MuseAMCLNode
+class MuseMCLNode
 {
 public:
-    MuseAMCLNode();
-    virtual ~MuseAMCLNode();
+    MuseMCLNode();
+    virtual ~MuseMCLNode();
 
     bool setup();
 
@@ -78,4 +78,4 @@ private:
 };
 }
 
-#endif /* MUSE_AMCL_NODE_H */
+#endif /* MUSE_MCL_NODE_H */

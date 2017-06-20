@@ -2,6 +2,7 @@
 #define DATA_PROVIDER_ODOMETRY_H
 
 #include <nav_msgs/Odometry.h>
+#include <ros/ros.h>
 
 #include <muse_mcl/data_sources/data_provider.hpp>
 

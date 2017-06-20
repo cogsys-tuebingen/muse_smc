@@ -4,7 +4,7 @@
 
 std::buffered_vector<double> test_vector;
 
-TEST(TestMuseAMCL, testInitialization)
+TEST(TestMuseMCL, testInitialization)
 {
     EXPECT_EQ(0, test_vector.size());
     EXPECT_EQ(0, test_vector.capacity());
@@ -24,7 +24,7 @@ TEST(TestMuseAMCL, testInitialization)
     EXPECT_EQ(10, test_vector.capacity());
 }
 
-TEST(TestMuseAMCL, testResize)
+TEST(TestMuseMCL, testResize)
 {
     test_vector.resize(99);
     EXPECT_EQ(99, test_vector.size());
@@ -35,7 +35,7 @@ TEST(TestMuseAMCL, testResize)
     EXPECT_EQ(111, test_vector.capacity());
 }
 
-TEST(TestMuseAMCL, testPushback)
+TEST(TestMuseMCL, testPushback)
 {
     for(std::size_t i = 0 ; i < 55 ; ++i) {
         test_vector.push_back(1.0 / i);
@@ -45,7 +45,7 @@ TEST(TestMuseAMCL, testPushback)
     }
 }
 
-TEST(TestMuseAMCL, testEmplaceBack)
+TEST(TestMuseMCL, testEmplaceBack)
 {
     for(std::size_t i = 1 ; i <= 56 ; ++i) {
         test_vector.push_back(1.0 / i);
@@ -55,7 +55,7 @@ TEST(TestMuseAMCL, testEmplaceBack)
     }
 }
 
-TEST(TestMuseAMCL, testVectorIterator)
+TEST(TestMuseMCL, testVectorIterator)
 {
     std::vector<double> t;
     EXPECT_EQ(t.end(), t.begin());

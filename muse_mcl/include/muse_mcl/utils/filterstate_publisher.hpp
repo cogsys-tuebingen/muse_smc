@@ -3,6 +3,9 @@
 
 #include <visualization_msgs/MarkerArray.h>
 #include <geometry_msgs/PoseArray.h>
+#include <geometry_msgs/PoseStamped.h>
+#include <tf/tf.h>
+
 
 #include <thread>
 #include <atomic>
@@ -77,6 +80,7 @@ public:
         pub_markers_   = nh_private_.advertise<visualization_msgs::MarkerArray>("/muse_mcl/markers", 1);
         pub_poses_     = nh_private_.advertise<geometry_msgs::PoseArray>("/muse_mcl/poses", 1);
         pub_particles_ = nh_private_.advertise<muse_mcl::ParticleSetMsg>("/muse_mcl/particles", 1);
+        pub_mean_      = nh_private_.advertise<geometry_msgs::PoseStamped>("/muse_mcl/mean", 1);
         worker_thread_ = std::thread([this]{loop();});
         worker_thread_.detach();
     }
@@ -93,10 +97,12 @@ public:
     }
 
     void addState(const ParticleSet::Particles &particles,
+                  const math::Pose &mean,
                   const ros::Time &time)
     {
         std::unique_lock<std::mutex> q_lock(q_mutex_);
-        q_.push(ParticleSet::Particles::Ptr(new ParticleSet::Particles(particles)));
+        q_particles_.push(ParticleSet::Particles::Ptr(new ParticleSet::Particles(particles)));
+        q_means_.push(mean);
         q_times_.push(time);
         notify_.notify_one();
     }
@@ -109,7 +115,8 @@ private:
     std::thread                             worker_thread_;
 
     std::mutex                              q_mutex_;
-    std::queue<ParticleSet::Particles::Ptr> q_;
+    std::queue<ParticleSet::Particles::Ptr> q_particles_;
+    std::queue<math::Pose>                  q_means_;
     std::queue<ros::Time>                   q_times_;
     std::condition_variable                 notify_;
     std::mutex                              notify_mutex_;
@@ -118,6 +125,7 @@ private:
     ros::Publisher                          pub_markers_;
     ros::Publisher                          pub_particles_;
     ros::Publisher                          pub_poses_;
+    ros::Publisher                          pub_mean_;
     std::size_t                             marker_count_;
     double                                  max_;
 
@@ -125,16 +133,18 @@ private:
     {
         running_ = true;
         auto dumpQ = [this] () {
-            while(!q_.empty()) {
+            while(!q_particles_.empty()) {
                 std::unique_lock<std::mutex> q_lock(q_mutex_);
-                auto s = q_.front();
-                q_.pop();
+                auto s = q_particles_.front();
+                q_particles_.pop();
+                auto m = q_means_.front();
+                q_means_.pop();
                 auto t = q_times_.front();
                 q_times_.pop();
                 q_lock.unlock();
 
                 publishMarkers(s, t);
-                publishPoses(s, t);
+                publishPoses(s, m, t);
                 publishParticles(s, t);
             }
         };
@@ -154,7 +164,7 @@ private:
         visualization_msgs::Marker marker_prototype;
         marker_prototype.header.frame_id = world_frame_;
         marker_prototype.header.stamp = time;
-        marker_prototype.ns      = "muse_amcl";
+        marker_prototype.ns      = "muse_mcl";
         marker_prototype.type    = visualization_msgs::Marker::ARROW;
         marker_prototype.action  = visualization_msgs::Marker::MODIFY;
         marker_prototype.scale.x = 0.25;
@@ -222,19 +232,29 @@ private:
     }
 
     inline void publishPoses(const ParticleSet::Particles::Ptr &samples,
+                             const math::Pose &mean,
                              const ros::Time &time)
     {
-        geometry_msgs::PoseArrayPtr msg(new geometry_msgs::PoseArray);
-        msg->header.stamp = time;
-        msg->header.frame_id = world_frame_;
+        geometry_msgs::PoseArrayPtr msg_poses(new geometry_msgs::PoseArray);
+        msg_poses->header.stamp = time;
+        msg_poses->header.frame_id = world_frame_;
         const std::size_t sample_size = samples->size();
         for(std::size_t i = 0 ; i < sample_size ; ++i) {
             auto &s = samples->at(i);
             geometry_msgs::Pose p;
             tf::poseTFToMsg(s.pose_.getPose(), p);
-            msg->poses.emplace_back(p);
+            msg_poses->poses.emplace_back(p);
         }
-        pub_poses_.publish(msg);
+        pub_poses_.publish(msg_poses);
+
+        geometry_msgs::PoseStampedPtr msg_pose(new geometry_msgs::PoseStamped);
+        msg_pose->header.stamp = time;
+        msg_pose->header.frame_id = world_frame_;
+        msg_pose->pose.position.x = mean.x();
+        msg_pose->pose.position.y = mean.y();
+        msg_pose->pose.orientation = tf::createQuaternionMsgFromYaw(mean.yaw());
+        pub_mean_.publish(msg_pose);
+
     }
 };
 }

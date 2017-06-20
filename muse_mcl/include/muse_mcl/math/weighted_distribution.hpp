@@ -15,312 +15,312 @@ namespace statistic {
 template<std::size_t Dim, bool limit_covariance = false>
 class WeightedDistribution {
 public:
-    typedef std::shared_ptr<WeightedDistribution<Dim, limit_covariance>> Ptr;
-
-    typedef Eigen::Matrix<double, Dim, 1>                        PointType;
-    typedef Eigen::Matrix<double, Dim, Dim>                      MatrixType;
-    typedef Eigen::Matrix<double, Dim, 1>                        EigenValueSetType;
-    typedef Eigen::Matrix<double, Dim, Dim>                      EigenVectorSetType;
-    typedef Eigen::Matrix<double, Dim, 1>                        ComplexVectorType;
-    typedef Eigen::Matrix<std::complex<double>, Dim, Dim>        ComplexMatrixType;
+    using Ptr                = std::shared_ptr<WeightedDistribution<Dim, limit_covariance>> ;
+    using PointType          = Eigen::Matrix<double, Dim, 1>                                ;
+    using MatrixType         = Eigen::Matrix<double, Dim, Dim>                              ;
+    using EigenValueSetType  = Eigen::Matrix<double, Dim, 1>                                ;
+    using EigenVectorSetType = Eigen::Matrix<double, Dim, Dim>                              ;
+    using ComplexVectorType  = Eigen::Matrix<double, Dim, 1>                                ;
+    using ComplexMatrixType  = Eigen::Matrix<std::complex<double>, Dim, Dim>                ;
 
     static constexpr double sqrt_2_M_PI = std::sqrt(2 * M_PI);
     static constexpr double lambda_ratio = 1e-2;
 
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     WeightedDistribution() :
-        mean(PointType::Zero()),
-        correlated(MatrixType::Zero()),
-        W(0.0),
-        W_1(0.0),
-        covariance(MatrixType::Zero()),
-        inverse_covariance(MatrixType::Zero()),
-        eigen_values(EigenValueSetType::Zero()),
-        eigen_vectors(EigenVectorSetType::Zero()),
-        determinant(0.0),
-        dirty(false),
-        dirty_eigen(false)
+        mean_(PointType::Zero()),
+        correlated_(MatrixType::Zero()),
+        W_(0.0),
+        W_1_(0.0),
+        covariance_(MatrixType::Zero()),
+        inverse_covariance_(MatrixType::Zero()),
+        eigen_values_(EigenValueSetType::Zero()),
+        eigen_vectors_(EigenVectorSetType::Zero()),
+        determinant_(0.0),
+        dirty_(false),
+        dirty_eigen_(false)
     {
     }
 
-    WeightedDistribution(const WeightedDistribution &other) = default;
-    WeightedDistribution& operator=(const WeightedDistribution &other) = default;
+    WeightedDistribution(const WeightedDistribution &other)             = default;
+    WeightedDistribution& operator=(const WeightedDistribution &other)  = default;
 
     inline void reset()
     {
-        mean       = PointType::Zero();
-        covariance = MatrixType::Zero();
-        correlated = MatrixType::Zero();
-        W = 1;
-        W_1 = 0;
-        dirty = true;
-        dirty_eigen = true;
+        mean_       = PointType::Zero();
+        covariance_ = MatrixType::Zero();
+        correlated_ = MatrixType::Zero();
+        W_ = 1;
+        W_1_ = 0;
+        dirty_ = true;
+        dirty_eigen_ = true;
     }
 
     /// Modification
-    inline void add(const PointType &_p, const double w)
+    inline void add(const PointType &p, const double w)
     {
-        W  += w;
-        mean = (mean * W_1 + w * _p) / W;
+        W_  += w;
+        mean_ = (mean_ * W_1_ + w * p) / W_;
         for(std::size_t i = 0 ; i < Dim ; ++i) {
             for(std::size_t j = i ; j < Dim ; ++j) {
-                correlated(i, j) = (correlated(i, j) * W_1 + w * _p(i) * _p(j)) / (double) W;
+                correlated_(i, j) = (correlated_(i, j) * W_1_ + w * p(i) * p(j)) / (double) W_;
             }
         }
-        W_1 = W;
-        dirty = true;
-        dirty_eigen = true;
+        W_1_ = W_;
+        dirty_ = true;
+        dirty_eigen_ = true;
     }
 
 
     inline WeightedDistribution& operator+=(const WeightedDistribution &other)
     {
-        mean = (mean * W + other.mean * other.W) / (W + other.W);
-        correlated = (correlated * W +  other.correlated * other.W) / (W + other.W);
-        W += other.W;
-        W_1 = W;
-        dirty = true;
-        dirty_eigen = true;
+        mean_ = (mean_ * W_ + other.mean_ * other.W_) / (W_ + other.W_);
+        correlated_ = (correlated_ * W_ +  other.correlated_ * other.W_) / (W_ + other.W_);
+        W_ += other.W_;
+        W_1_ = W_;
+        dirty_ = true;
+        dirty_eigen_ = true;
         return *this;
     }
 
     /// Distribution properties
     inline double getWeight() const
     {
-        return W;
+        return W_;
     }
 
     inline PointType getMean() const
     {
-        return mean;
+        return mean_;
     }
 
-    inline void getMean(PointType &_mean) const
+    inline void getMean(PointType &mean) const
     {
-        _mean = mean;
+        mean = mean_;
     }
 
     inline MatrixType getCovariance() const
     {
-        if(W > 0.0) {
-            if(dirty)
+        if(W_ > 0.0) {
+            if(dirty_)
                 update();
-            return covariance;
+            return covariance_;
         }
         return MatrixType::Zero();
     }
 
-    inline void getCovariance(MatrixType &_covariance) const
+    inline void getCovariance(MatrixType &covariance) const
     {
-        if(W > 0.0) {
-            if(dirty)
+        if(W_ > 0.0) {
+            if(dirty_)
                 update();
-            _covariance = covariance;
+            covariance = covariance_;
         } else {
-            _covariance = MatrixType::Zero();
+            covariance = MatrixType::Zero();
         }
     }
 
     inline MatrixType getInformationMatrix() const
     {
-        if(W > 0.0) {
-            if(dirty)
+        if(W_ > 0.0) {
+            if(dirty_)
                 update();
-            return inverse_covariance;
+            return inverse_covariance_;
         }
         return MatrixType::Zero();
     }
 
-    inline void getInformationMatrix(MatrixType &_inverse_covariance) const
+    inline void getInformationMatrix(MatrixType &inverse_covariance) const
     {
-        if(W > 0.0) {
-            if(dirty)
+        if(W_ > 0.0) {
+            if(dirty_)
                 update();
-            _inverse_covariance = inverse_covariance;
+            inverse_covariance = inverse_covariance_;
         } else {
-            _inverse_covariance = MatrixType::Zero();
+            inverse_covariance = MatrixType::Zero();
         }
     }
 
-    inline EigenValueSetType getEigenValues(const bool _abs = false) const
+    inline EigenValueSetType getEigenValues(const bool abs = false) const
     {
-        if(W > 0.0) {
-            if(dirty)
+        if(W_ > 0.0) {
+            if(dirty_)
                 update();
-            if(dirty_eigen)
+            if(dirty_eigen_)
                 updateEigen();
 
-            if(_abs)
-                return eigen_values.cwiseAbs();
+            if(abs)
+                return eigen_values_.cwiseAbs();
             else
-                return eigen_values;
+                return eigen_values_;
         }
         return EigenValueSetType::Zero();
     }
 
-    inline void getEigenValues(EigenValueSetType &_eigen_values,
-                               const double _abs = false) const
+    inline void getEigenValues(EigenValueSetType &eigen_values,
+                               const double abs = false) const
     {
-        if(W > 0.0) {
-            if(dirty)
+        if(W_ > 0.0) {
+            if(dirty_)
                 update();
-            if(dirty_eigen)
+            if(dirty_eigen_)
                 updateEigen();
 
-            if(_abs)
-                _eigen_values = eigen_values.cwiseAbs();
+            if(abs)
+                eigen_values = eigen_values_.cwiseAbs();
             else
-                _eigen_values = eigen_values;
+                eigen_values = eigen_values_;
         } else {
-            _eigen_values = EigenValueSetType::Zero();
+            eigen_values = EigenValueSetType::Zero();
         }
     }
 
     inline EigenVectorSetType getEigenVectors() const
     {
-        if(W > 0.0) {
-            if(dirty)
+        if(W_ > 0.0) {
+            if(dirty_)
                 update();
-            if(dirty_eigen)
+            if(dirty_eigen_)
                 updateEigen();
 
-            return eigen_vectors;
+            return eigen_vectors_;
         }
         return EigenVectorSetType::Zero();
     }
 
-    inline void getEigenVectors(EigenVectorSetType &_eigen_vectors) const
+    inline void getEigenVectors(EigenVectorSetType &eigen_vectors) const
     {
-        if(W > 0.0) {
-            if(dirty)
+        if(W_ > 0.0) {
+            if(dirty_)
                 update();
-            if(dirty_eigen)
+            if(dirty_eigen_)
                 updateEigen();
 
-            _eigen_vectors = eigen_vectors;
+            eigen_vectors = eigen_vectors_;
         } else {
-            _eigen_vectors = EigenVectorSetType::Zero();
+            eigen_vectors = EigenVectorSetType::Zero();
         }
     }
 
     /// Evaluation
-    inline double sample(const PointType &_p) const
+    inline double sample(const PointType &p) const
     {
-        if(W > 0.0) {
-            if(dirty)
+        if(W_ > 0.0) {
+            if(dirty_)
                 update();
-            PointType  q = _p - mean;
-            double exponent = -0.5 * double(q.transpose() * inverse_covariance * q);
-            double denominator = 1.0 / (covariance.determinant() * sqrt_2_M_PI);
+            PointType  q = p - mean_;
+            double exponent = -0.5 * double(q.transpose() * inverse_covariance_ * q);
+            double denominator = 1.0 / (covariance_.determinant() * sqrt_2_M_PI);
             return denominator * exp(exponent);
         }
         return 0.0;
     }
 
-    inline double sample(const PointType &_p,
-                         PointType &_q) const
+    inline double sample(const PointType &p,
+                         PointType &q) const
     {
-        if(W > 0.0) {
-            if(dirty)
+        if(W_ > 0.0) {
+            if(dirty_)
                 update();
-            _q = _p - mean;
-            double exponent = -0.5 * double(_q.transpose() * inverse_covariance * _q);
-            double denominator = 1.0 / (determinant * sqrt_2_M_PI);
+            q = p - mean_;
+            double exponent = -0.5 * double(q.transpose() * inverse_covariance_ * q);
+            double denominator = 1.0 / (determinant_ * sqrt_2_M_PI);
             return denominator * exp(exponent);
         }
         return 0.0;
     }
 
-    inline double sampleNonNormalized(const PointType &_p) const
+    inline double sampleNonNormalized(const PointType &p) const
     {
-        if(W > 0.0) {
-            if(dirty)
+        if(W_ > 0.0) {
+            if(dirty_)
                 update();
 
-            PointType  q = _p - mean;
-            double exponent = -0.5 * double(q.transpose() * inverse_covariance * q);
+            PointType  q = p - mean_;
+            double exponent = -0.5 * double(q.transpose() * inverse_covariance_ * q);
             return exp(exponent);
         }
         return 0.0;
     }
 
-    inline double sampleNonNormalized(const PointType &_p,
-                                      PointType &_q) const
+    inline double sampleNonNormalized(const PointType &p,
+                                      PointType &q) const
     {
-        if(W_1 >= 2) {
-            if(dirty)
+        if(W_1_ >= 2) {
+            if(dirty_)
                 update();
-            _q = _p - mean;
-            double exponent = -0.5 * double(_q.transpose() * inverse_covariance * _q);
+            q = p - mean_;
+            double exponent = -0.5 * double(q.transpose() * inverse_covariance_ * q);
             return exp(exponent);
         }
         return 0.0;
     }
 
 private:
-    PointType                    mean;
-    MatrixType                   correlated;
-    double                       W;
-    double                       W_1;            /// actual amount of points in distribution
+    PointType                    mean_;
+    MatrixType                   correlated_;
+    double                       W_;
+    double                       W_1_;            /// actual amount of points in distribution
 
-    mutable MatrixType           covariance;
-    mutable MatrixType           inverse_covariance;
-    mutable EigenValueSetType    eigen_values;
-    mutable EigenVectorSetType   eigen_vectors;
-    mutable double               determinant;
+    mutable MatrixType           covariance_;
+    mutable MatrixType           inverse_covariance_;
+    mutable EigenValueSetType    eigen_values_;
+    mutable EigenVectorSetType   eigen_vectors_;
+    mutable double               determinant_;
 
-    mutable bool                 dirty;
-    mutable bool                 dirty_eigen;
+    mutable bool                 dirty_;
+    mutable bool                 dirty_eigen_;
 
     inline void update() const
     {
         for(std::size_t i = 0 ; i < Dim ; ++i) {
             for(std::size_t j = i ; j < Dim ; ++j) {
-                covariance(i, j) = (correlated(i, j) - (mean(i) * mean(j))) / W;
-                covariance(j, i) = covariance(i, j);
+                covariance_(i, j) = (correlated_(i, j) - (mean_(i) * mean_(j))) / W_;
+                covariance_(j, i) = covariance_(i, j);
             }
         }
 
         if(limit_covariance) {
-            if(dirty_eigen)
+            if(dirty_eigen_)
                 updateEigen();
 
             double max_lambda = std::numeric_limits<double>::lowest();
             for(std::size_t i = 0 ; i < Dim ; ++i) {
-                if(eigen_values(i) > max_lambda)
-                    max_lambda = eigen_values(i);
+                if(eigen_values_(i) > max_lambda)
+                    max_lambda = eigen_values_(i);
             }
             MatrixType Lambda = MatrixType::Zero();
             double l = max_lambda * lambda_ratio;
             for(std::size_t i = 0 ; i < Dim; ++i) {
-                if(fabs(eigen_values(i)) < fabs(l)) {
+                if(fabs(eigen_values_(i)) < fabs(l)) {
                     Lambda(i,i) = l;
                 } else {
-                    Lambda(i,i) = eigen_values(i);
+                    Lambda(i,i) = eigen_values_(i);
                 }
             }
-            covariance = eigen_vectors * Lambda * eigen_vectors.transpose();
-            inverse_covariance = eigen_vectors * Lambda.inverse() * eigen_vectors.transpose();
+            covariance_ = eigen_vectors_ * Lambda * eigen_vectors_.transpose();
+            inverse_covariance_ = eigen_vectors_ * Lambda.inverse() * eigen_vectors_.transpose();
         } else {
-            inverse_covariance = covariance.inverse();
+            inverse_covariance_ = covariance_.inverse();
         }
 
-        determinant = covariance.determinant();
-        dirty = false;
-        dirty_eigen = true;
+        determinant_ = covariance_.determinant();
+        dirty_ = false;
+        dirty_eigen_ = true;
     }
 
     inline void updateEigen() const
     {
         Eigen::EigenSolver<MatrixType> solver;
-        solver.compute(covariance);
-        eigen_vectors = solver.eigenvectors().real();
-        eigen_values  = solver.eigenvalues().real();
-        dirty_eigen = false;
+        solver.compute(covariance_);
+        eigen_vectors_ = solver.eigenvectors().real();
+        eigen_values_  = solver.eigenvalues().real();
+        dirty_eigen_ = false;
     }
 };
 }
 }
 }
-
 
 #endif // WEIGHTED_DISTRIBUTION_HPP

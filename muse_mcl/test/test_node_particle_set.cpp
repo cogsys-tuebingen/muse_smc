@@ -24,7 +24,7 @@ Eigen::Vector3d min = Eigen::Vector3d::Constant(std::numeric_limits<double>::max
 namespace mms = muse_mcl::math::statistic;
 
 
-TEST(TestMuseAMCL, testTestDistributionRead)
+TEST(TestMuseMCL, testTestDistributionRead)
 {
     EXPECT_EQ(1000, test_distribution_a.data.size());
     EXPECT_EQ(1000, test_distribution_b.data.size());
@@ -74,7 +74,7 @@ TEST(TestMuseAMCL, testTestDistributionRead)
     EXPECT_EQ(test_samples.size(), 2000);
 }
 
-TEST(TestMuseAMCL, testParticleSetConstructors)
+TEST(TestMuseMCL, testParticleSetConstructors)
 {
     const std::size_t N = 500000;
     const std::size_t MIN = 10;
@@ -106,7 +106,7 @@ TEST(TestMuseAMCL, testParticleSetConstructors)
     EXPECT_EQ(particle_set_a.getSampleIndexMaximum(), maximum_index);
 }
 
-TEST(TestMuseAMCL, fillParticleSetA)
+TEST(TestMuseMCL, fillParticleSetA)
 {
     using Index = muse_mcl::Indexation::IndexType;
     using Size  = std::array<std::size_t, 3>;
@@ -142,7 +142,7 @@ TEST(TestMuseAMCL, fillParticleSetA)
     EXPECT_EQ(test_samples.size(), particle_set.getSampleSize());
 }
 
-TEST(TestMuseAMCL, fillParticleSetB)
+TEST(TestMuseMCL, fillParticleSetB)
 {
     using Index = muse_mcl::Indexation::IndexType;
     using Size  = std::array<std::size_t, 3>;
@@ -215,11 +215,8 @@ TEST(TestMuseAMCL, fillParticleSetB)
     EXPECT_EQ(test_samples.size(), particle_set.getSampleSize());
 }
 
-TEST(TestMuseAMCL, testWeightIterator)
+TEST(TestMuseMCL, testWeightIterator)
 {
-    using Index = muse_mcl::Indexation::IndexType;
-    using Size  = std::array<std::size_t, 3>;
-
     muse_mcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
     muse_mcl::ParticleSet particle_set("world", 0, 2 * test_samples.size(), indexation);
     auto i = particle_set.getInsertion();
@@ -240,7 +237,7 @@ TEST(TestMuseAMCL, testWeightIterator)
     EXPECT_EQ(s, particle_set.getSampleWeightSum());
 }
 
-TEST(TestMuseAMCL, testPoseIterator)
+TEST(TestMuseMCL, testPoseIterator)
 {
     using Index = muse_mcl::Indexation::IndexType;
     using Size  = std::array<std::size_t, 3>;
@@ -280,11 +277,8 @@ TEST(TestMuseAMCL, testPoseIterator)
     EXPECT_EQ(test_samples.size(), particle_set.getSampleSize());
 }
 
-TEST(TestMuseAMCL, testClustering)
+TEST(TestMuseMCL, testClustering)
 {
-    using Index = muse_mcl::Indexation::IndexType;
-    using Size  = std::array<std::size_t, 3>;
-
     muse_mcl::Indexation  indexation ({0.1, 0.1, 1./18. * M_PI});
     muse_mcl::ParticleSet particle_set("world", 0, 2 * test_samples.size(), indexation);
     auto i = particle_set.getInsertion();
@@ -377,7 +371,7 @@ TEST(TestMuseAMCL, testClustering)
 
 int main(int argc, char *argv[])
 {
-    ros::init(argc, argv, "muse_amcl_test_node_particle_set");
+    ros::init(argc, argv, "muse_mcl_test_node_particle_set");
     ros::NodeHandle nh_private("~");
 
     std::string test_distribution_a_path;

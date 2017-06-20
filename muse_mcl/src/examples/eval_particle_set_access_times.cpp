@@ -14,7 +14,6 @@ void states(muse_mcl::ParticleSet& set)
 
 void weights(muse_mcl::ParticleSet &set)
 {
-    std::size_t iteration = 0;
     for(auto &weight : set.getWeights()) {
        weight = 1.0;
     }
@@ -24,7 +23,6 @@ void particle(muse_mcl::ParticleSet &set)
 {
     std::size_t pos = 0;
     for(auto &p : set.getSamples()) {
-        const double w = p.weight_;
         const auto pose = p.pose_;
             if(pose.x() == 0)
                 std::cout << "was zero " << pos << std::endl;
@@ -37,7 +35,6 @@ void weight_const_state(muse_mcl::ParticleSet &set)
 {
     auto weights = set.getWeights();
     for(muse_mcl::ParticleSet::Weights::iterator it = weights.begin() ; it != weights.end() ; ++it) {
-        const auto &particle = it.getData();
         *it = 0.5;
     }
 }
@@ -46,7 +43,6 @@ void state_const_weight(muse_mcl::ParticleSet &set)
 {
     auto poses = set.getPoses();
     for(auto it = poses.begin() ; it != poses.end() ; ++it) {
-        const auto &particle = it.getData();
         (*it).x() = 1.f;
     }
 }

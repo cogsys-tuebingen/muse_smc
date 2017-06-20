@@ -16,6 +16,11 @@ void LikelihoodFieldProbModelAMCL::update(const Data::ConstPtr &data,
                                       const Map::ConstPtr &map,
                                       ParticleSet::Weights set)
 {
+    if(!map->isType<maps::DistanceGridMap>()) {
+        Logger::getLogger().error("The map is of incompatible type!", "UpdateModel:" + name_);
+        return;
+    }
+
     const maps::DistanceGridMap &gridmap = map->as<maps::DistanceGridMap>();
     const LaserScan2D           &laser_data = data->as<LaserScan2D>();
     const LaserScan2D::Rays   &laser_rays = laser_data.getRays();
@@ -64,7 +69,11 @@ void LikelihoodFieldProbModelAMCL::update(const Data::ConstPtr &data,
             const math::Pose pose = map_T_world * it->pose_ * base_T_laser; /// laser scanner pose in map coordinates
             std::size_t observation_index = 0;
             for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step, ++observation_index) {
-                const math::Point   ray_end_point = pose.getPose() * laser_rays[i].point_;
+                const auto &ray = laser_rays[i];
+                if(!ray.valid_)
+                    continue;
+
+                const math::Point   ray_end_point = pose.getPose() * ray.point_;
                 const double distance = gridmap.at(ray_end_point);
                 const double pz = p_hit(gridmap.at(distance)) + p_rand;
 

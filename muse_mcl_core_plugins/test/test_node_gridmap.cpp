@@ -170,7 +170,7 @@ private:
 
 int main(int argc, char *argv[])
 {
-    ros::init(argc, argv, "muse_amcl_test_gridmap");
+    ros::init(argc, argv, "muse_mcl_test_gridmap");
 
     muse_mcl::GridmapTestNode gtn;
 

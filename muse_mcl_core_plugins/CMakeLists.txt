@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(PCL REQUIRED)
+find_package(OpenCV REQUIRED)
 
 catkin_package()
 
@@ -28,6 +29,7 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
 
 add_library(${PROJECT_NAME} SHARED
@@ -41,6 +43,9 @@ add_library(${PROJECT_NAME} SHARED
 
     src/laser_2d/beam_model_parameter_estimator.cpp
 
+    src/laser_2d/beam_model_vector.cpp
+    src/laser_2d/likelihood_field_model_vector.cpp
+
     src/maps_2d/map_provider_binary_gridmap.cpp
     src/maps_2d/map_provider_distance_gridmap.cpp
     src/maps_2d/map_provider_probability_gridmap.cpp
@@ -48,10 +53,14 @@ add_library(${PROJECT_NAME} SHARED
     src/maps_2d/map_provider_distance_gridmap_service.cpp
     src/maps_2d/map_provider_probability_gridmap_service.cpp
 
+    src/maps_2d/map_provider_vector_map.cpp
+
     src/odometry/differential_drive.cpp
     src/odometry/differential_drive_abs.cpp
+    src/odometry/differential_drive_amcl.cpp
     src/odometry/omni_drive.cpp
     src/odometry/data_provider_odometry.cpp
+    src/odometry/data_provider_odometry_tf.cpp
 
     src/sampling/normal_2d.cpp
     src/sampling/uniform_all_maps_2d.cpp
@@ -68,6 +77,7 @@ add_library(${PROJECT_NAME} SHARED
 target_link_libraries(${PROJECT_NAME}
     ${catkin_LIBRARIES}
     ${PCL_LIBRARIES}
+    ${OpenCV_LIBRARIES}
     muse_mcl_maps
 )
 
@@ -79,6 +89,7 @@ add_library(muse_mcl_maps
 
 target_link_libraries(muse_mcl_maps
     ${catkin_LIBRARIES}
+    ${OpenCV_LIBRARIES}
 )
 
 
@@ -172,13 +183,6 @@ if(True)
         target_link_libraries(muse_mcl_exam_map_line_iterator
             ${OpenCV_LIBRARIES}
             ${catkin_LIBRARIES}
-        )
-
-        add_executable(muse_mcl_exam_distance_transform
-            src/examples/exam_distance_transform.cpp
-        )
-        target_link_libraries(muse_mcl_exam_distance_transform
-            ${OpenCV_LIBRARIES}
         )
     endif()
 endif()

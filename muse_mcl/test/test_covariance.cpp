@@ -6,14 +6,14 @@ using Matrix6d = Eigen::Matrix<double, 6, 6>;
 using Matrix3d = Eigen::Matrix<double, 3, 3>;
 using Covariance = muse_mcl::math::Covariance;
 
-TEST(TestMuseAMCL, testDefaultConstructor)
+TEST(TestMuseMCL, testDefaultConstructor)
 {
     Covariance cov;
     EXPECT_EQ(cov.getData() , Matrix6d::Zero());
     EXPECT_EQ(cov.getEigen3D() , Matrix3d::Zero());
 }
 
-TEST(TestMuseAMCL, testConstructor3d)
+TEST(TestMuseMCL, testConstructor3d)
 {
     auto makeIt6D = [](const Matrix3d &mat)
     {
@@ -37,7 +37,7 @@ TEST(TestMuseAMCL, testConstructor3d)
     EXPECT_EQ(cov.getEigen3D() , data3D);
 }
 
-TEST(TestMuseAMCL, testConstructor6d)
+TEST(TestMuseMCL, testConstructor6d)
 {
     auto makeIt3D = [](const Matrix6d &mat) {
         Matrix3d mat_3d = Matrix3d::Zero();
@@ -60,7 +60,7 @@ TEST(TestMuseAMCL, testConstructor6d)
     EXPECT_EQ(cov.getEigen3D() , data3D);
 }
 
-TEST(TestMuseAMCL, testConstructorStd3d)
+TEST(TestMuseMCL, testConstructorStd3d)
 {
     auto makeIt6D = [](const Matrix3d &mat)
     {
@@ -90,7 +90,7 @@ TEST(TestMuseAMCL, testConstructorStd3d)
     EXPECT_EQ(cov.getEigen3D() , data3D);
 }
 
-TEST(TestMuseAMCL, testConstructorStd6d)
+TEST(TestMuseMCL, testConstructorStd6d)
 {
     auto makeIt3D = [](const Matrix6d &mat) {
         Matrix3d mat_3d = Matrix3d::Zero();

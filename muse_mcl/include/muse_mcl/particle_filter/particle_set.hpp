@@ -31,7 +31,8 @@ public:
     using Weights   = MemberDecorator<Particle, Particle::WeightType, &Particle::weight_>;
     using Particles = std::buffered_vector<Particle>;
     using Clusters        = std::unordered_map<int, clustering::Data::ParticlePtrs>;
-    using Distributions   = std::unordered_map<int, clustering::Data::Distribution>;
+    using Distributions   = std::unordered_map<int, clustering::Data::Distribution, std::hash<int>, std::equal_to<int>, Eigen::aligned_allocator<std::pair<const int, clustering::Data::Distribution>>>;
+    using AngularMeans    = std::unordered_map<int, clustering::Data::AngularMean>;
     using KDTreeBuffered  = cis::Storage<clustering::Data, Indexation::IndexType::Base, cis::backend::kdtree::KDTreeBuffered>;
     using Array           = cis::Storage<clustering::Data, Indexation::IndexType::Base, cis::backend::array::Array>;
     using KDClustering    = cis::operations::clustering::Clustering<KDTreeBuffered>;
@@ -227,7 +228,7 @@ public:
     inline void cluster()
     {
         /// run clustering
-        ClusteringImpl impl;
+        ClusteringImpl impl(indexation_);
         if(array_to_be_used_) {
             ArrayClustering clustering(*array_);
             clustering.cluster(impl);
@@ -235,8 +236,9 @@ public:
             KDClustering clustering(*kdtree_);
             clustering.cluster(impl);
         }
-        p_t_1_clusters_ = std::move(impl.clusters_);
+        p_t_1_clusters_      = std::move(impl.clusters_);
         p_t_1_distributions_ = std::move(impl.distributions_);
+        p_t_1_angular_means_ = std::move(impl.angular_means_);
     }
 
     /**
@@ -251,6 +253,11 @@ public:
     inline Distributions const & getClusterDistributions() const
     {
         return p_t_1_distributions_;
+    }
+
+    inline AngularMeans const & getClusterAngularMeans() const
+    {
+        return p_t_1_angular_means_;
     }
 
     /**
@@ -377,6 +384,7 @@ private:
 
     Clusters                        p_t_1_clusters_;
     Distributions                   p_t_1_distributions_;
+    AngularMeans                    p_t_1_angular_means_;
 
     inline void resetWeightTracking()
     {

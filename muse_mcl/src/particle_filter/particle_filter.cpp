@@ -31,7 +31,6 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
 {
     Logger &l = Logger::getLogger();
 
-    const std::string topic_poses   = nh_private.param<std::string>(privateParameter("topic_poses"), "/muse_amcl/poses");
     const double pub_rate_poses     = nh_private.param<double>("pub_rate_poses", 30.0);
     const double pub_rate_tf        = nh_private.param<double>("pub_rate_tf", 30.0);
     const double resolution_linear  = nh_private.param<double>(privateParameter("resolution_linear"), 0.1);
@@ -80,7 +79,7 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
 
     //// SETUP TF
     tf_provider_               = tf_provider;
-    tf_publisher_.reset(new TransformPublisherAnchored(pub_rate_tf, odom_frame_, base_frame_, world_frame_));
+    tf_publisher_.reset(new TransformPublisher(pub_rate_tf, odom_frame_, base_frame_, world_frame_));
 
     //// FILTER STATE
     filter_state_publisher_.reset(new FilterStatePublisher(world_frame_));
@@ -106,7 +105,6 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
 
     l.info("resampling_offset_linear_='"  + std::to_string(resampling_threshold_linear_) + "'", "ParticleFilter");
     l.info("resampling_offset_angular_='" + std::to_string(resampling_threshold_angular_) + "'", "ParticleFilter");
-    l.info("topic_poses='" + topic_poses + "'", "ParticleFilter");
     l.info("pub_rate '" + std::to_string(pub_rate_poses) + "'", "ParticleFilter");
     l.info("pub_tf_rate='" + std::to_string(pub_rate_tf) + "'", "ParticleFilter");
     l.info("world_frame_='" + world_frame_ + "'", "ParticleFilter");
@@ -117,11 +115,12 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
 
     const double now = ros::Time::now().toSec();
     FilterStateLoggerDefault::Header header = {"predictions, updates, driven_linear, driven_angular, time_ratio"};
-    FilterStateLoggerDefault::getLogger(header).writeState(prediction_queue_.size(),
-                                                           update_queue_.size(),
-                                                           abs_motion_integral_linear_,
-                                                           abs_motion_integral_angular_,
-                                                           particle_set_stamp_.toSec() / now);
+    filter_state_logger_.reset(new FilterStateLoggerDefault(header));
+    filter_state_logger_->log(prediction_queue_.size(),
+                              update_queue_.size(),
+                              abs_motion_integral_linear_,
+                              abs_motion_integral_angular_,
+                              particle_set_stamp_.toSec() / now);
     ////////////////
 
 }
@@ -269,7 +268,7 @@ void ParticleFilter::processRequests()
     }
 }
 
-bool ParticleFilter::processPredictions(const ros::Time &until)
+ParticleFilter::PredictionOutcome ParticleFilter::processPredictions(const ros::Time &until)
 {
     auto wait_for_prediction = [this] ()
     {
@@ -294,8 +293,9 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
         saveFilterState();
 
         /// remove too old predction messages
-        if(prediction->getStamp() < particle_set_stamp_)
+        if(prediction->getStamp() < particle_set_stamp_) {
             continue;
+        }
 
         /// mutate time stamp
         PredictionModel::Result movement = prediction->apply(until, particle_set_->getPoses());
@@ -312,7 +312,7 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
         } else {
             std::unique_lock<std::mutex> l(prediction_queue_mutex_);
             prediction_queue_.emplace(prediction);
-            break;
+            return RETRY;
         }
     }
 
@@ -322,17 +322,20 @@ bool ParticleFilter::processPredictions(const ros::Time &until)
     saveFilterState();
     Logger::getLogger().info("After, '" + std::to_string(prediction_queue_.size()) + "' samples in queue.", "ParticleFilter");
 
-    return abs_motion_integral_linear > 0.0 || abs_motion_integral_angular > 0.0;
+    if(abs_motion_integral_linear > 0.0 || abs_motion_integral_angular > 0.0)
+        return MOTION;
+    else
+        return NO_MOTION;
 }
 
 void ParticleFilter::publishPoses()
 {
-    filter_state_publisher_->addState(particle_set_->getSamples(), particle_set_stamp_);
+    filter_state_publisher_->addState(particle_set_->getSamples(), particle_set_mean_, particle_set_stamp_);
 }
 
 void ParticleFilter::publishTF()
 {
-    tf_publisher_->setAnchor(tf_latest_w_T_b_);
+    tf_publisher_->setTransform(tf_latest_w_T_b_);
 }
 
 void ParticleFilter::loop()
@@ -359,11 +362,24 @@ void ParticleFilter::loop()
             processRequests();
 
             auto time = getUpdateTime();
-            if(time >= particle_set_stamp_ &&
-                    (processPredictions(time) || integrate_all_measurement_)) {
-                applyUpdate();
+            if(time >= particle_set_stamp_) {
+                switch(processPredictions(time)) {
+                case MOTION:
+                    applyUpdate();
+                    break;
+                case NO_MOTION:
+                    if(integrate_all_measurement_) {
+                        applyUpdate();
+                    } else {
+                        dropUpdate();
+                    }
+                    break;
+                default:
+                    break;
+                }
                 ++update_cycle_;
             } else {
+                /// drop old updates
                 dropUpdate();
             }
 
@@ -388,8 +404,7 @@ void ParticleFilter::tryToResample()
 
     if(motion_criterion || cycle_criterion){
         resampling_->apply(*particle_set_);
-        particle_set_->resetWeights();
-//        particle_set_->normalizeWeights();
+        particle_set_->normalizeWeights();
 
         abs_motion_integral_linear_  = 0.0;
         abs_motion_integral_angular_ = 0.0;
@@ -397,8 +412,10 @@ void ParticleFilter::tryToResample()
         /// 7. cluster the particle set an update the transformation
         /// @todo allow mean method
         particle_set_->cluster();
-        const ParticleSet::Clusters &clusters = particle_set_->getClusters();
+        const ParticleSet::Clusters      &clusters      = particle_set_->getClusters();
         const ParticleSet::Distributions &distributions = particle_set_->getClusterDistributions();
+        const ParticleSet::AngularMeans  &angular_means = particle_set_->getClusterAngularMeans();
+
         /// todo get the transformation odom -> world
         double max_weight = std::numeric_limits<double>::lowest();
         int    max_cluster_id = -1;
@@ -413,9 +430,12 @@ void ParticleFilter::tryToResample()
         }
 
         if(max_cluster_id != -1) {
-            particle_set_->resetWeights(true);
-            Eigen::Vector3d mean = distributions.at(max_cluster_id).getMean();
-            tf_latest_w_T_b_ = tf::StampedTransform(math::Pose(mean).getPose(), particle_set_stamp_, world_frame_, base_frame_);
+            particle_set_->resetWeights();
+            particle_set_mean_ = math::Pose(distributions.at(max_cluster_id).getMean(),
+                                            angular_means.at(max_cluster_id).getMean());
+
+            tf_latest_w_T_b_ = tf::StampedTransform(particle_set_mean_.getPose(),
+                                                    particle_set_stamp_, world_frame_, base_frame_);
             publishTF();
         }
 

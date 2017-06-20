@@ -66,7 +66,7 @@ public:
         return IndexType({
                              static_cast<int>(std::floor(sample.pose_.x()   / resolution_[0])),
                              static_cast<int>(std::floor(sample.pose_.y()   / resolution_[1])),
-                             static_cast<int>(std::floor(sample.pose_.yaw() / resolution_[2])),
+                             static_cast<int>(std::floor((sample.pose_.yaw() + M_PI) / resolution_[2])),
                          });
     }
 
@@ -83,7 +83,7 @@ public:
         return IndexType({
                              static_cast<int>(std::floor(sample.x()   / resolution_[0])),
                              static_cast<int>(std::floor(sample.y()   / resolution_[1])),
-                             static_cast<int>(std::floor(sample.yaw() / resolution_[2])),
+                             static_cast<int>(std::floor((sample.yaw() + M_PI) / resolution_[2])),
                          });
     }
 
@@ -100,7 +100,7 @@ public:
         return IndexType({
                              static_cast<int>(std::floor(sample[0] / resolution_[0])),
                              static_cast<int>(std::floor(sample[1] / resolution_[1])),
-                             static_cast<int>(std::floor(sample[2] / resolution_[2])),
+                             static_cast<int>(std::floor((sample[2] + M_PI) / resolution_[2])),
                          });
     }
 
