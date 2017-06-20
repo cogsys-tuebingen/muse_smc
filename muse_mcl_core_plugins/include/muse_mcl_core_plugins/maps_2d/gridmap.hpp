@@ -100,10 +100,10 @@ public:
         _x = i[0] * resolution_;
         _y = i[1] * resolution_;
         if(origin_phi_ != 0.0)  {
-            double x =  cos_phi_ * _x -
-                        sin_phi_ * _y;
-            double y =  sin_phi_ * _x +
-                        cos_phi_ * _y;
+            const double x =  cos_phi_ * _x -
+                              sin_phi_ * _y;
+            const double y =  sin_phi_ * _x +
+                              cos_phi_ * _y;
 
             _x = x;
             _y = y;
@@ -158,8 +158,8 @@ public:
         toIndex(start, start_index);
         toIndex(end, end_index);
         return LineIterator(start_index, end_index,
-                            {static_cast<int>(width_),
-                             static_cast<int>(height_)}, data_ptr_);
+                            {static_cast<int>(width_), static_cast<int>(height_)},
+                            data_ptr_);
     }
 
     inline double getResolution() const
@@ -216,8 +216,10 @@ protected:
 
     inline bool invalid(const Index &_i) const
     {
-        return _i[0] < 0 || _i[1] < 0 ||
-               _i[0] > max_index_[0] || _i[1] > max_index_[1];
+        return _i[0] < 0 ||
+               _i[1] < 0 ||
+               _i[0] > max_index_[0] ||
+               _i[1] > max_index_[1];
     }
 
 
