@@ -100,7 +100,8 @@ struct ClusteringImpl {
     int current_cluster_ = -1;
     int angular_bins_;
     std::unordered_map<int, Data::ParticlePtrs> clusters_;
-    std::unordered_map<int, Data::Distribution> distributions_;
+    using Distributions = std::unordered_map<int, Data::Distribution, std::hash<int>, std::equal_to<int>, Eigen::aligned_allocator<std::pair<const int, Data::Distribution>>>;
+    Distributions distributions_;
     std::unordered_map<int, Data::AngularMean>  angular_means_;
 
 };
