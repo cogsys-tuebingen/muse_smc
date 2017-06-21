@@ -29,7 +29,4 @@ void DataProviderOdometry::doSetup(ros::NodeHandle &nh_private)
 {
     topic_ = nh_private.param<std::string>(privateParameter("topic"), "/odom");
     source_= nh_private.subscribe(topic_, 1, &DataProviderOdometry::callback, this);
-
-    Logger &l = Logger::getLogger();
-    l.info("topic_=" + topic_, "DataProvider:" + name_);
 }

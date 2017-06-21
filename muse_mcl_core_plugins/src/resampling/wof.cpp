@@ -14,7 +14,6 @@ void WheelOfFortune::doApply(ParticleSet &particle_set)
     const ParticleSet::Particles &p_t_1 = particle_set.getSamples();
     const std::size_t size = p_t_1.size();
     if(size == 0) {
-        Logger::getLogger().error("Cannot resample the empty set.", "Resampling:" + name_);
         return;
     }
 

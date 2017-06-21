@@ -14,7 +14,7 @@ bool UniformPrimaryMap2D::update(const std::string &frame)
 
     primary_map  = primary_map_provider_->getMap();
     if(!primary_map) {
-        Logger::getLogger().error("Primary provider '" + primary_map_provider_->getName() + "' has not a map yet." , "UniformSampling:" + name_);
+        throw std::runtime_error("[UniformPrimaryMap2D] : primary map was null!");
         return false;
     }
 
@@ -27,7 +27,7 @@ bool UniformPrimaryMap2D::update(const std::string &frame)
     for(std::size_t i = 0 ; i < map_provider_count ; ++i) {
         Map::ConstPtr map = map_providers_[i]->getMap();
         if(!map) {
-            Logger::getLogger().error("Secondary provider '" + map_providers_[i]->getName() + "' has not a map yet." , "UniformSampling:" + name_);
+            throw std::runtime_error("[UniformPrimaryMap2D] : a secondary map was null!");
             return false;
         }
 
@@ -60,7 +60,6 @@ void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
 {
     if(sample_size_ < particle_set.getSampleSizeMinimum() ||
             sample_size_ > particle_set.getSampleSizeMaximum()) {
-        Logger::getLogger().error("Initialization sample size invalid.", "UniformSampling:" + name_);
         throw std::runtime_error("Initialization sample size invalid!");
     }
 
@@ -77,7 +76,6 @@ void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
         while(!valid) {
             ros::Time now = ros::Time::now();
             if(sampling_start + sampling_timeout_ < now) {
-                Logger::getLogger().error("Sampling timed out.", "UniformSampling:" + name_);
                 break;
             }
 
@@ -102,7 +100,6 @@ void UniformPrimaryMap2D::apply(Particle &particle)
     while(!valid) {
         ros::Time now = ros::Time::now();
         if(sampling_start + sampling_timeout_ < now) {
-            Logger::getLogger().error("Sampling timed out.", "UniformSampling:" + name_);
             break;
         }
 
@@ -120,9 +117,6 @@ void UniformPrimaryMap2D::apply(Particle &particle)
 void UniformPrimaryMap2D::doSetup(ros::NodeHandle &nh_private)
 {
     random_seed_ = nh_private.param(parameter("seed"), -1);
-
-    Logger &l = Logger::getLogger();
-    l.info("random_seed_='" + std::to_string(random_seed_) + "'", "UniformSampling:" + name_);
 }
 
 void UniformPrimaryMap2D::doSetupMapProviders(ros::NodeHandle &nh_private,
@@ -145,9 +139,4 @@ void UniformPrimaryMap2D::doSetupMapProviders(ros::NodeHandle &nh_private,
 
     secondary_maps_T_w_.resize(secondary_map_providers.size());
     secondary_maps_.resize(secondary_map_providers.size());
-
-    Logger &l = Logger::getLogger();
-    l.info("primary_map_provider='" + primary_map_provider + "'", "UniformSampling:" + name_);
-    l.info("secondary_maps='" + ms + "'", "UniformSampling:" + name_);
-
 }

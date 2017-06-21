@@ -23,18 +23,6 @@ void DataProviderLaser2D::doSetup(ros::NodeHandle &nh_private)
     angle_min_ = nh_private.param<double>(privateParameter("angle_min"),-M_PI);
 
     time_offset_ = ros::Rate(nh_private.param<double>(privateParameter("rate"), 0.0)).cycleTime();
-
-    Logger &l = Logger::getLogger();
-    l.info("topic_='" + topic_ + "'", "DataProvider:" + name_);
-    l.info("undistortion_='" + std::to_string(undistortion_) + "'", "DataProvider:" + name_);
-    l.info("undistortion_fixed_frame_='" + undistortion_fixed_frame_ + "'", "DataProvider:" + name_);
-    l.info("undistortion_tf_timeout_='" + std::to_string(undistortion_tf_timeout_.toSec()) + "'", "DataProvider:" + name_);
-
-    l.info("range_max_='" + std::to_string(range_max_) + "'", "DataProvider:" + name_);
-    l.info("range_min_='" + std::to_string(range_min_) + "'", "DataProvider:" + name_);
-    l.info("angle_max_='" + std::to_string(angle_max_) + "'", "DataProvider:" + name_);
-    l.info("angle_min_='" + std::to_string(angle_min_) + "'", "DataProvider:" + name_);
-
 }
 
 void DataProviderLaser2D::callback(const sensor_msgs::LaserScanConstPtr &msg)

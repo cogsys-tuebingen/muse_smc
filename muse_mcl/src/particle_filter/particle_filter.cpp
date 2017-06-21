@@ -29,8 +29,6 @@ ParticleFilter::~ParticleFilter()
 void ParticleFilter::setup(ros::NodeHandle &nh_private,
                            const TFProvider::Ptr &tf_provider)
 {
-    Logger &l = Logger::getLogger();
-
     const double pub_rate_poses     = nh_private.param<double>("pub_rate_poses", 30.0);
     const double pub_rate_tf        = nh_private.param<double>("pub_rate_tf", 30.0);
     const double resolution_linear  = nh_private.param<double>(privateParameter("resolution_linear"), 0.1);
@@ -48,17 +46,14 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
     }
 
     if(sample_size_minimum == 0 || sample_size_maximum == 0) {
-        l.error("Minimum or maximum sample sizes cannot be zero.", "ParticleFilter");
         throw std::runtime_error("[ParticleFilter]: Minimum or maximum sample sizes cannot be less than zero!");
     }
 
     if(sample_size_maximum == 0) {
-        l.error("The maximum sample size may not be zero.", "ParticleFilter");
         throw std::runtime_error("[ParticleFilter]: The maximum sample size may not be zero!");
     }
 
     if(sample_size_minimum > sample_size_maximum) {
-        l.error("The minimum sample size may not be greater than the maximum sample size.", "ParticleFilter");
         throw std::runtime_error("[ParticleFilter]: The minimum sample size may not be greater than the maximum sample size!");
     }
 
@@ -95,24 +90,6 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
 
 
     //// LOGGING ////
-    l.info("sample_size='"  + std::to_string(sample_size) +"'", "ParticleFilter");
-    l.info("sample_size_maximum='"  + std::to_string(sample_size) +"'", "ParticleFilter");
-    l.info("sample_size_minimum='"  + std::to_string(sample_size) +"'", "ParticleFilter");
-
-    l.info("resolution_linear='"  + std::to_string(resolution_linear) +"'", "ParticleFilter");
-    l.info("resolution_angular='"  + std::to_string(resolution_angular) +"'", "ParticleFilter");
-    l.info("array_extent='"  + std::to_string(array_extent) +"'", "ParticleFilter");
-
-    l.info("resampling_offset_linear_='"  + std::to_string(resampling_threshold_linear_) + "'", "ParticleFilter");
-    l.info("resampling_offset_angular_='" + std::to_string(resampling_threshold_angular_) + "'", "ParticleFilter");
-    l.info("pub_rate '" + std::to_string(pub_rate_poses) + "'", "ParticleFilter");
-    l.info("pub_tf_rate='" + std::to_string(pub_rate_tf) + "'", "ParticleFilter");
-    l.info("world_frame_='" + world_frame_ + "'", "ParticleFilter");
-    l.info("odom_frame_='" + odom_frame_ + "'", "ParticleFilter");
-    l.info("base_frame_='" + base_frame_ + "'", "ParticleFilter");
-
-    l.info("Set up.", "ParticleFilter");
-
     const double now = ros::Time::now().toSec();
     FilterStateLoggerDefault::Header header = {"predictions, updates, driven_linear, driven_angular, time_ratio"};
     filter_state_logger_.reset(new FilterStateLoggerDefault(header));
@@ -128,7 +105,6 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
 void ParticleFilter::setUniformSampling(const UniformSampling::Ptr &sampling_uniform)
 {
     sampling_uniform_ = sampling_uniform;
-    Logger::getLogger().info("Set uniform sampling '" + sampling_uniform->getName() + "'", "ParticleFilter");
 }
 
 UniformSampling::Ptr ParticleFilter::getUniformSampling() const
@@ -139,7 +115,6 @@ UniformSampling::Ptr ParticleFilter::getUniformSampling() const
 void ParticleFilter::setNormalsampling(NormalSampling::Ptr &sampling_normal_pose)
 {
     sampling_normal_pose_ = sampling_normal_pose;
-    Logger::getLogger().info("Set normal sampling '" + sampling_normal_pose->getName() + "'", "ParticleFilter");
 }
 
 NormalSampling::Ptr ParticleFilter::getNormalSampling() const
@@ -150,7 +125,6 @@ NormalSampling::Ptr ParticleFilter::getNormalSampling() const
 void ParticleFilter::setResampling(Resampling::Ptr &resampling)
 {
     resampling_ = resampling;
-    Logger::getLogger().info("Set normal resampling '" + resampling->getName() + "'", "ParticleFilter");
 }
 
 Resampling::Ptr ParticleFilter::getResampling() const
@@ -187,16 +161,12 @@ void ParticleFilter::requestPoseInitialization(const math::Pose &pose,
         request_pose_initilization_ = true;
         notify_event_.notify_one();
     }
-
-    Logger::getLogger().info("Got pose initialization request.", "ParticleFilter");
 }
 
 void ParticleFilter::requestGlobalInitialization()
 {
     request_global_initialization_ = true;
     notify_event_.notify_one();
-
-    Logger::getLogger().info("Got global initialization request.", "ParticleFilter");
 }
 
 void ParticleFilter::start()
@@ -210,7 +180,6 @@ void ParticleFilter::start()
 
         tf_publisher_->start();
     } else {
-        Logger::getLogger().error("Worker thread already running!", "ParticleFilter");
         throw std::runtime_error("[ParticleFilter]: Worker thread already running!");
     }
 }
@@ -226,7 +195,6 @@ void ParticleFilter::end()
 
         tf_publisher_->end();
     } else{
-        Logger::getLogger().error("Cannot end worker thread which is not running!", "ParticleFilter");
         throw std::runtime_error("[ParticleFilter]: Cannot end worker thread which is not running!");
     }
 }
@@ -246,7 +214,6 @@ void ParticleFilter::processRequests()
         particle_set_stamp_ = now;
 
         publishPoses();
-        Logger::getLogger().info("Global localization request has been processed", "ParticleFilter");
     }
     if(request_pose_initilization_) {
         const ros::Time now = ros::Time::now();
@@ -264,7 +231,6 @@ void ParticleFilter::processRequests()
         tf_latest_w_T_b_ = tf::StampedTransform(initialization_pose_.getPose(), particle_set_stamp_, base_frame_, world_frame_);
         publishPoses();
         publishTF();
-        Logger::getLogger().info("Pose localization request has been processed", "ParticleFilter");
     }
 }
 
@@ -320,7 +286,6 @@ ParticleFilter::PredictionOutcome ParticleFilter::processPredictions(const ros::
     abs_motion_integral_angular_ += abs_motion_integral_angular;
 
     saveFilterState();
-    Logger::getLogger().info("After, '" + std::to_string(prediction_queue_.size()) + "' samples in queue.", "ParticleFilter");
 
     if(abs_motion_integral_linear > 0.0 || abs_motion_integral_angular > 0.0)
         return MOTION;
@@ -340,7 +305,6 @@ void ParticleFilter::publishTF()
 
 void ParticleFilter::loop()
 {
-    Logger::getLogger().info("Starting loop.", "ParticleFilter");
     std::unique_lock<std::mutex> lock_notify(notify_mutex_);
     while(particle_set_stamp_.isZero())
         particle_set_stamp_ = ros::Time::now();

@@ -10,8 +10,6 @@
 #include <muse_mcl/utils/delegate.hpp>
 #include <muse_mcl/data_types/data.hpp>
 
-#include <muse_mcl/utils/logger.hpp>
-
 namespace muse_mcl {
 class DataProvider {
 public:
@@ -44,9 +42,6 @@ public:
     {
         name_ = name;
         tf_provider_ = tf_provider;
-
-        Logger &l = Logger::getLogger();
-        l.info("Setup", "DataProvider:" + name_);
         doSetup(nh_private);
     }
 
@@ -58,7 +53,6 @@ public:
      */
     DataConnection::Ptr connect(const Callback &callback)
     {
-        Logger::getLogger().info("Created a data connection.", "DataProvider:" + name_);
         return data_received_.connect(callback);
     }
 
@@ -67,7 +61,6 @@ public:
      */
     void enable()
     {
-        Logger::getLogger().info("Enabled.", "DataProvider:" + name_);
         data_received_.enable();
     }
 
@@ -76,7 +69,6 @@ public:
      */
     void disable()
     {
-        Logger::getLogger().info("Disabled.", "DataProvider:" + name_);
         data_received_.disable();
     }
 

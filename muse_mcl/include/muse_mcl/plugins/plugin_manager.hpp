@@ -11,7 +11,6 @@
 #include <typeindex>
 
 #include <muse_mcl/utils/delegate.hpp>
-#include <muse_mcl/utils/logger.hpp>
 
 namespace muse_mcl
 {
@@ -57,11 +56,9 @@ protected:
         document.LoadFile(xml_file);
         TiXmlElement * config = document.RootElement();
         if (config == nullptr) {
-            Logger::getLogger().error("Cannot load file '" + xml_file + "'.", "PluginManager");
             return false;
         }
         if (config->ValueStr() != "library") {
-            Logger::getLogger().error("Manifest root is not <library>.", "PluginManager");
             return false;
         }
 
@@ -70,8 +67,6 @@ protected:
 
             std::string library_name = library->Attribute("path");
             if (library_name.size() == 0) {
-                Logger::getLogger().error("Item in row '" + std::to_string(library->Row()) +
-                                          "' does not contain a path attribute", "PluginManager");
                 continue;
             }
 

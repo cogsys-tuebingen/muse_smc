@@ -11,8 +11,6 @@
 #include <muse_mcl/data_sources/tf_provider.hpp>
 #include <muse_mcl/math/covariance.hpp>
 
-#include <muse_mcl/utils/logger.hpp>
-
 namespace muse_mcl {
 class UniformSampling {
 public:
@@ -48,12 +46,6 @@ public:
         sampling_timeout_  = ros::Duration(nh_private.param(parameter("timeout"), 10.0));
         tf_timeout_        = ros::Duration(nh_private.param(parameter("tf_timeout"), 0.1));
         tf_provider_       = tf_provider;
-
-        Logger &l = Logger::getLogger();
-        l.info("Setup", "UniformSampling:" + name_);
-        l.info("sample_size_='" + std::to_string(sample_size_) + "'", "UniformSampling:" + name_);
-        l.info("sampling_timeout_='" + std::to_string(sampling_timeout_.toSec()) + "'", "UniformSampling:" + name_);
-        l.info("tf_timeout_='" + std::to_string(tf_timeout_.toSec()) + "'", "UniformSampling:" + name_);
 
         doSetup(nh_private);
         doSetupMapProviders(nh_private, map_providers);
@@ -105,9 +97,6 @@ protected:
             ms += m + ",";
         }
         ms.back() = ']';
-
-        Logger &l = Logger::getLogger();
-        l.info("maps='" + ms + "'", "UniformSampling:" + name_);
 
     }
 

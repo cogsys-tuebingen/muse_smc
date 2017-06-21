@@ -6,8 +6,6 @@
 #include <muse_mcl/utils/delegate.hpp>
 #include <mutex>
 
-#include <muse_mcl/utils/logger.hpp>
-
 namespace muse_mcl {
 class TFProvider {
 public:
@@ -25,7 +23,6 @@ public:
         std::unique_lock<std::mutex> l(mutex_);
         std::string error;
         if(tf_.canTransform(target_frame, source_frame, time, &error)) {
-            Logger::getLogger().error(error, "TFProvider");
             tf_.lookupTransform(target_frame, source_frame, time, transform);
             return true;
         } else {
@@ -56,7 +53,6 @@ public:
         std::unique_lock<std::mutex> l(mutex_);
         std::string error;
         if(tf_.canTransform(target_frame, source_frame, time, &error)) {
-            Logger::getLogger().error(error, "TFProvider");
             tf::StampedTransform stamped;
             tf_.lookupTransform(target_frame, source_frame, time, stamped);
             transform = static_cast<tf::Transform>(stamped);

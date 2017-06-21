@@ -18,7 +18,6 @@ void BeamModelMLE::update(const Data::ConstPtr  &data,
                           ParticleSet::Weights   set)
 {
     if(!map->isType<maps::BinaryGridMap>()) {
-        Logger::getLogger().error("The map is of incompatible type!", "UpdateModel:" + name_);
         return;
     }
 
@@ -132,13 +131,4 @@ void BeamModelMLE::doSetup(ros::NodeHandle &nh_private)
             static_cast<std::size_t>(nh_private.param<int>(privateParameter("max_estimation_iterations"), 20));
 
     parameter_estimator_mle_.reset(new BeamModelParameterEstimator(parameters_, max_estimation_iterations));
-
-    Logger &l = Logger::getLogger();
-    l.info("max_beams_=" + std::to_string(max_beams_), "UpdateModel:" + name_);
-    l.info("z_hit_="     + std::to_string(parameters_.z_hit), "UpdateModel:" + name_);
-    l.info("z_short_="   + std::to_string(parameters_.z_short), "UpdateModel:" + name_);
-    l.info("z_max_="     + std::to_string(parameters_.z_max), "UpdateModel:" + name_);
-    l.info("z_rand_="    + std::to_string(parameters_.z_rand), "UpdateModel:" + name_);
-    l.info("sigma_hit_=" + std::to_string(parameters_.sigma_hit), "UpdateModel:" + name_);
-    l.info("lambda_short_=" + std::to_string(parameters_.lambda_short), "UpdateModel:" + name_);
 }

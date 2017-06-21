@@ -17,7 +17,6 @@ void BeamModel::update(const Data::ConstPtr  &data,
                        ParticleSet::Weights   set)
 {
     if(!map->isType<maps::BinaryGridMap>()) {
-        Logger::getLogger().error("The map is of incompatible type!", "UpdateModel:" + name_);
         return;
     }
 
@@ -111,14 +110,4 @@ void BeamModel::doSetup(ros::NodeHandle &nh_private)
     denominator_hit_            = 1.0 / std::sqrt(2.0 * M_PI * sigma_hit_);
     lambda_short_ = nh_private.param(privateParameter("lambda_short"), 0.01);
     chi_outlier_  = nh_private.param(privateParameter("chi_outlier"), 0.05);
-
-    Logger &l = Logger::getLogger();
-    l.info("max_beams_=" + std::to_string(max_beams_), "UpdateModel:" + name_);
-    l.info("z_hit_=" + std::to_string(z_hit_), "UpdateModel:" + name_);
-    l.info("z_short_=" + std::to_string(z_short_), "UpdateModel:" + name_);
-    l.info("z_max_=" + std::to_string(z_max_), "UpdateModel:" + name_);
-    l.info("z_rand_=" + std::to_string(z_rand_), "UpdateModel:" + name_);
-    l.info("sigma_hit_=" + std::to_string(sigma_hit_), "UpdateModel:" + name_);
-    l.info("lambda_short_=" + std::to_string(lambda_short_), "UpdateModel:" + name_);
-    l.info("chi_outlier_=" + std::to_string(chi_outlier_), "UpdateModel:" + name_);
 }

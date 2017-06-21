@@ -26,8 +26,7 @@ void Normal2D::update(const std::string &frame)
         tf::Transform map_T_w;
         Map::ConstPtr map = m->getMap();
         if(!map) {
-            Logger::getLogger().error("Provider '" + m->getName() + "' has not a map yet." , "NormalSampling:" + name_);
-            continue;
+            throw std::runtime_error("[Normal2D] : map was null!");
         }
 
         if(tf_provider_->lookupTransform(map->getFrame(), frame, now, map_T_w, tf_timeout_)) {
@@ -55,7 +54,6 @@ void Normal2D::apply(const math::Pose       &pose,
 
     if(sample_size_ < particle_set.getSampleSizeMinimum() &&
             sample_size_ > particle_set.getSampleSizeMaximum()) {
-        Logger::getLogger().error("Initialization sample size invalid.", "NormalSampling:" + name_);
         throw std::runtime_error("Initialization sample size invalid!");
     }
 
@@ -70,7 +68,6 @@ void Normal2D::apply(const math::Pose       &pose,
         while(!valid) {
             ros::Time now = ros::Time::now();
             if(sampling_start + sampling_timeout_ < now) {
-                Logger::getLogger().error("Sampling timed out.", "NormalSampling:" + name_);
                 return;
             }
 
@@ -87,7 +84,4 @@ void Normal2D::apply(const math::Pose       &pose,
 void Normal2D::doSetup(ros::NodeHandle &nh_private)
 {
     random_seed_ = nh_private.param(parameter("seed"), -1);
-
-    Logger &l = Logger::getLogger();
-    l.info("random_seed_='" + std::to_string(random_seed_) + "'", "NormalSampling:" + name_);
 }

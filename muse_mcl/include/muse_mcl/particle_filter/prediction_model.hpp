@@ -5,7 +5,6 @@
 #include <muse_mcl/data_types/data.hpp>
 #include <muse_mcl/particle_filter/particle_set.hpp>
 
-#include <muse_mcl/utils/logger.hpp>
 #include <memory>
 
 namespace muse_mcl {
@@ -87,12 +86,6 @@ public:
         tf_provider_ = tf_provider;
         eps_zero_linear_  = nh_private.param(privateParameter("eps_zero_linear"), 1e-4);
         eps_zero_angular_ = nh_private.param(privateParameter("eps_zero_angular"), 1e-4);
-
-        Logger &l = Logger::getLogger();
-        l.info("Setup", "PredictionModel:" + name_);
-        l.info("eps_zero_linear_='" + std::to_string(eps_zero_linear_) + "'", "PredictionModel:" + name_);
-        l.info("eps_zero_angular_='" + std::to_string(eps_zero_angular_) + "'", "PredictionModel:" + name_);
-
         doSetup(nh_private);
     }
 

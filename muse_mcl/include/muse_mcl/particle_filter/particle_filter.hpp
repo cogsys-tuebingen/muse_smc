@@ -8,7 +8,6 @@
 #include <muse_mcl/particle_filter/sampling_uniform.hpp>
 #include <muse_mcl/particle_filter/prediction.hpp>
 #include <muse_mcl/particle_filter/update.hpp>
-#include <muse_mcl/utils/logger.hpp>
 #include <muse_mcl/utils/csv_logger.hpp>
 #include <muse_mcl/utils/transform_publisher.hpp>
 #include <muse_mcl/utils/filterstate_publisher.hpp>
