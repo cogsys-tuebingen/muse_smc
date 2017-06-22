@@ -152,29 +152,22 @@ protected:
         return !update_queue_.empty();
     }
 
-    inline void dropUpdate()
-    {
-        std::unique_lock<std::mutex> l(update_queue_mutex_);
-        update_queue_.pop();
-    }
-
     inline ros::Time getUpdateTime() const
     {
         std::unique_lock<std::mutex> l(update_queue_mutex_);
         return update_queue_.top()->getStamp();
     }
 
-    inline void applyUpdate()
+    inline Update::Ptr getUpdate()
     {
-        Update::Ptr update;
-        {
-            std::unique_lock<std::mutex> l(update_queue_mutex_);
-            update = update_queue_.top();
-            update_queue_.pop();
-        }
+        std::unique_lock<std::mutex> l(update_queue_mutex_);
+        Update::Ptr update = update_queue_.top();
+        update_queue_.pop();
+        return update;
+    }
 
-        /// we have to make sure to get the right time stamp!
-
+    inline void applyUpdate(Update::Ptr &update)
+    {
         update->apply(particle_set_->getWeights());
         particle_set_->normalizeWeights();
 

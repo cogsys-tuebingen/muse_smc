@@ -329,26 +329,23 @@ void ParticleFilter::loop()
 
             processRequests();
 
-            auto time = getUpdateTime();
+            Update::Ptr update = getUpdate();
+            auto time = update->getStamp();
+
             if(time >= particle_set_stamp_) {
                 switch(processPredictions(time)) {
                 case MOTION:
-                    applyUpdate();
+                    applyUpdate(update);
                     break;
                 case NO_MOTION:
                     if(integrate_all_measurement_) {
-                        applyUpdate();
-                    } else {
-                        dropUpdate();
+                        applyUpdate(update);
                     }
                     break;
                 default:
                     break;
                 }
                 ++update_cycle_;
-            } else {
-                /// drop old updates
-                dropUpdate();
             }
 
             saveFilterState();
