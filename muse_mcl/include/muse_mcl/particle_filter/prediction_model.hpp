@@ -13,6 +13,8 @@ public:
     using Ptr = std::shared_ptr<PredictionModel>;
 
     struct Result {
+        using Ptr = std::shared_ptr<PredictionModel::Result>;
+
         Result() :
             linear_distance_abs(0.0),
             angular_distance_abs(0.0)

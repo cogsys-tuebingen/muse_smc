@@ -245,6 +245,7 @@ ParticleFilter::PredictionOutcome ParticleFilter::processPredictions(const ros::
 
     double abs_motion_integral_linear = 0.0;       /// absolute integral over linear motion
     double abs_motion_integral_angular = 0.0;      /// absolute integral over angular motion
+    PredictionModel::Result::Ptr last_result;
     while(until > particle_set_stamp_) {
         Prediction::Ptr prediction;
         {
@@ -264,12 +265,20 @@ ParticleFilter::PredictionOutcome ParticleFilter::processPredictions(const ros::
             continue;
         }
 
+        /*
+         * There must be more logic behind this.
+         * -> we have to check if motion was fully applied
+         * +-> if so check if the timestamp is equal to 'until'
+         * -> split and retries have to be handled.
+         */
+
         /// mutate time stamp
         PredictionModel::Result movement = prediction->apply(until, particle_set_->getPoses());
+        last_result.reset(new PredictionModel::Result(movement));
         if(movement.success()) {
             abs_motion_integral_linear  += movement.linear_distance_abs;
             abs_motion_integral_angular += movement.angular_distance_abs;
-            particle_set_stamp_ = movement.applied->getTimeFrame().end;
+            particle_set_stamp_          = movement.applied->getTimeFrame().end;
 
             dotty_->addPrediction(movement.applied->getTimeFrame().end, static_cast<bool>(movement.left_to_apply));
 
@@ -285,6 +294,11 @@ ParticleFilter::PredictionOutcome ParticleFilter::processPredictions(const ros::
             return RETRY;
         }
     }
+
+
+    if(static_cast<bool>(last_result))
+    if(until != last_result->applied->getTimeFrame().end)
+        std::cerr << last_result->applied->getTimeFrame().end << std::endl;
 
     abs_motion_integral_linear_  += abs_motion_integral_linear;
     abs_motion_integral_angular_ += abs_motion_integral_angular;
@@ -335,6 +349,8 @@ void ParticleFilter::loop()
             if(time >= particle_set_stamp_) {
                 switch(processPredictions(time)) {
                 case MOTION:
+                    if(time != particle_set_stamp_)
+                        std::cerr << "i failed" << std::endl;
                     applyUpdate(update);
                     break;
                 case NO_MOTION:
