@@ -98,6 +98,7 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
                               abs_motion_integral_linear_,
                               abs_motion_integral_angular_,
                               particle_set_stamp_.toSec() / now);
+    dotty_.reset(new Dotty);
     ////////////////
 
 }
@@ -269,6 +270,9 @@ ParticleFilter::PredictionOutcome ParticleFilter::processPredictions(const ros::
             abs_motion_integral_linear  += movement.linear_distance_abs;
             abs_motion_integral_angular += movement.angular_distance_abs;
             particle_set_stamp_ = movement.applied->getTimeFrame().end;
+
+            dotty_->addPrediction(movement.applied->getTimeFrame().end, static_cast<bool>(movement.left_to_apply));
+
             if(movement.left_to_apply) {
                 Prediction::Ptr prediction_left_to_apply
                         (new Prediction(movement.left_to_apply, prediction->getPredictionModel()));

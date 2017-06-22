@@ -11,6 +11,7 @@
 #include <muse_mcl/utils/csv_logger.hpp>
 #include <muse_mcl/utils/transform_publisher.hpp>
 #include <muse_mcl/utils/filterstate_publisher.hpp>
+#include <muse_mcl/utils/dotty.hpp>
 
 #include <geometry_msgs/PoseArray.h>
 #include <ros/ros.h>
@@ -69,10 +70,11 @@ protected:
     TFProvider::Ptr          tf_provider_;
 
 
-    tf::StampedTransform             tf_latest_w_T_b_;
-    TransformPublisher::Ptr  tf_publisher_;
+    tf::StampedTransform      tf_latest_w_T_b_;
+    TransformPublisher::Ptr   tf_publisher_;
 
-    FilterStatePublisher::Ptr        filter_state_publisher_;
+    FilterStatePublisher::Ptr filter_state_publisher_;
+    Dotty::Ptr                dotty_;
 
     ros::Time                particle_set_stamp_;
     ParticleSet::Ptr         particle_set_;
@@ -170,8 +172,17 @@ protected:
             update = update_queue_.top();
             update_queue_.pop();
         }
+
+        /// we have to make sure to get the right time stamp!
+
         update->apply(particle_set_->getWeights());
         particle_set_->normalizeWeights();
+
+        if(particle_set_stamp_ != update->getStamp())
+          std::cerr << particle_set_stamp_ << " " << update->getStamp() << std::endl;
+
+        dotty_->addState(particle_set_stamp_);
+        dotty_->addUpdate(update->getStamp(), update->getModelName());
     }
 
 };

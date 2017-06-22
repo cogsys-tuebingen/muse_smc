@@ -40,8 +40,6 @@ public:
         path_(path),
         stop_(false)
     {
-        long s, ms;
-        getTime(s, ms);
         running_ = true;
         worker_thread_ = std::thread([this]{loop();});
         worker_thread_.detach();
@@ -79,7 +77,7 @@ private:
             std::stringstream ss;
             long s, ms;
             getTime(s, ms);
-            ss << "/tmp/muse_filter_state" << s << "." << ms << ".log";
+            ss << "/tmp/muse_filter_state" << getTime() << ".log";
             out_.open(ss.str());
         }
 
@@ -132,7 +130,7 @@ private:
         long s, ms;
         getTime(s, ms);
 
-        const std::string ms_off = ms >= 100 ? "" : (ms >= 10 ? "00" : "0");
+        const std::string ms_off = ms >= 100 ? "" : (ms >= 10 ? "0" : "00");
         const std::string time = std::to_string(s) + "." + ms_off + std::to_string(ms);
         return time;
     }
