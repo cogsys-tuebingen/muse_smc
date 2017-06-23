@@ -111,8 +111,10 @@ protected:
     UpdateQueue              update_queue_;                  /// this is for the weighting functions and therefore important
     PredictionQueue          prediction_queue_;              /// the predcition queue may not reach ovbersize.
 
-    double                   abs_motion_integral_linear_;    /// integrated movement from odometry
-    double                   abs_motion_integral_angular_;   /// integrated movement from odometry
+    double                   abs_motion_integral_linear_resampling_;    /// Motion integral for resampling threshold
+    double                   abs_motion_integral_angular_resampling_;   /// Motion integral for resampling threshold
+    double                   abs_motion_integral_linear_update_;        /// Motion integral for update application
+    double                   abs_motion_integral_angular_update_;       /// Motion integral for update application
 
     //// ------------------ requests -----------------------///
     std::mutex               request_pose_mutex_;
@@ -125,7 +127,7 @@ protected:
     FilterStateLoggerDefault::Ptr filter_state_logger_;
 
     void processRequests();
-    PredictionOutcome processPredictions(const ros::Time &until);
+    void processPredictions(const ros::Time &until);
     void publishPoses();
     void publishTF();
     void loop();
@@ -141,8 +143,8 @@ protected:
         const double now = ros::Time::now().toSec();
         filter_state_logger_->log(prediction_queue_.size(),
                                   update_queue_.size(),
-                                  abs_motion_integral_linear_,
-                                  abs_motion_integral_angular_,
+                                  abs_motion_integral_linear_resampling_,
+                                  abs_motion_integral_angular_resampling_,
                                   particle_set_stamp_.toSec() / now);
     }
 
@@ -164,6 +166,12 @@ protected:
         Update::Ptr update = update_queue_.top();
         update_queue_.pop();
         return update;
+    }
+
+    inline void queueUpdate(const Update::Ptr &update)
+    {
+        std::unique_lock<std::mutex> l(update_queue_mutex_);
+        update_queue_.push(update);
     }
 
     inline void applyUpdate(Update::Ptr &update)

@@ -21,6 +21,8 @@ PredictionModel::Result DifferentialDrive::doPredict(const Data::ConstPtr &data,
                                                      ParticleSet::Poses set)
 {
 
+    //// here we will have the next look
+
     Odometry::ConstPtr apply;
     Odometry::ConstPtr leave;
     if(until < data->getTimeFrame().end) {
@@ -45,7 +47,7 @@ PredictionModel::Result DifferentialDrive::doPredict(const Data::ConstPtr &data,
 
     if(delta_trans < eps_zero_linear_ &&
             std::abs(delta_rot2) < eps_zero_angular_) {
-        return PredictionModel::Result(0.0, 0.0, data);
+        return PredictionModel::Result(0.0, 0.0, apply, leave);
     }
 
     const double delta_rot_noise1 = std::min(std::abs(math::angle::difference(delta_rot1, 0.0)),

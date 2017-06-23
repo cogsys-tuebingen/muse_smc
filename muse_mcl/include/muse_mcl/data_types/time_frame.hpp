@@ -2,6 +2,7 @@
 #define TIME_FRAME_HPP
 
 #include <ros/time.h>
+#include <string>
 
 namespace muse_mcl {
     struct TimeFrame {
@@ -37,7 +38,14 @@ namespace muse_mcl {
             return end - start;
         }
 
+        inline std::string toString() const
+        {
+            return "[" + std::to_string(start.toSec()) + " -> " + std::to_string(end.toSec()) + "]";
+        }
+
     };
 }
+
+
 
 #endif // TIME_FRAME_HPP
