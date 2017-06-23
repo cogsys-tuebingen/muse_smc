@@ -18,8 +18,10 @@ class Dotty {
 public:
     using Ptr = std::shared_ptr<Dotty>;
 
-    Dotty(const std::string &path = "") :
-        path_(path),
+    Dotty() :
+        path_("/tmp/muse_filter_state_" + getTime()),
+        split_(0),
+        lines_(0),
         states_(0),
         predictions_(0),
         next_prediction_is_interpolated_(false),
@@ -108,6 +110,10 @@ public:
 private:
     std::ofstream           out_;
     std::string             path_;
+    std::size_t             split_;
+    std::size_t             lines_;
+
+    static const std::size_t MAX_LINES = 1000;
 
     std::map<std::string, std::size_t> updates_;
     std::size_t             states_;
@@ -126,14 +132,6 @@ private:
 
     void loop()
     {
-        out_.open(path_);
-        if(!out_.is_open()) {
-            std::stringstream ss;
-            ss << "/tmp/muse_filter_state" << getTime() << ".dot";
-            out_.open(ss.str());
-        }
-
-        out_ << "digraph states {" << std::endl;
         auto dumpQ = [this] () {
             while(!q_.empty()) {
                 std::unique_lock<std::mutex> q_lock(q_mutex_);
@@ -141,8 +139,19 @@ private:
                 q_.pop();
                 q_lock.unlock();
                 out_ << f << std::endl;
+                ++lines_;
+
+                if(lines_ >= 1000) {
+                    lines_ = 0;
+                    writeEnd();
+                    reopenOutStream();
+                    writeHeader();
+                }
             }
         };
+
+        reopenOutStream();
+        writeHeader();
 
         std::unique_lock<std::mutex> notify_lock(notify_mutex_);
         while(!stop_) {
@@ -150,8 +159,8 @@ private:
             dumpQ();
         }
         dumpQ();
-        out_ << "}" << std::endl;
-        out_.flush();
+        writeEnd();
+
         if(out_.is_open())
             out_.close();
 
@@ -186,8 +195,27 @@ private:
         return std::to_string(s) + "." + ms_off + std::to_string(ms);
     }
 
+    inline void reopenOutStream()
+    {
+        std::string path = path_ + "_" + std::to_string(split_) + ".dot";
+        if(out_.is_open())
+            out_.close();
+        out_.open(path);
+        ++split_;
+    }
+
+    inline void writeHeader()
+    {
+        out_ << "digraph states {" << std::endl;
+
+    }
+
+    inline void writeEnd()
+    {
+        out_ << "}" << std::endl;
+    }
+
+
 };
 }
-
-
 #endif // DOTTY_HPP
