@@ -68,7 +68,7 @@ struct Data {
         samples_.emplace_back(&sample);
         distribution_.add(sample.pose_.getPosition2D(), sample.weight_);
         angular_mean_.add(sample.pose_.yaw(), sample.weight_);
-    }
+     }
 
     /**
      * @brief Merge operation for this data container. It fuses the samples associated and the

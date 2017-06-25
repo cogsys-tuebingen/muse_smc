@@ -71,6 +71,7 @@ void UniformPrimaryMap2D::apply(ParticleSet &particle_set)
     const std::size_t          secondary_maps_count = secondary_maps_.size();
     const ros::Time sampling_start = ros::Time::now();
     Particle particle;
+    particle.weight_ = 1.0 / static_cast<double>(sample_size_);
     for(std::size_t i = 0 ; i < sample_size_; ++i) {
         bool valid = false;
         while(!valid) {

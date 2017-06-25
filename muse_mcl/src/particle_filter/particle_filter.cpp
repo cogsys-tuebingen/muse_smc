@@ -352,7 +352,7 @@ void ParticleFilter::loop()
                 } else if(time == particle_set_stamp_) {
                     if(integrate_all_measurement_ ||
                             abs_motion_integral_linear_update > 0.0 ||
-                                abs_motion_integral_angular_update > 0.0) {
+                            abs_motion_integral_angular_update > 0.0) {
                         applyUpdate(update);
                     }
                     abs_motion_integral_linear_update = 0.0;
@@ -403,6 +403,7 @@ void ParticleFilter::tryToResample()
             const int cluster_id = cluster.first;
             const auto &distribution = distributions.at(cluster_id);
             const double weight = distribution.getWeight() ;
+
             if(weight > max_weight) {
                 max_cluster_id = cluster_id;
                 max_weight = weight;
@@ -410,7 +411,7 @@ void ParticleFilter::tryToResample()
         }
 
         if(max_cluster_id != -1) {
-            particle_set_->resetWeights();
+            particle_set_->resetWeights(false);
             particle_set_mean_ = math::Pose(distributions.at(max_cluster_id).getMean(),
                                             angular_means.at(max_cluster_id).getMean());
 
@@ -422,3 +423,52 @@ void ParticleFilter::tryToResample()
         update_cycle_ = 0;
     }
 }
+
+std::string ParticleFilter::privateParameter(const std::string &name) const
+    {
+        return name_ + "/" + name;
+    }
+
+void ParticleFilter::saveFilterState() const
+    {
+        const double now = ros::Time::now().toSec();
+        filter_state_logger_->log(prediction_queue_.size(),
+                                  update_queue_.size(),
+                                  abs_motion_integral_linear_resampling_,
+                                  abs_motion_integral_angular_resampling_,
+                                  particle_set_stamp_.toSec() / now);
+    }
+
+bool ParticleFilter::updatesQueued() const
+    {
+        std::unique_lock<std::mutex> l(update_queue_mutex_);
+        return !update_queue_.empty();
+    }
+
+Update::Ptr ParticleFilter::getUpdate()
+{
+    std::unique_lock<std::mutex> l(update_queue_mutex_);
+    Update::Ptr update = update_queue_.top();
+    update_queue_.pop();
+    return update;
+}
+
+
+void ParticleFilter::queueUpdate(const Update::Ptr &update)
+{
+    std::unique_lock<std::mutex> l(update_queue_mutex_);
+    update_queue_.push(update);
+}
+
+void ParticleFilter::applyUpdate(Update::Ptr &update)
+{
+    update->apply(particle_set_->getWeights());
+    particle_set_->normalizeWeights();
+
+    if(particle_set_stamp_ != update->getStamp())
+        std::cerr << particle_set_stamp_ << " " << update->getStamp() << std::endl;
+
+    dotty_->addState(particle_set_stamp_);
+    dotty_->addUpdate(update->getStamp(), update->getModelName());
+}
+

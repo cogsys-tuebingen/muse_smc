@@ -137,59 +137,12 @@ protected:
     void loop();
     void tryToResample();
 
-    inline std::string privateParameter(const std::string &name)
-    {
-        return name_ + "/" + name;
-    }
-
-    inline void saveFilterState() const
-    {
-        const double now = ros::Time::now().toSec();
-        filter_state_logger_->log(prediction_queue_.size(),
-                                  update_queue_.size(),
-                                  abs_motion_integral_linear_resampling_,
-                                  abs_motion_integral_angular_resampling_,
-                                  particle_set_stamp_.toSec() / now);
-    }
-
-    inline bool updatesQueued() const
-    {
-        std::unique_lock<std::mutex> l(update_queue_mutex_);
-        return !update_queue_.empty();
-    }
-
-    inline ros::Time getUpdateTime() const
-    {
-        std::unique_lock<std::mutex> l(update_queue_mutex_);
-        return update_queue_.top()->getStamp();
-    }
-
-    inline Update::Ptr getUpdate()
-    {
-        std::unique_lock<std::mutex> l(update_queue_mutex_);
-        Update::Ptr update = update_queue_.top();
-        update_queue_.pop();
-        return update;
-    }
-
-    inline void queueUpdate(const Update::Ptr &update)
-    {
-        std::unique_lock<std::mutex> l(update_queue_mutex_);
-        update_queue_.push(update);
-    }
-
-    inline void applyUpdate(Update::Ptr &update)
-    {
-        update->apply(particle_set_->getWeights());
-        particle_set_->normalizeWeights();
-
-        if(particle_set_stamp_ != update->getStamp())
-          std::cerr << particle_set_stamp_ << " " << update->getStamp() << std::endl;
-
-        dotty_->addState(particle_set_stamp_);
-        dotty_->addUpdate(update->getStamp(), update->getModelName());
-    }
-
+    std::string privateParameter(const std::string &name) const;
+    void saveFilterState() const;
+    bool updatesQueued() const;
+    Update::Ptr getUpdate();
+    void queueUpdate(const Update::Ptr &update);
+    void applyUpdate(Update::Ptr &update);
 };
 }
 

@@ -193,6 +193,7 @@ public:
         for(auto &s : *p_t_1) {
             s.weight_ /= sample_weight_sum_;
         }
+
         sample_weight_average_  = sample_weight_sum_ / p_t_1->size();
         sample_weight_maximum_ /= sample_weight_sum_;
         sample_weight_sum_ = 1.0;
@@ -227,6 +228,7 @@ public:
      */
     inline void cluster()
     {
+
         /// run clustering
         ClusteringImpl impl(indexation_);
         if(array_to_be_used_) {
@@ -236,6 +238,7 @@ public:
             KDClustering clustering(*kdtree_);
             clustering.cluster(impl);
         }
+
         p_t_1_clusters_      = std::move(impl.clusters_);
         p_t_1_distributions_ = std::move(impl.distributions_);
         p_t_1_angular_means_ = std::move(impl.angular_means_);

@@ -29,6 +29,7 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     WeightedDistribution() :
+        sample_count_(0),
         mean_(PointType::Zero()),
         correlated_(MatrixType::Zero()),
         W_(0.0),
@@ -53,6 +54,7 @@ public:
         correlated_ = MatrixType::Zero();
         W_ = 1;
         W_1_ = 0;
+        sample_count_ = 0;
         dirty_ = true;
         dirty_eigen_ = true;
     }
@@ -67,6 +69,7 @@ public:
                 correlated_(i, j) = (correlated_(i, j) * W_1_ + w * p(i) * p(j)) / (double) W_;
             }
         }
+        ++sample_count_;
         W_1_ = W_;
         dirty_ = true;
         dirty_eigen_ = true;
@@ -79,12 +82,18 @@ public:
         correlated_ = (correlated_ * W_ +  other.correlated_ * other.W_) / (W_ + other.W_);
         W_ += other.W_;
         W_1_ = W_;
+        sample_count_ += other.sample_count_;
         dirty_ = true;
         dirty_eigen_ = true;
         return *this;
     }
 
     /// Distribution properties
+    inline std::size_t getSampleCount() const
+    {
+        return sample_count_;
+    }
+
     inline double getWeight() const
     {
         return W_;
@@ -258,6 +267,7 @@ public:
     }
 
 private:
+    std::size_t                  sample_count_;
     PointType                    mean_;
     MatrixType                   correlated_;
     double                       W_;

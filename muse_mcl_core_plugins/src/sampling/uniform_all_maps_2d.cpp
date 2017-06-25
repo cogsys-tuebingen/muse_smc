@@ -65,6 +65,7 @@ void UniformAllMaps2D::apply(ParticleSet &particle_set)
     const std::size_t map_count = maps_.size();
 
     Particle particle;
+    particle.weight_ = 1.0 / static_cast<double>(sample_size_);
     for(std::size_t i = 0 ; i < sample_size_ ; ++i) {
         bool valid = false;
         while(!valid) {
