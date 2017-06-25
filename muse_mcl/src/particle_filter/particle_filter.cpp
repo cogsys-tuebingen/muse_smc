@@ -11,8 +11,6 @@ ParticleFilter::ParticleFilter()  :
     update_cycle_(0),
     abs_motion_integral_linear_resampling_(0.0),
     abs_motion_integral_angular_resampling_(0.0),
-    abs_motion_integral_linear_update_(0.0),
-    abs_motion_integral_angular_update_(0.0),
     request_pose_initilization_(false),
     request_global_initialization_(false)
 {
@@ -237,7 +235,9 @@ void ParticleFilter::processRequests()
     }
 }
 
-void ParticleFilter::processPredictions(const ros::Time &until)
+void ParticleFilter::processPredictions(const ros::Time &until,
+                                        double &abs_motion_integral_linear_update,
+                                        double &abs_motion_integral_angular_update)
 {
     auto wait_for_prediction = [this] ()
     {
@@ -287,7 +287,7 @@ void ParticleFilter::processPredictions(const ros::Time &until)
 
             if(movement.left_to_apply) {
                 Prediction::Ptr prediction_left_to_apply
-                        (new Prediction(movement.left_to_apply, prediction->getPredictionModel()));
+                        (new Prediction(movement.left_to_apply, prediction->getModel()));
                 std::unique_lock<std::mutex> l(prediction_queue_mutex_);
                 prediction_queue_.emplace(prediction_left_to_apply);
                 break;
@@ -300,8 +300,8 @@ void ParticleFilter::processPredictions(const ros::Time &until)
 
     abs_motion_integral_linear_resampling_  += local_abs_motion_integral_linear;
     abs_motion_integral_angular_resampling_ += local_abs_motion_integral_angular;
-    abs_motion_integral_linear_update_      += local_abs_motion_integral_linear;
-    abs_motion_integral_angular_update_     += local_abs_motion_integral_angular;
+    abs_motion_integral_linear_update       += local_abs_motion_integral_linear;
+    abs_motion_integral_angular_update      += local_abs_motion_integral_angular;
 
     saveFilterState();
 }
@@ -338,20 +338,25 @@ void ParticleFilter::loop()
 
             processRequests();
 
-            Update::Ptr update = getUpdate();
-            auto time = update->getStamp();
+            Update::Ptr  update = getUpdate();
+            auto         time = update->getStamp();
+            UpdateModel* update_model = update->getModel().get();
+
+            double &abs_motion_integral_linear_update  = abs_motion_integrals_linear_update_[update_model];
+            double &abs_motion_integral_angular_update = abs_motion_integrals_angular_update_[update_model] ;
+
             if(time >= particle_set_stamp_) {
-                processPredictions(time);
+                processPredictions(time, abs_motion_integral_linear_update, abs_motion_integral_angular_update);
                 if(time > particle_set_stamp_) {
                     queueUpdate(update);
                 } else if(time == particle_set_stamp_) {
                     if(integrate_all_measurement_ ||
-                            abs_motion_integral_linear_update_ > 0.0 ||
-                                abs_motion_integral_angular_update_ > 0.0) {
+                            abs_motion_integral_linear_update > 0.0 ||
+                                abs_motion_integral_angular_update > 0.0) {
                         applyUpdate(update);
                     }
-                    abs_motion_integral_linear_update_ = 0.0;
-                    abs_motion_integral_angular_update_ = 0.0;
+                    abs_motion_integral_linear_update = 0.0;
+                    abs_motion_integral_angular_update = 0.0;
                 } else  {
                     std::cerr << "Motion model seems not to have interpolated to update stamp!" << std::endl;
                 }

@@ -22,6 +22,7 @@
 #include <atomic>
 #include <queue>
 #include <condition_variable>
+#include <map>
 
 namespace muse_mcl {
 class ParticleFilter {
@@ -108,13 +109,14 @@ protected:
     //// ------------------ working members ----------------///
     mutable std::mutex       update_queue_mutex_;
     mutable std::mutex       prediction_queue_mutex_;
-    UpdateQueue              update_queue_;                  /// this is for the weighting functions and therefore important
-    PredictionQueue          prediction_queue_;              /// the predcition queue may not reach ovbersize.
+    UpdateQueue              update_queue_;                             /// this is for the weighting functions and therefore important
+    PredictionQueue          prediction_queue_;                         /// the predcition queue may not reach ovbersize.
 
-    double                   abs_motion_integral_linear_resampling_;    /// Motion integral for resampling threshold
-    double                   abs_motion_integral_angular_resampling_;   /// Motion integral for resampling threshold
-    double                   abs_motion_integral_linear_update_;        /// Motion integral for update application
-    double                   abs_motion_integral_angular_update_;       /// Motion integral for update application
+    std::map<UpdateModel*, double> abs_motion_integrals_linear_update_;  /// track motion integral for each update model
+    std::map<UpdateModel*, double> abs_motion_integrals_angular_update_; /// track motion integral for each update model
+
+    double                   abs_motion_integral_linear_resampling_;     /// Motion integral for resampling threshold
+    double                   abs_motion_integral_angular_resampling_;    /// Motion integral for resampling threshold
 
     //// ------------------ requests -----------------------///
     std::mutex               request_pose_mutex_;
@@ -127,7 +129,9 @@ protected:
     FilterStateLoggerDefault::Ptr filter_state_logger_;
 
     void processRequests();
-    void processPredictions(const ros::Time &until);
+    void processPredictions(const ros::Time &until,
+                            double &abs_motion_integral_linear_update,
+                            double &abs_motion_integral_angular_update);
     void publishPoses();
     void publishTF();
     void loop();
