@@ -64,7 +64,7 @@ public:
 
     void addUpdate(const ros::Time &time, const std::string &name)
     {
-        std::string update = "update_" + std::to_string(updates_[name]);
+        std::string update = "update_" + name + "_" + std::to_string(updates_[name]);
         std::string node = update +
                 " [label=\"" + name +
                 " at time \\n" +
