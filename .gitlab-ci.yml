@@ -2,7 +2,7 @@ before_script:
   # Install ssh-agent if not already installed, it is required by Docker.
   # (change apt-get to yum if you use a CentOS-based image)
   - 'apt-get -qq update -y'
-  - 'apt-get -qq install build-essential openssh-client libeigen3-dev libyaml-cpp-dev libtbb-dev sudo -y'
+  - 'apt-get -qq install build-essential openssh-client libeigen3-dev libyaml-cpp-dev libtbb-dev libopencv-dev sudo -y'
 
   # Run ssh-agent (inside the build environment)
   - eval $(ssh-agent -s)
@@ -40,7 +40,7 @@ indigo:
     - rosdep install -y -r -i --from-paths src
     - catkin_make
     - catkin_make tests
-    - catkin_make run_tests_muse_amcl
+    - catkin_make run_tests_muse_mcl
     
 jade:
   stage: build
@@ -50,7 +50,7 @@ jade:
     - rosdep install -y -r -i --from-paths src
     - catkin_make
     - catkin_make tests
-    - catkin_make run_tests_muse_amcl
+    - catkin_make run_tests_muse_mcl
 
 kinetic:
   stage: build
@@ -60,4 +60,4 @@ kinetic:
     - rosdep install -y -r -i --from-paths src
     - catkin_make
     - catkin_make tests
-    - catkin_make run_tests_muse_amcl
+    - catkin_make run_tests_muse_mcl
