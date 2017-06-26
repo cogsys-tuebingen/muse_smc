@@ -26,6 +26,7 @@ public:
     using ConstPtr = std::shared_ptr<ParticleSet const>;
 
     using Index     = Indexation::IndexType;
+    using Indeces   = std::buffered_vector<Index>;
     using Size      = Indexation::SizeType;
     using Poses     = MemberDecorator<Particle, Particle::PoseType,   &Particle::pose_>;
     using Weights   = MemberDecorator<Particle, Particle::WeightType, &Particle::weight_>;
@@ -38,6 +39,7 @@ public:
     using KDClustering    = cis::operations::clustering::Clustering<KDTreeBuffered>;
     using ArrayClustering = cis::operations::clustering::Clustering<Array>;
     using ClusteringImpl  = clustering::ClusteringImpl;
+
 
     /// particle sets should not be copyable
     ParticleSet(const ParticleSet &other) = delete;
@@ -63,8 +65,9 @@ public:
         sample_weight_sum_(0.0),
         sample_weight_maximum_(0.0),
         sample_weight_average_(0.0),
-        p_t_1(new Particles(0, sample_size)),
-        p_t(new Particles(0, sample_size)),
+        p_t_1_(new Particles(0, sample_size)),
+        p_t_1_indices_(new Indeces(0, sample_size)),
+        p_t_(new Particles(0, sample_size)),
         kdtree_(new KDTreeBuffered),
         array_(new Array),
         array_to_be_used_(false)
@@ -95,8 +98,9 @@ public:
         sample_index_maximum_(std::numeric_limits<int>::min()),
         sample_weight_sum_(0.0),
         sample_weight_maximum_(0.0),
-        p_t_1(new Particles(0, sample_size_maximum)),
-        p_t(new Particles(0, sample_size_maximum)),
+        p_t_1_(new Particles(0, sample_size_maximum)),
+        p_t_1_indices_(new Indeces(0, sample_size_maximum)),
+        p_t_(new Particles(0, sample_size_maximum)),
         kdtree_(new KDTreeBuffered),
         array_(new Array),
         array_to_be_used_(false)
@@ -120,7 +124,7 @@ public:
      */
     inline Poses getPoses()
     {
-        return Poses(*p_t_1,
+        return Poses(*p_t_1_,
                      Poses::notify_update::from<ParticleSet, &ParticleSet::updateIndices>(this),
                      Poses::notify_touch::from<ParticleSet, &ParticleSet::resetIndices>(this));
     }
@@ -132,7 +136,7 @@ public:
      */
     inline Weights getWeights()
     {
-        return Weights(*p_t_1,
+        return Weights(*p_t_1_,
                        Weights::notify_update::from<ParticleSet, &ParticleSet::updateWeight>(this),
                        Weights::notify_touch::from<ParticleSet, &ParticleSet::resetWeightTracking>(this));
     }
@@ -143,7 +147,7 @@ public:
      */
     inline Particles const & getSamples() const
     {
-        return *p_t_1;
+        return *p_t_1_;
     }
 
     /**
@@ -153,32 +157,15 @@ public:
      */
     inline Insertion getInsertion()
     {
-
-        if(p_t_1->size() > 0) {
-            /// this means that bounaries have to be update for time step t-1
-            const Size size = indexation_.size(sample_index_minimum_, sample_index_maximum_);
-            array_to_be_used_ = size[0] <= array_size_[0] && size[1] <= array_size_[1] && size[2] <= array_size_[2];
-            array_to_be_used_ = false;
-            /// maybe the radian part can be exchanged by static value
-        }
-
         sample_weight_maximum_ = 0.0;
         sample_weight_sum_     = 0.0;
-        p_t->clear();
-        kdtree_->clear();
-
-        if(array_to_be_used_) {
-            array_->set<cis::option::tags::array_offset>(sample_index_minimum_[0],
-                                                         sample_index_minimum_[1],
-                                                         sample_index_minimum_[2]);
-            return Insertion(*p_t,
-                             Insertion::notify_update::from<ParticleSet, &ParticleSet::updateInsertArray>(this),
-                             Insertion::notify_finished::from<ParticleSet, &ParticleSet::insertionFinished>(this));
-        } else {
-            return Insertion(*p_t,
-                             Insertion::notify_update::from<ParticleSet, &ParticleSet::updateInsertKD>(this),
-                             Insertion::notify_finished::from<ParticleSet, &ParticleSet::insertionFinished>(this));
-        }
+        p_t_->clear();
+        p_t_1_indices_->clear();
+        resetIndices();
+        resetWeightTracking();
+        return Insertion(*p_t_,
+                         Insertion::notify_update::from<ParticleSet, &ParticleSet::updateInsert>(this),
+                         Insertion::notify_finished::from<ParticleSet, &ParticleSet::insertionFinished>(this));
     }
 
     /**
@@ -186,15 +173,15 @@ public:
      */
     inline void normalizeWeights()
     {
-        if(p_t_1->size() == 0)
+        if(p_t_1_->size() == 0)
             return;
 
 
-        for(auto &s : *p_t_1) {
+        for(auto &s : *p_t_1_) {
             s.weight_ /= sample_weight_sum_;
         }
 
-        sample_weight_average_  = sample_weight_sum_ / p_t_1->size();
+        sample_weight_average_  = sample_weight_sum_ / p_t_1_->size();
         sample_weight_maximum_ /= sample_weight_sum_;
         sample_weight_sum_ = 1.0;
 
@@ -202,24 +189,24 @@ public:
 
     inline void resetWeights(const bool normalize = false)
     {
-        if(p_t_1->size() == 0)
+        if(p_t_1_->size() == 0)
             return;
 
         if(normalize) {
-            double norm = p_t_1->size();
-            for(auto &s : *p_t_1) {
+            double norm = p_t_1_->size();
+            for(auto &s : *p_t_1_) {
                 s.weight_ = 1.0 / norm;
             }
             sample_weight_average_  = norm;
             sample_weight_maximum_  = norm;
             sample_weight_sum_      = 1.0;
         } else {
-            for(auto &s : *p_t_1) {
+            for(auto &s : *p_t_1_) {
                 s.weight_ = 1.0;
             }
             sample_weight_average_  = 1.0;
             sample_weight_maximum_  = 1.0;
-            sample_weight_sum_      = static_cast<double>(p_t_1->size());
+            sample_weight_sum_      = static_cast<double>(p_t_1_->size());
         }
     }
 
@@ -228,15 +215,42 @@ public:
      */
     inline void cluster()
     {
-
-        /// run clustering
+        const std::size_t sample_size = p_t_1_->size();
         ClusteringImpl impl(indexation_);
-        if(array_to_be_used_) {
-            ArrayClustering clustering(*array_);
-            clustering.cluster(impl);
-        } else {
-            KDClustering clustering(*kdtree_);
-            clustering.cluster(impl);
+
+        if(sample_size > 0) {
+            normalizeWeights();
+            const Size size = indexation_.size(sample_index_minimum_, sample_index_maximum_);
+            const bool use_array = size[0] <= array_size_[0] &&
+                    size[1] <= array_size_[1] &&
+                    size[2] <= array_size_[2] && false;
+            if(use_array) {
+                array_->clear();
+                array_->set<cis::option::tags::array_offset>(sample_index_minimum_[0],
+                                                             sample_index_minimum_[1],
+                                                             sample_index_minimum_[2]);
+                /// fill array
+                const Particles &p_t_1 = *p_t_1_;
+                const Indeces   &indices = *p_t_1_indices_;
+                for(std::size_t i = 0 ; i < sample_size ; ++i) {
+                    array_->insert(indices[i], clustering::Data(p_t_1[i]));
+                }
+                /// cluster
+                ArrayClustering clustering(*array_);
+                clustering.cluster(impl);
+            } else {
+                kdtree_->clear();
+                const Particles &p_t_1 = *p_t_1_;
+                const Indeces   &indices = *p_t_1_indices_;
+                /// fill kdtree
+                for(std::size_t i = 0 ; i < sample_size ; ++i) {
+                    kdtree_->insert(indices[i], clustering::Data(p_t_1[i]));
+
+                }
+                /// cluster
+                KDClustering clustering(*kdtree_);
+                clustering.cluster(impl);
+            }
         }
 
         p_t_1_clusters_      = std::move(impl.clusters_);
@@ -300,7 +314,7 @@ public:
      */
     inline std::size_t getSampleSize() const
     {
-        return p_t_1->size();
+        return p_t_1_->size();
     }
 
     /**
@@ -377,8 +391,9 @@ private:
     double         sample_weight_maximum_;              /// current sample weight maximum
     double         sample_weight_average_;              /// current non-normalized sample weight average
 
-    Particles::Ptr p_t_1;                               /// set of the previous time step
-    Particles::Ptr p_t;                                 /// set of the upcoming time step
+    Particles::Ptr p_t_1_;                               /// set of the previous time step
+    Indeces::Ptr   p_t_1_indices_;
+    Particles::Ptr p_t_;                                 /// set of the upcoming time step
 
     std::shared_ptr<KDTreeBuffered> kdtree_;            /// kdtree for wide range density estimation
     std::shared_ptr<Array>          array_;             /// array for near range density estimation
@@ -388,6 +403,8 @@ private:
     Clusters                        p_t_1_clusters_;
     Distributions                   p_t_1_distributions_;
     AngularMeans                    p_t_1_angular_means_;
+
+
 
     inline void resetWeightTracking()
     {
@@ -399,6 +416,12 @@ private:
     {
         sample_index_minimum_  = std::numeric_limits<int>::max();
         sample_index_maximum_  = std::numeric_limits<int>::min();
+    }
+
+    inline void updateIndices(const Index &i)
+    {
+        sample_index_minimum_.min(i);
+        sample_index_maximum_.max(i);
     }
 
     /**
@@ -423,37 +446,23 @@ private:
             sample_weight_maximum_ = sample_weight;
     }
 
-    /**
-     * @brief Inseration callback access for the kd-tree implementation assuming the array cannot be used.
-     * @param sample - the current sample processed
-     */
-    inline void updateInsertKD(const Particle &sample)
+    inline void updateInsert(const Particle &sample)
     {
-        /// weight reset to one ;) - more stable and suggested by the "probabilistic robotics"
-        kdtree_->insert(indexation_.create(sample), clustering::Data(sample));
-        updateIndices(sample.pose_);
+        /// calculate the index
+        Index i = indexation_.create(sample);
+        updateIndices(i);
         updateWeight(sample.weight_);
+        p_t_1_indices_->emplace_back(std::move(i));
     }
 
-    /**
-     * @brief Inseration callback access for the array implementation assuming the array can be used.
-     * @param sample - the current sample processed
-     */
-    inline void updateInsertArray(const Particle &sample)
-    {
-        /// weight reset to one ;) - more stable and suggested by the "probabilistic robotics"
-        array_->insert(indexation_.create(sample), clustering::Data(sample));
-        updateIndices(sample.pose_);
-        updateWeight(sample.weight_);
-    }
+
     /**
      * @brief Finalizing the insertion, the particle storages have to be swapped.
      */
     inline void insertionFinished()
     {
         p_t_1_clusters_.clear();
-        std::swap(p_t, p_t_1);
-
+        std::swap(p_t_, p_t_1_);
         normalizeWeights();
     }
 };
