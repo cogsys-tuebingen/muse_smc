@@ -88,10 +88,10 @@
             <param name="class" value="muse_mcl::DifferentialDrive" />
             <param name="base_class" value="muse_mcl::PredictionModel"/>
             <param name="data_provider" value="odometry" />
-  			    <param name="alpha1" value="0.1"/>
-  		  	  <param name="alpha2" value="0.2"/>
-  	   		  <param name="alpha3" value="0.2"/>
-    		    <param name="alpha4" value="0.1"/>
+  			    <param name="alpha1" value="0.01"/>
+  		  	  <param name="alpha2" value="0.02"/>
+  	   		  <param name="alpha3" value="0.1"/>
+    		    <param name="alpha4" value="0.05"/>
     		    <param name="alpha5" value="0.0"/>
         </group>
         <group ns="rawseeds">
@@ -131,9 +131,9 @@
           <param name="seed"    	value="0" />
         </group>
         <group ns="particle_filter">
-         	  <param name="resampling_threshold_linear"  value="0.25" /> 
-          	<param name="resampling_threshold_angular" value="30.0" />
-          	<param name="resampling_cycle" 			       value="50 " />
+         	  <param name="resampling_threshold_linear"  value="0.1" /> 
+          	<param name="resampling_threshold_angular" value="5.0" />
+          	<param name="resampling_cycle" 			       value="50" />
           	<param name="integrate_all_measurement"    value="false" />
 
            <!-- <param name="sample_size"     value="" /> --> 		<!-- if set, maximum and minimum are this value -->
