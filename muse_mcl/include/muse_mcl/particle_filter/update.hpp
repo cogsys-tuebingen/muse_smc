@@ -65,6 +65,16 @@ public:
         return data_->getTimeFrame().end;
     }
 
+    inline UpdateModel::Ptr getModel() const
+    {
+        return model_;
+    }
+
+    inline const std::string& getModelName() const
+    {
+        return model_->getName();
+    }
+
 
 private:
     const Data::ConstPtr data_;

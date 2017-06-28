@@ -62,9 +62,9 @@
             <param name="base_class" value="muse_mcl::PredictionModel"/>
             <param name="data_provider" value="odometry" />
   			<param name="alpha1" value="0.05"/>
-  		  	<param name="alpha2" value="0.1"/>
-  	   		<param name="alpha3" value="0.5"/>
-    		<param name="alpha4" value="0.2"/>
+  		  	<param name="alpha2" value="0.01"/>
+  	   		<param name="alpha3" value="0.1"/>
+    		<param name="alpha4" value="0.1"/>
     		<param name="alpha5" value="0.0"/>
         </group>
         <group ns="rawseeds">
@@ -108,7 +108,7 @@
         </group>
         <group ns="particle_filter">
          	<param name="resampling_threshold_linear"    value="0.075" /> 
-          	<param name="resampling_threshold_angular"   value="10.0" />
+          	<param name="resampling_threshold_angular"   value="5.0" />
           	<param name="resampling_cycle" 			     value="10 " />
           	<param name="integrate_all_measurement"      value="false" />
 
@@ -116,7 +116,7 @@
             <param name="sample_size_minimum" value="100" /> 			<!-- if not sample_size is already set -->
             <param name="sample_size_maximum" value="1000" /> 			<!-- if not sample_size is already set -->
             
-            <param name="resolution_linear" value="0.5" />     <!-- linear discretization resolution -->
+            <param name="resolution_linear" value="0.05" />     <!-- linear discretization resolution -->
             <param name="resolution_radial" value="10.0"/>  <!-- angular discretization resolution -->
 
             <param name="array_extent" value="10.0" /> 			<!-- use array if possible, higher speed -->
@@ -133,7 +133,7 @@
 	  <node pkg="tf" type="static_transform_publisher" name="map_T_w" args="0 0 0 0 0 0 map world 10"/>
 	
   <node pkg="map_server" type="map_server" name="map_server" output="log" args="$(arg map_path)" />
-	<node pkg="rosbag" type="play" name="player" output="log" args="--clock --rate 1.0 -d 15 $(arg bag_path)" required="true" />
+	<node pkg="rosbag" type="play" name="player" output="log" args="--clock --rate 1.0 -d 5 $(arg bag_path)" required="true" />
 	<include file="$(find rawseeds_ros)/launch/transforms.launch" />
   <node pkg="rawseeds_ros" type="log_trajectory.py" name="log_trajectory" />
 

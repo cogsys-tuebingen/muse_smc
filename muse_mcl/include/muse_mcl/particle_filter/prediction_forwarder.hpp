@@ -30,12 +30,9 @@ public:
         auto callback = [this] (const Data::ConstPtr &data) {
             Prediction::Ptr p(new Prediction(data, model_));
             filter_->addPrediction(p);
-
-            Logger::getLogger().info("Received prediction to forward.", "PredictionForwarder");
         };
 
         connection_ = provider->connect(callback);
-        Logger::getLogger().info("Connected data provider '" + provider_name + "'.", "PredictionForwarder");
     }
 
 private:

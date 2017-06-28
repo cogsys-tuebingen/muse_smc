@@ -28,7 +28,7 @@ bool UniformAllMaps2D::update(const std::string &frame)
     for(std::size_t i = 0 ; i < map_provider_count ; ++i) {
         Map::ConstPtr map = map_providers_[i]->getMap();
         if(!map) {
-            Logger::getLogger().error("Provider '" + map_providers_[i]->getName() + "' has not a map yet." , "UniformSampling:" + name_);
+            throw std::runtime_error("[Normal2D] : map was null!");
             continue;
         }
         if(tf_provider_->lookupTransform(map->getFrame(), frame, now, maps_T_w_[i], tf_timeout_)) {
@@ -54,7 +54,6 @@ void UniformAllMaps2D::apply(ParticleSet &particle_set)
 {
     if(sample_size_ < particle_set.getSampleSizeMinimum() ||
             sample_size_ > particle_set.getSampleSizeMaximum()) {
-        Logger::getLogger().error("Initialization sample size invalid.", "UniformSampling:" + name_);
         throw std::runtime_error("Initialization sample size invalid!");
     }
 
@@ -66,12 +65,12 @@ void UniformAllMaps2D::apply(ParticleSet &particle_set)
     const std::size_t map_count = maps_.size();
 
     Particle particle;
+    particle.weight_ = 1.0 / static_cast<double>(sample_size_);
     for(std::size_t i = 0 ; i < sample_size_ ; ++i) {
         bool valid = false;
         while(!valid) {
             ros::Time now = ros::Time::now();
             if(sampling_start + sampling_timeout_ < now) {
-                Logger::getLogger().error("Sampling timed out.", "UniformSampling:" + name_);
                 return;
             }
 
@@ -94,7 +93,6 @@ void UniformAllMaps2D::apply(Particle &particle)
     while(!valid) {
         ros::Time now = ros::Time::now();
         if(sampling_start + sampling_timeout_ < now) {
-            Logger::getLogger().error("Sampling timed out.", "UniformSampling:" + name_);
             break;
         }
 
@@ -109,7 +107,4 @@ void UniformAllMaps2D::apply(Particle &particle)
 void UniformAllMaps2D::doSetup(ros::NodeHandle &nh_private)
 {
     random_seed_ = nh_private.param(parameter("seed"), -1);
-
-    Logger &l = Logger::getLogger();
-    l.info("random_seed_='" + std::to_string(random_seed_) + "'", "UniformSampling:" + name_);
 }

@@ -18,6 +18,17 @@ Map::ConstPtr MapProviderDistanceGridMap::getMap() const
     if(!map_ && blocking_) {
         map_loaded_.wait(l);
     }
+
+//    cv::Mat display(map_->getHeight(), map_->getWidth(), CV_32FC1, cv::Scalar());
+//    for(int i = 0 ; i < display.rows ; ++i) {
+//        for(int j = 0 ; j < display.cols ; ++j) {
+//            display.at<float>(i,j) = map_->at(j,i);
+//        }
+//    }
+
+//    cv::imshow("map", display);
+//    cv::waitKey(0);
+
     return map_;
 }
 
@@ -31,12 +42,6 @@ void MapProviderDistanceGridMap::doSetup(ros::NodeHandle &nh_private)
     blocking_ = nh_private.param<bool>(privateParameter("blocking"), false);
 
     source_= nh_private.subscribe(topic_, 1, &MapProviderDistanceGridMap::callback, this);
-
-    Logger &l = Logger::getLogger();
-    l.info("topic_='" + topic_ + "'", "MapProvider:" + name_);
-    l.info("binarization_threshold_='" + std::to_string(binarization_threshold_) + "'", "MapProvider:" + name_);
-    l.info("kernel_size_='" + std::to_string(kernel_size_) + "'", "MapProvider:" + name_);
-    l.info("blocking_='" + std::to_string(blocking_) + "'", "MapProvider:" + name_);
 }
 
 void MapProviderDistanceGridMap::callback(const nav_msgs::OccupancyGridConstPtr &msg)

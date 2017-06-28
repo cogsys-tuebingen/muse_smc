@@ -61,7 +61,12 @@ public:
         return data_->getTimeFrame().start;
     }
 
-    inline PredictionModel::Ptr getPredictionModel() const
+    inline const std::string& getModelName() const
+    {
+        return model_->getName();
+    }
+
+    inline PredictionModel::Ptr getModel() const
     {
         return model_;
     }

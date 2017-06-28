@@ -4,7 +4,6 @@
 #include <string>
 
 #include "plugin_manager.hpp"
-#include <muse_mcl/utils/logger.hpp>
 
 namespace muse_mcl {
 template<typename PluginType, typename ... Arguments>
@@ -26,9 +25,6 @@ public:
             plugin->setup(plugin_name, arguments...);
             return plugin;
         } else {
-            Logger::getLogger().error("Cannot create class '"  + class_name +
-                                      "' derived from class '" + PluginType::Type() + "'.",
-                                      "PluginFactory");
             return nullptr;
         }
     }

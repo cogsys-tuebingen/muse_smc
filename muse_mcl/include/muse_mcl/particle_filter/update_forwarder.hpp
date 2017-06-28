@@ -5,7 +5,6 @@
 #include "particle_filter.hpp"
 
 #include <muse_mcl/data_sources/map_provider.hpp>
-#include <muse_mcl/utils/logger.hpp>
 
 namespace muse_mcl {
 class UpdateForwarder {
@@ -47,15 +46,12 @@ public:
                 if(map) {
                     Update::Ptr u(new Update(data, map, model));
                     filter_->addUpdate(u);
-                    Logger::getLogger().info("Received update to forward.", "UpdateForwarder");
                 } else {
-                    Logger::getLogger().error("Could not get map from '" + map_provider->getName() + "'.", "UpdateForwarder");
-                 }
+                    throw std::runtime_error("[UpdateForwarder]: Map was null!");
+                }
             };
 
             connections_[model_name] = data_provider->connect(callback);
-            Logger::getLogger().info("Connected data provider '" + data_provider->getName() +
-                                     "' and map provider '" + map_provider->getName() + "'.", "UpdateForwarder");
         }
     }
 

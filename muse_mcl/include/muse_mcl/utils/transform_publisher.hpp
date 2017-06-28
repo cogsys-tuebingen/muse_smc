@@ -38,8 +38,7 @@ public:
                        const std::string &odom_frame,
                        const std::string &base_frame,
                        const std::string &world_frame,
-                       const double timeout = 0.1,
-                       const double valid_time_interval = 0.1) :
+                       const double timeout = 0.1) :
         odom_frame_(odom_frame),
         base_frame_(base_frame),
         world_frame_(world_frame),
@@ -47,8 +46,7 @@ public:
         running_(false),
         stop_(false),
         wait_for_transform_(true),
-        tf_rate_(rate),
-        tf_valid_time_interval_(valid_time_interval)
+        tf_rate_(rate)
     {
     }
 
@@ -117,7 +115,6 @@ private:
     tf::TransformListener    tf_listener_;
     ros::Rate                tf_rate_;
     ros::Time                tf_time_of_transform_;
-    ros::Duration            tf_valid_time_interval_;
 
     void loop()
     {
@@ -125,11 +122,8 @@ private:
         while(!stop_) {
             if(!wait_for_transform_) {
                 std::unique_lock<std::mutex> l(tf_mutex_);
-                auto now = ros::Time::now();
-                if(now <= tf_time_of_transform_ + tf_valid_time_interval_) {
-                    w_T_o_.stamp_ = ros::Time::now();
-                    tf_broadcaster_.sendTransform(w_T_o_);
-                }
+                w_T_o_.stamp_ = ros::Time::now();
+                tf_broadcaster_.sendTransform(w_T_o_);
             }
             tf_rate_.sleep();
         }

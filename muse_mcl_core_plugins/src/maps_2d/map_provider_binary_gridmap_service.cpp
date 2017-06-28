@@ -56,10 +56,4 @@ void MapProviderBinaryGridMapService::doSetup(ros::NodeHandle &nh_private)
     binarization_threshold_ = nh_private.param<double>(privateParameter("threshold"), 0.5);
     source_= nh_private.serviceClient<nav_msgs::GetMap>(service_name_);
     blocking_ = nh_private.param<double>(privateParameter("blocking"), false);
-
-    Logger &l = Logger::getLogger();
-    l.info("service_name_='" + service_name_ + "'", "MapProvider:" + name_);
-    l.info("binarization_threshold_='" + std::to_string(binarization_threshold_) + "'", "MapProvider:" + name_);
-    l.info("blocking_='" + std::to_string(blocking_) + "'", "MapProvider:" + name_);
-
 }

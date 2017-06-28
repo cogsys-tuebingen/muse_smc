@@ -11,7 +11,6 @@ void KLD2D::doApply(ParticleSet &particle_set)
     const ParticleSet::Particles &p_t_1 = particle_set.getSamples();
     const std::size_t size = p_t_1.size();
     if(size == 0) {
-        Logger::getLogger().error("Cannot resample the empty set.", "Resampling:" + name_);
         return;
     }
 
@@ -98,8 +97,4 @@ void KLD2D::doSetup(ros::NodeHandle &nh_private)
 {
     kld_error_ = nh_private.param(parameter("kld_error"), 0.01);
     kld_z_     = nh_private.param(parameter("kld_z"), 0.99);
-
-    Logger &l = Logger::getLogger();
-    l.info("kld_error_='" + std::to_string(kld_error_) + "'", "Resampling:" + name_);
-    l.info("kld_z_='" + std::to_string(kld_z_) + "'", "Resampling:" + name_);
 }

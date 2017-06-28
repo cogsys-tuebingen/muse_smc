@@ -8,10 +8,10 @@
 #include <muse_mcl/particle_filter/sampling_uniform.hpp>
 #include <muse_mcl/particle_filter/prediction.hpp>
 #include <muse_mcl/particle_filter/update.hpp>
-#include <muse_mcl/utils/logger.hpp>
 #include <muse_mcl/utils/csv_logger.hpp>
 #include <muse_mcl/utils/transform_publisher.hpp>
 #include <muse_mcl/utils/filterstate_publisher.hpp>
+#include <muse_mcl/utils/dotty.hpp>
 
 #include <geometry_msgs/PoseArray.h>
 #include <ros/ros.h>
@@ -22,6 +22,7 @@
 #include <atomic>
 #include <queue>
 #include <condition_variable>
+#include <map>
 
 namespace muse_mcl {
 class ParticleFilter {
@@ -70,10 +71,11 @@ protected:
     TFProvider::Ptr          tf_provider_;
 
 
-    tf::StampedTransform             tf_latest_w_T_b_;
-    TransformPublisher::Ptr  tf_publisher_;
+    tf::StampedTransform      tf_latest_w_T_b_;
+    TransformPublisher::Ptr   tf_publisher_;
 
-    FilterStatePublisher::Ptr        filter_state_publisher_;
+    FilterStatePublisher::Ptr filter_state_publisher_;
+    Dotty::Ptr                dotty_;
 
     ros::Time                particle_set_stamp_;
     ParticleSet::Ptr         particle_set_;
@@ -107,11 +109,14 @@ protected:
     //// ------------------ working members ----------------///
     mutable std::mutex       update_queue_mutex_;
     mutable std::mutex       prediction_queue_mutex_;
-    UpdateQueue              update_queue_;                  /// this is for the weighting functions and therefore important
-    PredictionQueue          prediction_queue_;              /// the predcition queue may not reach ovbersize.
+    UpdateQueue              update_queue_;                             /// this is for the weighting functions and therefore important
+    PredictionQueue          prediction_queue_;                         /// the predcition queue may not reach ovbersize.
 
-    double                   abs_motion_integral_linear_;    /// integrated movement from odometry
-    double                   abs_motion_integral_angular_;   /// integrated movement from odometry
+    std::map<UpdateModel*, double> abs_motion_integrals_linear_update_;  /// track motion integral for each update model
+    std::map<UpdateModel*, double> abs_motion_integrals_angular_update_; /// track motion integral for each update model
+
+    double                   abs_motion_integral_linear_resampling_;     /// Motion integral for resampling threshold
+    double                   abs_motion_integral_angular_resampling_;    /// Motion integral for resampling threshold
 
     //// ------------------ requests -----------------------///
     std::mutex               request_pose_mutex_;
@@ -124,57 +129,20 @@ protected:
     FilterStateLoggerDefault::Ptr filter_state_logger_;
 
     void processRequests();
-    PredictionOutcome processPredictions(const ros::Time &until);
+    void processPredictions(const ros::Time &until,
+                            double &abs_motion_integral_linear_update,
+                            double &abs_motion_integral_angular_update);
     void publishPoses();
     void publishTF();
     void loop();
     void tryToResample();
 
-    inline std::string privateParameter(const std::string &name)
-    {
-        return name_ + "/" + name;
-    }
-
-    inline void saveFilterState() const
-    {
-        const double now = ros::Time::now().toSec();
-        filter_state_logger_->log(prediction_queue_.size(),
-                                  update_queue_.size(),
-                                  abs_motion_integral_linear_,
-                                  abs_motion_integral_angular_,
-                                  particle_set_stamp_.toSec() / now);
-    }
-
-    inline bool updatesQueued() const
-    {
-        std::unique_lock<std::mutex> l(update_queue_mutex_);
-        return !update_queue_.empty();
-    }
-
-    inline void dropUpdate()
-    {
-        std::unique_lock<std::mutex> l(update_queue_mutex_);
-        update_queue_.pop();
-    }
-
-    inline ros::Time getUpdateTime() const
-    {
-        std::unique_lock<std::mutex> l(update_queue_mutex_);
-        return update_queue_.top()->getStamp();
-    }
-
-    inline void applyUpdate()
-    {
-        Update::Ptr update;
-        {
-            std::unique_lock<std::mutex> l(update_queue_mutex_);
-            update = update_queue_.top();
-            update_queue_.pop();
-        }
-        update->apply(particle_set_->getWeights());
-        particle_set_->normalizeWeights();
-    }
-
+    std::string privateParameter(const std::string &name) const;
+    void saveFilterState() const;
+    bool updatesQueued() const;
+    Update::Ptr getUpdate();
+    void queueUpdate(const Update::Ptr &update);
+    void applyUpdate(Update::Ptr &update);
 };
 }
 

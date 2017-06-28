@@ -47,12 +47,6 @@ public:
         tf_timeout_        = ros::Duration(nh_private.param(parameter("tf_timeout"), 0.1));
         tf_provider_       = tf_provider;
 
-        Logger &l = Logger::getLogger();
-        l.info("Setup", "NormalSampling:" + name_);
-        l.info("sample_size_='" + std::to_string(sample_size_) + "'", "NormalSampling:" + name_);
-        l.info("sampling_timeout_='" + std::to_string(sampling_timeout_.toSec()) + "'", "NormalSampling:" + name_);
-        l.info("tf_timeout_='" + std::to_string(tf_timeout_.toSec()) + "'", "NormalSampling:" + name_);
-
         doSetup(nh_private);
         doSetupMapProviders(nh_private, map_providers);
     }
@@ -99,9 +93,6 @@ protected:
             ms += m + ",";
         }
         ms.back() = ']';
-
-        Logger &l = Logger::getLogger();
-        l.info("maps='" + ms + "'", "NormalSampling:" + name_);
 
     }
 

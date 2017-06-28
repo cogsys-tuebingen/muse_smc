@@ -21,6 +21,8 @@ PredictionModel::Result DifferentialDrive::doPredict(const Data::ConstPtr &data,
                                                      ParticleSet::Poses set)
 {
 
+    //// here we will have the next look
+
     Odometry::ConstPtr apply;
     Odometry::ConstPtr leave;
     if(until < data->getTimeFrame().end) {
@@ -45,7 +47,7 @@ PredictionModel::Result DifferentialDrive::doPredict(const Data::ConstPtr &data,
 
     if(delta_trans < eps_zero_linear_ &&
             std::abs(delta_rot2) < eps_zero_angular_) {
-        return PredictionModel::Result(0.0, 0.0, data);
+        return PredictionModel::Result(0.0, 0.0, apply, leave);
     }
 
     const double delta_rot_noise1 = std::min(std::abs(math::angle::difference(delta_rot1, 0.0)),
@@ -89,10 +91,6 @@ PredictionModel::Result DifferentialDrive::doPredict(const Data::ConstPtr &data,
         pose(2)  = math::angle::normalize(pose(2) + delta_rot_hat1 + delta_rot_hat2);
         sample.setEigen3D(pose);
     }
-
-    Logger &l = Logger::getLogger();
-    l.info("delta_trans='" + std::to_string(delta_trans) + "', delta_rot2='" + std::to_string(delta_rot2) + "'", "DifferentialDrive");
-
     return PredictionModel::Result(delta_trans, std::abs(delta_rot2), apply, leave);
 }
 
@@ -103,12 +101,4 @@ void DifferentialDrive::doSetup(ros::NodeHandle &nh_private)
     alpha_2_ = nh_private.param<double>(privateParameter("alpha2"), 0.1);
     alpha_3_ = nh_private.param<double>(privateParameter("alpha3"), 0.1);
     alpha_4_ = nh_private.param<double>(privateParameter("alpha4"), 0.1);
-
-    Logger &l = Logger::getLogger();
-    l.info("seed_='" + std::to_string(alpha_4_) + "'",    "PredictionModel:" + name_);
-    l.info("alpha_1_='" + std::to_string(alpha_1_) + "'", "PredictionModel:" + name_);
-    l.info("alpha_2_='" + std::to_string(alpha_2_) + "'", "PredictionModel:" + name_);
-    l.info("alpha_3_='" + std::to_string(alpha_3_) + "'", "PredictionModel:" + name_);
-    l.info("alpha_4_='" + std::to_string(alpha_4_) + "'", "PredictionModel:" + name_);
-
 }

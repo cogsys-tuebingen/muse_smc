@@ -316,6 +316,28 @@ TEST(TestMuseMCL, testWeightedDistribution)
     EXPECT_NEAR(4.086956521739131, mean(1), 1e-6);
 }
 
+TEST(TestMuseMCL, testWeightedDistributionAddition)
+{
+        mms::WeightedDistribution<2> wa;
+        mms::WeightedDistribution<2> wb;
+
+        Eigen::Vector2d placeholder;
+
+        wa.add(placeholder, 0.25);
+        wa.add(placeholder, 0.25);
+        wb.add(placeholder, 0.25);
+        wb.add(placeholder, 0.25);
+
+        wa += wb;
+
+        std::cout << wa.getWeight() << std::endl;
+
+
+}
+
+
+
+
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "muse_mcl_test_node_distribution");
