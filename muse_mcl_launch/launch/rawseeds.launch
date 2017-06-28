@@ -63,7 +63,7 @@
             <param name="z_short"       value="0.05"/>
             <param name="z_max"         value="0.05"/>
             <param name="z_rand"        value="0.1"/>
-            <param name="sigma_hit"     value="0.2"/>
+            <param name="sigma_hit"     value="0.15"/>
             <param name="lambda_short"  value="0.1"/>
             <param name="max_beams"     value="30" />
             <param name="use_estimated_parameters" value="true" />
@@ -78,7 +78,7 @@
             <param name="z_short"       value="0.05"/>
             <param name="z_max"         value="0.05"/>
             <param name="z_rand"        value="0.1"/>
-            <param name="sigma_hit"     value="0.2"/>
+            <param name="sigma_hit"     value="0.15"/>
             <param name="lambda_short"  value="0.1"/>
             <param name="max_beams"     value="30" />
             <param name="use_estimated_parameters" value="true" />

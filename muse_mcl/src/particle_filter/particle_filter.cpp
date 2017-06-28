@@ -401,8 +401,7 @@ void ParticleFilter::tryToResample()
         for(const auto &cluster : clusters) {
             const int cluster_id = cluster.first;
             const auto &distribution = distributions.at(cluster_id);
-            const double weight = distribution.getWeight() ;
-
+            const double weight = distribution.getWeight();
             if(weight > max_weight) {
                 max_cluster_id = cluster_id;
                 max_weight = weight;
