@@ -1,9 +1,109 @@
 #ifndef EIGEN_HPP
 #define EIGEN_HPP
 
+#include <tf/tf.h>
 #include <eigen3/Eigen/Geometry>
 
 namespace muse_mcl {
+
+
+
+//// convert from tf to eigen
+inline void fromEigen(tf::Vector3 &tf,
+                      Eigen::Vector2d &e)
+{
+    e(0) = tf[0];
+    e(1) = tf[1];
+    e(2) = 0.0;
+}
+
+inline void fromEigen(tf::Vector3 &tf,
+                      Eigen::Vector3d &e)
+{
+    e(0) = tf[0];
+    e(1) = tf[1];
+    e(2) = tf[2];
+}
+
+inline void toEigen(const tf::Matrix3x3 &tf,
+                    Eigen::Matrix3d &e)
+{
+    e(0,0)= tf[0][0];
+    e(1,0)= tf[1][0];
+    e(2,0)= tf[2][0];
+    e(0,1)= tf[0][1];
+    e(1,1)= tf[1][1];
+    e(2,1)= tf[2][1];
+    e(0,2)= tf[0][2];
+    e(1,2)= tf[1][2];
+    e(2,2)= tf[2][2];
+}
+
+inline void toEigen(const tf::Transform &tf,
+                    Eigen::Affine2d &e)
+{
+
+}
+
+inline void toEigen(const tf::Transform &tf,
+                    Eigen::Affine3d &e)
+{
+    auto &emat = e.matrix();
+    toEigen(tf.getBasis(), emat.block<3,3>(0,0));
+    toEigen(tf.getOrigin(), emat.black<3,1>(0,3));
+}
+
+//// convert from eigen to tf
+inline void fromEigen(const Eigen::Vector2d &e,
+                      const tf::Vector3 &tf)
+{
+    tf[0] = e(0);
+    tf[1] = e(1);
+    tf[2] = 0.0;
+}
+
+inline void fromEigen(const Eigen::Vector3d &e,
+                      const tf::Vector3 &tf)
+{
+    tf[0] = e(0);
+    tf[1] = e(1);
+    tf[2] = e(2);
+}
+
+inline void fromEigen(const Eigen::Matrix3d &e,
+                      tf::Matrix3x3 &tf)
+{
+    tf[0][0] = e(0,0);
+    tf[1][0] = e(1,0);
+    tf[2][0] = e(2,0);
+    tf[0][1] = e(0,1);
+    tf[1][1] = e(1,1);
+    tf[2][1] = e(2,1);
+    tf[0][2] = e(0,2);
+    tf[1][2] = e(1,2);
+    tf[2][2] = e(2,2);
+}
+
+
+inline void fromEigen(const Eigen::Affine2d &e,
+                      tf::Transform &tf)
+{
+
+}
+
+inline void fromEigen(const Eigen::Affine3d &e,
+                      tf::Transform &tf)
+{
+
+}
+
+
+
+
+
+
+
+
 
 inline void getRotation(const double yaw,
                         Eigen::Matrix2d &matrix)
