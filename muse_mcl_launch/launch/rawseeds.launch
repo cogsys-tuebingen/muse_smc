@@ -55,7 +55,7 @@
           <!-- <param name="angle_max" value="3.1425" /> -->
         </group>
         <group ns="beam_model_front">
-            <param name="class"         value="muse_mcl::BeamModelMLE" />
+            <param name="class"         value="muse_mcl::BeamModel" />
             <param name="base_class"    value="muse_mcl::UpdateModel" />
             <param name="data_provider" value="front_laser" />
             <param name="map_provider"  value="rawseeds" />
@@ -70,7 +70,7 @@
             <param name="use_weights_for_estimation" value="true" />
         </group>
         <group ns="beam_model_rear">
-            <param name="class"         value="muse_mcl::BeamModelMLE" />
+            <param name="class"         value="muse_mcl::BeamModel" />
             <param name="base_class"    value="muse_mcl::UpdateModel" />
             <param name="data_provider" value="rear_laser" />
             <param name="map_provider"  value="rawseeds" />
