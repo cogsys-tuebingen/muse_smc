@@ -1,7 +1,7 @@
 #ifndef KLD2D_H
 #define KLD2D_H
 
-#include <muse_mcl/particle_filter/resampling.hpp>
+#include <muse_mcl/plugins/types/resampling.hpp>
 
 namespace muse_mcl {
 class KLD2D : public Resampling

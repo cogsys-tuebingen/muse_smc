@@ -1,15 +1,17 @@
 #ifndef PARTICLE_FILTER_HPP
 #define PARTICLE_FILTER_HPP
 
-#include <muse_mcl/data_sources/tf_provider.hpp>
+#include <muse_mcl/tf/tf_provider.hpp>
+#include <muse_mcl/tf/tf_publisher.hpp>
+
+#include <muse_mcl/plugins/types/resampling.hpp>
+#include <muse_mcl/plugins/types/sampling_normal.hpp>
+#include <muse_mcl/plugins/types/sampling_uniform.hpp>
+
 #include <muse_mcl/particle_filter/particle_set.hpp>
-#include <muse_mcl/particle_filter/resampling.hpp>
-#include <muse_mcl/particle_filter/sampling_normal.hpp>
-#include <muse_mcl/particle_filter/sampling_uniform.hpp>
 #include <muse_mcl/particle_filter/prediction.hpp>
 #include <muse_mcl/particle_filter/update.hpp>
 #include <muse_mcl/utils/csv_logger.hpp>
-#include <muse_mcl/utils/transform_publisher.hpp>
 #include <muse_mcl/utils/filterstate_publisher.hpp>
 #include <muse_mcl/utils/dotty.hpp>
 
@@ -72,7 +74,7 @@ protected:
 
 
     tf::StampedTransform      tf_latest_w_T_b_;
-    TransformPublisher::Ptr   tf_publisher_;
+    TFPublisher::Ptr          tf_publisher_;
 
     FilterStatePublisher::Ptr filter_state_publisher_;
     Dotty::Ptr                dotty_;

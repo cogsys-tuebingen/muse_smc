@@ -2,7 +2,9 @@
 #define UPDATE_MODEL_HPP
 
 #include <memory>
-#include <muse_mcl/data_sources/tf_provider.hpp>
+
+#include <muse_mcl/tf/tf_provider.hpp>
+
 #include <muse_mcl/data_types/data.hpp>
 #include <muse_mcl/data_types/map.hpp>
 #include <muse_mcl/particle_filter/particle_set.hpp>

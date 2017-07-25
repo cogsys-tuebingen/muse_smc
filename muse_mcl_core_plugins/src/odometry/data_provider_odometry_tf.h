@@ -6,7 +6,7 @@
 #include <atomic>
 
 #include <muse_mcl/data_sources/data_provider.hpp>
-#include <muse_mcl/data_sources/tf_provider.hpp>
+#include <muse_mcl/tf/tf_provider.hpp>
 
 namespace muse_mcl {
 class DataProviderOdometryTF : public muse_mcl::DataProvider

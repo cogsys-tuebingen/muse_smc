@@ -76,8 +76,6 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}_particle_filter
-    include/muse_mcl/particle_filter/update_model.hpp
-    include/muse_mcl/particle_filter/prediction_model.hpp
     src/particle_filter/particle_filter.cpp
 )
 

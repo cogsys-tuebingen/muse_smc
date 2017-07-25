@@ -1,7 +1,7 @@
 #ifndef STRATIFIED_H
 #define STRATIFIED_H
 
-#include <muse_mcl/particle_filter/resampling.hpp>
+#include <muse_mcl/plugins/types/resampling.hpp>
 
 namespace muse_mcl {
 class Stratified : public Resampling

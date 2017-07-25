@@ -23,9 +23,9 @@ namespace muse_mcl {
  *        world frame.
  *
  */
-class TransformPublisher {
+class TFPublisher {
 public:
-    using Ptr = std::shared_ptr<TransformPublisher>;
+    using Ptr = std::shared_ptr<TFPublisher>;
 
     /**
      * @brief TransformPublisherAnchored constructor.
@@ -34,7 +34,7 @@ public:
      * @param base_frame    - the base frame
      * @param world_frame   - the world fram
      */
-    TransformPublisher(const double rate,
+    TFPublisher(const double rate,
                        const std::string &odom_frame,
                        const std::string &base_frame,
                        const std::string &world_frame,
@@ -50,7 +50,7 @@ public:
     {
     }
 
-    virtual ~TransformPublisher()
+    virtual ~TFPublisher()
     {
         end();
     }

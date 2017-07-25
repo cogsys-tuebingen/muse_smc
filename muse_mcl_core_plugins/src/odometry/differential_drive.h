@@ -1,7 +1,7 @@
 #ifndef DIFFERENTIAL_DRIVE_H
 #define DIFFERENTIAL_DRIVE_H
 
-#include <muse_mcl/particle_filter/prediction_model.hpp>
+#include <muse_mcl/plugins/types/prediction_model.hpp>
 #include <muse_mcl/math/random.hpp>
 
 #include <fstream>

@@ -1,7 +1,8 @@
 #ifndef UPDATE_HPP
 #define UPDATE_HPP
 
-#include "update_model.hpp"
+#include <muse_mcl/plugins/types/update_model.hpp>
+
 #include "particle_set.hpp"
 
 #include <muse_mcl/data_types/time_frame.hpp>

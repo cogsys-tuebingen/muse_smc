@@ -6,9 +6,10 @@
 #include <muse_mcl/GlobalInitialization.h>
 #include <muse_mcl/PoseInitialization.h>
 
+#include <muse_mcl/tf/tf_provider.hpp>
+
 #include <muse_mcl/data_sources/map_provider.hpp>
 #include <muse_mcl/data_sources/data_provider.hpp>
-#include <muse_mcl/data_sources/tf_provider.hpp>
 
 #include <muse_mcl/particle_filter/update_forwarder.hpp>
 #include <muse_mcl/particle_filter/prediction_forwarder.hpp>

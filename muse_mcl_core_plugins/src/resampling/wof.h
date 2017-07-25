@@ -1,7 +1,7 @@
 #ifndef WHEELOFFORTUNE_H
 #define WHEELOFFORTUNE_H
 
-#include <muse_mcl/particle_filter/resampling.hpp>
+#include <muse_mcl/plugins/types/resampling.hpp>
 
 namespace muse_mcl {
 class WheelOfFortune : public Resampling

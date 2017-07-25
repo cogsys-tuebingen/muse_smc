@@ -2,7 +2,9 @@
 #define RESAMPLING_HPP
 
 #include <muse_mcl/particle_filter/particle_set.hpp>
-#include <muse_mcl/particle_filter/sampling_uniform.hpp>
+
+#include <muse_mcl/plugins/types/sampling_uniform.hpp>
+
 #include <muse_mcl/math/random.hpp>
 
 #include <memory>

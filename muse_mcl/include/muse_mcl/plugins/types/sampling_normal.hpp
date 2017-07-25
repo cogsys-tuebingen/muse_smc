@@ -1,34 +1,35 @@
-#ifndef POSE_GENERATION_UNIFORM_HPP
-#define POSE_GENERATION_UNIFORM_HPP
+#ifndef POSE_GENERATION_NORMAL_HPP
+#define POSE_GENERATION_NORMAL_HPP
 
 #include <memory>
 #include <vector>
 #include <tf/transform_listener.h>
 #include <ros/node_handle.h>
 
+#include <muse_mcl/tf/tf_provider.hpp>
+
 #include <muse_mcl/particle_filter/particle_set.hpp>
 #include <muse_mcl/data_sources/map_provider.hpp>
-#include <muse_mcl/data_sources/tf_provider.hpp>
 #include <muse_mcl/math/covariance.hpp>
 
 namespace muse_mcl {
-class UniformSampling {
+class NormalSampling {
 public:
-    typedef std::shared_ptr<UniformSampling> Ptr;
+    typedef std::shared_ptr<NormalSampling> Ptr;
 
     using MapProviders = std::map<std::string, MapProvider::Ptr>;
 
-    UniformSampling()
+    NormalSampling()
     {
     }
 
-    virtual ~UniformSampling()
+    virtual ~NormalSampling()
     {
     }
 
     inline const static std::string Type()
     {
-        return "muse_mcl::UniformPoseGeneration";
+        return "muse_mcl::NormalPoseGeneration";
     }
 
     inline std::string getName() const
@@ -36,10 +37,10 @@ public:
         return name_;
     }
 
-    inline void setup(const std::string                             &name,
-                      const std::map<std::string, MapProvider::Ptr> &map_providers,
-                      const TFProvider::Ptr                         &tf_provider,
-                      ros::NodeHandle                               &nh_private)
+    void setup(const std::string                             &name,
+               const std::map<std::string, MapProvider::Ptr> &map_providers,
+               const TFProvider::Ptr                         &tf_provider,
+               ros::NodeHandle                               &nh_private)
     {
         name_              = name;
         sample_size_       = nh_private.param(parameter("sample_size"), 500);
@@ -51,22 +52,18 @@ public:
         doSetupMapProviders(nh_private, map_providers);
     }
 
+
+    virtual void update(const std::string &frame) = 0;
     /**
-     * @brief Has to be called before generation to capture the worlds state
-     *        at the current time. Afterwards resampling may be called.
-     * @param frame - frame poses should be generated in
+     * @brief Generate a multivariate Gaussian distributed particle set with
+     *        a mean given by a desired initialization pose and the covariance
+     *        matrix.
+     * @param pose          - 6 dimensional pose vector (x,y,z,roll,pitch,yaw)
+     * @param covariance    - 6 dimensnioal covariance matrix
      */
-    virtual bool update(const std::string &frame) = 0;
-    /**
-     * @brief Build a uniformely distributed particle set using maps that should
-     *        be used for pose generation.
-     */
-    virtual void apply(ParticleSet &particle_set) = 0;
-    /**
-     * @brief Generate a single particle from current state.
-     * @param particle
-     */
-    virtual void apply(Particle &particle) = 0;
+    virtual void apply(const math::Pose       &pose,
+                       const math::Covariance &covariance,
+                       ParticleSet            &particle_set) = 0;
 
 protected:
     std::string                   name_;
@@ -77,21 +74,21 @@ protected:
     TFProvider::Ptr               tf_provider_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) = 0;
-    virtual void doSetupMapProviders(ros::NodeHandle &nh_private,
+    virtual void doSetupMapProviders(ros::NodeHandle    &nh_private,
                                      const MapProviders &map_providers)
     {
         std::vector<std::string> map_provider_ids;
         nh_private.getParam(parameter("maps"), map_provider_ids);
 
         if(map_provider_ids.size() == 0) {
-            throw std::runtime_error("[UniformSampling]: No map providers were found!");
+            throw std::runtime_error("[NormalSampling]: No map providers were found!");
         }
 
         std::string ms ="[";
         for(auto m : map_provider_ids) {
 
             if(map_providers.find(m) == map_providers.end())
-                throw std::runtime_error("[UniformSampling]: Cannot find map provider '" + m + "'!");
+                throw std::runtime_error("[NormalSampling]: Cannot find map provider '" + m + "'!");
 
             map_providers_.emplace_back(map_providers.at(m));
             ms += m + ",";
@@ -104,9 +101,7 @@ protected:
     {
         return name_ + "/" + name;
     }
+
 };
 }
-
-
-
-#endif // POSE_GENERATION_UNIFORM_HPP
+#endif // POSE_GENERATION_NORMAL_HPP

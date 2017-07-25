@@ -1,7 +1,8 @@
 #ifndef PREDICTION_MODEL_HPP
 #define PREDICTION_MODEL_HPP
 
-#include <muse_mcl/data_sources/tf_provider.hpp>
+#include <muse_mcl/tf/tf_provider.hpp>
+
 #include <muse_mcl/data_types/data.hpp>
 #include <muse_mcl/particle_filter/particle_set.hpp>
 

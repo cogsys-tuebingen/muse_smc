@@ -1,7 +1,7 @@
 #ifndef MULTINOMIAL_H
 #define MULTINOMIAL_H
 
-#include <muse_mcl/particle_filter/resampling.hpp>
+#include <muse_mcl/plugins/types/resampling.hpp>
 
 namespace muse_mcl {
 class Multinomial : public Resampling
