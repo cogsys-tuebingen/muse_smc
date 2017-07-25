@@ -13,23 +13,23 @@
 #include <muse_mcl/math/covariance.hpp>
 
 namespace muse_mcl {
-class UniformSampling {
+class SamplingUniform {
 public:
-    typedef std::shared_ptr<UniformSampling> Ptr;
+    typedef std::shared_ptr<SamplingUniform> Ptr;
 
     using MapProviders = std::map<std::string, ProviderMap::Ptr>;
 
-    UniformSampling()
+    SamplingUniform()
     {
     }
 
-    virtual ~UniformSampling()
+    virtual ~SamplingUniform()
     {
     }
 
     inline const static std::string Type()
     {
-        return "muse_mcl::UniformPoseGeneration";
+        return "muse_mcl::SamplingUniform";
     }
 
     inline std::string getName() const

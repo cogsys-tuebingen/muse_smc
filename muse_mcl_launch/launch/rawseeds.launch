@@ -113,7 +113,7 @@
             ["rawseeds"]
           </rosparam>
           <param name="class"     	value="muse_mcl::UniformAllMaps2D" />
-          <param name="base_class"  value="muse_mcl::UniformPoseGeneration" />
+          <param name="base_class"  value="muse_mcl::SamplingUniform" />
           <param name="seed"    	  value="2" />
           <param name="timeout"   	value="10.0" />
           <param name="tf_timeout"  value="0.1" />
@@ -127,7 +127,7 @@
           <param name="tf_timeout"  value="0.1" />
           <param name="sample_size" value="500" />
           <param name="class"     	value="muse_mcl::Normal2D" />
-          <param name="base_class"  value="muse_mcl::NormalPoseGeneration" />
+          <param name="base_class"  value="muse_mcl::SamplingNormal" />
           <param name="seed"    	value="0" />
         </group>
         <group ns="particle_filter">

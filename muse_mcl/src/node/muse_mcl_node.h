@@ -66,8 +66,8 @@ private:
     ModelPrediction::Ptr        prediction_model_;
 
     /// sampling & resampling
-    UniformSampling::Ptr        uniform_sampling_;
-    NormalSampling::Ptr         normal_sampling_;
+    SamplingUniform::Ptr        uniform_sampling_;
+    SamplingNormal::Ptr         normal_sampling_;
     Resampling::Ptr             resampling_;
 
 

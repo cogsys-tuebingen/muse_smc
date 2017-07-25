@@ -145,21 +145,21 @@ bool MuseMCLNode::setup()
         ROS_INFO_STREAM(data_provider_list);
     }
     { /// sampling algorithms
-        loader.load<UniformSampling,  MapProviders, TFProvider::Ptr, ros::NodeHandle&>(uniform_sampling_, map_providers_, tf_provider_backend_, nh_private_);
+        loader.load<SamplingUniform,  MapProviders, TFProvider::Ptr, ros::NodeHandle&>(uniform_sampling_, map_providers_, tf_provider_backend_, nh_private_);
         if(!uniform_sampling_) {
             ROS_ERROR_STREAM("No uniform sampling function was found!");
             return false;
         }
         ROS_INFO_STREAM("Loaded uniform sampler.");
         ROS_INFO_STREAM("[" << uniform_sampling_->getName() << "]");
-        loader.load<NormalSampling, MapProviders, TFProvider::Ptr, ros::NodeHandle&>(normal_sampling_, map_providers_,  tf_provider_backend_, nh_private_);
+        loader.load<SamplingNormal, MapProviders, TFProvider::Ptr, ros::NodeHandle&>(normal_sampling_, map_providers_,  tf_provider_backend_, nh_private_);
         if(!normal_sampling_) {
             ROS_ERROR_STREAM("No gaussian sampling function was found!");
             return false;
         }
         ROS_INFO_STREAM("Loaded gaussian sampler.");
         ROS_INFO_STREAM("[" << normal_sampling_->getName() << "]");
-        loader.load<Resampling, UniformSampling::Ptr, ros::NodeHandle&>(resampling_, uniform_sampling_, nh_private_);
+        loader.load<Resampling, SamplingUniform::Ptr, ros::NodeHandle&>(resampling_, uniform_sampling_, nh_private_);
         if(!resampling_) {
             ROS_ERROR_STREAM("No resampling function was found!");
             return false;

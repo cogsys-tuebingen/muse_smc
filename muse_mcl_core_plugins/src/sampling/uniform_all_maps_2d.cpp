@@ -1,7 +1,7 @@
 #include "uniform_all_maps_2d.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl::UniformAllMaps2D, muse_mcl::UniformSampling)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::UniformAllMaps2D, muse_mcl::SamplingUniform)
 
 
 #include <tf/tf.h>

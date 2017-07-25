@@ -5,7 +5,7 @@
 #include <muse_mcl/pose_samplers/uniform.hpp>
 
 namespace muse_mcl {
-class UniformAllMaps2D : public UniformSampling
+class UniformAllMaps2D : public SamplingUniform
 {
 public:
     UniformAllMaps2D();

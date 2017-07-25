@@ -41,12 +41,12 @@ public:
     void setup(ros::NodeHandle &nh_private, const TFProvider::Ptr &tf_provider);
 
     /// uniform pose sampling
-    void setUniformSampling(const UniformSampling::Ptr &sampling_uniform);
-    UniformSampling::Ptr getUniformSampling() const;
+    void setUniformSampling(const SamplingUniform::Ptr &sampling_uniform);
+    SamplingUniform::Ptr getUniformSampling() const;
 
     /// normal pose sampling
-    void setNormalsampling(NormalSampling::Ptr &sampling_normal_pose);
-    NormalSampling::Ptr getNormalSampling() const;
+    void setNormalsampling(SamplingNormal::Ptr &sampling_normal_pose);
+    SamplingNormal::Ptr getNormalSampling() const;
 
     /// resampling
     void setResampling(Resampling::Ptr &resampling);
@@ -83,8 +83,8 @@ protected:
     ParticleSet::Ptr         particle_set_;
     math::Pose               particle_set_mean_;
 
-    UniformSampling::Ptr     sampling_uniform_;
-    NormalSampling::Ptr      sampling_normal_pose_;
+    SamplingUniform::Ptr     sampling_uniform_;
+    SamplingNormal::Ptr      sampling_normal_pose_;
     Resampling::Ptr          resampling_;
     std::size_t              resampling_cycle_;
 

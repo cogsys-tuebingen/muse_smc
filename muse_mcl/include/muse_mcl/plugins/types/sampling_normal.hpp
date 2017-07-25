@@ -13,23 +13,23 @@
 #include <muse_mcl/math/covariance.hpp>
 
 namespace muse_mcl {
-class NormalSampling {
+class SamplingNormal {
 public:
-    typedef std::shared_ptr<NormalSampling> Ptr;
+    typedef std::shared_ptr<SamplingNormal> Ptr;
 
     using MapProviders = std::map<std::string, ProviderMap::Ptr>;
 
-    NormalSampling()
+    SamplingNormal()
     {
     }
 
-    virtual ~NormalSampling()
+    virtual ~SamplingNormal()
     {
     }
 
     inline const static std::string Type()
     {
-        return "muse_mcl::NormalPoseGeneration";
+        return "muse_mcl::SamplingNormal";
     }
 
     inline std::string getName() const

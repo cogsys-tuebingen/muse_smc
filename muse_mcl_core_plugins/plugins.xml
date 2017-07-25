@@ -1,51 +1,51 @@
 <library path="libmuse_mcl_core_plugins">
    <!-- Update functions -->
-   <class type="muse_mcl::BeamModel" base_class_type="muse_mcl::UpdateModel">
+   <class type="muse_mcl::BeamModel" base_class_type="muse_mcl::ModelUpdate">
      <description>Beam model update function.</description>
    </class>
-   <class type="muse_mcl::BeamModelAMCL" base_class_type="muse_mcl::UpdateModel">
+   <class type="muse_mcl::BeamModelAMCL" base_class_type="muse_mcl::ModelUpdate">
      <description>Beam model update function.</description>
    </class>
-   <class type="muse_mcl::BeamModelMLE" base_class_type="muse_mcl::UpdateModel">
+   <class type="muse_mcl::BeamModelMLE" base_class_type="muse_mcl::ModelUpdate">
      <description>Beam model update function.</description>
    </class>
-   <class type="muse_mcl::LikelihoodFieldModel" base_class_type="muse_mcl::UpdateModel">
+   <class type="muse_mcl::LikelihoodFieldModel" base_class_type="muse_mcl::ModelUpdate">
      <description>Likelihoodfield model update function.</description>
    </class>
-   <class type="muse_mcl::LikelihoodFieldModelAMCL" base_class_type="muse_mcl::UpdateModel">
+   <class type="muse_mcl::LikelihoodFieldModelAMCL" base_class_type="muse_mcl::ModelUpdate">
      <description>Likelihoodfield model update function.</description>
    </class>
-   <class type="muse_mcl::LikelihoodFieldProbModelAMCL" base_class_type="muse_mcl::UpdateModel">
+   <class type="muse_mcl::LikelihoodFieldProbModelAMCL" base_class_type="muse_mcl::ModelUpdate">
      <description>Likelihoodfield model update function with consistency check.</description>
    </class>
    <!-- Propagation Functions -->
-   <class type="muse_mcl::DifferentialDrive" base_class_type="muse_mcl::PredictionModel">
+   <class type="muse_mcl::DifferentialDrive" base_class_type="muse_mcl::ModelPrediction">
      <description>Differential drive propagation model.</description>
    </class>
-   <class type="muse_mcl::DifferentialDriveAbs" base_class_type="muse_mcl::PredictionModel">
+   <class type="muse_mcl::DifferentialDriveAbs" base_class_type="muse_mcl::ModelPrediction">
      <description>
         Differential drive propagation model using only absolute values in the terms,
         instead of quadratic ones.
    </description>
    </class>
-   <class type="muse_mcl::OmniDrive" base_class_type="muse_mcl::PredictionModel">
+   <class type="muse_mcl::OmniDrive" base_class_type="muse_mcl::ModelPrediction">
      <description>Omnidirectional drive propagation model.</description>
    </class>
    <!-- Pose Generation -->
-   <class type="muse_mcl::Normal2D" base_class_type="muse_mcl::NormalPoseGeneration">
+   <class type="muse_mcl::Normal2D" base_class_type="muse_mcl::SamplingNormal">
      <description>2D normal distributed pose generation for pose initialation by the user.</description>
    </class>
-   <class type="muse_mcl::Normal3D" base_class_type="muse_mcl::NormalPoseGeneration">
+   <class type="muse_mcl::Normal3D" base_class_type="muse_mcl::SamplingNormal">
      <description>3D normal distributed pose generation for pose initialation by the user.</description>
    </class>
-   <class type="muse_mcl::UniformAllMaps2D" base_class_type="muse_mcl::UniformPoseGeneration">
+   <class type="muse_mcl::UniformAllMaps2D" base_class_type="muse_mcl::SamplingUniform">
      <description>
         2D uniform pose generation for global initialization with an axis aligned
         bounding rectangle containing all given maps.
      </description>
    </class>
 
-   <class type="muse_mcl::UniformMainMap2D" base_class_type="muse_mcl::UniformPoseGeneration">
+   <class type="muse_mcl::UniformMainMap2D" base_class_type="muse_mcl::SamplingUniform">
      <description>
         2D uniform pose generation for global initialization with an axis aligned
         bounding rectangle of the main map. All other maps are used for validation.
@@ -74,32 +74,32 @@
      <description>Systematic resampling.</description>
    </class>
    <!-- Map Providers -->
-   <class type="muse_mcl::MapProviderBinaryGridMap" base_class_type="muse_mcl::MapProvider">
+   <class type="muse_mcl::ProviderGridmapBinary" base_class_type="muse_mcl::ProviderMap">
      <description>Provides binarized map versions given a destinct threshold by topic.</description>
    </class>
-   <class type="muse_mcl::MapProviderBinaryGridMapService" base_class_type="muse_mcl::MapProvider">
+   <class type="muse_mcl::ProviderGridmapBinaryService" base_class_type="muse_mcl::ProviderMap">
       <description>Provides binarized map versions given a destinct threshold by service.</description>
    </class>
-   <class type="muse_mcl::MapProviderDistanceGridMap" base_class_type="muse_mcl::MapProvider">
+   <class type="muse_mcl::ProviderGridmapDistance" base_class_type="muse_mcl::ProviderMap">
       <description>Provides cspace map versions given a destinct threshold by topic.</description>
    </class>
-   <class type="muse_mcl::MapProviderDistanceGridMapService" base_class_type="muse_mcl::MapProvider">
+   <class type="muse_mcl::ProviderGridmapDistanceService" base_class_type="muse_mcl::ProviderMap">
       <description>Provides cspace map versions given a destinct threshold by Service.</description>
    </class>
-   <class type="muse_mcl::MapProviderProbabilityGridMap" base_class_type="muse_mcl::MapProvider">
+   <class type="muse_mcl::ProviderGridmapProbability" base_class_type="muse_mcl::ProviderMap">
       <description>Provides floating point probability map versions by topic.</description>
    </class>
-   <class type="muse_mcl::MapProviderProbabilityGridMapService" base_class_type="muse_mcl::MapProvider">
+   <class type="muse_mcl::MProviderGridmapProbabilityMapService" base_class_type="muse_mcl::ProviderMap">
       <description>Provides floating point probability map versions by service.</description>
    </class>
    <!-- Data Providers -->
-   <class type="muse_mcl::DataProviderLaser2D" base_class_type="muse_mcl::DataProvider">
+   <class type="muse_mcl::ProviderDataLaser2D" base_class_type="muse_mcl::ProviderData">
       <description>Provides 2D laserscans with the possible to define a linear and angular FOV.</description>
    </class>
-   <class type="muse_mcl::DataProviderOdometry" base_class_type="muse_mcl::DataProvider">
+   <class type="muse_mcl::ProviderDataOdometry" base_class_type="muse_mcl::ProviderData">
       <description>Data provider for standard odmetry messages.</description>
    </class>
-   <class type="muse_mcl::DataProviderOdometryTF" base_class_type="muse_mcl::DataProvider">
+   <class type="muse_mcl::ProviderDataOdometryTF" base_class_type="muse_mcl::ProviderData">
       <description>Data provider for odometry input based on TF.</description>
    </class>
 </library>

@@ -1,7 +1,7 @@
 #include "normal_2d.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl::Normal2D, muse_mcl::NormalSampling)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::Normal2D, muse_mcl::SamplingNormal)
 
 #include <ros/time.h>
 #include <muse_mcl/pose_samplers/normal.hpp>

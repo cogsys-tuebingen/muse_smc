@@ -4,7 +4,7 @@
 #include <muse_mcl/plugins/types/sampling_normal.hpp>
 
 namespace muse_mcl {
-class Normal2D : public NormalSampling
+class Normal2D : public SamplingNormal
 {
 public:
     virtual void update(const std::string &frame) override;

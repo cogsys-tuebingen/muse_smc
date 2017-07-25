@@ -103,22 +103,22 @@ void ParticleFilter::setup(ros::NodeHandle &nh_private,
 
 }
 
-void ParticleFilter::setUniformSampling(const UniformSampling::Ptr &sampling_uniform)
+void ParticleFilter::setUniformSampling(const SamplingUniform::Ptr &sampling_uniform)
 {
     sampling_uniform_ = sampling_uniform;
 }
 
-UniformSampling::Ptr ParticleFilter::getUniformSampling() const
+SamplingUniform::Ptr ParticleFilter::getUniformSampling() const
 {
     return sampling_uniform_;
 }
 
-void ParticleFilter::setNormalsampling(NormalSampling::Ptr &sampling_normal_pose)
+void ParticleFilter::setNormalsampling(SamplingNormal::Ptr &sampling_normal_pose)
 {
     sampling_normal_pose_ = sampling_normal_pose;
 }
 
-NormalSampling::Ptr ParticleFilter::getNormalSampling() const
+SamplingNormal::Ptr ParticleFilter::getNormalSampling() const
 {
     return sampling_normal_pose_;
 }

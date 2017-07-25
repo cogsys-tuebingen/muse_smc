@@ -5,7 +5,7 @@
 #include <muse_mcl/plugins/types/sampling_uniform.hpp>
 
 namespace muse_mcl {
-class UniformPrimaryMap2D : public UniformSampling
+class UniformPrimaryMap2D : public SamplingUniform
 {
 public:
     UniformPrimaryMap2D() = default;

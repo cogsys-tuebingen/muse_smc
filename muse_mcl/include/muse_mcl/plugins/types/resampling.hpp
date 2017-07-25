@@ -41,7 +41,7 @@ public:
     }
 
     inline void setup(const std::string          &name,
-                      const UniformSampling::Ptr &uniform_pose_sampler,
+                      const SamplingUniform::Ptr &uniform_pose_sampler,
                       ros::NodeHandle            &nh_private)
     {
         name_                 = name;
@@ -72,7 +72,7 @@ protected:
     double                        recovery_fast_;
     double                        recovery_slow_;
     double                        recovery_random_pose_probability_;
-    UniformSampling::Ptr          uniform_pose_sampler_;
+    SamplingUniform::Ptr          uniform_pose_sampler_;
 
     virtual void doSetup(ros::NodeHandle &nh_private) = 0;
     virtual void doApply(ParticleSet &particle_set) = 0;
