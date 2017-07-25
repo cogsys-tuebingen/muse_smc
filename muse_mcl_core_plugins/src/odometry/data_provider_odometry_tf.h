@@ -5,7 +5,7 @@
 #include <thread>
 #include <atomic>
 
-#include <muse_mcl/data_sources/data_provider.hpp>
+#include <muse_mcl/plugins/types/provider_data.hpp>
 #include <muse_mcl/tf/tf_provider.hpp>
 
 namespace muse_mcl {

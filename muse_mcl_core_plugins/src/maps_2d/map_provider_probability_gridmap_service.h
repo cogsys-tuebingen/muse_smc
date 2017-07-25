@@ -7,7 +7,7 @@
 #include <thread>
 #include <atomic>
 #include <condition_variable>
-#include <muse_mcl/data_sources/map_provider.hpp>
+#include <muse_mcl/plugins/types/provider_map.hpp>
 #include <muse_mcl_core_plugins/maps_2d/probability_gridmap.h>
 
 namespace muse_mcl {

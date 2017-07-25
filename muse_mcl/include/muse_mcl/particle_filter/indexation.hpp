@@ -100,7 +100,7 @@ public:
         return IndexType({
                              static_cast<int>(std::floor(sample[0] / resolution_[0])),
                              static_cast<int>(std::floor(sample[1] / resolution_[1])),
-                             static_cast<int>(std::floor((sample[2] + M_PI) / resolution_[2])),
+                             static_cast<int>(std::floor((sample[2] + M_PI) / resolution_[2]))
                          });
     }
 
@@ -111,11 +111,10 @@ public:
      */
     inline SizeType size(const std::array<double, 3> &extent) const
     {
-        const  IndexType index = create(extent) + 1;
         return {
-            static_cast<std::size_t>(index[0]),
-            static_cast<std::size_t>(index[1]),
-            static_cast<std::size_t>(index[2]),
+            static_cast<std::size_t>(std::floor(extent[0] / resolution_[0]) + 1ul),
+            static_cast<std::size_t>(std::floor(extent[1] / resolution_[1]) + 1ul),
+            static_cast<std::size_t>(std::floor(extent[2] / resolution_[2]) + 1ul)
         };
     }
 
@@ -126,7 +125,7 @@ public:
         return {
             static_cast<std::size_t>(index[0]),
             static_cast<std::size_t>(index[1]),
-            static_cast<std::size_t>(index[2]),
+            static_cast<std::size_t>(index[2])
         };
     }
 private:

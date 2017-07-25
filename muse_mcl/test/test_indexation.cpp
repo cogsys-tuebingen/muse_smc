@@ -24,18 +24,18 @@ TEST(TestMuseMCL, testCreation)
 
     EXPECT_EQ(2.0, i[0]);
     EXPECT_EQ(4.0, i[1]);
-    EXPECT_EQ(1.0, i[2]);
+    EXPECT_EQ(4.0, i[2]);
 
     i = ia.create({3.0, 3.0, 3.0});
     EXPECT_EQ(6.0, i[0]);
     EXPECT_EQ(12.0,i[1]);
-    EXPECT_EQ(3.0, i[2]);
+    EXPECT_EQ(6.0, i[2]);
 
     ia.setResolution({3.0, 3.0, 3.0});
     i = ia.create({1.0, 2.0, 3.0});
     EXPECT_EQ(0.0, i[0]);
     EXPECT_EQ(0.0, i[1]);
-    EXPECT_EQ(1.0, i[2]);
+    EXPECT_EQ(2.0, i[2]);
 }
 
 TEST(TestMuseMCL, testSize)

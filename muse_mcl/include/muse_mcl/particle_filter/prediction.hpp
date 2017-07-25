@@ -2,10 +2,11 @@
 #define PREDICTION_HPP
 
 #include <muse_mcl/data_types/data.hpp>
-#include <muse_mcl/data_sources/data_provider.hpp>
+#include <muse_mcl/plugins/types/provider_data.hpp>
+
 #include <muse_mcl/particle_filter/particle_set.hpp>
 
-#include <muse_mcl/plugins/types/prediction_model.hpp>
+#include <muse_mcl/plugins/types/model_prediction.hpp>
 
 namespace muse_mcl {
 class Prediction {
