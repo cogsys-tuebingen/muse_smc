@@ -75,6 +75,7 @@ private:
     PredictionForwarder::Ptr    predicition_forwarder_;
 
     void checkPoseInitialization();
+
 };
 }
 

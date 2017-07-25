@@ -46,14 +46,14 @@ add_library(${PROJECT_NAME} SHARED
     src/laser_2d/beam_model_vector.cpp
     src/laser_2d/likelihood_field_model_vector.cpp
 
-    src/maps_2d/provider_map_binary.cpp
-    src/maps_2d/provider_map_distance.cpp
-    src/maps_2d/provider_map_probability.cpp
-    src/maps_2d/provider_map_binary_service.cpp
-    src/maps_2d/provider_map_distance_service.cpp
-    src/maps_2d/provider_map_probability_service.cpp
+    src/maps_2d/provider_gridmap_binary.cpp
+    src/maps_2d/provider_gridmap_distance.cpp
+    src/maps_2d/provider_gridmap_probability.cpp
+    src/maps_2d/provider_gridmap_binary_service.cpp
+    src/maps_2d/provider_gridmap_distance_service.cpp
+    src/maps_2d/provider_gridmap_probability_service.cpp
 
-    src/maps_2d/provider_map_vector.cpp
+    src/maps_2d/provider_vectormap.cpp
 
     src/odometry/differential_drive.cpp
     src/odometry/differential_drive_abs.cpp

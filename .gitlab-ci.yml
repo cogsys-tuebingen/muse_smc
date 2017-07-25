@@ -24,10 +24,17 @@ before_script:
   - ln -s $CI_PROJECT_DIR src/$CI_PROJECT_NAME
   # clone dependencies here:
   - cd src
-  - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_kdtree.git cslibs_kdtree
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_indexed_storage.git cslibs_indexed_storage
-  - cd ..
-
+  - cd cslibs_indexed_storage
+  - git check devel
+  - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_boost_geometry.git cslibs_boost_geometry
+  - cd cslibs_boost_geometry
+  - git check devel
+  - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_vectormaps.git cslibs_vectormaps
+  - cd cslibs_vectormaps
+  - git check devel
+  - cd ../..
+  
 
 stages:
   - build

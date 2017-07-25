@@ -11,10 +11,10 @@
 #include <muse_mcl_core_plugins/maps_2d/binary_gridmap.h>
 
 namespace muse_mcl {
-class ProviderMapBinaryService : public ProviderMap
+class ProviderGridmapBinaryService : public ProviderMap
 {
 public:
-    ProviderMapBinaryService();
+    ProviderGridmapBinaryService();
 
     Map::ConstPtr getMap() const override;
 

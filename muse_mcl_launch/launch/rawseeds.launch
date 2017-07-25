@@ -29,8 +29,8 @@
         </group>
 
         <group ns="front_laser">
-          <param name="class"                    value="muse_mcl::DataProviderLaser2D" />
-          <param name="base_class"               value="muse_mcl::DataProvider" />
+          <param name="class"                    value="muse_mcl::ProviderDataLaser2D" />
+          <param name="base_class"               value="muse_mcl::ProviderData" />
         	<param name="topic"                    value="/sick_front" />
         	<param name="undistortion"             value="false" />
         	<param name="undistortion_fixed_frame" value="/odom" />
@@ -42,8 +42,8 @@
           <param name="queue_size"               value="10" />
         </group>
         <group ns="rear_laser">
-          <param name="class"                    value="muse_mcl::DataProviderLaser2D" />
-          <param name="base_class"               value="muse_mcl::DataProvider" />
+          <param name="class"                    value="muse_mcl::ProviderDataLaser2D" />
+          <param name="base_class"               value="muse_mcl::ProviderData" />
           <param name="topic"                    value="/sick_rear" />
           <param name="undistortion"             value="false" />
           <param name="undistortion_fixed_frame" value="/odom" />
@@ -56,7 +56,7 @@
         </group>
         <group ns="beam_model_front">
             <param name="class"         value="muse_mcl::BeamModel" />
-            <param name="base_class"    value="muse_mcl::UpdateModel" />
+            <param name="base_class"    value="muse_mcl::ModelUpdate" />
             <param name="data_provider" value="front_laser" />
             <param name="map_provider"  value="rawseeds" />
             <param name="z_hit"         value="0.8"/>
@@ -71,7 +71,7 @@
         </group>
         <group ns="beam_model_rear">
             <param name="class"         value="muse_mcl::BeamModel" />
-            <param name="base_class"    value="muse_mcl::UpdateModel" />
+            <param name="base_class"    value="muse_mcl::ModelUpdate" />
             <param name="data_provider" value="rear_laser" />
             <param name="map_provider"  value="rawseeds" />
             <param name="z_hit"         value="0.8"/>
@@ -86,7 +86,7 @@
         </group>
         <group ns="differential_drive_model">
             <param name="class" value="muse_mcl::DifferentialDrive" />
-            <param name="base_class" value="muse_mcl::PredictionModel"/>
+            <param name="base_class" value="muse_mcl::ModelPrediction"/>
             <param name="data_provider" value="odometry" />
   			    <param name="alpha1" value="0.01"/>
   		  	  <param name="alpha2" value="0.02"/>
@@ -95,13 +95,13 @@
     		    <param name="alpha5" value="0.0"/>
         </group>
         <group ns="rawseeds">
-            <param name="class" value="muse_mcl::MapProviderBinaryGridMap" />
-            <param name="base_class" value="muse_mcl::MapProvider" />
+            <param name="class" value="muse_mcl::ProviderGridmapBinary" />
+            <param name="base_class" value="muse_mcl::ProviderMap" />
             <param name="topic" value="/map" />
         </group>
         <group ns="odometry">
-            <param name="base_class" value="muse_mcl::DataProvider" />
-            <param name="class"      value="muse_mcl::DataProviderOdometry" />
+            <param name="base_class" value="muse_mcl::ProviderData" />
+            <param name="class"      value="muse_mcl::ProviderDataOdometry" />
             <param name="topic" 	 value="/odom" />
         </group>
         <group ns="resampling">

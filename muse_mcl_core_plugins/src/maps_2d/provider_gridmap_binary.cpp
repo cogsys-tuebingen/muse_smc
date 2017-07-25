@@ -1,16 +1,16 @@
-#include "provider_map_binary.h"
+#include "provider_gridmap_binary.h"
 
 using namespace muse_mcl;
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl::ProviderMapBinary, muse_mcl::ProviderMap)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::ProviderGridmapBinary, muse_mcl::ProviderMap)
 
-ProviderMapBinary::ProviderMapBinary() :
+ProviderGridmapBinary::ProviderGridmapBinary() :
     loading_(false)
 {
 }
 
-Map::ConstPtr ProviderMapBinary::getMap() const
+Map::ConstPtr ProviderGridmapBinary::getMap() const
 {
     std::unique_lock<std::mutex> l(map_mutex_);
     if(!map_ && blocking_) {
@@ -19,15 +19,15 @@ Map::ConstPtr ProviderMapBinary::getMap() const
     return map_;
 }
 
-void ProviderMapBinary::doSetup(ros::NodeHandle &nh_private)
+void ProviderGridmapBinary::doSetup(ros::NodeHandle &nh_private)
 {
     topic_ = nh_private.param<std::string>(privateParameter("topic"), "/map");
     binarization_threshold_ = nh_private.param<double>(privateParameter("threshold"), 0.5);
-    source_= nh_private.subscribe(topic_, 1, &ProviderMapBinary::callback, this);
+    source_= nh_private.subscribe(topic_, 1, &ProviderGridmapBinary::callback, this);
     blocking_ = nh_private.param<bool>(privateParameter("blocking"), false);
 }
 
-void ProviderMapBinary::callback(const nav_msgs::OccupancyGridConstPtr &msg)
+void ProviderGridmapBinary::callback(const nav_msgs::OccupancyGridConstPtr &msg)
 {
     /// conversion can take time
     /// we allow concurrent loading, this way, the front end thread is not blocking.

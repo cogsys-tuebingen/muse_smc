@@ -1,18 +1,18 @@
-#include "provider_map_distance.h"
+#include "provider_gridmap_distance.h"
 
 #include <opencv2/opencv.hpp>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl::ProviderMapDistance, muse_mcl::ProviderMap)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::ProviderGridmapDistance, muse_mcl::ProviderMap)
 
 using namespace muse_mcl;
 
-ProviderMapDistance::ProviderMapDistance() :
+ProviderGridmapDistance::ProviderGridmapDistance() :
     loading_(false)
 {
 }
 
-Map::ConstPtr ProviderMapDistance::getMap() const
+Map::ConstPtr ProviderGridmapDistance::getMap() const
 {
     std::unique_lock<std::mutex> l(map_mutex_);
     if(!map_ && blocking_) {
@@ -32,7 +32,7 @@ Map::ConstPtr ProviderMapDistance::getMap() const
     return map_;
 }
 
-void ProviderMapDistance::doSetup(ros::NodeHandle &nh_private)
+void ProviderGridmapDistance::doSetup(ros::NodeHandle &nh_private)
 {
 
     topic_ = nh_private.param<std::string>(privateParameter("topic"), "/map");
@@ -41,10 +41,10 @@ void ProviderMapDistance::doSetup(ros::NodeHandle &nh_private)
     kernel_size_ += 1 - (kernel_size_ % 2);
     blocking_ = nh_private.param<bool>(privateParameter("blocking"), false);
 
-    source_= nh_private.subscribe(topic_, 1, &ProviderMapDistance::callback, this);
+    source_= nh_private.subscribe(topic_, 1, &ProviderGridmapDistance::callback, this);
 }
 
-void ProviderMapDistance::callback(const nav_msgs::OccupancyGridConstPtr &msg)
+void ProviderGridmapDistance::callback(const nav_msgs::OccupancyGridConstPtr &msg)
 {
     /// conversion can take time
     /// we allow concurrent loading, this way, the front end thread is not blocking.

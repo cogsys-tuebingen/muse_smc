@@ -1,16 +1,16 @@
-#include "provider_map_probability.h"
+#include "provider_gridmap_probability.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl::ProviderMapProbability, muse_mcl::ProviderMap)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::ProviderGridmapProbability, muse_mcl::ProviderMap)
 
 using namespace muse_mcl;
 
-ProviderMapProbability::ProviderMapProbability() :
+ProviderGridmapProbability::ProviderGridmapProbability() :
     loading_(false)
 {
 }
 
-Map::ConstPtr ProviderMapProbability::getMap() const
+Map::ConstPtr ProviderGridmapProbability::getMap() const
 {
     std::unique_lock<std::mutex> l(map_mutex_);
     if(!map_ && blocking_) {
@@ -19,14 +19,14 @@ Map::ConstPtr ProviderMapProbability::getMap() const
     return map_;
 }
 
-void ProviderMapProbability::doSetup(ros::NodeHandle &nh_private)
+void ProviderGridmapProbability::doSetup(ros::NodeHandle &nh_private)
 {
     topic_ = nh_private.param<std::string>(privateParameter("topic"), "/map");
-    source_= nh_private.subscribe(topic_, 1, &ProviderMapProbability::callback, this);
+    source_= nh_private.subscribe(topic_, 1, &ProviderGridmapProbability::callback, this);
     blocking_ = nh_private.param<bool>(privateParameter("blocking"), false);
 }
 
-void ProviderMapProbability::callback(const nav_msgs::OccupancyGridConstPtr &msg)
+void ProviderGridmapProbability::callback(const nav_msgs::OccupancyGridConstPtr &msg)
 {
     /// conversion can take time
     /// we allow concurrent loading, this way, the front end thread is not blocking.

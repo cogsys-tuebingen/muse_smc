@@ -1,16 +1,16 @@
-#include "provider_map_distance_service.h"
+#include "provider_gridmap_distance_service.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl::ProviderMapDistanceService, muse_mcl::ProviderMap)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::ProviderGridmapDistanceService, muse_mcl::ProviderMap)
 
 using namespace muse_mcl;
 
-ProviderMapDistanceService::ProviderMapDistanceService() :
+ProviderGridmapDistanceService::ProviderGridmapDistanceService() :
     loading_(false)
 {
 }
 
-Map::ConstPtr ProviderMapDistanceService::getMap() const
+Map::ConstPtr ProviderGridmapDistanceService::getMap() const
 {
     nav_msgs::GetMap req;
     if(source_.call(req)) {
@@ -52,7 +52,7 @@ Map::ConstPtr ProviderMapDistanceService::getMap() const
 
 }
 
-void ProviderMapDistanceService::doSetup(ros::NodeHandle &nh_private)
+void ProviderGridmapDistanceService::doSetup(ros::NodeHandle &nh_private)
 {
     service_name_ = nh_private.param<std::string>(privateParameter("service"), "/static_map");
     binarization_threshold_ = nh_private.param<double>(privateParameter("threshold"), 0.5);

@@ -42,7 +42,7 @@ void MuseMCLNode::start()
 }
 
 bool MuseMCLNode::requestGlobalInitialization(muse_mcl::GlobalInitialization::Request &req,
-                                               muse_mcl::GlobalInitialization::Response &res)
+                                              muse_mcl::GlobalInitialization::Response &res)
 {
     particle_filter_->requestGlobalInitialization();
     res.success = true;
@@ -50,7 +50,7 @@ bool MuseMCLNode::requestGlobalInitialization(muse_mcl::GlobalInitialization::Re
 }
 
 bool MuseMCLNode::requestPoseInitialization(muse_mcl::PoseInitialization::Request &req,
-                                             muse_mcl::PoseInitialization::Response &res)
+                                            muse_mcl::PoseInitialization::Response &res)
 {
     auto convert_pose = [&req]() {
         tf::Pose p;
@@ -92,36 +92,82 @@ bool MuseMCLNode::setup()
     /// load all plugins
     PluginLoader loader(nh_private_);
 
-    loader.load<ModelUpdate, TFProvider::Ptr, ros::NodeHandle&>(update_models_, tf_provider_backend_, nh_private_);
-    if(update_models_.empty()) {
-        return false;
-    }
-    loader.load<ModelPrediction, TFProvider::Ptr, ros::NodeHandle&>(prediction_model_, tf_provider_backend_, nh_private_);
-    if(update_models_.empty()) {
-        return false;
-    }
-    loader.load<ProviderMap, ros::NodeHandle&>(map_providers_, nh_private_);
-    if(update_models_.empty()) {
-        return false;
-    }
-    loader.load<ProviderData,TFProvider::Ptr, ros::NodeHandle&>(data_providers_, tf_provider_frontend_, nh_private_);
-    if(update_models_.empty()) {
-        return false;
+    {   /// Update Models
+        loader.load<ModelUpdate, TFProvider::Ptr, ros::NodeHandle&>(update_models_, tf_provider_backend_, nh_private_);
+        if(update_models_.empty()) {
+            ROS_ERROR_STREAM("No update model functions were found!");
+            return false;
+        }
+        std::string update_model_list = "[";
+        for(auto &e : update_models_) {
+            update_model_list += e.first + ",";
+        }
+        update_model_list.at(update_model_list.size() - 1) = ']';
+        ROS_INFO_STREAM("Loaded update function models.");
+        ROS_INFO_STREAM(update_model_list);
     }
 
-    //// sampling algorithms
-    loader.load<UniformSampling,  MapProviders, TFProvider::Ptr, ros::NodeHandle&>(uniform_sampling_, map_providers_, tf_provider_backend_, nh_private_);
-    if(!uniform_sampling_) {
-        return false;
+    {   /// Prediction Model
+        loader.load<ModelPrediction, TFProvider::Ptr, ros::NodeHandle&>(prediction_model_, tf_provider_backend_, nh_private_);
+        if(!prediction_model_) {
+            ROS_ERROR_STREAM("No prediction model functions was found!");
+            return false;
+        }
+        ROS_INFO_STREAM("Loaded prediction function model.");
+        ROS_INFO_STREAM("[" << prediction_model_->getName() << "]");
     }
-    loader.load<NormalSampling, MapProviders, TFProvider::Ptr, ros::NodeHandle&>(normal_sampling_, map_providers_,  tf_provider_backend_, nh_private_);
-    if(!normal_sampling_) {
-        return false;
+    {   /// Map Providers
+        loader.load<ProviderMap, ros::NodeHandle&>(map_providers_, nh_private_);
+        if(map_providers_.empty()) {
+            ROS_ERROR_STREAM("No map provider was found!");
+            return false;
+        }
+        std::string map_provider_list = "[";
+        for(auto &e : map_providers_) {
+            map_provider_list += e.first + ",";
+        }
+        map_provider_list.at(map_provider_list.size() - 1) = ']';
+        ROS_INFO_STREAM("Loaded map providers.");
+        ROS_INFO_STREAM(map_provider_list);
     }
-    loader.load<Resampling, UniformSampling::Ptr, ros::NodeHandle&>(resampling_, uniform_sampling_, nh_private_);
-    if(!resampling_) {
-        return false;
+    {   /// Data Providers
+        loader.load<ProviderData,TFProvider::Ptr, ros::NodeHandle&>(data_providers_, tf_provider_frontend_, nh_private_);
+        if(data_providers_.empty()) {
+            ROS_ERROR_STREAM("No data provider was found!");
+            return false;
+        }
+        std::string data_provider_list = "[";
+        for(auto &e : data_providers_) {
+            data_provider_list += e.first + ",";
+        }
+        data_provider_list.at(data_provider_list.size() - 1) = ']';
+        ROS_INFO_STREAM("Loaded data providers.");
+        ROS_INFO_STREAM(data_provider_list);
     }
+    { /// sampling algorithms
+        loader.load<UniformSampling,  MapProviders, TFProvider::Ptr, ros::NodeHandle&>(uniform_sampling_, map_providers_, tf_provider_backend_, nh_private_);
+        if(!uniform_sampling_) {
+            ROS_ERROR_STREAM("No uniform sampling function was found!");
+            return false;
+        }
+        ROS_INFO_STREAM("Loaded uniform sampler.");
+        ROS_INFO_STREAM("[" << uniform_sampling_->getName() << "]");
+        loader.load<NormalSampling, MapProviders, TFProvider::Ptr, ros::NodeHandle&>(normal_sampling_, map_providers_,  tf_provider_backend_, nh_private_);
+        if(!normal_sampling_) {
+            ROS_ERROR_STREAM("No gaussian sampling function was found!");
+            return false;
+        }
+        ROS_INFO_STREAM("Loaded gaussian sampler.");
+        ROS_INFO_STREAM("[" << normal_sampling_->getName() << "]");
+        loader.load<Resampling, UniformSampling::Ptr, ros::NodeHandle&>(resampling_, uniform_sampling_, nh_private_);
+        if(!resampling_) {
+            ROS_ERROR_STREAM("No resampling function was found!");
+            return false;
+        }
+        ROS_INFO_STREAM("Loaded resampling alpgorithm.");
+        ROS_INFO_STREAM("[" << resampling_->getName() << "]");
+    }
+
     //// set up the necessary functions for the particle filter
     particle_filter_.reset(new ParticleFilter);
     particle_filter_->setup(nh_private_, tf_provider_backend_);
@@ -159,11 +205,11 @@ void MuseMCLNode::checkPoseInitialization()
         switch(p_v.size()) {
         case 6:
             pose = math::Pose(p_v[0], p_v[1], p_v[2],
-                              p_v[3], p_v[4], p_v[5]);
+                    p_v[3], p_v[4], p_v[5]);
             break;
         case 7:
             pose = math::Pose(p_v[0], p_v[1], p_v[2],
-                              p_v[3], p_v[4], p_v[5], p_v[6]);
+                    p_v[3], p_v[4], p_v[5], p_v[6]);
             break;
         default:
             valid_pose = false;
@@ -189,7 +235,7 @@ int main(int argc, char *argv[])
     if(node.setup()) {
         node.start();
     } else {
-        throw std::runtime_error("[muse_mcl]: Could not set up the node!");
+        ROS_ERROR_STREAM("[muse_mcl]: Could not set up the node!");
     }
     return 0;
 }

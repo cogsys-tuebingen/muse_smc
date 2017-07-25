@@ -1,4 +1,4 @@
-#include "provider_map_vector.h"
+#include "provider_vectormap.h"
 
 MapProviderVectorMap::MapProviderVectorMap()
 {
