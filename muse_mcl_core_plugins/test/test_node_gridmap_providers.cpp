@@ -7,7 +7,7 @@
 #include <thread>
 #include <muse_mcl/math/distribution.hpp>
 #include <muse_mcl/plugins/plugin_loader.hpp>
-#include <muse_mcl/data_sources/map_provider.hpp>
+#include <muse_mcl/plugins/types/provider_map.hpp>
 
 using namespace muse_mcl;
 
