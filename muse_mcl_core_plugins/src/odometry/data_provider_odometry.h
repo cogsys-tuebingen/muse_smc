@@ -7,10 +7,10 @@
 #include <muse_mcl/plugins/types/provider_data.hpp>
 
 namespace muse_mcl {
-class DataProviderOdometry  : public muse_mcl::DataProvider
+class ProviderDataOdometry  : public muse_mcl::ProviderData
 {
 public:
-    DataProviderOdometry() = default;
+    ProviderDataOdometry() = default;
 
 protected:
     ros::Subscriber source_;

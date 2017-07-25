@@ -28,7 +28,7 @@ TEST(muse_mcl_core_plugins, testNormalSampling2D)
     /// setup the sampler
     ros::NodeHandle nh_private("~");
     TestNormal2D  normal2d;
-    std::map<std::string, muse_mcl::MapProvider::Ptr> map_providers;
+    std::map<std::string, muse_mcl::ProviderMap::Ptr> map_providers;
 
     /// prepare the maps
     TestMap::Ptr map0(new TestMap("map0", math::Point(-10, -10), math::Point(10,10)));
@@ -48,7 +48,7 @@ TEST(muse_mcl_core_plugins, testNormalSampling2D)
     EXPECT_EQ(ros::Duration(10.0), normal2d.getSamplingTimeout());
     EXPECT_EQ(ros::Duration(0.1),  normal2d.getTFTimeout());
     EXPECT_EQ(tf_provider,         normal2d.getTFProvider());
-    std::vector<MapProvider::Ptr> list_of_mps = normal2d.getMapProviders();
+    std::vector<ProviderMap::Ptr> list_of_mps = normal2d.getMapProviders();
     EXPECT_EQ(2, list_of_mps.size());
     std::map<std::string, int> counts;
     for(auto m : list_of_mps) {

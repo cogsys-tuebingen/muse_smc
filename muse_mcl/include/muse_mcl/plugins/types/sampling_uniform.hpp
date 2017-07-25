@@ -17,7 +17,7 @@ class UniformSampling {
 public:
     typedef std::shared_ptr<UniformSampling> Ptr;
 
-    using MapProviders = std::map<std::string, MapProvider::Ptr>;
+    using MapProviders = std::map<std::string, ProviderMap::Ptr>;
 
     UniformSampling()
     {
@@ -38,7 +38,7 @@ public:
     }
 
     inline void setup(const std::string                             &name,
-                      const std::map<std::string, MapProvider::Ptr> &map_providers,
+                      const std::map<std::string, ProviderMap::Ptr> &map_providers,
                       const TFProvider::Ptr                         &tf_provider,
                       ros::NodeHandle                               &nh_private)
     {
@@ -72,7 +72,7 @@ public:
 protected:
     std::string                   name_;
     std::size_t                   sample_size_;
-    std::vector<MapProvider::Ptr> map_providers_;
+    std::vector<ProviderMap::Ptr> map_providers_;
     ros::Duration                 sampling_timeout_;
     ros::Duration                 tf_timeout_;
     TFProvider::Ptr               tf_provider_;

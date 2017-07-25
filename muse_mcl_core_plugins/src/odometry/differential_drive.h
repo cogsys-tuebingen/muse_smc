@@ -7,7 +7,7 @@
 #include <fstream>
 
 namespace muse_mcl {
-class DifferentialDrive : public PredictionModel
+class DifferentialDrive : public ModelPrediction
 {
 public:
     DifferentialDrive();

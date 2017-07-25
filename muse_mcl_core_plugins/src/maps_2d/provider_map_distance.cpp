@@ -1,33 +1,50 @@
-#include "map_provider_binary_gridmap.h"
+#include "provider_map_distance.h"
+
+#include <opencv2/opencv.hpp>
+
+#include <class_loader/class_loader_register_macro.h>
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::ProviderMapDistance, muse_mcl::ProviderMap)
 
 using namespace muse_mcl;
 
-#include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl::MapProviderBinaryGridMap, muse_mcl::MapProvider)
-
-MapProviderBinaryGridMap::MapProviderBinaryGridMap() :
+ProviderMapDistance::ProviderMapDistance() :
     loading_(false)
 {
 }
 
-Map::ConstPtr MapProviderBinaryGridMap::getMap() const
+Map::ConstPtr ProviderMapDistance::getMap() const
 {
     std::unique_lock<std::mutex> l(map_mutex_);
     if(!map_ && blocking_) {
         map_loaded_.wait(l);
     }
+
+//    cv::Mat display(map_->getHeight(), map_->getWidth(), CV_32FC1, cv::Scalar());
+//    for(int i = 0 ; i < display.rows ; ++i) {
+//        for(int j = 0 ; j < display.cols ; ++j) {
+//            display.at<float>(i,j) = map_->at(j,i);
+//        }
+//    }
+
+//    cv::imshow("map", display);
+//    cv::waitKey(0);
+
     return map_;
 }
 
-void MapProviderBinaryGridMap::doSetup(ros::NodeHandle &nh_private)
+void ProviderMapDistance::doSetup(ros::NodeHandle &nh_private)
 {
+
     topic_ = nh_private.param<std::string>(privateParameter("topic"), "/map");
     binarization_threshold_ = nh_private.param<double>(privateParameter("threshold"), 0.5);
-    source_= nh_private.subscribe(topic_, 1, &MapProviderBinaryGridMap::callback, this);
+    kernel_size_ = std::max(nh_private.param<int>(privateParameter("kernel_size"), 5), 5);
+    kernel_size_ += 1 - (kernel_size_ % 2);
     blocking_ = nh_private.param<bool>(privateParameter("blocking"), false);
+
+    source_= nh_private.subscribe(topic_, 1, &ProviderMapDistance::callback, this);
 }
 
-void MapProviderBinaryGridMap::callback(const nav_msgs::OccupancyGridConstPtr &msg)
+void ProviderMapDistance::callback(const nav_msgs::OccupancyGridConstPtr &msg)
 {
     /// conversion can take time
     /// we allow concurrent loading, this way, the front end thread is not blocking.
@@ -36,18 +53,19 @@ void MapProviderBinaryGridMap::callback(const nav_msgs::OccupancyGridConstPtr &m
             loading_ = true;
 
             auto load = [this, msg]() {
-                maps::BinaryGridMap::Ptr map(new maps::BinaryGridMap(msg, binarization_threshold_));
+                maps::DistanceGridMap::Ptr map(new maps::DistanceGridMap(*msg, binarization_threshold_, kernel_size_));
                 std::unique_lock<std::mutex>l(map_mutex_);
                 map_ = map;
                 loading_ = false;
             };
             auto load_blocking = [this, msg]() {
                 std::unique_lock<std::mutex>l(map_mutex_);
-                map_.reset(new maps::BinaryGridMap(msg, binarization_threshold_));
+                maps::DistanceGridMap::Ptr map(new maps::DistanceGridMap(*msg, binarization_threshold_, kernel_size_));
+                map_ = map;
                 loading_ = false;
+
                 map_loaded_.notify_one();
             };
-
             if(blocking_) {
                 worker_ = std::thread(load_blocking);
             } else {
@@ -57,4 +75,3 @@ void MapProviderBinaryGridMap::callback(const nav_msgs::OccupancyGridConstPtr &m
         }
     }
 }
-

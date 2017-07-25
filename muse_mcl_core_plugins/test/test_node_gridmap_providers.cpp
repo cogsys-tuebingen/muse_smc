@@ -11,7 +11,7 @@
 
 using namespace muse_mcl;
 
-std::map<std::string, MapProvider::Ptr>  map_providers;
+std::map<std::string, ProviderMap::Ptr>  map_providers;
 PluginLoader *loader;
 
 TEST(muse_mcl_core_plugins, testLoadMapProviders)
@@ -19,7 +19,7 @@ TEST(muse_mcl_core_plugins, testLoadMapProviders)
     ros::NodeHandle nh_private("~");
 
     loader = new PluginLoader(nh_private);
-    loader->load<MapProvider, ros::NodeHandle&>(map_providers, nh_private);
+    loader->load<ProviderMap, ros::NodeHandle&>(map_providers, nh_private);
     EXPECT_EQ(6, map_providers.size());
     EXPECT_TRUE(map_providers.find("binary_gridmap") != map_providers.end());
     EXPECT_TRUE(map_providers.find("distance_gridmap") != map_providers.end());
@@ -32,7 +32,7 @@ TEST(muse_mcl_core_plugins, testLoadMapProviders)
 TEST(muse_mcl_core_plugins, testGetMapsTopic)
 {
     /// binary gridmap provider
-    MapProvider::Ptr map_provider = map_providers["binary_gridmap"];
+    ProviderMap::Ptr map_provider = map_providers["binary_gridmap"];
     Map::ConstPtr map;
     std::size_t tries = 0;
 //    while(!map) {

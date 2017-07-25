@@ -10,21 +10,21 @@
 #include <muse_mcl/particle_filter/particle_set.hpp>
 
 namespace muse_mcl {
-class UpdateModel {
+class ModelUpdate {
 public:
-    using Ptr = std::shared_ptr<UpdateModel>;
+    using Ptr = std::shared_ptr<ModelUpdate>;
 
-    UpdateModel()
+    ModelUpdate()
     {
     }
 
-    virtual ~UpdateModel()
+    virtual ~ModelUpdate()
     {
     }
 
     inline const static std::string Type()
     {
-        return "muse_mcl::UpdateModel";
+        return "muse_mcl::ModelUpdate";
     }
 
     inline const std::string& getName() const

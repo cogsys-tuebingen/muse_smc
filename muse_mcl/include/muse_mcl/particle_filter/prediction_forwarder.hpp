@@ -9,14 +9,14 @@ class PredictionForwarder {
 public:
     using Ptr = std::shared_ptr<PredictionForwarder>;
 
-    PredictionForwarder(const PredictionModel::Ptr &model,
+    PredictionForwarder(const ModelPrediction::Ptr &model,
                         const ParticleFilter::Ptr &filter) :
         model_(model),
         filter_(filter)
     {
     }
 
-    inline void bind(const std::map<std::string, DataProvider::Ptr> &data_providers,
+    inline void bind(const std::map<std::string, ProviderData::Ptr> &data_providers,
                      ros::NodeHandle &nh_private)
     {
         const std::string provider_param = model_->getName() + "/data_provider";
@@ -25,7 +25,7 @@ public:
         if(data_providers.find(provider_name) == data_providers.end())
             throw std::runtime_error("[PredictionForwarder]: Cannot find data provider '" + provider_name + "'!");
 
-        const DataProvider::Ptr &provider = data_providers.at(provider_name);
+        const ProviderData::Ptr &provider = data_providers.at(provider_name);
 
         auto callback = [this] (const Data::ConstPtr &data) {
             Prediction::Ptr p(new Prediction(data, model_));
@@ -36,9 +36,9 @@ public:
     }
 
 private:
-    PredictionModel::Ptr              model_;
+    ModelPrediction::Ptr              model_;
     ParticleFilter::Ptr               filter_;
-    DataProvider::DataConnection::Ptr connection_;
+    ProviderData::DataConnection::Ptr connection_;
 };
 }
 

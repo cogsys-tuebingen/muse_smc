@@ -114,8 +114,8 @@ protected:
     UpdateQueue              update_queue_;                             /// this is for the weighting functions and therefore important
     PredictionQueue          prediction_queue_;                         /// the predcition queue may not reach ovbersize.
 
-    std::map<UpdateModel*, double> abs_motion_integrals_linear_update_;  /// track motion integral for each update model
-    std::map<UpdateModel*, double> abs_motion_integrals_angular_update_; /// track motion integral for each update model
+    std::map<ModelUpdate*, double> abs_motion_integrals_linear_update_;  /// track motion integral for each update model
+    std::map<ModelUpdate*, double> abs_motion_integrals_angular_update_; /// track motion integral for each update model
 
     double                   abs_motion_integral_linear_resampling_;     /// Motion integral for resampling threshold
     double                   abs_motion_integral_angular_resampling_;    /// Motion integral for resampling threshold

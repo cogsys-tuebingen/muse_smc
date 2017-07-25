@@ -12,10 +12,10 @@
 
 
 namespace muse_mcl {
-class MapProviderBinaryGridMap : public MapProvider
+class ProviderMapBinary : public ProviderMap
 {
 public:
-    MapProviderBinaryGridMap();
+    ProviderMapBinary();
 
     Map::ConstPtr getMap() const override;
 

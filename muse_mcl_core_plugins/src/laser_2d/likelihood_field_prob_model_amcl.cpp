@@ -4,7 +4,7 @@
 #include <muse_mcl_core_plugins/maps_2d/distance_gridmap.h>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl::LikelihoodFieldProbModelAMCL, muse_mcl::UpdateModel)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::LikelihoodFieldProbModelAMCL, muse_mcl::ModelUpdate)
 
 using namespace muse_mcl;
 

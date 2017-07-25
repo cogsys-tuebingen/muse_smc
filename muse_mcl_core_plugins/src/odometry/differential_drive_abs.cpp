@@ -4,7 +4,7 @@
 #include <muse_mcl/math/angle.hpp>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl::DifferentialDriveAbs, muse_mcl::PredictionModel)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::DifferentialDriveAbs, muse_mcl::ModelPrediction)
 
 using namespace muse_mcl;
 
@@ -12,7 +12,7 @@ DifferentialDriveAbs::DifferentialDriveAbs()
 {
 }
 
-PredictionModel::Result DifferentialDriveAbs::doPredict(const Data::ConstPtr &data,
+ModelPrediction::Result DifferentialDriveAbs::doPredict(const Data::ConstPtr &data,
                                                         const ros::Time &until,
                                                         ParticleSet::Poses set)
 {
@@ -26,7 +26,7 @@ PredictionModel::Result DifferentialDriveAbs::doPredict(const Data::ConstPtr &da
 
     if(delta_trans < eps_zero_linear_ &&
             delta_rot2 < eps_zero_angular_)
-        return PredictionModel::Result(0.0, 0.0, data);
+        return ModelPrediction::Result(0.0, 0.0, data);
 
 
     const double delta_rot_noise1 = std::min(std::abs(math::angle::difference(delta_rot1, 0.0)),
@@ -72,7 +72,7 @@ PredictionModel::Result DifferentialDriveAbs::doPredict(const Data::ConstPtr &da
         sample.setEigen3D(pose);
     }
 
-    return PredictionModel::Result(delta_trans, delta_rot2, data);
+    return ModelPrediction::Result(delta_trans, delta_rot2, data);
 }
 
 void DifferentialDriveAbs::doSetup(ros::NodeHandle &nh_private)

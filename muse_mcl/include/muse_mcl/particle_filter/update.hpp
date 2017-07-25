@@ -40,7 +40,7 @@ public:
 
     Update(const Data::ConstPtr   &data,
            const Map::ConstPtr    &map,
-           const UpdateModel::Ptr &model) :
+           const ModelUpdate::Ptr &model) :
         data_(data),
         map_(map),
         model_(model)
@@ -66,7 +66,7 @@ public:
         return data_->getTimeFrame().end;
     }
 
-    inline UpdateModel::Ptr getModel() const
+    inline ModelUpdate::Ptr getModel() const
     {
         return model_;
     }
@@ -80,7 +80,7 @@ public:
 private:
     const Data::ConstPtr data_;
     const Map::ConstPtr  map_;
-    UpdateModel::Ptr     model_;
+    ModelUpdate::Ptr     model_;
 };
 }
 

@@ -3,11 +3,11 @@
 #include <muse_mcl_core_plugins/odometry/odometry.hpp>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl::DataProviderOdometry, muse_mcl::DataProvider)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::ProviderDataOdometry, muse_mcl::ProviderData)
 
 using namespace muse_mcl;
 
-void DataProviderOdometry::callback(const nav_msgs::OdometryConstPtr &msg)
+void ProviderDataOdometry::callback(const nav_msgs::OdometryConstPtr &msg)
 {
     auto toPose = [](const nav_msgs::OdometryConstPtr &msg)
     {
@@ -25,8 +25,8 @@ void DataProviderOdometry::callback(const nav_msgs::OdometryConstPtr &msg)
     last_msg_ = msg;
 }
 
-void DataProviderOdometry::doSetup(ros::NodeHandle &nh_private)
+void ProviderDataOdometry::doSetup(ros::NodeHandle &nh_private)
 {
     topic_ = nh_private.param<std::string>(privateParameter("topic"), "/odom");
-    source_= nh_private.subscribe(topic_, 1, &DataProviderOdometry::callback, this);
+    source_= nh_private.subscribe(topic_, 1, &ProviderDataOdometry::callback, this);
 }

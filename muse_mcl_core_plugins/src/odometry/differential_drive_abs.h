@@ -5,7 +5,7 @@
 #include <muse_mcl/math/random.hpp>
 
 namespace muse_mcl {
-class DifferentialDriveAbs : public PredictionModel
+class DifferentialDriveAbs : public ModelPrediction
 {
 public:
     DifferentialDriveAbs();

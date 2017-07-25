@@ -25,7 +25,7 @@ TEST(muse_mcl_core_plugins, testSamplingUniformPrimary2D)
     /// setup the sampler
     ros::NodeHandle nh_private("~");
     TestUniformPrimary2D  uniform2d;
-    std::map<std::string, muse_mcl::MapProvider::Ptr> map_providers;
+    std::map<std::string, muse_mcl::ProviderMap::Ptr> map_providers;
 
     /// prepare the maps
     TestMap::Ptr map0(new TestMap("map0", math::Point(-1, -1), math::Point(1,1)));
@@ -46,7 +46,7 @@ TEST(muse_mcl_core_plugins, testSamplingUniformPrimary2D)
     EXPECT_EQ(ros::Duration(0.2),  uniform2d.getTFTimeout());
     EXPECT_EQ(tf_provider,         uniform2d.getTFProvider());
 
-    std::vector<MapProvider::Ptr> list_of_secondary_maps = uniform2d.getSecondaryMapProviders();
+    std::vector<ProviderMap::Ptr> list_of_secondary_maps = uniform2d.getSecondaryMapProviders();
     EXPECT_EQ(1, list_of_secondary_maps.size());
     EXPECT_EQ("map0", list_of_secondary_maps.front()->getName());
     EXPECT_FALSE((!uniform2d.getPrimaryMapProvider()));

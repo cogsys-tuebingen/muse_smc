@@ -40,19 +40,19 @@ public:
 
 
     Prediction(const Data::ConstPtr       &data,
-               const PredictionModel::Ptr &model) :
+               const ModelPrediction::Ptr &model) :
         data_(data),
         model_(model)
     {
     }
 
-    inline PredictionModel::Result operator ()
+    inline ModelPrediction::Result operator ()
         (const ros::Time &until, ParticleSet::Poses poses)
     {
         return model_->predict(data_, until, poses);
     }
 
-    inline PredictionModel::Result apply(const ros::Time &until,
+    inline ModelPrediction::Result apply(const ros::Time &until,
                                          ParticleSet::Poses poses)
     {
         return model_->predict(data_, until, poses);
@@ -68,14 +68,14 @@ public:
         return model_->getName();
     }
 
-    inline PredictionModel::Ptr getModel() const
+    inline ModelPrediction::Ptr getModel() const
     {
         return model_;
     }
 
 private:
     Data::ConstPtr          data_;
-    PredictionModel::Ptr    model_;
+    ModelPrediction::Ptr    model_;
 };
 }
 

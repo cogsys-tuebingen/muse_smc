@@ -4,7 +4,7 @@
 #include <muse_mcl/particle_filter/update.hpp>
 
 namespace muse_mcl {
-class BeamModel : public UpdateModel
+class BeamModel : public ModelUpdate
 {
 public:
     BeamModel();

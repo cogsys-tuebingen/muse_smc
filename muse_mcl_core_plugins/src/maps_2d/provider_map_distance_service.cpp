@@ -1,18 +1,16 @@
-#include "map_provider_binary_gridmap_service.h"
-
-#include <nav_msgs/GetMap.h>
+#include "provider_map_distance_service.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl::MapProviderBinaryGridMapService, muse_mcl::MapProvider)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::ProviderMapDistanceService, muse_mcl::ProviderMap)
 
 using namespace muse_mcl;
 
-MapProviderBinaryGridMapService::MapProviderBinaryGridMapService() :
+ProviderMapDistanceService::ProviderMapDistanceService() :
     loading_(false)
 {
 }
 
-Map::ConstPtr MapProviderBinaryGridMapService::getMap() const
+Map::ConstPtr ProviderMapDistanceService::getMap() const
 {
     nav_msgs::GetMap req;
     if(source_.call(req)) {
@@ -23,37 +21,44 @@ Map::ConstPtr MapProviderBinaryGridMapService::getMap() const
                 loading_ = true;
 
                 auto load = [this, req]() {
-                    maps::BinaryGridMap::Ptr map(new maps::BinaryGridMap(req.response.map, binarization_threshold_));
+                    maps::DistanceGridMap::Ptr map(new maps::DistanceGridMap(req.response.map, binarization_threshold_, kernel_size_));
                     std::unique_lock<std::mutex>l(map_mutex_);
                     map_ = map;
                     loading_ = false;
                 };
                 auto load_blocking = [this, req]() {
-                   std::unique_lock<std::mutex> l(map_mutex_);
-                   map_.reset(new maps::BinaryGridMap(req.response.map, binarization_threshold_));
-                   loading_ = false;
-                   map_loaded_.notify_one();
+                    std::unique_lock<std::mutex>l(map_mutex_);
+                    map_.reset(new maps::DistanceGridMap(req.response.map, binarization_threshold_, kernel_size_));
+                    loading_ = false;
+                    map_loaded_.notify_one();
                 };
+
                 if(blocking_) {
                     worker_ = std::thread(load_blocking);
                 } else {
                     worker_ = std::thread(load);
                 }
                 worker_.detach();
+            } else if(blocking_) {
+                map_loaded_.notify_one();
             }
         }
     }
     std::unique_lock<std::mutex> l(map_mutex_);
-    if(!map_ && blocking_) {
+    if(blocking_) {
         map_loaded_.wait(l);
     }
     return map_;
+
 }
 
-void MapProviderBinaryGridMapService::doSetup(ros::NodeHandle &nh_private)
+void ProviderMapDistanceService::doSetup(ros::NodeHandle &nh_private)
 {
     service_name_ = nh_private.param<std::string>(privateParameter("service"), "/static_map");
     binarization_threshold_ = nh_private.param<double>(privateParameter("threshold"), 0.5);
-    source_= nh_private.serviceClient<nav_msgs::GetMap>(service_name_);
-    blocking_ = nh_private.param<double>(privateParameter("blocking"), false);
+    kernel_size_ = std::max(nh_private.param<int>(privateParameter("kernel_size"), 5), 5);
+    kernel_size_ += 1 - (kernel_size_ % 2);
+    blocking_ = nh_private.param<bool>(privateParameter("blocking"), false);
+    source_   = nh_private.serviceClient<nav_msgs::GetMap>(service_name_);
 }
+

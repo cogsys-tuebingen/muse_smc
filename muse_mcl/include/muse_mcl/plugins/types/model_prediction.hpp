@@ -9,12 +9,12 @@
 #include <memory>
 
 namespace muse_mcl {
-class PredictionModel {
+class ModelPrediction {
 public:
-    using Ptr = std::shared_ptr<PredictionModel>;
+    using Ptr = std::shared_ptr<ModelPrediction>;
 
     struct Result {
-        using Ptr = std::shared_ptr<PredictionModel::Result>;
+        using Ptr = std::shared_ptr<ModelPrediction::Result>;
 
         Result() :
             linear_distance_abs(0.0),
@@ -63,17 +63,17 @@ public:
 
     };
 
-    PredictionModel()
+    ModelPrediction()
     {
     }
 
-    virtual ~PredictionModel()
+    virtual ~ModelPrediction()
     {
     }
 
     inline static const std::string Type()
     {
-        return "muse_mcl::PredictionModel";
+        return "muse_mcl::ModelPrediction";
     }
 
     inline const std::string& getName() const

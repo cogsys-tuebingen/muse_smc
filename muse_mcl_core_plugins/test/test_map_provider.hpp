@@ -5,7 +5,7 @@
 #include <muse_mcl/plugins/types/provider_map.hpp>
 
 namespace muse_mcl {
-class TestMapProvider : public MapProvider {
+class TestMapProvider : public ProviderMap {
 public:
     typedef std::shared_ptr<TestMapProvider> Ptr;
 

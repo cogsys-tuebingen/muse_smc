@@ -4,7 +4,7 @@
 #include <muse_mcl/math/angle.hpp>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl::DifferentialDriveAMCL, muse_mcl::PredictionModel)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::DifferentialDriveAMCL, muse_mcl::ModelPrediction)
 
 using namespace muse_mcl;
 
@@ -16,11 +16,11 @@ DifferentialDriveAMCL::~DifferentialDriveAMCL()
 {
 }
 
-PredictionModel::Result DifferentialDriveAMCL::doPredict(const Data::ConstPtr &data,
+ModelPrediction::Result DifferentialDriveAMCL::doPredict(const Data::ConstPtr &data,
                                                      const ros::Time &until,
                                                      ParticleSet::Poses set)
 {
-    return PredictionModel::Result();
+    return ModelPrediction::Result();
 }
 
 void DifferentialDriveAMCL::doSetup(ros::NodeHandle &nh_private)

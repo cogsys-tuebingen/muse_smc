@@ -19,7 +19,7 @@ protected:
     using Radian   = muse_mcl::pose_generation::Radian;
     using RandomPoseGenerator = muse_mcl::pose_generation::Uniform<Metric, Metric, Radian>;
 
-    MapProvider::Ptr primary_map_provider_;
+    ProviderMap::Ptr primary_map_provider_;
     int              random_seed_;
 
     RandomPoseGenerator::Ptr   rng_;

@@ -12,24 +12,24 @@
 #include <muse_mcl/data_types/data.hpp>
 
 namespace muse_mcl {
-class DataProvider {
+class ProviderData {
 public:
-    typedef std::shared_ptr<DataProvider>              Ptr;
+    typedef std::shared_ptr<ProviderData>              Ptr;
     typedef delegate<void(const Data::ConstPtr&)>      Callback;
     typedef Signal<Callback>                           DataSignal;
     typedef DataSignal::Connection                     DataConnection;
 
-    DataProvider()
+    ProviderData()
     {
     }
 
-    virtual ~DataProvider()
+    virtual ~ProviderData()
     {
     }
 
     inline const static std::string Type()
     {
-        return "muse_mcl::DataProvider";
+        return "muse_mcl::ProviderData";
     }
 
     inline std::string getName() const

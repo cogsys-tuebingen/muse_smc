@@ -43,9 +43,9 @@ public:
     void poseInitialization(const geometry_msgs::PoseWithCovarianceStampedConstPtr &msg);
 
 private:
-    using MapProviders  = std::map<std::string, MapProvider::Ptr>;
-    using DataProviders = std::map<std::string, DataProvider::Ptr>;
-    using UpdateModels  = std::map<std::string, UpdateModel::Ptr>;
+    using MapProviders  = std::map<std::string, ProviderMap::Ptr>;
+    using DataProviders = std::map<std::string, ProviderData::Ptr>;
+    using UpdateModels  = std::map<std::string, ModelUpdate::Ptr>;
 
     ros::NodeHandle             nh_private_;
     ros::NodeHandle             nh_public_;
@@ -63,7 +63,7 @@ private:
 
     //// prediction & update
     UpdateModels                update_models_;
-    PredictionModel::Ptr        prediction_model_;
+    ModelPrediction::Ptr        prediction_model_;
 
     /// sampling & resampling
     UniformSampling::Ptr        uniform_sampling_;

@@ -40,7 +40,7 @@ struct TestNormal2D : public Normal2D
         return tf_provider_;
     }
 
-    std::vector<MapProvider::Ptr> getMapProviders() const
+    std::vector<ProviderMap::Ptr> getMapProviders() const
     {
         return map_providers_;
     }

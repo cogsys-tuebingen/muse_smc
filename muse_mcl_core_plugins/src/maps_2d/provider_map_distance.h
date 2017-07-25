@@ -12,10 +12,10 @@
 
 
 namespace muse_mcl {
-class MapProviderDistanceGridMap : public MapProvider
+class ProviderMapDistance : public ProviderMap
 {
 public:
-    MapProviderDistanceGridMap();
+    ProviderMapDistance();
 
     Map::ConstPtr getMap() const override;
 

@@ -38,22 +38,22 @@ add_library(${PROJECT_NAME} SHARED
     src/laser_2d/beam_model_amcl.cpp
     src/laser_2d/likelihood_field_model_amcl.cpp
     src/laser_2d/likelihood_field_prob_model_amcl.cpp
-    src/laser_2d/data_provider_laser_2d.cpp
     src/laser_2d/beam_model_mle.cpp
+    src/laser_2d/provider_data_laser_2d.cpp
 
     src/laser_2d/beam_model_parameter_estimator.cpp
 
     src/laser_2d/beam_model_vector.cpp
     src/laser_2d/likelihood_field_model_vector.cpp
 
-    src/maps_2d/map_provider_binary_gridmap.cpp
-    src/maps_2d/map_provider_distance_gridmap.cpp
-    src/maps_2d/map_provider_probability_gridmap.cpp
-    src/maps_2d/map_provider_binary_gridmap_service.cpp
-    src/maps_2d/map_provider_distance_gridmap_service.cpp
-    src/maps_2d/map_provider_probability_gridmap_service.cpp
+    src/maps_2d/provider_map_binary.cpp
+    src/maps_2d/provider_map_distance.cpp
+    src/maps_2d/provider_map_probability.cpp
+    src/maps_2d/provider_map_binary_service.cpp
+    src/maps_2d/provider_map_distance_service.cpp
+    src/maps_2d/provider_map_probability_service.cpp
 
-    src/maps_2d/map_provider_vector_map.cpp
+    src/maps_2d/provider_map_vector.cpp
 
     src/odometry/differential_drive.cpp
     src/odometry/differential_drive_abs.cpp

@@ -9,12 +9,12 @@
 #include <muse_mcl/tf/tf_provider.hpp>
 
 namespace muse_mcl {
-class DataProviderOdometryTF : public muse_mcl::DataProvider
+class ProviderDataOdometryTF : public muse_mcl::ProviderData
 {
 public:
-    DataProviderOdometryTF();
+    ProviderDataOdometryTF();
 
-    virtual ~DataProviderOdometryTF();
+    virtual ~ProviderDataOdometryTF();
 
 protected:
     TFProvider           tf_;

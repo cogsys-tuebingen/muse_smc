@@ -42,7 +42,7 @@ struct TestUniformAllMaps2D : public UniformAllMaps2D
         return tf_provider_;
     }
 
-    std::vector<MapProvider::Ptr> getMapProviders() const
+    std::vector<ProviderMap::Ptr> getMapProviders() const
     {
         return map_providers_;
     }

@@ -92,19 +92,19 @@ bool MuseMCLNode::setup()
     /// load all plugins
     PluginLoader loader(nh_private_);
 
-    loader.load<UpdateModel, TFProvider::Ptr, ros::NodeHandle&>(update_models_, tf_provider_backend_, nh_private_);
+    loader.load<ModelUpdate, TFProvider::Ptr, ros::NodeHandle&>(update_models_, tf_provider_backend_, nh_private_);
     if(update_models_.empty()) {
         return false;
     }
-    loader.load<PredictionModel, TFProvider::Ptr, ros::NodeHandle&>(prediction_model_, tf_provider_backend_, nh_private_);
+    loader.load<ModelPrediction, TFProvider::Ptr, ros::NodeHandle&>(prediction_model_, tf_provider_backend_, nh_private_);
     if(update_models_.empty()) {
         return false;
     }
-    loader.load<MapProvider, ros::NodeHandle&>(map_providers_, nh_private_);
+    loader.load<ProviderMap, ros::NodeHandle&>(map_providers_, nh_private_);
     if(update_models_.empty()) {
         return false;
     }
-    loader.load<DataProvider,TFProvider::Ptr, ros::NodeHandle&>(data_providers_, tf_provider_frontend_, nh_private_);
+    loader.load<ProviderData,TFProvider::Ptr, ros::NodeHandle&>(data_providers_, tf_provider_frontend_, nh_private_);
     if(update_models_.empty()) {
         return false;
     }

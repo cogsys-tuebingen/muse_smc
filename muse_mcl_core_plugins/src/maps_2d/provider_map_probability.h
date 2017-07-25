@@ -11,10 +11,10 @@
 #include <muse_mcl_core_plugins/maps_2d/probability_gridmap.h>
 
 namespace muse_mcl {
-class MapProviderProbabilityGridMap : public MapProvider
+class ProviderMapProbability : public ProviderMap
 {
 public:
-    MapProviderProbabilityGridMap();
+    ProviderMapProbability();
 
     Map::ConstPtr getMap() const override;
 

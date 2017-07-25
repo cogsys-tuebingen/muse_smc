@@ -1,18 +1,18 @@
-#include "data_provider_laser_2d.h"
+#include "provider_data_laser_2d.h"
 
 #include <muse_mcl_core_plugins/laser_2d/laser_scan_2d.hpp>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl::DataProviderLaser2D, muse_mcl::DataProvider)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::ProviderDataLaser2D, muse_mcl::ProviderData)
 
 using namespace muse_mcl;
 
-void DataProviderLaser2D::doSetup(ros::NodeHandle &nh_private)
+void ProviderDataLaser2D::doSetup(ros::NodeHandle &nh_private)
 {
     int queue_size = nh_private.param<int>(privateParameter("queue_size"), 1);
 
     topic_ = nh_private.param<std::string>(privateParameter("topic"), "/scan");
-    source_= nh_private.subscribe(topic_, queue_size, &DataProviderLaser2D::callback, this);
+    source_= nh_private.subscribe(topic_, queue_size, &ProviderDataLaser2D::callback, this);
     undistortion_ = nh_private.param<bool>(privateParameter("undistortion"), true);
     undistortion_fixed_frame_ = nh_private.param<std::string>(privateParameter("undistortion_fixed_frame"), "");
     undistortion_tf_timeout_ = ros::Duration(nh_private.param(privateParameter("undistotion_tf_timeout"), 0.1));
@@ -25,7 +25,7 @@ void DataProviderLaser2D::doSetup(ros::NodeHandle &nh_private)
     time_offset_ = ros::Rate(nh_private.param<double>(privateParameter("rate"), 0.0)).cycleTime();
 }
 
-void DataProviderLaser2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
+void ProviderDataLaser2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
 {
     if(!time_offset_.isZero() &&
             time_of_last_measurement_.isZero()) {

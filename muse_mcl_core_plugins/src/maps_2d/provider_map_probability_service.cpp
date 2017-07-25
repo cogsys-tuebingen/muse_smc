@@ -1,16 +1,16 @@
-#include "map_provider_distance_gridmap_service.h"
+#include "provider_map_probability_service.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl::MapProviderDistanceGridMapService, muse_mcl::MapProvider)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::ProviderMapProbabilityService, muse_mcl::ProviderMap)
 
 using namespace muse_mcl;
 
-MapProviderDistanceGridMapService::MapProviderDistanceGridMapService() :
+ProviderMapProbabilityService::ProviderMapProbabilityService() :
     loading_(false)
 {
 }
 
-Map::ConstPtr MapProviderDistanceGridMapService::getMap() const
+Map::ConstPtr ProviderMapProbabilityService::getMap() const
 {
     nav_msgs::GetMap req;
     if(source_.call(req)) {
@@ -21,14 +21,14 @@ Map::ConstPtr MapProviderDistanceGridMapService::getMap() const
                 loading_ = true;
 
                 auto load = [this, req]() {
-                    maps::DistanceGridMap::Ptr map(new maps::DistanceGridMap(req.response.map, binarization_threshold_, kernel_size_));
+                    maps::ProbabilityGridMap::Ptr map(new maps::ProbabilityGridMap(req.response.map));
                     std::unique_lock<std::mutex>l(map_mutex_);
                     map_ = map;
                     loading_ = false;
                 };
                 auto load_blocking = [this, req]() {
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    map_.reset(new maps::DistanceGridMap(req.response.map, binarization_threshold_, kernel_size_));
+                    map_.reset(new maps::ProbabilityGridMap(req.response.map));
                     loading_ = false;
                     map_loaded_.notify_one();
                 };
@@ -39,26 +39,20 @@ Map::ConstPtr MapProviderDistanceGridMapService::getMap() const
                     worker_ = std::thread(load);
                 }
                 worker_.detach();
-            } else if(blocking_) {
-                map_loaded_.notify_one();
             }
         }
     }
     std::unique_lock<std::mutex> l(map_mutex_);
-    if(blocking_) {
+    if(!map_ && blocking_) {
         map_loaded_.wait(l);
     }
     return map_;
 
 }
 
-void MapProviderDistanceGridMapService::doSetup(ros::NodeHandle &nh_private)
+void ProviderMapProbabilityService::doSetup(ros::NodeHandle &nh_private)
 {
     service_name_ = nh_private.param<std::string>(privateParameter("service"), "/static_map");
-    binarization_threshold_ = nh_private.param<double>(privateParameter("threshold"), 0.5);
-    kernel_size_ = std::max(nh_private.param<int>(privateParameter("kernel_size"), 5), 5);
-    kernel_size_ += 1 - (kernel_size_ % 2);
+    source_ = nh_private.serviceClient<nav_msgs::GetMap>(service_name_);
     blocking_ = nh_private.param<bool>(privateParameter("blocking"), false);
-    source_   = nh_private.serviceClient<nav_msgs::GetMap>(service_name_);
 }
-

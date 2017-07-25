@@ -4,12 +4,12 @@
 #include <tf/tf.h>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl::DataProviderOdometryTF, muse_mcl::DataProvider)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::ProviderDataOdometryTF, muse_mcl::ProviderData)
 
 using namespace muse_mcl;
 
 
-DataProviderOdometryTF::DataProviderOdometryTF() :
+ProviderDataOdometryTF::ProviderDataOdometryTF() :
     initialized_(false),
     rate_(60.0),
     running_(false),
@@ -17,7 +17,7 @@ DataProviderOdometryTF::DataProviderOdometryTF() :
 {
 }
 
-DataProviderOdometryTF::~DataProviderOdometryTF()
+ProviderDataOdometryTF::~ProviderDataOdometryTF()
 {
     if(running_) {
         stop_ = true;
@@ -27,7 +27,7 @@ DataProviderOdometryTF::~DataProviderOdometryTF()
 
 }
 
-void DataProviderOdometryTF::doSetup(ros::NodeHandle &nh_private)
+void ProviderDataOdometryTF::doSetup(ros::NodeHandle &nh_private)
 {
     odom_frame_ = nh_private.param<std::string>(privateParameter("odom_frame"), "/odom");
     base_frame_ = nh_private.param<std::string>(privateParameter("base_frame"), "/base_link");
@@ -41,7 +41,7 @@ void DataProviderOdometryTF::doSetup(ros::NodeHandle &nh_private)
     }
 }
 
-void DataProviderOdometryTF::loop()
+void ProviderDataOdometryTF::loop()
 {
     running_ = true;
     while(!stop_) {

@@ -6,10 +6,10 @@
 #include <muse_mcl/plugins/types/provider_data.hpp>
 
 namespace muse_mcl {
-class DataProviderLaser2D : public muse_mcl::DataProvider
+class ProviderDataLaser2D : public muse_mcl::ProviderData
 {
 public:
-    DataProviderLaser2D() = default;
+    ProviderDataLaser2D() = default;
 
 protected:
     ros::Subscriber source_;                    /// the subscriber to be used

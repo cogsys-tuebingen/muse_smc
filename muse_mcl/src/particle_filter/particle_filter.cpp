@@ -275,7 +275,7 @@ void ParticleFilter::processPredictions(const ros::Time &until,
          */
 
         /// mutate time stamp
-        PredictionModel::Result movement = prediction->apply(until, particle_set_->getPoses());
+        ModelPrediction::Result movement = prediction->apply(until, particle_set_->getPoses());
         if(movement.success()) {
             local_abs_motion_integral_linear  += movement.linear_distance_abs;
             local_abs_motion_integral_angular += movement.angular_distance_abs;
@@ -340,7 +340,7 @@ void ParticleFilter::loop()
 
             Update::Ptr  update = getUpdate();
             auto         time = update->getStamp();
-            UpdateModel* update_model = update->getModel().get();
+            ModelUpdate* update_model = update->getModel().get();
 
             double &abs_motion_integral_linear_update  = abs_motion_integrals_linear_update_[update_model];
             double &abs_motion_integral_angular_update = abs_motion_integrals_angular_update_[update_model] ;

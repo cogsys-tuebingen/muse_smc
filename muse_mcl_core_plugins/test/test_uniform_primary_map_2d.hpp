@@ -40,12 +40,12 @@ struct TestUniformPrimary2D : UniformPrimaryMap2D
         return tf_provider_;
     }
 
-    MapProvider::Ptr getPrimaryMapProvider() const
+    ProviderMap::Ptr getPrimaryMapProvider() const
     {
         return primary_map_provider_;
     }
 
-    std::vector<MapProvider::Ptr> getSecondaryMapProviders() const
+    std::vector<ProviderMap::Ptr> getSecondaryMapProviders() const
     {
         return map_providers_;
     }

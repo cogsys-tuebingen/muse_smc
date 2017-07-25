@@ -7,17 +7,17 @@
 
 
 namespace muse_mcl {
-class MapProvider {
+class ProviderMap {
 public:
-    typedef std::shared_ptr<MapProvider> Ptr;
+    typedef std::shared_ptr<ProviderMap> Ptr;
 
-    virtual ~MapProvider()
+    virtual ~ProviderMap()
     {
     }
 
     inline const static std::string Type()
     {
-        return "muse_mcl::MapProvider";
+        return "muse_mcl::ProviderMap";
     }
 
     inline std::string getName() const

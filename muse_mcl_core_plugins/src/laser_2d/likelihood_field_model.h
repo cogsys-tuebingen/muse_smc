@@ -4,7 +4,7 @@
 #include <muse_mcl/particle_filter/update.hpp>
 
 namespace muse_mcl {
-class LikelihoodFieldModel : public UpdateModel
+class LikelihoodFieldModel : public ModelUpdate
 {
 public:
     LikelihoodFieldModel();

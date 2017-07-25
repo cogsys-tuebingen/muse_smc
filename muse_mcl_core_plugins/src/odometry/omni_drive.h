@@ -4,7 +4,7 @@
 #include <muse_mcl/plugins/types/model_prediction.hpp>
 
 namespace muse_mcl {
-class OmniDrive : public PredictionModel
+class OmniDrive : public ModelPrediction
 {
 public:
     OmniDrive();
