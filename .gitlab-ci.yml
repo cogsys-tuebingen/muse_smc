@@ -34,7 +34,7 @@ before_script:
   - cd cslibs_vectormaps
   - git checkout devel
   - cd ../..
-  
+  - pwd
 
 stages:
   - build
