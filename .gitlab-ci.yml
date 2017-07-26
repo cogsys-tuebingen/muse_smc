@@ -26,13 +26,13 @@ before_script:
   - cd src
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_indexed_storage.git cslibs_indexed_storage
   - cd cslibs_indexed_storage
-  - git check devel
+  - git checkout devel
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_boost_geometry.git cslibs_boost_geometry
   - cd cslibs_boost_geometry
-  - git check devel
+  - git checkout devel
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_vectormaps.git cslibs_vectormaps
   - cd cslibs_vectormaps
-  - git check devel
+  - git checkout devel
   - cd ../..
   
 
