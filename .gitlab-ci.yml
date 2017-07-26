@@ -33,8 +33,8 @@ before_script:
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_vectormaps.git cslibs_vectormaps
   - cd cslibs_vectormaps
   - git checkout devel
-  - cd ../..
-  - pwd
+  - cd ..
+  - cd ..
 
 stages:
   - build
