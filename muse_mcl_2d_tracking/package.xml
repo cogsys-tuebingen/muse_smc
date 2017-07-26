@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>muse_mcl_2D_tracking</name>
+  <name>muse_mcl_2d_tracking</name>
   <version>0.0.0</version>
-  <description>The muse_mcl_2D_tracking package</description>
+  <description>The muse_mcl_2d_tracking package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
