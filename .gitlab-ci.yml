@@ -27,14 +27,17 @@ before_script:
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_indexed_storage.git cslibs_indexed_storage
   - cd cslibs_indexed_storage
   - git checkout devel
+  - cd ..
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_boost_geometry.git cslibs_boost_geometry
   - cd cslibs_boost_geometry
   - git checkout devel
+  - cd ..
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_vectormaps.git cslibs_vectormaps
   - cd cslibs_vectormaps
   - git checkout devel
+  - cd ..
   - cd /build/ws/
-  
+
 stages:
   - build
 
