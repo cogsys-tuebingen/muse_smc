@@ -35,6 +35,7 @@ before_script:
   - git checkout devel
   - cd ..
   - cd ..
+  - pwd
 
 stages:
   - build
