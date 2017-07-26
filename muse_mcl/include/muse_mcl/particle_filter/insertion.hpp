@@ -2,8 +2,8 @@
 #define INSERTION_HPP
 
 #include "particle.hpp"
-#include <muse_mcl/utils/buffered_vector.hpp>
-#include <muse_mcl/utils/delegate.hpp>
+#include <muse_mcl/utility/buffered_vector.hpp>
+#include <muse_mcl/utility/delegate.hpp>
 
 namespace muse_mcl {
 /**

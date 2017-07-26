@@ -10,7 +10,7 @@
 #include <functional>
 #include <typeindex>
 
-#include <muse_mcl/utils/delegate.hpp>
+#include <muse_mcl/utility/delegate.hpp>
 
 namespace muse_mcl
 {

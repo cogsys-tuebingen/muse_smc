@@ -1,7 +1,7 @@
 #ifndef PARTICLE_SET_HPP
 #define PARTICLE_SET_HPP
 
-#include <muse_mcl/utils/buffered_vector.hpp>
+#include <muse_mcl/utility/buffered_vector.hpp>
 
 #include "particle.hpp"
 #include "indexation.hpp"

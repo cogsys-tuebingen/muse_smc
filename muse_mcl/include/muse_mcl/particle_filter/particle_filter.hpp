@@ -11,9 +11,9 @@
 #include <muse_mcl/particle_filter/particle_set.hpp>
 #include <muse_mcl/particle_filter/prediction.hpp>
 #include <muse_mcl/particle_filter/update.hpp>
-#include <muse_mcl/utils/csv_logger.hpp>
-#include <muse_mcl/utils/filterstate_publisher.hpp>
-#include <muse_mcl/utils/dotty.hpp>
+#include <muse_mcl/utility/csv_logger.hpp>
+#include <muse_mcl/utility/filterstate_publisher.hpp>
+#include <muse_mcl/utility/dotty.hpp>
 
 #include <geometry_msgs/PoseArray.h>
 #include <ros/ros.h>

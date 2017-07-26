@@ -3,7 +3,7 @@
 
 #include <tf/transform_listener.h>
 #include <memory>
-#include <muse_mcl/utils/delegate.hpp>
+#include <muse_mcl/utility/delegate.hpp>
 #include <mutex>
 
 namespace muse_mcl {

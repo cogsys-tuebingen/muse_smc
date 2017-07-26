@@ -7,7 +7,7 @@
 #include <cmath>
 #include <iostream>
 
-#include <muse_mcl/utils/csv_logger.hpp>
+#include <muse_mcl/utility/csv_logger.hpp>
 
 namespace muse_mcl {
 class BeamModelParameterEstimator

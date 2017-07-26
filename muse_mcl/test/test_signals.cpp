@@ -1,5 +1,5 @@
-#include <muse_mcl/utils/signals.hpp>
-#include <muse_mcl/utils/delegate.hpp>
+#include <muse_mcl/utility/signals.hpp>
+#include <muse_mcl/utility/delegate.hpp>
 
 #include <gtest/gtest.h>
 

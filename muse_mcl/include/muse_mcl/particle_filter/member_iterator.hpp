@@ -1,8 +1,8 @@
 #ifndef PARTICLE_SET_MEMBER_ITERATOR_HPP
 #define PARTICLE_SET_MEMBER_ITERATOR_HPP
 
-#include <muse_mcl/utils/buffered_vector.hpp>
-#include <muse_mcl/utils/delegate.hpp>
+#include <muse_mcl/utility/buffered_vector.hpp>
+#include <muse_mcl/utility/delegate.hpp>
 
 namespace muse_mcl {
 /**

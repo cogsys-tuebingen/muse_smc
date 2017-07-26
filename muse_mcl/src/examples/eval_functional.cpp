@@ -3,7 +3,7 @@
 #include <iostream>
 #include "function.h"
 
-#include <muse_mcl/utils/delegate.hpp>
+#include <muse_mcl/utility/delegate.hpp>
 
 #define FUNC_NO_EXCEPTIONS
 #define FUNC_NO_RTTI
