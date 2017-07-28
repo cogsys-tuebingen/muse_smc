@@ -9,7 +9,7 @@
 
 #include <muse_mcl/utility/signals.hpp>
 #include <muse_mcl/utility/delegate.hpp>
-#include <muse_mcl/data_types/data.hpp>
+#include <muse_mcl/data/data.hpp>
 
 namespace muse_mcl {
 class ProviderData {

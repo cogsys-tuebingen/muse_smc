@@ -42,7 +42,7 @@ public:
     inline size_t getSize(const index_t &min,
                           const index_t &max)
     {
-        size_t size;
+        size_t size = 0ul;
         for(std::size_t d = 0ul ; d < Dimension ; ++d) {
             size[d] = static_cast<std::size_t>(max[d] - min[d]) + 1ul;
         }

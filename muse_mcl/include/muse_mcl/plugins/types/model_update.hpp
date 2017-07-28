@@ -5,8 +5,9 @@
 
 #include <muse_mcl/tf/tf_provider.hpp>
 
-#include <muse_mcl/data_types/data.hpp>
-#include <muse_mcl/data_types/map.hpp>
+#include <muse_mcl/map/map.hpp>
+
+#include <muse_mcl/data/data.hpp>
 #include <muse_mcl/particle_filter/particle_set.hpp>
 
 namespace muse_mcl {

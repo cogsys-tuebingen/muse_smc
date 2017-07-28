@@ -2,7 +2,7 @@
 #define LASER_SCAN_2D_HPP
 
 #include <muse_mcl/math/point.hpp>
-#include <muse_mcl/data_types/data.hpp>
+#include <muse_mcl/data/data.hpp>
 
 #include <limits>
 

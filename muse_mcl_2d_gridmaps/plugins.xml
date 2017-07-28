@@ -1,0 +1,20 @@
+<library path="libmuse_mcl_2d_gridmaps">
+<class type="muse_mcl::ProviderGridmapBinary" base_class_type="muse_mcl::ProviderMap">
+  <description>Provides binarized map versions given a destinct threshold by topic.</description>
+</class>
+<class type="muse_mcl::ProviderGridmapBinaryService" base_class_type="muse_mcl::ProviderMap">
+   <description>Provides binarized map versions given a destinct threshold by service.</description>
+</class>
+<class type="muse_mcl::ProviderGridmapDistance" base_class_type="muse_mcl::ProviderMap">
+   <description>Provides cspace map versions given a destinct threshold by topic.</description>
+</class>
+<class type="muse_mcl::ProviderGridmapDistanceService" base_class_type="muse_mcl::ProviderMap">
+   <description>Provides cspace map versions given a destinct threshold by Service.</description>
+</class>
+<class type="muse_mcl::ProviderGridmapProbability" base_class_type="muse_mcl::ProviderMap">
+   <description>Provides floating point probability map versions by topic.</description>
+</class>
+<class type="muse_mcl::MProviderGridmapProbabilityMapService" base_class_type="muse_mcl::ProviderMap">
+   <description>Provides floating point probability map versions by service.</description>
+</class>
+</library>

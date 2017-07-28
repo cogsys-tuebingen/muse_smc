@@ -1,20 +1,20 @@
-#include "beam_model_amcl.h"
+#include "beam_model.h"
 
-#include <muse_mcl_core_plugins/laser_2d/laser_scan_2d.hpp>
-#include <muse_mcl_core_plugins/maps_2d/binary_gridmap.h>
+#include <muse_mcl_2d_laser/laser/laser_2d_scan.hpp>
+#include <muse_mcl_2d_gridmaps/maps/binary_gridmap.h>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl::BeamModelAMCL, muse_mcl::ModelUpdate)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::BeamModel, muse_mcl::ModelUpdate)
 
 using namespace muse_mcl;
 
-BeamModelAMCL::BeamModelAMCL()
+BeamModel::BeamModel()
 {
 }
 
-void BeamModelAMCL::update(const Data::ConstPtr  &data,
-                           const Map::ConstPtr   &map,
-                           ParticleSet::Weights   set)
+void BeamModel::update(const Data::ConstPtr  &data,
+                       const Map::ConstPtr   &map,
+                       ParticleSet::Weights   set)
 {
     if(!map->isType<maps::BinaryGridMap>()) {
         return;
@@ -34,10 +34,10 @@ void BeamModelAMCL::update(const Data::ConstPtr  &data,
                                       tf_timeout_))
         return;
     if(!tf_provider_->lookupTransform(world_frame_,
-                                      gridmap.getFrame(),
-                                      laser_data.getTimeFrame().end,
-                                      m_T_w,
-                                      tf_timeout_))
+                                     gridmap.getFrame(),
+                                     laser_data.getTimeFrame().end,
+                                     m_T_w,
+                                     tf_timeout_))
         return;
 
     const LaserScan2D::Rays rays = laser_data.getRays();
@@ -49,12 +49,16 @@ void BeamModelAMCL::update(const Data::ConstPtr  &data,
 
 
     /// mixture distribution entries
-    auto p_hit = [this](const double z) {
-        return z_hit_ * std::exp(-z * z * denominator_hit_);
+    auto p_hit = [this](const double ray_range, const double map_range) {
+        const double dz = ray_range - map_range;
+        return z_hit_ * denominator_hit_ * std::exp(-dz * dz * denominator_exponenten_hit_);
     };
-    auto p_short = [this](const double z, const double ray_range) {
-        if(z < 0)
-            return z_short_ * lambda_short_ * exp(-lambda_short_ * ray_range);
+    auto p_short = [this](const double ray_range, const double map_range) {
+        if(ray_range < map_range) {
+            return z_short_ *
+                   (1.0 / (1.0 - std::exp(-lambda_short_  * map_range))) *
+                    lambda_short_ * exp(-lambda_short_ * ray_range);
+        }
         return 0.0;
     };
     auto p_max = [this, range_max](const double ray_range)
@@ -71,30 +75,30 @@ void BeamModelAMCL::update(const Data::ConstPtr  &data,
     };
     auto probability = [p_hit, p_short, p_max, p_random] (const double ray_range, const double map_range)
     {
-        const double z = ray_range - map_range;
-        return p_hit(z) + p_short(z, ray_range) + p_max(ray_range) + p_random(ray_range);
+        return p_hit(ray_range, map_range) + p_short(ray_range, map_range) + p_max(ray_range) + p_random(ray_range);
     };
 
     for(auto it = set.begin() ; it != end ; ++it) {
-        const math::Pose pose = m_T_w * it.getData().pose_ * b_T_l; /// laser scanner pose in map coordinates
-        double p = 1.0;
+        const math::Pose m_T_l = m_T_w * it.getData().pose_ * b_T_l; /// laser scanner pose in map coordinates
+        double p = 0.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
             if(!ray.valid_) {
                 p += z_max_;
-            } else {
-                const double        ray_range = ray.range_;
-                const math::Point   ray_end_point = pose.getPose() * ray.point_;
-                const double        map_range = gridmap.getRange(pose.getOrigin(), ray_end_point);
-                const double pz = probability(ray_range, map_range);
-                p += pz * pz * pz;  /// @todo : fix the inprobable thing ;)
+                continue;
             }
+
+            const double        ray_range = ray.range_;
+            const math::Point   ray_end_point = m_T_l.getPose() * ray.point_;
+            const double        map_range = gridmap.getRange(m_T_l.getOrigin(), ray_end_point);
+            const double pz = probability(ray_range, map_range);
+            p += std::log(pz);
         }
-        *it *= p;
+        *it *= std::exp(p);
     }
 }
 
-void BeamModelAMCL::doSetup(ros::NodeHandle &nh_private)
+void BeamModel::doSetup(ros::NodeHandle &nh_private)
 {
     max_beams_    = nh_private.param(privateParameter("max_beams"), 30);
     z_hit_        = nh_private.param(privateParameter("z_hit"), 0.8);
@@ -102,7 +106,8 @@ void BeamModelAMCL::doSetup(ros::NodeHandle &nh_private)
     z_max_        = nh_private.param(privateParameter("z_max"), 0.05);
     z_rand_       = nh_private.param(privateParameter("z_rand"), 0.05);
     sigma_hit_    = nh_private.param(privateParameter("sigma_hit"), 0.15);
-    denominator_hit_ = 0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
+    denominator_exponenten_hit_ = 0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
+    denominator_hit_            = 1.0 / std::sqrt(2.0 * M_PI * sigma_hit_);
     lambda_short_ = nh_private.param(privateParameter("lambda_short"), 0.01);
     chi_outlier_  = nh_private.param(privateParameter("chi_outlier"), 0.05);
 }

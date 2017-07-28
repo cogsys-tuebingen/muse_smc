@@ -1,7 +1,7 @@
 #include "likelihood_field_prob_model_amcl.h"
 
-#include <muse_mcl_core_plugins/laser_2d/laser_scan_2d.hpp>
-#include <muse_mcl_core_plugins/maps_2d/distance_gridmap.h>
+#include <muse_mcl_2d_laser/laser/laser_2d_scan.hpp>
+#include <muse_mcl_2d_gridmaps/maps//distance_gridmap.h>
 
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl::LikelihoodFieldProbModelAMCL, muse_mcl::ModelUpdate)

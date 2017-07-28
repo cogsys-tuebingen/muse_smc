@@ -8,7 +8,7 @@
 #include <atomic>
 #include <condition_variable>
 #include <muse_mcl/plugins/types/provider_map.hpp>
-#include <muse_mcl_core_plugins/maps_2d/probability_gridmap.h>
+#include <muse_mcl_2d_gridmaps/maps//probability_gridmap.h>
 
 namespace muse_mcl {
 class ProviderGridmapProbabilityService : public ProviderMap

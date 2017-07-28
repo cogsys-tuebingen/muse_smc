@@ -1,7 +1,7 @@
 #ifndef TEST_MAP_HPP
 #define TEST_MAP_HPP
 
-#include <muse_mcl/data_types/map.hpp>
+#include <muse_mcl/map/map.hpp>
 
 namespace muse_mcl {
 class TestMap : public muse_mcl::Map

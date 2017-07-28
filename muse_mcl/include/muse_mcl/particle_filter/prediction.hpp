@@ -1,7 +1,7 @@
 #ifndef PREDICTION_HPP
 #define PREDICTION_HPP
 
-#include <muse_mcl/data_types/data.hpp>
+#include <muse_mcl/data/data.hpp>
 #include <muse_mcl/plugins/types/provider_data.hpp>
 
 #include <muse_mcl/particle_filter/particle_set.hpp>

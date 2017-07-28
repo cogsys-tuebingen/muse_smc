@@ -2,7 +2,7 @@
 #define ODOMETRY_POSE_2D_HPP
 
 #include <muse_mcl/math/pose.hpp>
-#include <muse_mcl/data_types/data.hpp>
+#include <muse_mcl/data/data.hpp>
 #include <muse_mcl/math/angle.hpp>
 #include <ostream>
 

@@ -1,0 +1,25 @@
+<library path="libmuse_mcl_2d_laser">
+   <!-- Update Models -->
+   <class type="muse_mcl::BeamModel" base_class_type="muse_mcl::ModelUpdate">
+     <description>Beam model update function.</description>
+   </class>
+   <class type="muse_mcl::BeamModelAMCL" base_class_type="muse_mcl::ModelUpdate">
+     <description>Beam model update function.</description>
+   </class>
+   <class type="muse_mcl::BeamModelMLE" base_class_type="muse_mcl::ModelUpdate">
+     <description>Beam model update function.</description>
+   </class>
+   <class type="muse_mcl::LikelihoodFieldModel" base_class_type="muse_mcl::ModelUpdate">
+     <description>Likelihoodfield model update function.</description>
+   </class>
+   <class type="muse_mcl::LikelihoodFieldModelAMCL" base_class_type="muse_mcl::ModelUpdate">
+     <description>Likelihoodfield model update function.</description>
+   </class>
+   <class type="muse_mcl::LikelihoodFieldProbModelAMCL" base_class_type="muse_mcl::ModelUpdate">
+     <description>Likelihoodfield model update function with consistency check.</description>
+   </class>
+   <!-- Data Providers -->
+   <class type="muse_mcl::ProviderDataLaser2D" base_class_type="muse_mcl::ProviderData">
+      <description>Provides 2D laserscans with the possible to define a linear and angular FOV.</description>
+   </class>
+</library>

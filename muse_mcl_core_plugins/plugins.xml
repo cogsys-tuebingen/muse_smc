@@ -74,28 +74,7 @@
      <description>Systematic resampling.</description>
    </class>
    <!-- Map Providers -->
-   <class type="muse_mcl::ProviderGridmapBinary" base_class_type="muse_mcl::ProviderMap">
-     <description>Provides binarized map versions given a destinct threshold by topic.</description>
-   </class>
-   <class type="muse_mcl::ProviderGridmapBinaryService" base_class_type="muse_mcl::ProviderMap">
-      <description>Provides binarized map versions given a destinct threshold by service.</description>
-   </class>
-   <class type="muse_mcl::ProviderGridmapDistance" base_class_type="muse_mcl::ProviderMap">
-      <description>Provides cspace map versions given a destinct threshold by topic.</description>
-   </class>
-   <class type="muse_mcl::ProviderGridmapDistanceService" base_class_type="muse_mcl::ProviderMap">
-      <description>Provides cspace map versions given a destinct threshold by Service.</description>
-   </class>
-   <class type="muse_mcl::ProviderGridmapProbability" base_class_type="muse_mcl::ProviderMap">
-      <description>Provides floating point probability map versions by topic.</description>
-   </class>
-   <class type="muse_mcl::MProviderGridmapProbabilityMapService" base_class_type="muse_mcl::ProviderMap">
-      <description>Provides floating point probability map versions by service.</description>
-   </class>
    <!-- Data Providers -->
-   <class type="muse_mcl::ProviderDataLaser2D" base_class_type="muse_mcl::ProviderData">
-      <description>Provides 2D laserscans with the possible to define a linear and angular FOV.</description>
-   </class>
    <class type="muse_mcl::ProviderDataOdometry" base_class_type="muse_mcl::ProviderData">
       <description>Data provider for standard odmetry messages.</description>
    </class>

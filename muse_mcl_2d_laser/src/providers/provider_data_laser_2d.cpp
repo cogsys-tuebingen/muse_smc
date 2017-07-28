@@ -1,6 +1,6 @@
 #include "provider_data_laser_2d.h"
 
-#include <muse_mcl_core_plugins/laser_2d/laser_scan_2d.hpp>
+#include <muse_mcl_2d_laser/laser/laser_2d_scan.hpp>
 
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl::ProviderDataLaser2D, muse_mcl::ProviderData)

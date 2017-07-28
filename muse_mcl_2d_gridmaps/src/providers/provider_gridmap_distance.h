@@ -7,8 +7,10 @@
 #include <thread>
 #include <atomic>
 #include <condition_variable>
+
 #include <muse_mcl/plugins/types/provider_map.hpp>
-#include <muse_mcl_core_plugins/maps_2d/distance_gridmap.h>
+
+#include <muse_mcl_2d_gridmaps/maps/distance_gridmap.h>
 
 
 namespace muse_mcl {

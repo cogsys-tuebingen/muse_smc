@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   rostest
   cslibs_indexed_storage
   pcl_ros
+  muse_mcl_2d_gridmaps
 )
 
 find_package(PCL REQUIRED)
@@ -33,25 +34,8 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME} SHARED
-    src/laser_2d/beam_model.cpp
-    src/laser_2d/likelihood_field_model.cpp
-    src/laser_2d/beam_model_amcl.cpp
-    src/laser_2d/likelihood_field_model_amcl.cpp
-    src/laser_2d/likelihood_field_prob_model_amcl.cpp
-    src/laser_2d/beam_model_mle.cpp
-    src/laser_2d/provider_data_laser_2d.cpp
-
-    src/laser_2d/beam_model_parameter_estimator.cpp
-
     src/laser_2d/beam_model_vector.cpp
     src/laser_2d/likelihood_field_model_vector.cpp
-
-    src/maps_2d/provider_gridmap_binary.cpp
-    src/maps_2d/provider_gridmap_distance.cpp
-    src/maps_2d/provider_gridmap_probability.cpp
-    src/maps_2d/provider_gridmap_binary_service.cpp
-    src/maps_2d/provider_gridmap_distance_service.cpp
-    src/maps_2d/provider_gridmap_probability_service.cpp
 
     src/maps_2d/provider_vectormap.cpp
 
@@ -78,114 +62,101 @@ target_link_libraries(${PROJECT_NAME}
     ${catkin_LIBRARIES}
     ${PCL_LIBRARIES}
     ${OpenCV_LIBRARIES}
-    muse_mcl_maps
 )
 
-add_library(muse_mcl_maps
-    src/maps_2d/binary_gridmap.cpp
-    src/maps_2d/distance_gridmap.cpp
-    src/maps_2d/probability_gridmap.cpp
-)
+#if(${CATKIN_ENABLE_TESTING})
+#    add_custom_target(show_test_headers
+#        SOURCES
+#        test/test_map.hpp
+#        test/test_map_provider.hpp
+#        test/test_normal_2d.hpp
+#        test/test_uniform_primary_map_2d.hpp
+#        test/test_uniform_all_maps_2d.hpp
+#    )
 
-target_link_libraries(muse_mcl_maps
-    ${catkin_LIBRARIES}
-    ${OpenCV_LIBRARIES}
-)
+#    add_unit_test_rostest(${PROJECT_NAME}_test_node_sampling_normal_2d
+#        test/sampling_normal_2d.test
+#        test/test_node_sampling_normal_2d.cpp
+#        "${PROJECT_NAME}"
+#    )
 
+#    add_unit_test_rostest(${PROJECT_NAME}_test_node_sampling_uniform_all_maps_2d
+#        test/sampling_uniform_all_maps_2d.test
+#        test/test_node_sampling_uniform_all_maps_2d.cpp
+#       "${PROJECT_NAME}"
+#    )
 
-if(${CATKIN_ENABLE_TESTING})
-    add_custom_target(show_test_headers
-        SOURCES
-        test/test_map.hpp
-        test/test_map_provider.hpp
-        test/test_normal_2d.hpp
-        test/test_uniform_primary_map_2d.hpp
-        test/test_uniform_all_maps_2d.hpp
-    )
+#    add_unit_test_rostest(${PROJECT_NAME}_test_node_sampling_uniform_primary_map_2d
+#        test/sampling_uniform_primary_map_2d.test
+#        test/test_node_sampling_uniform_primary_map_2d.cpp
+#       "${PROJECT_NAME}"
+#    )
 
-    add_unit_test_rostest(${PROJECT_NAME}_test_node_sampling_normal_2d
-        test/sampling_normal_2d.test
-        test/test_node_sampling_normal_2d.cpp
-        "${PROJECT_NAME}"
-    )
+#    add_unit_test_rostest(${PROJECT_NAME}_test_node_gridmap_providers
+#        test/gridmap_providers.test
+#        test/test_node_gridmap_providers.cpp
+#        "${PROJECT_NAME}"
+#    )
 
-    add_unit_test_rostest(${PROJECT_NAME}_test_node_sampling_uniform_all_maps_2d
-        test/sampling_uniform_all_maps_2d.test
-        test/test_node_sampling_uniform_all_maps_2d.cpp
-       "${PROJECT_NAME}"
-    )
+#endif()
 
-    add_unit_test_rostest(${PROJECT_NAME}_test_node_sampling_uniform_primary_map_2d
-        test/sampling_uniform_primary_map_2d.test
-        test/test_node_sampling_uniform_primary_map_2d.cpp
-       "${PROJECT_NAME}"
-    )
+#if(True)
+#    add_executable(muse_mcl_exam_resampling
+#        src/examples/exam_resampling.cpp
+#    )
 
-    add_unit_test_rostest(${PROJECT_NAME}_test_node_gridmap_providers
-        test/gridmap_providers.test
-        test/test_node_gridmap_providers.cpp
-        "${PROJECT_NAME}"
-    )
+#    target_link_libraries(muse_mcl_exam_resampling
+#        ${catkin_LIBRARIES}
+#        ${PROJECT_NAME}
+#    )
 
-endif()
+#    add_executable(muse_mcl_exam_vector
+#        src/examples/exam_vector.cpp
+#    )
 
-if(True)
-    add_executable(muse_mcl_exam_resampling
-        src/examples/exam_resampling.cpp
-    )
+#    add_executable(${PROJECT_NAME}_test_node_odometry
+#        test/test_node_odometry.cpp
+#    )
+#    target_link_libraries(${PROJECT_NAME}_test_node_odometry
+#        ${catkin_LIBRARIES}
+#    )
 
-    target_link_libraries(muse_mcl_exam_resampling
-        ${catkin_LIBRARIES}
-        ${PROJECT_NAME}
-    )
+#    find_package(OpenCV QUIET)
+#    include_directories(
+#        ${OpenCV_INCLUDE_DIRS}
+#    )
+#    if(${OpenCV_FOUND})
 
-    add_executable(muse_mcl_exam_vector
-        src/examples/exam_vector.cpp
-    )
+#        add_executable(muse_mcl_test_node_gridmap
+#            test/test_node_gridmap.cpp
+#        )
 
-    add_executable(${PROJECT_NAME}_test_node_odometry
-        test/test_node_odometry.cpp
-    )
-    target_link_libraries(${PROJECT_NAME}_test_node_odometry
-        ${catkin_LIBRARIES}
-    )
+#        target_link_libraries(muse_mcl_test_node_gridmap
+#            ${catkin_LIBRARIES}
+#            ${OpenCV_LIBRARIES}
+#            ${PROJECT_NAME}
+#        )
 
-    find_package(OpenCV QUIET)
-    include_directories(
-        ${OpenCV_INCLUDE_DIRS}
-    )
-    if(${OpenCV_FOUND})
+#        add_executable(muse_mcl_test_node_gridmap_particles
+#            test/test_node_gridmap_particles.cpp
+#        )
 
-        add_executable(muse_mcl_test_node_gridmap
-            test/test_node_gridmap.cpp
-        )
+#        target_link_libraries(muse_mcl_test_node_gridmap_particles
+#            ${catkin_LIBRARIES}
+#            ${OpenCV_LIBRARIES}
+#            ${PROJECT_NAME}
+#        )
 
-        target_link_libraries(muse_mcl_test_node_gridmap
-            ${catkin_LIBRARIES}
-            ${OpenCV_LIBRARIES}
-            ${PROJECT_NAME}
-        )
+#        add_executable(muse_mcl_exam_map_line_iterator
+#            src/examples/exam_map_line_iterator.cpp
+#        )
 
-        add_executable(muse_mcl_test_node_gridmap_particles
-            test/test_node_gridmap_particles.cpp
-        )
-
-        target_link_libraries(muse_mcl_test_node_gridmap_particles
-            ${catkin_LIBRARIES}
-            ${OpenCV_LIBRARIES}
-            ${PROJECT_NAME}
-        )
-
-        add_executable(muse_mcl_exam_map_line_iterator
-            src/examples/exam_map_line_iterator.cpp
-        )
-
-        target_link_libraries(muse_mcl_exam_map_line_iterator
-            ${OpenCV_LIBRARIES}
-            ${catkin_LIBRARIES}
-        )
-    endif()
-endif()
+#        target_link_libraries(muse_mcl_exam_map_line_iterator
+#            ${OpenCV_LIBRARIES}
+#            ${catkin_LIBRARIES}
+#        )
+#    endif()
+#endif()
 
 install(FILES plugins.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
