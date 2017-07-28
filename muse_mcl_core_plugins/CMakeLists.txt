@@ -35,10 +35,6 @@ include_directories(
 
 add_library(${PROJECT_NAME} SHARED
 
-    src/sampling/normal_2d.cpp
-    src/sampling/uniform_all_maps_2d.cpp
-    src/sampling/uniform_primary_map_2d.cpp
-
     src/resampling/wof.cpp
     src/resampling/multinomial.cpp
     src/resampling/residual.cpp
