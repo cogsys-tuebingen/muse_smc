@@ -34,17 +34,6 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME} SHARED
-    src/laser_2d/beam_model_vector.cpp
-    src/laser_2d/likelihood_field_model_vector.cpp
-
-    src/maps_2d/provider_vectormap.cpp
-
-    src/odometry/differential_drive.cpp
-    src/odometry/differential_drive_abs.cpp
-    src/odometry/differential_drive_amcl.cpp
-    src/odometry/omni_drive.cpp
-    src/odometry/data_provider_odometry.cpp
-    src/odometry/data_provider_odometry_tf.cpp
 
     src/sampling/normal_2d.cpp
     src/sampling/uniform_all_maps_2d.cpp

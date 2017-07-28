@@ -1,6 +1,6 @@
 #include "data_provider_odometry.h"
 
-#include <muse_mcl_core_plugins/odometry/odometry.hpp>
+#include <muse_mcl_2d_odometry/odometry/odometry.hpp>
 
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl::ProviderDataOdometry, muse_mcl::ProviderData)

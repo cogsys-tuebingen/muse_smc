@@ -1,4 +1,4 @@
-<library path="libmuse_mcl_2d_gridmaps">
+<library path="libmuse_mcl_2d_gridmaps_providers">
 <class type="muse_mcl::ProviderGridmapBinary" base_class_type="muse_mcl::ProviderMap">
   <description>Provides binarized map versions given a destinct threshold by topic.</description>
 </class>
@@ -16,5 +16,26 @@
 </class>
 <class type="muse_mcl::MProviderGridmapProbabilityMapService" base_class_type="muse_mcl::ProviderMap">
    <description>Provides floating point probability map versions by service.</description>
+</class>
+</library>
+<library path="libmuse_mcl_2d_gridmaps_models">
+<!-- Update Models -->
+<class type="muse_mcl::BeamModel" base_class_type="muse_mcl::ModelUpdate">
+  <description>Beam model update function.</description>
+</class>
+<class type="muse_mcl::BeamModelAMCL" base_class_type="muse_mcl::ModelUpdate">
+  <description>Beam model update function.</description>
+</class>
+<class type="muse_mcl::BeamModelMLE" base_class_type="muse_mcl::ModelUpdate">
+  <description>Beam model update function.</description>
+</class>
+<class type="muse_mcl::LikelihoodFieldModel" base_class_type="muse_mcl::ModelUpdate">
+  <description>Likelihoodfield model update function.</description>
+</class>
+<class type="muse_mcl::LikelihoodFieldModelAMCL" base_class_type="muse_mcl::ModelUpdate">
+  <description>Likelihoodfield model update function.</description>
+</class>
+<class type="muse_mcl::LikelihoodFieldProbModelAMCL" base_class_type="muse_mcl::ModelUpdate">
+  <description>Likelihoodfield model update function with consistency check.</description>
 </class>
 </library>

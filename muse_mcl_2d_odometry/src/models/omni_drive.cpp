@@ -1,6 +1,6 @@
 #include "omni_drive.h"
 
-#include <muse_mcl_core_plugins/odometry/odometry.hpp>
+#include <muse_mcl_2d_odometry/odometry/odometry.hpp>
 #include <muse_mcl/math/angle.hpp>
 #include <muse_mcl/math/random.hpp>
 

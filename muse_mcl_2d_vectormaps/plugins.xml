@@ -1,0 +1,5 @@
+<library path="libmuse_mcl_2d_vectormaps">
+<class type="muse_mcl::ProviderGridmapBinary" base_class_type="muse_mcl::ProviderMap">
+  <description>Provides binarized map versions given a destinct threshold by topic.</description>
+</class>
+</library>

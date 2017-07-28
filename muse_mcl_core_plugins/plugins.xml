@@ -1,36 +1,6 @@
 <library path="libmuse_mcl_core_plugins">
    <!-- Update functions -->
-   <class type="muse_mcl::BeamModel" base_class_type="muse_mcl::ModelUpdate">
-     <description>Beam model update function.</description>
-   </class>
-   <class type="muse_mcl::BeamModelAMCL" base_class_type="muse_mcl::ModelUpdate">
-     <description>Beam model update function.</description>
-   </class>
-   <class type="muse_mcl::BeamModelMLE" base_class_type="muse_mcl::ModelUpdate">
-     <description>Beam model update function.</description>
-   </class>
-   <class type="muse_mcl::LikelihoodFieldModel" base_class_type="muse_mcl::ModelUpdate">
-     <description>Likelihoodfield model update function.</description>
-   </class>
-   <class type="muse_mcl::LikelihoodFieldModelAMCL" base_class_type="muse_mcl::ModelUpdate">
-     <description>Likelihoodfield model update function.</description>
-   </class>
-   <class type="muse_mcl::LikelihoodFieldProbModelAMCL" base_class_type="muse_mcl::ModelUpdate">
-     <description>Likelihoodfield model update function with consistency check.</description>
-   </class>
-   <!-- Propagation Functions -->
-   <class type="muse_mcl::DifferentialDrive" base_class_type="muse_mcl::ModelPrediction">
-     <description>Differential drive propagation model.</description>
-   </class>
-   <class type="muse_mcl::DifferentialDriveAbs" base_class_type="muse_mcl::ModelPrediction">
-     <description>
-        Differential drive propagation model using only absolute values in the terms,
-        instead of quadratic ones.
-   </description>
-   </class>
-   <class type="muse_mcl::OmniDrive" base_class_type="muse_mcl::ModelPrediction">
-     <description>Omnidirectional drive propagation model.</description>
-   </class>
+
    <!-- Pose Generation -->
    <class type="muse_mcl::Normal2D" base_class_type="muse_mcl::SamplingNormal">
      <description>2D normal distributed pose generation for pose initialation by the user.</description>
@@ -74,11 +44,5 @@
      <description>Systematic resampling.</description>
    </class>
    <!-- Map Providers -->
-   <!-- Data Providers -->
-   <class type="muse_mcl::ProviderDataOdometry" base_class_type="muse_mcl::ProviderData">
-      <description>Data provider for standard odmetry messages.</description>
-   </class>
-   <class type="muse_mcl::ProviderDataOdometryTF" base_class_type="muse_mcl::ProviderData">
-      <description>Data provider for odometry input based on TF.</description>
-   </class>
+
 </library>

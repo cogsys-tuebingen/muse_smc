@@ -1,0 +1,24 @@
+<library path="libmuse_mcl_2d_odometry_providers">
+<!-- Data Providers -->
+<class type="muse_mcl::ProviderDataOdometry" base_class_type="muse_mcl::ProviderData">
+   <description>Data provider for standard odmetry messages.</description>
+</class>
+<class type="muse_mcl::ProviderDataOdometryTF" base_class_type="muse_mcl::ProviderData">
+   <description>Data provider for odometry input based on TF.</description>
+</class>
+</library>
+<library path="libmuse_mcl_2d_odometry_models">
+<!-- Propagation Functions -->
+<class type="muse_mcl::DifferentialDrive" base_class_type="muse_mcl::ModelPrediction">
+  <description>Differential drive propagation model.</description>
+</class>
+<class type="muse_mcl::DifferentialDriveAbs" base_class_type="muse_mcl::ModelPrediction">
+  <description>
+     Differential drive propagation model using only absolute values in the terms,
+     instead of quadratic ones.
+</description>
+</class>
+<class type="muse_mcl::OmniDrive" base_class_type="muse_mcl::ModelPrediction">
+  <description>Omnidirectional drive propagation model.</description>
+</class>
+</library>

@@ -1,6 +1,6 @@
 #include "differential_drive.h"
 
-#include <muse_mcl_core_plugins/odometry/odometry.hpp>
+#include <muse_mcl_2d_odometry/odometry/odometry.hpp>
 #include <muse_mcl/math/angle.hpp>
 
 #include <class_loader/class_loader_register_macro.h>

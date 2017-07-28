@@ -1,19 +1,15 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(muse_mcl_2d_gridmaps)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
-
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   muse_mcl
+  muse_mcl_2d_laser
   nav_msgs
   pluginlib
   roscpp
   rostest
   tf
+  cslibs_indexed_storage # REMOVE THIS
 )
 find_package(OpenCV REQUIRED)
 
@@ -40,7 +36,7 @@ target_link_libraries(${PROJECT_NAME}_maps
     ${OpenCV_LIBRARIES}
 )
 
-add_library(${PROJECT_NAME} SHARED
+add_library(${PROJECT_NAME}_providers SHARED
     src/providers/provider_gridmap_binary.cpp
     src/providers/provider_gridmap_distance.cpp
     src/providers/provider_gridmap_probability.cpp
@@ -48,15 +44,32 @@ add_library(${PROJECT_NAME} SHARED
     src/providers/provider_gridmap_distance_service.cpp
     src/providers/provider_gridmap_probability_service.cpp
 )
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME}_providers
+    ${catkin_LIBRARIES}
+    ${PROJECT_NAME}_maps
+)
+add_library(${PROJECT_NAME}_models SHARED
+    src/models/beam_model.cpp
+    src/models/likelihood_field_model.cpp
+    src/models/beam_model_amcl.cpp
+    src/models/likelihood_field_model_amcl.cpp
+    src/models/likelihood_field_prob_model_amcl.cpp
+    src/models/beam_model_mle.cpp
+    src/models/beam_model_parameter_estimator.cpp
+
+)
+target_link_libraries(${PROJECT_NAME}_models
     ${catkin_LIBRARIES}
     ${PROJECT_NAME}_maps
 )
 
-
 install(FILES plugins.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-install(TARGETS ${PROJECT_NAME}
+install(TARGETS ${PROJECT_NAME}_providers
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+install(TARGETS ${PROJECT_NAME}_models
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
