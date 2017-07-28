@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(muse_mcl_2d_sampling)
 
 find_package(catkin REQUIRED COMPONENTS
-  cslibs_indexed_storage
+  cslibs_indexed_storage #  <!-- REMOVE THIS -->
   muse_mcl
   muse_mcl_2d_gridmaps
   roscpp
