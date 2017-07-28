@@ -1,6 +1,5 @@
 <library path="libmuse_mcl_core_plugins">
    <!-- Update functions -->
-
    <!-- Pose Generation -->
    <class type="muse_mcl::Normal2D" base_class_type="muse_mcl::SamplingNormal">
      <description>2D normal distributed pose generation for pose initialation by the user.</description>

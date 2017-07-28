@@ -128,6 +128,7 @@ protected:
             std::string tags = readString(class_element, "tags");
 
             available_classes.emplace(lookup_name, [loader, lookup_name]() {
+                std::cerr << loader->getLibraryPath() << std::endl;
                 return std::shared_ptr<M> { loader->createUnmanagedInstance<M>(lookup_name) };
             });
         }
@@ -212,7 +213,6 @@ public:
     Constructor getConstructor(const std::string& name) {
         std::unique_lock<std::mutex> lock(PluginManagerLocker::getMutex());
         auto pos = instance->available_classes.find(name);
-
         if(pos != instance->available_classes.end()) {
             return pos->second;
         } else {
