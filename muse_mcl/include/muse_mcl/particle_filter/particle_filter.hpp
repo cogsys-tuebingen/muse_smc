@@ -6,8 +6,8 @@
 
 #include <muse_mcl/resampling/resampling.hpp>
 
-#include <muse_mcl/plugins/types/sampling_normal.hpp>
-#include <muse_mcl/plugins/types/sampling_uniform.hpp>
+#include <muse_mcl/sampling/sampling_normal.hpp>
+#include <muse_mcl/sampling/sampling_uniform.hpp>
 
 #include <muse_mcl/particle_filter/particle_set.hpp>
 #include <muse_mcl/particle_filter/prediction.hpp>

@@ -3,7 +3,7 @@
 
 #include <muse_mcl/particle_filter/particle_set.hpp>
 
-#include <muse_mcl/plugins/types/sampling_uniform.hpp>
+#include <muse_mcl/sampling/sampling_uniform.hpp>
 
 #include <muse_mcl/math/random.hpp>
 

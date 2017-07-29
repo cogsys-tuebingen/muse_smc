@@ -1,7 +1,7 @@
 #ifndef ENCLOSINGAA2D_H
 #define ENCLOSINGAA2D_H
 
-#include <muse_mcl/plugins/types/sampling_uniform.hpp>
+#include <muse_mcl/sampling/sampling_uniform.hpp>
 #include <muse_mcl/pose_samplers/uniform.hpp>
 
 namespace muse_mcl {

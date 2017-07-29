@@ -1,7 +1,7 @@
 #ifndef NORMAL2D_H
 #define NORMAL2D_H
 
-#include <muse_mcl/plugins/types/sampling_normal.hpp>
+#include <muse_mcl/sampling/sampling_normal.hpp>
 
 namespace muse_mcl {
 class Normal2D : public SamplingNormal
