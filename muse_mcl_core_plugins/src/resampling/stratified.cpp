@@ -99,6 +99,5 @@ void Stratified::doApplyRecovery(ParticleSet &particle_set)
             }
         }
     }
-
 }
 
