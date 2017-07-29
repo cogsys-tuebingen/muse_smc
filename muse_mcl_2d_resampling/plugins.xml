@@ -1,0 +1,24 @@
+<library path="libmuse_mcl_2d_resampling">
+   <!-- Resampling -->
+   <class type="muse_mcl::KLD2D" base_class_type="muse_mcl::Resampling">
+     <description>2D resampling with adaptive sample size.</description>
+   </class>
+   <class type="muse_mcl::KLD3D" base_class_type="muse_mcl::Resampling">
+     <description>3D resampling with adaptive sample size.</description>
+   </class>
+   <class type="muse_mcl::Multinomial" base_class_type="muse_mcl::Resampling">
+     <description>Multinomial sampling.</description>
+   </class>
+   <class type="muse_mcl::Residual" base_class_type="muse_mcl::Resampling">
+     <description>Residual resampling.</description>
+   </class>
+   <class type="muse_mcl::Stratified" base_class_type="muse_mcl::Resampling">
+     <description>Stratified resampling.</description>
+   </class>
+   <class type="muse_mcl::Systematic" base_class_type="muse_mcl::Resampling">
+     <description>Systematic resampling.</description>
+   </class>
+   <class type="muse_mcl::WheelOfFortune" base_class_type="muse_mcl::Resampling">
+     <description>Systematic resampling.</description>
+   </class>
+</library>

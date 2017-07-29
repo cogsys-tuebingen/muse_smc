@@ -33,21 +33,21 @@ include_directories(
   ${OpenCV_INCLUDE_DIRS}
 )
 
-add_library(${PROJECT_NAME} SHARED
+#add_library(${PROJECT_NAME} SHARED
 
-    src/resampling/wof.cpp
-    src/resampling/multinomial.cpp
-    src/resampling/residual.cpp
-    src/resampling/stratified.cpp
-    src/resampling/systematic.cpp
-    src/resampling/kld_2d.cpp
-)
+#    src/resampling/wof.cpp
+#    src/resampling/multinomial.cpp
+#    src/resampling/residual.cpp
+#    src/resampling/stratified.cpp
+#    src/resampling/systematic.cpp
+#    src/resampling/kld_2d.cpp
+#)
 
-target_link_libraries(${PROJECT_NAME}
-    ${catkin_LIBRARIES}
-    ${PCL_LIBRARIES}
-    ${OpenCV_LIBRARIES}
-)
+#target_link_libraries(${PROJECT_NAME}
+#    ${catkin_LIBRARIES}
+#    ${PCL_LIBRARIES}
+#    ${OpenCV_LIBRARIES}
+#)
 
 #if(${CATKIN_ENABLE_TESTING})
 #    add_custom_target(show_test_headers
@@ -143,9 +143,9 @@ target_link_libraries(${PROJECT_NAME}
 #    endif()
 #endif()
 
-install(FILES plugins.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+#install(FILES plugins.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-install(TARGETS ${PROJECT_NAME}
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+#install(TARGETS ${PROJECT_NAME}
+#        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})

@@ -1,0 +1,4 @@
+#include <muse_mcl/resampling/systematic.hpp>
+
+#include <class_loader/class_loader_register_macro.h>
+CLASS_LOADER_REGISTER_CLASS(muse_mcl::Systematic, muse_mcl::Resampling)

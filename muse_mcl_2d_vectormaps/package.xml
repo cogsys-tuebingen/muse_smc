@@ -4,7 +4,9 @@
   <version>0.0.0</version>
   <description>The muse_mcl_2d_vectormaps package</description>
 
-  <maintainer email="richard.hanten@uni-tuebingen.de">hanten</maintainer>
+  <maintainer email="richard.hanten@uni-tuebingen.de">Richard Hanten</maintainer>
+  <author email="richard.hanten@uni-tuebingen.de">Richard Hanten</author>
+
   <license>BSD</license>
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>cslibs_boost_geometry</build_depend>

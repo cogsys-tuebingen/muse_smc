@@ -4,7 +4,8 @@
     <version>0.0.1</version>
     <description>The muse_mcl_2d_gridmaps package</description>
 
-    <maintainer email="richard.hanten@uni-tuebingen.de">hanten</maintainer>
+    <maintainer email="richard.hanten@uni-tuebingen.de">Richard Hanten</maintainer>
+    <author email="richard.hanten@uni-tuebingen.de">Richard Hanten</author>
 
     <license>BSD</license>
     <buildtool_depend>catkin</buildtool_depend>
