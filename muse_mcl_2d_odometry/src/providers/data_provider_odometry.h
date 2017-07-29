@@ -4,7 +4,7 @@
 #include <nav_msgs/Odometry.h>
 #include <ros/ros.h>
 
-#include <muse_mcl/plugins/types/provider_data.hpp>
+#include <muse_mcl/providers/provider_data.hpp>
 
 namespace muse_mcl {
 class ProviderDataOdometry  : public muse_mcl::ProviderData

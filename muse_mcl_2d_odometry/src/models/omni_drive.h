@@ -1,7 +1,7 @@
 #ifndef OMNI_DRIVE_H
 #define OMNI_DRIVE_H
 
-#include <muse_mcl/plugins/types/model_prediction.hpp>
+#include <muse_mcl/prediction/model_prediction.hpp>
 
 namespace muse_mcl {
 class OmniDrive : public ModelPrediction

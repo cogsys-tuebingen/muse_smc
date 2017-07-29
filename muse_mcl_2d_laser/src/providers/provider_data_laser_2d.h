@@ -3,7 +3,7 @@
 
 #include <sensor_msgs/LaserScan.h>
 
-#include <muse_mcl/plugins/types/provider_data.hpp>
+#include <muse_mcl/providers/provider_data.hpp>
 
 namespace muse_mcl {
 class ProviderDataLaser2D : public muse_mcl::ProviderData

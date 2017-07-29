@@ -8,8 +8,8 @@
 
 #include <muse_mcl/tf/tf_provider.hpp>
 
-#include <muse_mcl/plugins/types/provider_data.hpp>
-#include <muse_mcl/plugins/types/provider_map.hpp>
+#include <muse_mcl/providers/provider_data.hpp>
+#include <muse_mcl/providers/provider_map.hpp>
 
 #include <muse_mcl/particle_filter/update_forwarder.hpp>
 #include <muse_mcl/particle_filter/prediction_forwarder.hpp>

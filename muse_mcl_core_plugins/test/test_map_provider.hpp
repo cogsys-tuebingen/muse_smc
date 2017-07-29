@@ -2,7 +2,7 @@
 #define TEST_MAP_PROVIDER_HPP
 
 #include "test_map.hpp"
-#include <muse_mcl/plugins/types/provider_map.hpp>
+#include <muse_mcl/providers/provider_map.hpp>
 
 namespace muse_mcl {
 class TestMapProvider : public ProviderMap {

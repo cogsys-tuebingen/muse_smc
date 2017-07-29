@@ -4,7 +4,7 @@
 #include "update.hpp"
 #include "particle_filter.hpp"
 
-#include <muse_mcl/plugins/types/provider_map.hpp>
+#include <muse_mcl/providers/provider_map.hpp>
 
 namespace muse_mcl {
 class UpdateForwarder {

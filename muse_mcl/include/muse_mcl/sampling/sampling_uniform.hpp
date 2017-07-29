@@ -9,7 +9,7 @@
 #include <muse_mcl/tf/tf_provider.hpp>
 
 #include <muse_mcl/particle_filter/particle_set.hpp>
-#include <muse_mcl/plugins/types/provider_map.hpp>
+#include <muse_mcl/providers/provider_map.hpp>
 #include <muse_mcl/math/covariance.hpp>
 
 namespace muse_mcl {

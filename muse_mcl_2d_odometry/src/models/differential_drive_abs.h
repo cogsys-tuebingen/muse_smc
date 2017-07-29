@@ -1,7 +1,7 @@
 #ifndef DIFFERENTIAL_DRIVE_ABS_H
 #define DIFFERENTIAL_DRIVE_ABS_H
 
-#include <muse_mcl/plugins/types/model_prediction.hpp>
+#include <muse_mcl/prediction/model_prediction.hpp>
 #include <muse_mcl/math/random.hpp>
 
 namespace muse_mcl {
