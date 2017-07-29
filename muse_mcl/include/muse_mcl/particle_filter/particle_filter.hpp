@@ -4,7 +4,8 @@
 #include <muse_mcl/tf/tf_provider.hpp>
 #include <muse_mcl/tf/tf_publisher.hpp>
 
-#include <muse_mcl/plugins/types/resampling.hpp>
+#include <muse_mcl/resampling/resampling.hpp>
+
 #include <muse_mcl/plugins/types/sampling_normal.hpp>
 #include <muse_mcl/plugins/types/sampling_uniform.hpp>
 
