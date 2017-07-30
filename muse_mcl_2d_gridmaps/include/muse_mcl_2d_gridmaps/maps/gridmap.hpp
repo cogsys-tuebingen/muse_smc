@@ -7,7 +7,7 @@
 
 #include <muse_mcl/map/map.hpp>
 
-#include "bresenham.hpp"
+#include <muse_mcl_2d_gridmaps/algorithms/bresenham.hpp>
 
 namespace muse_mcl {
 namespace maps {
@@ -15,9 +15,9 @@ template<typename T>
 class GridMap : public Map
 {
 public:
-    using Ptr = std::shared_ptr<GridMap>;
-    using LineIterator = Bresenham<T const>;
-    using Index = std::array<int, 2>;
+    using Ptr           = std::shared_ptr<GridMap>;
+    using LineIterator  = algorithms::Bresenham<T const>;
+    using Index         = std::array<int, 2>;
 
     GridMap(const double origin_x,
             const double origin_y,
