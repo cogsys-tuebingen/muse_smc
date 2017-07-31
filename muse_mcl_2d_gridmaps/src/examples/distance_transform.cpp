@@ -22,7 +22,8 @@ int main(int argc, char *argv[])
     }
 
     cv::Mat dis(200, 200, CV_64FC1, distances.data());
-    cv::imshow("distances", distances);
+    cv::normalize(dis, dis, 0.0, 1.0, cv::NORM_MINMAX);
+    cv::imshow("distances", dis);
     cv::waitKey(0);
 
     return 0;

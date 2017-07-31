@@ -41,6 +41,15 @@ struct Data {
         }
     };
 
+    struct Greater {
+        bool operator()( const Data& lhs,
+                         const Data& rhs ) const
+        {
+            return *lhs.data >
+                    *rhs.data;
+        }
+    };
+
     inline Data(const std::size_t     x,
                 const std::size_t     y,
                 const double         *data) :
@@ -128,7 +137,7 @@ public:
         src_width_  = step;
         src_height_ = src.size() / step;
 
-        queue_ = std::priority_queue<cell_data_t, std::deque<cell_data_t>, cell_data_t::Less>();
+        queue_ = std::priority_queue<cell_data_t, std::deque<cell_data_t>, cell_data_t::Greater>();
         marked_.resize(src.size(), 0);
         dst.resize(src.size(), maximum_distance_);
 
@@ -184,7 +193,7 @@ private:
     distance_transform::DistanceCache   cache_;
     std::vector<uint8_t>                marked_;
 
-    std::priority_queue<cell_data_t, std::deque<cell_data_t>, cell_data_t::Less> queue_;
+    std::priority_queue<cell_data_t, std::deque<cell_data_t>, cell_data_t::Greater> queue_;
 
     inline void enqueue(std::vector<double> &dst,
                         cell_data_t         &cell)
