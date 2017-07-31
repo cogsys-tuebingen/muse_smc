@@ -18,6 +18,11 @@ struct Sample
     {
     }
 
+    inline Sample(const double weight) :
+        weight(weight)
+    {
+    }
+
     inline Sample(const StateT &state,
                   const double weight) :
         state(state),

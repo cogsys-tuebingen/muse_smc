@@ -1,8 +1,8 @@
 #ifndef UPDATE_FORWARDER_HPP
 #define UPDATE_FORWARDER_HPP
 
-#include "update.hpp"
-#include "particle_filter.hpp"
+#include <muse_mcl/update/update.hpp>
+#include <muse_mcl/particle_filter/particle_filter.hpp>
 
 #include <muse_mcl/providers/provider_map.hpp>
 

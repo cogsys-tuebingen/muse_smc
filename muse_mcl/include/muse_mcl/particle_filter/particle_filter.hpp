@@ -10,8 +10,8 @@
 #include <muse_mcl/sampling/sampling_uniform.hpp>
 
 #include <muse_mcl/particle_filter/particle_set.hpp>
-#include <muse_mcl/particle_filter/prediction.hpp>
-#include <muse_mcl/particle_filter/update.hpp>
+#include <muse_mcl/prediction/prediction.hpp>
+#include <muse_mcl/update/update.hpp>
 #include <muse_mcl/utility/csv_logger.hpp>
 #include <muse_mcl/utility/filterstate_publisher.hpp>
 #include <muse_mcl/utility/dotty.hpp>

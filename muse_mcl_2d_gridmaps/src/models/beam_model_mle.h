@@ -3,7 +3,7 @@
 
 #include <atomic>
 
-#include <muse_mcl/particle_filter/update.hpp>
+#include <muse_mcl/update/update.hpp>
 #include "beam_model_parameter_estimator.h"
 
 namespace muse_mcl {

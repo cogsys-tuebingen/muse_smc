@@ -97,7 +97,7 @@ public:
 template<typename Data, typename T, T Data::*Member>
 class MemberDecorator {
 public:
-    using iterator = MemberIterator<Data, T, Member>;
+    using iterator      = MemberIterator<Data, T, Member>;
     using notify_update = delegate<void(const T&)>;
     using notify_touch  = delegate<void()>;
 

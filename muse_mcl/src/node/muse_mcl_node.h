@@ -11,8 +11,8 @@
 #include <muse_mcl/providers/provider_data.hpp>
 #include <muse_mcl/providers/provider_map.hpp>
 
-#include <muse_mcl/particle_filter/update_forwarder.hpp>
-#include <muse_mcl/particle_filter/prediction_forwarder.hpp>
+#include <muse_mcl/update/update_forwarder.hpp>
+#include <muse_mcl/prediction/prediction_forwarder.hpp>
 #include <muse_mcl/particle_filter/particle_filter.hpp>
 
 #include <muse_mcl/plugins/plugin_loader.hpp>

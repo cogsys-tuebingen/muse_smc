@@ -1,7 +1,7 @@
 #ifndef LIKELIHOODFIELD_PROB_MODEL_AMCL_H
 #define LIKELIHOODFIELD_PROB_MODEL_AMCL_H
 
-#include <muse_mcl/particle_filter/update.hpp>
+#include <muse_mcl/update/update.hpp>
 
 namespace muse_mcl {
 class LikelihoodFieldProbModelAMCL : public ModelUpdate

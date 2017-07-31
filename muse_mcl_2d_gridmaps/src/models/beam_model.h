@@ -1,7 +1,7 @@
 #ifndef BEAM_MODEL_H
 #define BEAM_MODEL_H
 
-#include <muse_mcl/particle_filter/update.hpp>
+#include <muse_mcl/update/update.hpp>
 
 namespace muse_mcl {
 class BeamModel : public ModelUpdate

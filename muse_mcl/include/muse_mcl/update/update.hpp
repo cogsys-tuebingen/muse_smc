@@ -3,7 +3,7 @@
 
 #include <muse_mcl/update/model_update.hpp>
 
-#include "particle_set.hpp"
+#include <muse_mcl/particle_filter/particle_set.hpp>
 
 #include <muse_mcl/time/time_frame.hpp>
 

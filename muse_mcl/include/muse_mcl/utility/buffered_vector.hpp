@@ -46,6 +46,22 @@ public:
     }
 
     /**
+     * @brief buffered_vector constructor for preferred size and capacity.
+     * @param size          - preferred value <= capacity
+     * @param capacity      - the maximim capacity
+     * @param default_value - default value to initialize with
+     */
+    buffered_vector(const std::size_t size,
+                    const std::size_t capacity,
+                    const T &default_value) :
+        size_(size),
+        data_(capacity, default_value),
+        data_ptr_(data_.data())
+    {
+        assert(size <= capacity);
+    }
+
+    /**
      * @brief Return reference to the i-th entry of the vector.
      *        This operator does not assure validity.
      * @param i - the index

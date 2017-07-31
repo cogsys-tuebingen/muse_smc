@@ -1,8 +1,8 @@
 #ifndef PREDICTION_FORWARDER_HPP
 #define PREDICTION_FORWARDER_HPP
 
-#include "prediction.hpp"
-#include "particle_filter.hpp"
+#include <muse_mcl/prediction/prediction.hpp>
+#include <muse_mcl/particle_filter/particle_filter.hpp>
 
 namespace muse_mcl  {
 class PredictionForwarder {

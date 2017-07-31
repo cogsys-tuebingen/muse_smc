@@ -1,7 +1,7 @@
 #ifndef LIKELIHOOD_FIELD_MODEL_H
 #define LIKELIHOOD_FIELD_MODEL_H
 
-#include <muse_mcl/particle_filter/update.hpp>
+#include <muse_mcl/update/update.hpp>
 
 namespace muse_mcl {
 class LikelihoodFieldModel : public ModelUpdate
