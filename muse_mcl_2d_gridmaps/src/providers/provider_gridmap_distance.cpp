@@ -19,16 +19,6 @@ Map::ConstPtr ProviderGridmapDistance::getMap() const
         map_loaded_.wait(l);
     }
 
-//    cv::Mat display(map_->getHeight(), map_->getWidth(), CV_32FC1, cv::Scalar());
-//    for(int i = 0 ; i < display.rows ; ++i) {
-//        for(int j = 0 ; j < display.cols ; ++j) {
-//            display.at<float>(i,j) = map_->at(j,i);
-//        }
-//    }
-
-//    cv::imshow("map", display);
-//    cv::waitKey(0);
-
     return map_;
 }
 
@@ -37,8 +27,7 @@ void ProviderGridmapDistance::doSetup(ros::NodeHandle &nh_private)
 
     topic_ = nh_private.param<std::string>(privateParameter("topic"), "/map");
     binarization_threshold_ = nh_private.param<double>(privateParameter("threshold"), 0.5);
-    kernel_size_ = std::max(nh_private.param<int>(privateParameter("kernel_size"), 5), 5);
-    kernel_size_ += 1 - (kernel_size_ % 2);
+    kernel_size_ = nh_private.param<double>(privateParameter("maximum_distance"), 2.0);
     blocking_ = nh_private.param<bool>(privateParameter("blocking"), false);
 
     source_= nh_private.subscribe(topic_, 1, &ProviderGridmapDistance::callback, this);

@@ -1,12 +1,15 @@
 #include <muse_mcl_2d_gridmaps/maps/distance_gridmap.h>
+#include <muse_mcl_2d_gridmaps/algorithms/distance_transform.hpp>
+
 #include <tf/tf.h>
-#include <opencv2/opencv.hpp>
+
 
 using namespace muse_mcl;
 using namespace maps;
 
 DistanceGridMap::DistanceGridMap(const nav_msgs::OccupancyGrid &occupancy_grid,
-                                 const double threshold, const std::size_t kernel_size) :
+                                 const double maximum_distance,
+                                 const double threshold) :
     GridMap<double>(occupancy_grid.info.origin.position.x,
                     occupancy_grid.info.origin.position.y,
                     tf::getYaw(occupancy_grid.info.origin.orientation),
@@ -15,11 +18,11 @@ DistanceGridMap::DistanceGridMap(const nav_msgs::OccupancyGrid &occupancy_grid,
                     occupancy_grid.info.width,
                     occupancy_grid.header.frame_id)
 {
-    convert(occupancy_grid, threshold, kernel_size);
+    convert(occupancy_grid, threshold, maximum_distance);
 }
 
-DistanceGridMap::DistanceGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupancy_grid,
-                                 const double threshold, const std::size_t kernel_size) :
+DistanceGridMap::DistanceGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupancy_grid, const double maximum_distance,
+                                 const double threshold) :
     DistanceGridMap(*occupancy_grid, threshold)
 {
 }
@@ -35,33 +38,15 @@ double DistanceGridMap::at(const math::Point &point) const
 
 
 
-void DistanceGridMap::convert(const nav_msgs::OccupancyGrid &occupancy_grid, const double threshold, const std::size_t kernel_size)
+void DistanceGridMap::convert(const nav_msgs::OccupancyGrid &occupancy_grid,
+                              const double threshold,
+                              const double maximum_distance)
 {
-    const std::size_t size = height_ * width_;
-    const int8_t *occupancy_grid_ptr = occupancy_grid.data.data();
-    data_.resize(size, 0.0);
-    data_ptr_ = data_.data();
+    algorithms::DistanceTransform<int8_t> distance_transform(resolution_,
+                                                             maximum_distance,
+                                                             static_cast<int8_t>(threshold * 100));
 
-    cv::Mat src(height_, width_, CV_8UC1, cv::Scalar(1));
-    for(std::size_t i = 0 ; i < size ; ++i) {
-        int8_t occupancy = occupancy_grid_ptr[i];
-        assert(occupancy <= 100);
-        assert(occupancy >= -1);
-
-        if(occupancy == -1 || occupancy >= threshold) {
-            src.at<uchar>(i) = 0;
-        }
-    }
-
-    cv::Mat dst(height_, width_, CV_32FC1, cv::Scalar());
-    cv::distanceTransform(src, dst, CV_DIST_L2, 3);
-
-    /// todo max distance
-    /// kernel size parameter
-
-    for(std::size_t i = 0 ; i < size ; ++i) {
-        data_ptr_[i] = dst.at<float>(i) * resolution_;
-    }
-
-
+    distance_transform.apply(occupancy_grid.data,
+                             occupancy_grid.info.width,
+                             data_);
 }
