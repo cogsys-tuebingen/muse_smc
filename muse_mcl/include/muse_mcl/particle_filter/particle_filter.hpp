@@ -53,6 +53,10 @@ public:
     void setResampling(Resampling::Ptr &resampling);
     Resampling::Ptr getResampling() const;
 
+    /// density estimation
+
+
+
     /// insert new predictions
     void addPrediction(Prediction::Ptr &prediction);
 
