@@ -110,6 +110,7 @@ struct Index : public std::array<int, _Nm>
         }
         return r;
     }
+
 };
 }
 }
@@ -158,5 +159,46 @@ inline muse_mcl::math::Index<_Nm> operator + (const muse_mcl::math::Index<_Nm>& 
 
     return __res;
 }
+
+template<std::size_t _Nm>
+inline muse_mcl::math::Index<_Nm> operator < (const muse_mcl::math::Index<_Nm> &__one,
+                                              const muse_mcl::math::Index<_Nm> &__two)
+{
+    bool less = true;
+    for(std::size_t i = 0 ; i< _Nm; ++i)
+        less &= __one[i] < __two[i];
+    return less;
+}
+
+template<std::size_t _Nm>
+inline muse_mcl::math::Index<_Nm> operator > (const muse_mcl::math::Index<_Nm> &__one,
+                                              const muse_mcl::math::Index<_Nm> &__two)
+{
+    bool greater = true;
+    for(std::size_t i = 0 ; i< _Nm; ++i)
+        greater &= __one[i] > __two[i];
+    return greater;
+}
+
+template<std::size_t _Nm>
+inline muse_mcl::math::Index<_Nm> operator <= (const muse_mcl::math::Index<_Nm> &__one,
+                                               const muse_mcl::math::Index<_Nm> &__two)
+{
+    bool less_equal = true;
+    for(std::size_t i = 0 ; i< _Nm; ++i)
+        less_equal &= __one[i] <= __two[i];
+    return less_equal;
+}
+
+template<std::size_t _Nm>
+inline muse_mcl::math::Index<_Nm> operator >= (const muse_mcl::math::Index<_Nm> &__one,
+                                               const muse_mcl::math::Index<_Nm> &__two)
+{
+    bool greater_equal = true;
+    for(std::size_t i = 0 ; i< _Nm; ++i)
+        greater_equal &= __one[i] >= __two[i];
+    return greater_equal;
+}
+
 
 #endif // INDEX_HPP

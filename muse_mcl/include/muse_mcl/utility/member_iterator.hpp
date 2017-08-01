@@ -116,6 +116,15 @@ public:
     {
     }
 
+    MemberDecorator(std::buffered_vector<muse_mcl::Data> &data,
+                    notify_touch touch) :
+        data_(data),
+        untouched_(true),
+        touch_(touch),
+        update_([](){return;})
+    {
+    }
+
     /**
      * @brief  begin returns and iterator pointing to the begin of the data structure
      *         to be iterated.

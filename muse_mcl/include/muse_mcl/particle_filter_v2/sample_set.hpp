@@ -9,7 +9,6 @@
 
 #include <muse_mcl/particle_filter_v2/sample.hpp>
 #include <muse_mcl/particle_filter_v2/sample_insertion.hpp>
-#include <muse_mcl/particle_filter_v2/sample_indexation.hpp>
 
 namespace muse_mcl {
 template<typename StateT, typename Dimension>
@@ -20,8 +19,6 @@ public:
     using ConstPtr          = std::shared_ptr<sample_set_t const>;
     using weight_iterator_t = MemberDecorator<Sample<StateT>, double, &Sample<StateT>::weight>;
     using state_iterator_t  = MemberDecorator<Sample<StateT>, StateT, &Sample<StateT>::state>;
-    using indexation_t      = SampleIndexation<StateT, Dimension>;
-    using index_vector_t    = std::buffered_vector<indexation_t::index_t>;
     using sample_vector_t   = std::buffered_vector<Sample<StateT>>;
     using sample_set_t      = SampleSet<StateT, Dimension>;
 
@@ -37,7 +34,7 @@ public:
      */
     SampleSet(const std::string &frame_id,
               const std::size_t sample_size,
-              const SampleIndexation<StateT>::Ptr &indexation) :
+              const sample_density_t::Ptr &indexation) :
         frame_id_(frame_id),
         minimum_sample_size_(sample_size),
         maximum_sample_size_(sample_size),
@@ -45,9 +42,8 @@ public:
         average_weight_(1.0 / sample_size_minimum),
         weight_sum_(1.0),
         p_t_1_(new sample_vector_t(0, sample_size)),
-        p_t_1_indeces_(new index_vector_t(0, sample_size)),
-        p_t_(new sample_vector_t(0, sample_size)),
-        indexation_(indexation)
+        p_t_1_density_(density),
+        p_t_(new sample_vector_t(0, sample_size))
     {
     }
 
@@ -60,7 +56,7 @@ public:
     SampleSet(const std::string &frame_id,
               const std::size_t sample_size_minimum,
               const std::size_t sample_size_maxmimum,
-              const SampleIndexation<StateT>::Ptr &indexation) :
+              const sample_density_t::Ptr &density) :
         frame_id_(frame_id),
         minimum_sample_size_(sample_size_minimum),
         maximum_sample_size_(sample_size_maxmimum),
@@ -68,9 +64,8 @@ public:
         average_weight_(1.0 / sample_size_minimum),
         weight_sum_(1.0),
         p_t_1_(new sample_vector_t(0, sample_size_maximum)),
-        p_t_1_indeces_(new index_vector_t(0, sample_size_maximum)),
-        p_t_(new sample_vector_t(0, sample_size_maximum)),
-        indexation_(indexation)
+        p_t_1_density_(density),
+        p_t_(new sample_vector_t(0, sample_size_maximum))
     {
     }
 
@@ -85,20 +80,19 @@ public:
     {
         return weight_iterator_t(*p_t_1_,
                               weight_iterator_t::notify_update::from<sample_set_t, &sample_set_t::weightUpdate>(this),
-                              weight_iterator_t::notify_touch::from<sample_set_t, &sample_set_t::resetSampleWeightStatistic>(this));
+                              weight_iterator_t::notify_touch::from<sample_set_t, &sample_set_t::weightStatisticReset>(this));
     }
 
     inline state_iterator_t getStateIterator()
     {
         return state_iterator_t(*p_t_1_,
-                              state_iterator_t::notify_update::from<sample_set_t, &sample_set_t::indexationUpdate>(this),
                               state_iterator_t::notify_touch::from<sample_set_t, &sample_set_t::resetIndexationStatistic>(this));
     }
 
     inline SampleInsertion<StateT> getInsertion()
     {
-        resetSampleWeightStatistic();
-        resetIndexationStatistic();
+        weightStatisticReset();
+        p_t_1_density_->clear();
         p_t_->clear();
         return SampleInsertion<StateT>(*p_t_,
                                        SampleInsertion::notify_update::from<sample_set_t, &SampleSet::insertionUpdate>(this),
@@ -241,33 +235,14 @@ private:
     double                  weight_sum_;
 
     sample_vector_t::Ptr    p_t_1_;
-    index_vector_t::Ptr     p_t_1_indeces_;
+    sample_density_t::Ptr   p_t_1_density_;
     sample_vector_t::Ptr    p_t_;
 
-    indexation_t::Ptr       indexation_;
-    indexation_t::index_t   minimum_index_;
-    indexation_t::index_t   maximum_index_;
-
-    void resetSampleWeightStatistic()
+    void weightStatisticReset()
     {
         maximum_weight_ = 0.0;
         average_weight_ = 0.0;
         weight_sum_     = 0.0;
-    }
-
-    void resetIndexationStatistic()
-    {
-        minimum_index_  = std::numeric_limits<int>::max();
-        maximum_index_  = std::numeric_limits<int>::min();
-        indeces_.clear();
-    }
-
-    void indexationUpdate(const StateT &state)
-    {
-        const indexation_t::index_t i = indexation_->create(state);
-        minimum_index_.min(i);
-        maximum_index_.max(i);
-        p_t_1_indeces_->emplace_back(i);
     }
 
     void weightUpdate(const double weight)
@@ -280,13 +255,14 @@ private:
 
     void insertionUpdate(const Sample<StateT> &sample)
     {
-        stateUpdate(sample.state);
         weightUpdate(sample.weight);
+        p_t_1_density_->insert(sample);
     }
 
     void insertionClosed()
     {
         std::swap(p_t_, p_t_1_);
+        p_t_1_density_->cluster();
     }
 };
 }
