@@ -7,34 +7,31 @@
 #include <muse_mcl/utility/buffered_vector.hpp>
 #include <muse_mcl/utility/member_iterator.hpp>
 
-#include <muse_mcl/particle_filter_v2/sample.hpp>
-#include <muse_mcl/particle_filter_v2/sample_insertion.hpp>
+#include <muse_mcl/samples/sample_density.hpp>
+#include <muse_mcl/samples/sample_insertion.hpp>
 
 namespace muse_mcl {
-template<typename StateT, typename Dimension>
+template<typename sample_t>
 class SampleSet
 {
 public:
-    using Ptr               = std::shared_ptr<sample_set_t>;
-    using ConstPtr          = std::shared_ptr<sample_set_t const>;
-    using weight_iterator_t = MemberDecorator<Sample<StateT>, double, &Sample<StateT>::weight>;
-    using state_iterator_t  = MemberDecorator<Sample<StateT>, StateT, &Sample<StateT>::state>;
-    using sample_vector_t   = std::buffered_vector<Sample<StateT>>;
-    using sample_set_t      = SampleSet<StateT, Dimension>;
+    using sample_set_t       = SampleSet<sample_t>;
+    using sample_vector_t    = std::buffered_vector<sample_t, typename sample_t::allocator_t>;
+    using sample_density_t   = SampleDensity<sample_t>;
+    using sample_insertion_t = SampleInsertion<sample_t>;
+    using state_iterator_t   = MemberDecorator<sample_t, typename sample_t::state_t, &sample_t::state>;
+    using weight_iterator_t  = MemberDecorator<sample_t, double, &sample_t::weight>;
 
-    /// Allowed and deleted constructors
+
+    using Ptr = std::shared_ptr<sample_set_t>;
+    using ConstPtr = std::shared_ptr<sample_set_t const>;
+
     SampleSet(const SampleSet &other) = delete;
     SampleSet& operator = (const SampleSet &other) = delete;
 
-    /**
-     * @brief SampleSet constructor.
-     * @param frame_id      - the coordinate frame, the samples are defined in
-     * @param sample_size   - the sample_size of the set, which is fixed using
-     *                        this constructor
-     */
-    SampleSet(const std::string &frame_id,
-              const std::size_t sample_size,
-              const sample_density_t::Ptr &indexation) :
+    SampleSet(const std::string           &frame_id,
+              const std::size_t            sample_size,
+              const sample_density_t::Ptr &density) :
         frame_id_(frame_id),
         minimum_sample_size_(sample_size),
         maximum_sample_size_(sample_size),
@@ -47,12 +44,6 @@ public:
     {
     }
 
-    /**
-     * @brief SampleSet constructor.
-     * @param frame_id              - the coordinate frame, the samples are defined in
-     * @param sample_size_minimum   - the minimum sample size allowed for the set
-     * @param sample_size_maxmimum  - the maximum sample size allowed for the set
-     */
     SampleSet(const std::string &frame_id,
               const std::size_t sample_size_minimum,
               const std::size_t sample_size_maxmimum,
@@ -69,10 +60,7 @@ public:
     {
     }
 
-    /**
-     * @brief   Move assignment operator
-     * @param   other - the particle set to be moved
-     */
+
     inline SampleSet& operator = (SampleSet &&other) = default;
 
 
@@ -100,9 +88,6 @@ public:
     }
 
 
-    /**
-     * @brief normalizeWeights the sample weights.
-     */
     inline void normalizeWeights()
     {
         if(p_t_1_->size() == 0 || weight_sum_ == 0.0) {
@@ -116,10 +101,6 @@ public:
         weight_sum_ = 1.0;
     }
 
-    /**
-     * @brief resetWeights resets the weights ever to a normalized uniform distribution or a non-normalized one.
-     * @param set_to_one    - sets all sample weights to one
-     */
     inline void resetWeights(const bool set_to_one = false)
     {
         if(p_t_1_->size() == 0) {
@@ -134,95 +115,49 @@ public:
         weight_sum_     = weight * p_t_1_->size();
     }
 
-
-    /**
-     * @brief getMinimumSampleSize returns the minimum  of allowed sample sizes.
-     * @return  - minimum_sample_size_
-     */
     inline std::size_t getMinimumSampleSize() const
     {
         return minimum_sample_size_;
     }
 
-    /**
-     * @brief getMaximumSampleSize return the maximum of allowed sample sizes.
-     * @return  - maximum_sample_size_
-     */
     inline std::size_t getMaximumSampleSize() const
     {
         return maximum_sample_size_;
     }
 
-    /**
-     * @brief getSampleSize returns the current sample size of the set.
-     * @return  - size of current set p_t_1_
-     */
     inline std::size_t getSampleSize() const
     {
          return p_t_1_->size();
     }
 
-    /**
-     * @brief getFrameID returns the frame id.
-     * @return      - frame_id_
-     */
     inline std::string const & getFrameID() const
     {
         return frame_id_;
     }
 
-    /**
-     * @brief getMaximumWeight returns the maximum sample weight.
-     * @return      - maximum_weight_
-     */
     inline double getMaximumWeight() const
     {
         return maximum_weight_;
     }
 
-    /**
-     * @brief getAverageWeight returns the average weight.
-     * @return      - average_weight_
-     */
     inline double getAverageWeight() const
     {
         return average_weight_;
     }
 
-    /**
-     * @brief getWeightSum returns the weight sum.
-     * @return      - weight_sum_
-     */
     inline double getWeightSum() const
     {
         return weight_sum_;
     }
 
-    /**
-     * @brief isNormalized returns if the sample weights are normalized.
-     * @return      - weight_sum == 1.0
-     */
     inline bool isNormalized() const
     {
         return weight_sum_ == 1.0;
     }
 
-    /**
-     * @brief getSamples returns the sample vector / set contents.
-     * @return  - *p_t_1_
-     */
     inline sample_vector_t const & getSamples() const
     {
         return *p_t_1_;
-    }
-
-    /**
-     * @brief getIndices returns the sample index vector / set contents.
-     * @return  - *p_t_1_indices
-     */
-    inline index_vector_t const & getIndices() const
-    {
-        return *p_t_1_indeces_;
     }
 
 private:

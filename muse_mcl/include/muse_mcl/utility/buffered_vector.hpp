@@ -6,12 +6,12 @@
 #include <assert.h>
 
 namespace std {
-template<typename T>
+template<typename T, typename Alloc = std::allocator<T> >
 class buffered_vector {
 public:
     using Ptr            = std::shared_ptr<buffered_vector>;
-    using iterator       = typename std::vector<T>::iterator;
-    using const_iterator = typename std::vector<T>::const_iterator;
+    using iterator       = typename std::vector<T, Alloc>::iterator;
+    using const_iterator = typename std::vector<T, Alloc>::const_iterator;
 
     buffered_vector() :
         size_(0),
@@ -282,9 +282,9 @@ public:
     }
 
 private:
-    std::size_t    size_;
-    std::vector<T> data_;
-    T*             data_ptr_;
+    std::size_t           size_;
+    std::vector<T, Alloc> data_;
+    T*                    data_ptr_;
 
 
 };

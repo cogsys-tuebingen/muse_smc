@@ -3,12 +3,18 @@
 
 #include <memory>
 #include <utility>
+#include <vector>
 
+/**
+ * Default sample type.
+ */
 namespace muse_mcl {
 template<typename StateT>
 struct Sample
 {
-    using Ptr = std::shared_ptr<Sample<StateT>>;
+    using Ptr         = std::shared_ptr<Sample<StateT>>;
+    using allocator_t = std::allocator<Sample<StateT>>;
+    using state_t     = StateT;
 
     StateT state;
     double weight;
@@ -43,6 +49,7 @@ struct Sample
     }
 };
 }
+
 
 
 #endif // SAMPLE_HPP
