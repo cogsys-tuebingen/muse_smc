@@ -1,10 +1,10 @@
 #ifndef PARTICLE_SET_MEMBER_ITERATOR_HPP
 #define PARTICLE_SET_MEMBER_ITERATOR_HPP
 
-#include <muse_mcl/utility/buffered_vector.hpp>
-#include <muse_mcl/utility/delegate.hpp>
+#include <muse/utility/buffered_vector.hpp>
+#include <muse/utility/delegate.hpp>
 
-namespace muse_mcl {
+namespace muse {
 /**
  * @brief The MemberIterator class is used to make a certain member of a data
  *        class available, whereas the full data entry can only be accessed by
@@ -116,7 +116,7 @@ public:
     {
     }
 
-    MemberDecorator(std::buffered_vector<Data> &data,
+    MemberDecorator(std::buffered_vector<muse_mcl::Data> &data,
                     notify_touch touch) :
         data_(data),
         untouched_(true),

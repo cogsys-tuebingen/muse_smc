@@ -9,7 +9,8 @@
 #include "clustering_impl.hpp"
 
 #include "insertion.hpp"
-#include "member_iterator.hpp"
+#include <muse_mcl/utility/buffered_vector.hpp>
+#include <muse_mcl/utility/member_iterator.hpp>
 
 #include <memory>
 #include <string>

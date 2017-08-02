@@ -1,4 +1,4 @@
-#include "particle_filter.hpp"
+#include <muse_mcl/particle_filter/particle_filter.hpp>
 
 #include <muse_mcl/math/angle.hpp>
 

@@ -1,11 +1,7 @@
-#ifndef PARTICLE_FILTER_HPP
-#define PARTICLE_FILTER_HPP
+#ifndef FILTER_HPP
+#define FILTER_HPP
 
-#include <muse_mcl/tf/tf_provider.hpp>
-#include <muse_mcl/tf/tf_publisher.hpp>
-
-#include <muse_mcl/resampling/resampling.hpp>
-
+#include <muse/resampling/resampling.hpp>
 #include <muse_mcl/sampling/sampling_normal.hpp>
 #include <muse_mcl/sampling/sampling_uniform.hpp>
 
@@ -27,19 +23,26 @@
 #include <condition_variable>
 #include <map>
 
-namespace muse_mcl {
-class ParticleFilter {
+namespace muse {
+template<typename sample_t, typename update_t, typename prediction_t, typename ... setup_args_t>
+class ParticleFilter
+{
 public:
     using Ptr = std::shared_ptr<ParticleFilter>;
-    using UpdateQueue     =
-    std::priority_queue<Update::Ptr, std::deque<Update::Ptr>, Update::Greater>;
-    using PredictionQueue =
-    std::priority_queue<Prediction::Ptr, std::deque<Prediction::Ptr>, Prediction::Greater>;
+    using update_queue_t =
+    std::priority_queue<typename update_t::Ptr,
+                        std::deque<typename update_t::Ptr>,
+                        typename update_t::Greater>;
+
+    using prediction_queue_t =
+    std::priority_queue<typename prediction_t::Ptr,
+                        std::deque<typename prediction_t::Ptr>,
+                        typename prediction_t::Greater>;
 
     ParticleFilter();
     virtual ~ParticleFilter();
 
-    void setup(ros::NodeHandle &nh_private, const TFProvider::Ptr &tf_provider);
+    void setup(const setup_args_t& ... args);
 
     /// uniform pose sampling
     void setUniformSampling(const SamplingUniform::Ptr &sampling_uniform);
@@ -153,4 +156,4 @@ protected:
 };
 }
 
-#endif // PARTICLE_FILTER_HPP
+#endif // FILTER_HPP

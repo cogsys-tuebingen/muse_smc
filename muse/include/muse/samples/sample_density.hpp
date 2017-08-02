@@ -3,7 +3,7 @@
 
 #include <memory>
 
-namespace muse_mcl {
+namespace muse {
 template<typename sample_t>
 class SampleDensity
 {

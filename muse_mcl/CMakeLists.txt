@@ -75,28 +75,28 @@ include_directories(
     ${TBB_ICLUDE_DIRS}
 )
 
-#add_library(${PROJECT_NAME}_particle_filter
-#    src/particle_filter/particle_filter.cpp
-#)
+add_library(${PROJECT_NAME}_particle_filter
+    src/particle_filter.cpp
+)
 
-#add_dependencies(${PROJECT_NAME}_particle_filter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_particle_filter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-#target_link_libraries(${PROJECT_NAME}_particle_filter
-#    ${catkin_LIBRARIES}
-#    ${tinyXML_LIBRARIES}
-#)
+target_link_libraries(${PROJECT_NAME}_particle_filter
+    ${catkin_LIBRARIES}
+    ${tinyXML_LIBRARIES}
+)
 
 
-#add_executable(${PROJECT_NAME}_node
-#    src/node/muse_mcl_node.cpp
-#)
+add_executable(${PROJECT_NAME}_node
+    src/muse_mcl_node.cpp
+)
 
-#add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-#target_link_libraries(${PROJECT_NAME}_node
-#    ${catkin_LIBRARIES}
-#    ${PROJECT_NAME}_particle_filter
-#)
+target_link_libraries(${PROJECT_NAME}_node
+    ${catkin_LIBRARIES}
+    ${PROJECT_NAME}_particle_filter
+)
 
 add_executable(muse_mcl_eval_weighted_distribution
     src/examples/eval_weighted_distribution.cpp

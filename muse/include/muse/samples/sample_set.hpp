@@ -4,13 +4,13 @@
 #include <string>
 #include <limits>
 
-#include <muse_mcl/utility/buffered_vector.hpp>
-#include <muse_mcl/utility/member_iterator.hpp>
+#include <muse/utility/buffered_vector.hpp>
+#include <muse/utility/member_iterator.hpp>
 
-#include <muse_mcl/samples/sample_density.hpp>
-#include <muse_mcl/samples/sample_insertion.hpp>
+#include <muse/samples/sample_density.hpp>
+#include <muse/samples/sample_insertion.hpp>
 
-namespace muse_mcl {
+namespace muse {
 template<typename sample_t>
 class SampleSet
 {
@@ -21,7 +21,6 @@ public:
     using sample_insertion_t = SampleInsertion<sample_t>;
     using state_iterator_t   = MemberDecorator<sample_t, typename sample_t::state_t, &sample_t::state>;
     using weight_iterator_t  = MemberDecorator<sample_t, double, &sample_t::weight>;
-
 
     using Ptr = std::shared_ptr<sample_set_t>;
     using ConstPtr = std::shared_ptr<sample_set_t const>;
@@ -77,7 +76,7 @@ public:
                               state_iterator_t::notify_touch::from<sample_set_t, &sample_set_t::resetIndexationStatistic>(this));
     }
 
-    inline SampleInsertion<StateT> getInsertion()
+    inline sample_insertion_t getInsertion()
     {
         weightStatisticReset();
         p_t_1_density_->clear();

@@ -1,10 +1,10 @@
 #ifndef SAMPLE_INSERTION_HPP
 #define SAMPLE_INSERTION_HPP
 
-#include <muse_mcl/utility/buffered_vector.hpp>
-#include <muse_mcl/utility/delegate.hpp>
+#include <muse/utility/buffered_vector.hpp>
+#include <muse/utility/delegate.hpp>
 
-namespace muse_mcl {
+namespace muse {
 /**
  * @brief The SampleInsertion class is used to fill up a particle set.
  *        The insertion object notifies usage and changes.

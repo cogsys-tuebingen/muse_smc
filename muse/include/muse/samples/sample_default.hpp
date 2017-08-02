@@ -8,13 +8,14 @@
 /**
  * Default sample type.
  */
-namespace muse_mcl {
+namespace muse {
 template<typename StateT>
 struct Sample
 {
-    using Ptr         = std::shared_ptr<Sample<StateT>>;
-    using allocator_t = std::allocator<Sample<StateT>>;
-    using state_t     = StateT;
+    using Ptr              = std::shared_ptr<Sample<StateT>>;
+    using allocator_t      = std::allocator<Sample<StateT>>;
+    using state_t          = StateT;
+    using state_covariance = std::vector<double>;
 
     StateT state;
     double weight;
