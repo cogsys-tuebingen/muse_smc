@@ -75,28 +75,28 @@ include_directories(
     ${TBB_ICLUDE_DIRS}
 )
 
-add_library(${PROJECT_NAME}_particle_filter
-    src/particle_filter/particle_filter.cpp
-)
+#add_library(${PROJECT_NAME}_particle_filter
+#    src/particle_filter/particle_filter.cpp
+#)
 
-add_dependencies(${PROJECT_NAME}_particle_filter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(${PROJECT_NAME}_particle_filter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-target_link_libraries(${PROJECT_NAME}_particle_filter
-    ${catkin_LIBRARIES}
-    ${tinyXML_LIBRARIES}
-)
+#target_link_libraries(${PROJECT_NAME}_particle_filter
+#    ${catkin_LIBRARIES}
+#    ${tinyXML_LIBRARIES}
+#)
 
 
-add_executable(${PROJECT_NAME}_node
-    src/node/muse_mcl_node.cpp
-)
+#add_executable(${PROJECT_NAME}_node
+#    src/node/muse_mcl_node.cpp
+#)
 
-add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-target_link_libraries(${PROJECT_NAME}_node
-    ${catkin_LIBRARIES}
-    ${PROJECT_NAME}_particle_filter
-)
+#target_link_libraries(${PROJECT_NAME}_node
+#    ${catkin_LIBRARIES}
+#    ${PROJECT_NAME}_particle_filter
+#)
 
 add_executable(muse_mcl_eval_weighted_distribution
     src/examples/eval_weighted_distribution.cpp
@@ -179,28 +179,28 @@ if(${CATKIN_ENABLE_TESTING})
         ${catkin_LIBRARIES}
     )
 
-    add_executable(${PROJECT_NAME}_eval_particle_set_access_times
-        src/examples/eval_particle_set_access_times.cpp
-    )
-    target_link_libraries(${PROJECT_NAME}_eval_particle_set_access_times
-        muse_mcl_particle_filter
-    )
+#    add_executable(${PROJECT_NAME}_eval_particle_set_access_times
+#        src/examples/eval_particle_set_access_times.cpp
+#    )
+#    target_link_libraries(${PROJECT_NAME}_eval_particle_set_access_times
+#        muse_mcl_particle_filter
+#    )
 
-    add_executable(${PROJECT_NAME}_eval_angle_normalization_times
-        src/examples/eval_angle_normalization.cpp
-    )
+#    add_executable(${PROJECT_NAME}_eval_angle_normalization_times
+#        src/examples/eval_angle_normalization.cpp
+#    )
 
-    add_executable(${PROJECT_NAME}_eval_functional
-        src/examples/eval_functional.cpp
-    )
+#    add_executable(${PROJECT_NAME}_eval_functional
+#        src/examples/eval_functional.cpp
+#    )
 
-    add_executable(${PROJECT_NAME}_eval_locking_times
-        src/examples/eval_locking_times.cpp
-    )
+#    add_executable(${PROJECT_NAME}_eval_locking_times
+#        src/examples/eval_locking_times.cpp
+#    )
 
-    target_link_libraries(${PROJECT_NAME}_eval_locking_times
-        ${TBB_LIBRARIES}
-    )
+#    target_link_libraries(${PROJECT_NAME}_eval_locking_times
+#        ${TBB_LIBRARIES}
+#    )
 
 endif()
 

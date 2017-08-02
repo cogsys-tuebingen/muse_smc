@@ -1,4 +1,4 @@
-#include <muse_mcl/particle_filter/particle_set.hpp>
+#include <muse_mcl/samples/sample_set.hpp>
 #include <chrono>
 #include <iostream>
 
