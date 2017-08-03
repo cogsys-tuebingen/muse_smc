@@ -10,7 +10,7 @@ template<typename sample_t>
 class Prediction {
 public:
     using Ptr = std::shared_ptr<Prediction>;
-    using predition_model_t = predition_model_t<sample_t>;
+    using predition_model_t = PredictionModel<sample_t>;
     using sample_set_t = SampleSet<sample_t>;
 
     struct Less {
