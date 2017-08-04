@@ -5,13 +5,13 @@
 
 namespace muse_smc {
 template<typename sample_t>
-class StatePublisher
+class FilterState
 {
 public:
-    using Ptr = std::shared_ptr<StatePublisher>;
+    using Ptr = std::shared_ptr<FilterState>;
+    using sample_set_t = SampleSet<sample_t>;
 
-protected:
-
+    virtual void publish(const sample_set_t::Ptr &sample_set) = 0;
 };
 }
 
