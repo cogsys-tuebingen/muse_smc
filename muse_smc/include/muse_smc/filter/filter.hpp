@@ -84,8 +84,8 @@ public:
 
     }
 
-    void requestNormalInitialization(const sample_t &sample,
-                                     const typename sample_t::covariance_t)
+    void requestStateInitialization(const typename sample_t::state_t &state,
+                                    const typename sample_t::covariance_t &covariance)
     {
 
     }
@@ -96,6 +96,7 @@ public:
     }
 
 protected:
+    /// functions to apply to the sample set
     sample_set_t::Ptr           sample_set_;
     uniform_sampling_t::Ptr     sample_uniform_;
     normal_sampling_t::Ptr      sample_normal_;
@@ -103,9 +104,23 @@ protected:
     resampling_criterion_t::Ptr prediction_integral_;
     filter_state_t::Ptr         state_publisher_;
 
+    /// requests
+    std::mutex                      init_state_mutex_;
+    typename sample_t::state_t      init_state_;
+    typename sample_t::covariance_t init_state_covariance_;
+    std::atomic_bool                request_init_state_;
+    std::atomic_bool                request_init_uniform_;
+
     void requests()
     {
-
+        if(request_init_state_) {
+            sample_normal_->apply(init_state_,
+                                  init_state_covariance_,
+                                  sample_set_->getInsertion());
+        }
+        if(request_init_uniform_) {
+            sample_uniform_->apply(sample_set_->getInsertion());
+        }
     }
 
     void loop()
@@ -115,6 +130,7 @@ protected:
 
     void resample()
     {
+
 
     }
 

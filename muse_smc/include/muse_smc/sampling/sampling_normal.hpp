@@ -44,7 +44,7 @@ public:
         id_ = id;
     }
 
-    virtual void apply(const typename sample_t::state_t      &pose,
+    virtual void apply(const typename sample_t::state_t      &state,
                        const typename sample_t::covariance_t &covariance,
                        sample_set_t::sample_insertion_t      &insertion) = 0;
     virtual void update() = 0;
