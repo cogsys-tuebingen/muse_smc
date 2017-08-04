@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(muse)
+project(muse_smc)
 
 include(cmake/muse_enable_c++11.cmake)
 include(cmake/muse_extras.cmake)

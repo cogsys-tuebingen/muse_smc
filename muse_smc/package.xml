@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>muse</name>
-  <version>0.0.0</version>
-  <description>The muse package</description>
+  <name>muse_smc</name>
+  <version>0.0.1</version>
+  <description>The muse_smc package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
