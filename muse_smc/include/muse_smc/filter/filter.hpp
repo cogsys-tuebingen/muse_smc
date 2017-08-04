@@ -24,6 +24,10 @@ class SMC
 {
 public:
     using Ptr                   = std::shared_ptr<SMC>;
+    using mutex_t               = std::mutex;
+    using lock_t                = std::unique_lock<mutex_t>;
+
+    /// filter specific type defs
     using sample_set_t          = SampleSet<sample_t>;
     using update_t              = Update<sample_t>;
     using prediction_t          = Prediction<sample_t>;
@@ -41,7 +45,9 @@ public:
     std::deque<typename prediction_t::Ptr>,
     typename prediction_t::Greater>;
 
-    SMC()
+    SMC() :
+        request_init_state_(false),
+        request_init_uniform_(false)
     {
     }
 
@@ -87,12 +93,15 @@ public:
     void requestStateInitialization(const typename sample_t::state_t &state,
                                     const typename sample_t::covariance_t &covariance)
     {
-
+        lock_t l(init_state_mutex_);
+        init_state_ = state;
+        init_state_covariance_;
+        request_init_state_ = true;
     }
 
     void requestUniformInitialization()
     {
-
+        request_init_uniform_ = true;
     }
 
 protected:
