@@ -1,9 +1,9 @@
 #ifndef STATE_SPACE_PROVIDER_HPP
 #define STATE_SPACE_PROVIDER_HPP
 
-#include <muse/state_space/state_space.hpp>
+#include <muse_smc/state_space/state_space.hpp>
 
-namespace muse {
+namespace muse_smc {
 template<typename sample_t>
 class StateSpaceProvider
 {

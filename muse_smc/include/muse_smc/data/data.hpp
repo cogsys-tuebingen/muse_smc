@@ -2,9 +2,9 @@
 #define DATA_HPP
 
 #include <memory>
-#include <muse/time/time_frame.hpp>
+#include <muse_smc/time/time_frame.hpp>
 
-namespace muse {
+namespace muse_smc {
 class Data {
 public:
     typedef std::shared_ptr<Data> Ptr;

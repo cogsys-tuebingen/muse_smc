@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(muse_smc)
 
-include(cmake/muse_enable_c++11.cmake)
-include(cmake/muse_extras.cmake)
+include(cmake/muse_smc_enable_c++11.cmake)
+include(cmake/muse_smc_extras.cmake)
 set(OpenMP true)
-include(cmake/muse_openmp.cmake)
-include(cmake/muse_show_headers.cmake)
-include(cmake/muse_add_unit_test_gtest.cmake)
-include(cmake/muse_add_unit_test_rostest.cmake)
+include(cmake/muse_smc_openmp.cmake)
+include(cmake/muse_smc_show_headers.cmake)
+include(cmake/muse_smc_add_unit_test_gtest.cmake)
+include(cmake/muse_smc_add_unit_test_rostest.cmake)
 set(CATKIN_ENABLE_TESTING ON)
 set(CATKIN_SKIP_TESTING OFF)
 
@@ -21,11 +21,10 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package(
     INCLUDE_DIRS    include
-    LIBRARIES       muse_particle_filter
-    CFG_EXTRAS      muse_extras.cmake
-                    muse_add_unit_test_gtest.cmake
-                    muse_enable_c++11.cmake
-                    muse_show_headers.cmake
+    CFG_EXTRAS      muse_smc_extras.cmake
+                    muse_smc_add_unit_test_gtest.cmake
+                    muse_smc_enable_c++11.cmake
+                    muse_smc_show_headers.cmake
 )
 
 include_directories(

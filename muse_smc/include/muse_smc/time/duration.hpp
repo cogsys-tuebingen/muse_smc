@@ -6,7 +6,7 @@
 
 #include "ros/rate.h"
 
-namespace muse {
+namespace muse_smc {
 class Duration {
 public:
     using clock_t = std::chrono::high_resolution_clock;
@@ -52,52 +52,52 @@ public:
         return true;
     }
 
-    inline muse::Duration operator + (const muse::Duration &other)
+    inline muse_smc::Duration operator + (const muse_smc::Duration &other)
     {
-        return muse::Duration(other.duration_ + duration_);
+        return muse_smc::Duration(other.duration_ + duration_);
     }
 
-    inline muse::Duration operator - (const muse::Duration &other)
+    inline muse_smc::Duration operator - (const muse_smc::Duration &other)
     {
-        return muse::Duration(other.duration_ - duration_);
+        return muse_smc::Duration(other.duration_ - duration_);
     }
 
-    inline muse::Duration operator * (const double s)
+    inline muse_smc::Duration operator * (const double s)
     {
-        return muse::Duration(static_cast<int64_t>(std::floor(nanoseconds() * s)));
+        return muse_smc::Duration(static_cast<int64_t>(std::floor(nanoseconds() * s)));
     }
 
-    inline muse::Duration operator / (const double s)
+    inline muse_smc::Duration operator / (const double s)
     {
-        return muse::Duration(static_cast<int64_t>(std::floor(nanoseconds() / s)));
+        return muse_smc::Duration(static_cast<int64_t>(std::floor(nanoseconds() / s)));
     }
 
-    inline bool operator == (const muse::Duration &other)
+    inline bool operator == (const muse_smc::Duration &other)
     {
         return duration_ == other.duration_;
     }
 
-    inline bool operator != (const muse::Duration &other)
+    inline bool operator != (const muse_smc::Duration &other)
     {
         return duration_ != other.duration_;
     }
 
-    inline bool operator <= (const muse::Duration &other)
+    inline bool operator <= (const muse_smc::Duration &other)
     {
         return duration_ <= other.duration_;
     }
 
-    inline bool operator >= (const muse::Duration &other)
+    inline bool operator >= (const muse_smc::Duration &other)
     {
         return duration_ >= other.duration_;
     }
 
-    inline bool operator > (const muse::Duration &other)
+    inline bool operator > (const muse_smc::Duration &other)
     {
         return duration_ > other.duration_;
     }
 
-    inline bool operator < (const muse::Duration &other)
+    inline bool operator < (const muse_smc::Duration &other)
     {
         return duration_ < other.duration_;
     }

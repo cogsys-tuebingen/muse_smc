@@ -4,9 +4,9 @@
 #include <memory>
 #include <chrono>
 
-#include <muse/time/time.hpp>
+#include <muse_smc/time/time.hpp>
 
-namespace muse {
+namespace muse_smc {
 template<typename sample_t>
 class StateSpace {
 public:

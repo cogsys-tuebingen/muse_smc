@@ -4,13 +4,13 @@
 #include <string>
 #include <limits>
 
-#include <muse/utility/buffered_vector.hpp>
-#include <muse/utility/member_iterator.hpp>
+#include <muse_smc/utility/buffered_vector.hpp>
+#include <muse_smc/utility/member_iterator.hpp>
 
-#include <muse/samples/sample_density.hpp>
-#include <muse/samples/sample_insertion.hpp>
+#include <muse_smc/samples/sample_density.hpp>
+#include <muse_smc/samples/sample_insertion.hpp>
 
-namespace muse {
+namespace muse_smc {
 template<typename sample_t>
 class SampleSet
 {

@@ -1,10 +1,10 @@
 #ifndef PARTICLE_SET_MEMBER_ITERATOR_HPP
 #define PARTICLE_SET_MEMBER_ITERATOR_HPP
 
-#include <muse/utility/buffered_vector.hpp>
-#include <muse/utility/delegate.hpp>
+#include <muse_smc/utility/buffered_vector.hpp>
+#include <muse_smc/utility/delegate.hpp>
 
-namespace muse {
+namespace muse_smc {
 /**
  * @brief The MemberIterator class is used to make a certain member of a data
  *        class available, whereas the full data entry can only be accessed by

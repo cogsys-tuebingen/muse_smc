@@ -1,11 +1,11 @@
 #ifndef PREDICTION_MODEL_HPP
 #define PREDICTION_MODEL_HPP
 
-#include <muse/data/data.hpp>
-#include <muse/samples/sample_set.hpp>
+#include <muse_smc/data/data.hpp>
+#include <muse_smc/samples/sample_set.hpp>
 #include <memory>
 
-namespace muse {
+namespace muse_smc {
 template<typename sample_t>
 class PredictionModel {
 public:

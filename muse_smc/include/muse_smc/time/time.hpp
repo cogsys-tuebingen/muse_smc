@@ -1,9 +1,9 @@
 #ifndef TIME_HPP
 #define TIME_HPP
 
-#include <muse/time/duration.hpp>
+#include <muse_smc/time/duration.hpp>
 
-namespace muse {
+namespace muse_smc {
 class Time {
 public:
     using clock_t = std::chrono::high_resolution_clock;
@@ -46,44 +46,49 @@ public:
         return Time(clock_t::now());
     }
 
-    inline bool operator == (const muse::Time &other) const
+    inline bool operator == (const Time &other) const
     {
         return time_ == other.time_;
     }
 
-    inline bool operator != (const muse::Time &other) const
+    inline bool operator != (const Time &other) const
     {
         return time_ != other.time_;
     }
 
-    inline bool operator <= (const muse::Time &other) const
+    inline bool operator <= (const Time &other) const
     {
         return time_ <= other.time_;
     }
 
-    inline bool operator >= (const muse::Time &other) const
+    inline bool operator >= (const Time &other) const
     {
          return time_ >= other.time_;
     }
 
-    inline bool operator > (const muse::Time &other) const
+    inline bool operator > (const Time &other) const
     {
          return time_ > other.time_;
     }
 
-    inline bool operator < (const muse::Time &other) const
+    inline bool operator < (const Time &other) const
     {
          return time_ < other.time_;
     }
 
-    inline muse::Time operator - (const muse::Duration &d) const
+    inline Duration operator - (const Time &other) const
     {
-        return muse::Time(time_ - d.duration());
+        return Duration(time_ - other.time_);
     }
 
-    inline muse::Time operator + (const muse::Duration &d) const
+    inline Time operator - (const Duration &d) const
     {
-        return muse::Time(time_ + d.duration());
+        return Time(time_ - d.duration());
+    }
+
+    inline Time operator + (const Duration &d) const
+    {
+        return Time(time_ + d.duration());
     }
 
 private:

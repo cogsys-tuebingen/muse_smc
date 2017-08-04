@@ -1,10 +1,10 @@
 #ifndef TIME_FRAME_HPP
 #define TIME_FRAME_HPP
 
-#include <muse/time/time.hpp>
+#include <muse_smc/time/time.hpp>
 #include <string>
 
-namespace muse {
+namespace muse_smc {
     struct TimeFrame {
         const Time start;
         const Time end;

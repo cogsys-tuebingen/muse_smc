@@ -5,9 +5,9 @@
 #include <vector>
 #include <map>
 
-#include <muse/samples/sample_set.hpp>
+#include <muse_smc/samples/sample_set.hpp>
 
-namespace muse {
+namespace muse_smc {
 template<typename sample_t>
 class SamplingNormal {
 public:

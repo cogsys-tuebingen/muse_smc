@@ -1,14 +1,14 @@
 #ifndef FILTER_HPP
 #define FILTER_HPP
 
-#include <muse/prediction/prediction.hpp>
-#include <muse/update/update.hpp>
-#include <muse/sampling/sampling_normal.hpp>
-#include <muse/sampling/sampling_uniform.hpp>
-#include <muse/samples/sample_set.hpp>
-#include <muse/resampling/resampling.hpp>
-#include <muse/resampling/resampling_criterion.hpp>
-#include <muse/filter/state_publisher.hpp>
+#include <muse_smc/prediction/prediction.hpp>
+#include <muse_smc/update/update.hpp>
+#include <muse_smc/sampling/sampling_normal.hpp>
+#include <muse_smc/sampling/sampling_uniform.hpp>
+#include <muse_smc/samples/sample_set.hpp>
+#include <muse_smc/resampling/resampling.hpp>
+#include <muse_smc/resampling/resampling_criterion.hpp>
+#include <muse_smc/filter/state_publisher.hpp>
 
 
 #include <memory>
@@ -18,7 +18,7 @@
 #include <condition_variable>
 #include <map>
 
-namespace muse {
+namespace muse_smc {
 template<typename sample_t>
 class SMC
 {

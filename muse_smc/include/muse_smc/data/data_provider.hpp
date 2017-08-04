@@ -4,11 +4,11 @@
 #include <memory>
 #include <functional>
 
-#include <muse/data/data.hpp>
-#include <muse/utility/signals.hpp>
-#include <muse/utility/delegate.hpp>
+#include <muse_smc/data/data.hpp>
+#include <muse_smc/utility/signals.hpp>
+#include <muse_smc/utility/delegate.hpp>
 
-namespace muse {
+namespace muse_smc {
 template<typename sample_t>
 class DataProvider {
 public:

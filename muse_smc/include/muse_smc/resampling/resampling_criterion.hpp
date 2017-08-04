@@ -1,9 +1,9 @@
 #ifndef RESAMPLING_CRITERION_HPP
 #define RESAMPLING_CRITERION_HPP
 
-#include <muse/prediction/prediction_model.hpp>
+#include <muse_smc/prediction/prediction_model.hpp>
 
-namespace muse {
+namespace muse_smc {
 template<typename sample_t>
 class ResamplingCriterion
 {

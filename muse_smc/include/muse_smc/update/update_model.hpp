@@ -3,11 +3,11 @@
 
 #include <memory>
 
-#include <muse/data/data.hpp>
-#include <muse/state_space/state_space.hpp>
-#include <muse/samples/sample_set.hpp>
+#include <muse_smc/data/data.hpp>
+#include <muse_smc/state_space/state_space.hpp>
+#include <muse_smc/samples/sample_set.hpp>
 
-namespace muse {
+namespace muse_smc {
 template<typename sample_t>
 class UpdateModel {
 public:

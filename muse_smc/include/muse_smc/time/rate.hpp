@@ -1,10 +1,10 @@
 #ifndef RATE_HPP
 #define RATE_HPP
 
-#include <muse/time/time.hpp>
-#include <muse/time/duration.hpp>
+#include <muse_smc/time/time.hpp>
+#include <muse_smc/time/duration.hpp>
 
-namespace muse {
+namespace muse_smc {
 class Rate {
 public:
     using clock_t = std::chrono::high_resolution_clock;
@@ -40,7 +40,7 @@ public:
         return expected_cycle_time_;
     }
 
-    bool Rate::sleep()
+    bool sleep()
     {
         Time expected_end = start_ + expected_cycle_time_;
         Time actual_end = Time::now();
@@ -66,12 +66,12 @@ public:
         return sleep_time.sleep();
     }
 
+
+
 private:
     Time    start_;
     Duration actual_cycle_time_;
     Duration expected_cycle_time_;
-
-
 };
 }
 

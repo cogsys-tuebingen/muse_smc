@@ -7,7 +7,7 @@
 #include <functional>
 #include <map>
 
-namespace muse {
+namespace muse_smc {
 template<typename Slot>
 class Signal;
 

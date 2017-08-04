@@ -1,9 +1,9 @@
 #ifndef PREDICTION_INTEGRAL_HPP
 #define PREDICTION_INTEGRAL_HPP
 
-#include <muse/prediction/prediction_model.hpp>
+#include <muse_smc/prediction/prediction_model.hpp>
 
-namespace muse {
+namespace muse_smc {
 template<typename sample_t, typename data_t>
 class PredictionIntegral
 {

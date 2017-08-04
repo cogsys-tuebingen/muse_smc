@@ -1,15 +1,15 @@
 #ifndef RESAMPLING_HPP
 #define RESAMPLING_HPP
 
-#include <muse/samples/sample_set.hpp>
-#include <muse/sampling/sampling_uniform.hpp>
+#include <muse_smc/samples/sample_set.hpp>
+#include <muse_smc/sampling/sampling_uniform.hpp>
 
-#include <muse/math/random.hpp>
+#include <muse_smc/math/random.hpp>
 
 #include <memory>
 #include <vector>
 
-namespace muse {
+namespace muse_smc {
 template<typename sample_t>
 class Resampling
 {
