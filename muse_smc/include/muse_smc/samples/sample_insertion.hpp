@@ -13,7 +13,7 @@ template<typename sample_t>
 class SampleInsertion {
 public:
     using notify_closed   = delegate<void()>;
-    using notify_update   = delegate<void(const Sample &)>;
+    using notify_update   = delegate<void(const sample_t &)>;
     using sample_vector_t = std::buffered_vector<sample_t, typename sample_t::allocator_t>;
 
     /**
@@ -61,7 +61,7 @@ public:
         return data_.size() < data_.capacity() && open_;
     }
 
-    inline void close_()
+    inline void close()
     {
         if(open_) {
             open_ = false;

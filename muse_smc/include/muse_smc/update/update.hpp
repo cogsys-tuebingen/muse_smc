@@ -12,7 +12,7 @@ public:
     using Ptr = std::shared_ptr<Update>;
     using update_model_t = UpdateModel<sample_t>;
     using sample_set_t   = SampleSet<sample_t>;
-
+    using state_space_t  = StateSpace<sample_t>;
 
     struct Less {
         bool operator()( const Update& lhs,
@@ -40,9 +40,9 @@ public:
         }
     };
 
-    Update(const Data::ConstPtr         &data,
-           const StateSpace::ConstPtr   &state_space,
-           const update_model_t::Ptr    &model) :
+    Update(const Data::ConstPtr                     &data,
+           const typename state_space_t::ConstPtr   &state_space,
+           const typename update_model_t::Ptr       &model) :
         data_(data),
         state_space(state_space),
         model_(model)
@@ -53,12 +53,13 @@ public:
     {
     }
 
-    inline void operator() (sample_set_t::weight_iterator_t weights)
+    inline void operator()
+        (typename sample_set_t::weight_iterator_t weights)
     {
         model_->update(data_, state_space, weights);
     }
 
-    inline void apply(sample_set_t::weight_iterator_t weights)
+    inline void apply(typename sample_set_t::weight_iterator_t weights)
     {
         model_->update(data_, state_space, weights);
     }
@@ -68,7 +69,7 @@ public:
         return data_->getTimeFrame().end;
     }
 
-    inline UpdateModel::Ptr getModel() const
+    inline typename update_model_t::Ptr getModel() const
     {
         return model_;
     }
@@ -80,9 +81,9 @@ public:
 
 
 private:
-    const Data::ConstPtr        data_;
-    const StateSpace::ConstPtr  state_space;
-    update_model_t::Ptr         model_;
+    const Data::ConstPtr                    data_;
+    const typename state_space_t::ConstPtr  state_space;
+    typename update_model_t::Ptr            model_;
 };
 }
 

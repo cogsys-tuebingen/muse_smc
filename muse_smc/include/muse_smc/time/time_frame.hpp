@@ -40,7 +40,7 @@ namespace muse_smc {
 
         inline std::string toString() const
         {
-            return "[" + std::to_string(start.toSec()) + " -> " + std::to_string(end.toSec()) + "]";
+            return "[" + std::to_string(start.seconds()) + " -> " + std::to_string(end.seconds()) + "]";
         }
 
     };

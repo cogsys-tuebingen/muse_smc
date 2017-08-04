@@ -102,7 +102,7 @@ public:
     using notify_touch  = delegate<void()>;
 
     /**
-     * @brief MemberDecorator constrcutor.
+     * @brief MemberDecorator constructor.
      * @param data   - the data structure which shall be iterated
      * @param update - on update callback
      */
@@ -116,7 +116,7 @@ public:
     {
     }
 
-    MemberDecorator(std::buffered_vector<muse_mcl::Data> &data,
+    MemberDecorator(std::buffered_vector<Data> &data,
                     notify_touch touch) :
         data_(data),
         untouched_(true),

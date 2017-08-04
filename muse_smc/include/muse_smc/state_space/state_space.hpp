@@ -70,6 +70,7 @@ protected:
 
     std::string frame_;
     Time        stamp_;
-
+};
+}
 
 #endif // STATE_SPACE_HPP

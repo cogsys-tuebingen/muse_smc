@@ -11,7 +11,7 @@ public:
     using Ptr = std::shared_ptr<FilterState>;
     using sample_set_t = SampleSet<sample_t>;
 
-    virtual void publish(const sample_set_t::Ptr &sample_set) = 0;
+    virtual void publish(const typename sample_set_t::Ptr &sample_set) = 0;
 };
 }
 

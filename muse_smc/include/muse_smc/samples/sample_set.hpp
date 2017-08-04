@@ -28,34 +28,34 @@ public:
     SampleSet(const SampleSet &other) = delete;
     SampleSet& operator = (const SampleSet &other) = delete;
 
-    SampleSet(const std::string           &frame_id,
-              const std::size_t            sample_size,
-              const sample_density_t::Ptr &density) :
+    SampleSet(const std::string                    &frame_id,
+              const std::size_t                     sample_size,
+              const typename sample_density_t::Ptr &density) :
         frame_id_(frame_id),
         minimum_sample_size_(sample_size),
         maximum_sample_size_(sample_size),
-        maximum_weight_(1.0 / sample_size_minimum),
-        average_weight_(1.0 / sample_size_minimum),
-        weight_sum_(1.0),
-        p_t_1_(new sample_vector_t(0, sample_size)),
+        maximum_weight_(0.0),
+        average_weight_(0.0),
+        weight_sum_(0.0),
+        p_t_1_(new sample_vector_t(0, maximum_sample_size_)),
         p_t_1_density_(density),
-        p_t_(new sample_vector_t(0, sample_size))
+        p_t_(new sample_vector_t(0, maximum_sample_size_))
     {
     }
 
     SampleSet(const std::string &frame_id,
               const std::size_t sample_size_minimum,
               const std::size_t sample_size_maxmimum,
-              const sample_density_t::Ptr &density) :
+              const typename sample_density_t::Ptr &density) :
         frame_id_(frame_id),
         minimum_sample_size_(sample_size_minimum),
         maximum_sample_size_(sample_size_maxmimum),
-        maximum_weight_(1.0 / sample_size_minimum),
-        average_weight_(1.0 / sample_size_minimum),
-        weight_sum_(1.0),
-        p_t_1_(new sample_vector_t(0, sample_size_maximum)),
+        maximum_weight_(0.0),
+        average_weight_(0.0),
+        weight_sum_(0.0),
+        p_t_1_(new sample_vector_t(0, maximum_sample_size_)),
         p_t_1_density_(density),
-        p_t_(new sample_vector_t(0, sample_size_maximum))
+        p_t_(new sample_vector_t(0, maximum_sample_size_))
     {
     }
 
@@ -66,14 +66,14 @@ public:
     inline weight_iterator_t getWeightIterator()
     {
         return weight_iterator_t(*p_t_1_,
-                              weight_iterator_t::notify_update::from<sample_set_t, &sample_set_t::weightUpdate>(this),
-                              weight_iterator_t::notify_touch::from<sample_set_t, &sample_set_t::weightStatisticReset>(this));
+                                weight_iterator_t::notify_update::template from<sample_set_t, &sample_set_t::weightUpdate>(this),
+                                weight_iterator_t::notify_touch::template from<sample_set_t, &sample_set_t::weightStatisticReset>(this));
     }
 
     inline state_iterator_t getStateIterator()
     {
         return state_iterator_t(*p_t_1_,
-                              state_iterator_t::notify_touch::from<sample_set_t, &sample_set_t::resetIndexationStatistic>(this));
+                               state_iterator_t::notify_touch::template from<sample_set_t, &sample_set_t::resetIndexationStatistic>(this));
     }
 
     inline sample_insertion_t getInsertion()
@@ -81,9 +81,9 @@ public:
         weightStatisticReset();
         p_t_1_density_->clear();
         p_t_->clear();
-        return SampleInsertion<StateT>(*p_t_,
-                                       SampleInsertion::notify_update::from<sample_set_t, &SampleSet::insertionUpdate>(this),
-                                       SampleInsertion::notify_closed::from<sample_set_t, &SampleSet::insertionClosed>(this));
+        return sample_insertion_t(*p_t_,
+                                  sample_insertion_t::notify_update::template from<sample_set_t, &sample_set_t::insertionUpdate>(this),
+                                  sample_insertion_t::notify_closed::template from<sample_set_t, &sample_set_t::insertionClosed>(this));
     }
 
 
@@ -168,9 +168,9 @@ private:
     double                  average_weight_;
     double                  weight_sum_;
 
-    sample_vector_t::Ptr    p_t_1_;
-    sample_density_t::Ptr   p_t_1_density_;
-    sample_vector_t::Ptr    p_t_;
+    std::shared_ptr<sample_vector_t> p_t_1_;
+    std::shared_ptr<sample_vector_t> p_t_1_density_;
+    std::shared_ptr<sample_vector_t> p_t_;
 
     void weightStatisticReset()
     {
@@ -187,7 +187,7 @@ private:
         average_weight_ = weight_sum_ / p_t_1_->size();
     }
 
-    void insertionUpdate(const Sample<StateT> &sample)
+    void insertionUpdate(const sample_t &sample)
     {
         weightUpdate(sample.weight);
         p_t_1_density_->insert(sample);

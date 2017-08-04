@@ -9,7 +9,7 @@
 #include <muse_smc/resampling/resampling.hpp>
 #include <muse_smc/resampling/resampling_criterion.hpp>
 #include <muse_smc/filter/filter_state.hpp>
-
+#include <muse_smc/utility/synchronized_priority_queue.hpp>
 
 #include <memory>
 #include <thread>
@@ -31,17 +31,19 @@ public:
     using sample_set_t          = SampleSet<sample_t>;
     using update_t              = Update<sample_t>;
     using prediction_t          = Prediction<sample_t>;
-    using prediction_result_t   = prediction_t::predition_model_t::Result;
+    using prediction_result_t   = typename prediction_t::predition_model_t::Result;
     using resampling_criterion_t= ResamplingCriterion<sample_t>;
     using normal_sampling_t     = SamplingNormal<sample_t>;
     using uniform_sampling_t    = SamplingUniform<sample_t>;
     using resampling_t          = Resampling<sample_t>;
     using filter_state_t        = FilterState<sample_t>;
-    using update_queue_t        = std::priority_queue<typename update_t::Ptr,
+    using update_queue_t        =
+    muse_smc::synchronized::priority_queue<typename update_t::Ptr,
     std::deque<typename update_t::Ptr>,
     typename update_t::Greater>;
 
-    using prediction_queue_t  = std::priority_queue<typename prediction_t::Ptr,
+    using prediction_queue_t  =
+    muse_smc::synchronized::priority_queue<typename prediction_t::Ptr,
     std::deque<typename prediction_t::Ptr>,
     typename prediction_t::Greater>;
 
@@ -55,12 +57,12 @@ public:
     {
     }
 
-    void setup(const sample_set_t::Ptr           &sample_set,
-               const uniform_sampling_t::Ptr     &sample_uniform,
-               const normal_sampling_t::Ptr      &sample_normal,
-               const resampling_t::Ptr           &resampling,
-               const resampling_criterion_t::Ptr &resampling_criterion,
-               const filter_state_t::Ptr          &state_publisher)
+    void setup(const typename sample_set_t::Ptr            &sample_set,
+               const typename uniform_sampling_t::Ptr      &sample_uniform,
+               const typename normal_sampling_t::Ptr       &sample_normal,
+               const typename resampling_t::Ptr            &resampling,
+               const typename resampling_criterion_t::Ptr  &resampling_criterion,
+               const typename filter_state_t::Ptr          &state_publisher)
     {
         sample_set_          = sample_set;
         sample_uniform_      = sample_uniform;
@@ -80,14 +82,14 @@ public:
 
     }
 
-    void addPrediction(const prediction_t::Ptr &prediction)
+    void addPrediction(const typename prediction_t::Ptr &prediction)
     {
-
+        prediction_queue_.emplace(prediction);
     }
 
-    void addUpdate(const update_t::Ptr &update)
+    void addUpdate(const typename update_t::Ptr &update)
     {
-
+        update_queue_.emplace(update);
     }
 
     void requestStateInitialization(const typename sample_t::state_t &state,
@@ -106,12 +108,12 @@ public:
 
 protected:
     /// functions to apply to the sample set
-    sample_set_t::Ptr           sample_set_;
-    uniform_sampling_t::Ptr     sample_uniform_;
-    normal_sampling_t::Ptr      sample_normal_;
-    resampling_t::Ptr           resampling_;
-    resampling_criterion_t::Ptr prediction_integral_;
-    filter_state_t::Ptr         state_publisher_;
+    typename sample_set_t::Ptr           sample_set_;
+    typename uniform_sampling_t::Ptr     sample_uniform_;
+    typename normal_sampling_t::Ptr      sample_normal_;
+    typename resampling_t::Ptr           resampling_;
+    typename resampling_criterion_t::Ptr prediction_integral_;
+    typename filter_state_t::Ptr         state_publisher_;
 
     /// requests
     std::mutex                      init_state_mutex_;
@@ -119,6 +121,20 @@ protected:
     typename sample_t::covariance_t init_state_covariance_;
     std::atomic_bool                request_init_state_;
     std::atomic_bool                request_init_uniform_;
+
+    /// processing queues
+    update_queue_t                  update_queue_;
+    prediction_queue_t              prediction_queue_;
+
+    bool hasUpdates()
+    {
+        return !update_queue_.empty();
+    }
+
+    bool hasPredictions()
+    {
+        return !prediction_queue_.empty();
+    }
 
     void requests()
     {

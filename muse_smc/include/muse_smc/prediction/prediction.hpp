@@ -40,21 +40,21 @@ public:
     };
 
 
-    Prediction(const Data::ConstPtr       &data,
-               const PredictionModel::Ptr &model) :
+    Prediction(const Data::ConstPtr                  &data,
+               const typename predition_model_t::Ptr &model) :
         data_(data),
         model_(model)
     {
     }
 
-    inline PredictionModel::Result operator ()
-        (const Time &until, sample_set_t::state_iterator_t states)
+    inline typename predition_model_t::Result operator ()
+        (const Time &until, typename sample_set_t::state_iterator_t states)
     {
         return model_->predict(data_, until, states);
     }
 
-    inline PredictionModel::Result::Ptr apply(const Time  &until,
-                                              sample_set_t::state_iterator_t states)
+    inline typename predition_model_t::Result::Ptr apply(const Time  &until,
+                                                         typename sample_set_t::state_iterator_t states)
     {
         return model_->predict(data_, until, states);
     }
@@ -69,14 +69,14 @@ public:
         return model_->getName();
     }
 
-    inline PredictionModel::Ptr getModel() const
+    inline  typename predition_model_t::Ptr getModel() const
     {
         return model_;
     }
 
 private:
-    Data::ConstPtr          data_;
-    PredictionModel::Ptr    model_;
+    Data::ConstPtr                     data_;
+    typename predition_model_t::Ptr    model_;
 };
 }
 

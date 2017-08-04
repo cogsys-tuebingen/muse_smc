@@ -35,6 +35,11 @@ public:
         return "muse::Resampling";
     }
 
+    inline void setName(const std::string &name)
+    {
+        name_ = name;
+    }
+
     inline std::string getName() const
     {
         return name_;
@@ -50,24 +55,22 @@ public:
         id_ = id;
     }
 
-    inline void setup(const std::string           &name,
-                      const sample_uniform_t::Ptr &uniform_pose_sampler,
-                      const double recovery_alpha_fast = 0.0,
-                      const double recovery_alpha_slow = 0.0)
+    inline void setup(const typename sample_uniform_t::Ptr &uniform_pose_sampler,
+                      const double                          recovery_alpha_fast = 0.0,
+                      const double                          recovery_alpha_slow = 0.0)
     {
-        name_                 = name;
         uniform_pose_sampler_ = uniform_pose_sampler;
         recovery_alpha_fast_  = recovery_alpha_fast;
         recovery_alpha_slow_  = recovery_alpha_slow;
     }
 
-    inline void apply(sample_set_t &particle_set)
+    inline void apply(sample_set_t &sample_set)
     {
-        updateRecovery(particle_set);
+        updateRecovery(sample_set);
         if(recovery_random_pose_probability_ == 0.0)
-            doApply(particle_set);
+            doApply(sample_set);
         else
-            doApplyRecovery(particle_set);
+            doApplyRecovery(sample_set);
     }
 
     inline void resetRecovery()
@@ -77,16 +80,17 @@ public:
     }
 
 protected:
-    std::string                   name_;
-    double                        recovery_alpha_fast_;
-    double                        recovery_alpha_slow_;
-    double                        recovery_fast_;
-    double                        recovery_slow_;
-    double                        recovery_random_pose_probability_;
-    SamplingUniform::Ptr          uniform_pose_sampler_;
+    std::string                     name_;
+    std::size_t                     id_;
+    double                          recovery_alpha_fast_;
+    double                          recovery_alpha_slow_;
+    double                          recovery_fast_;
+    double                          recovery_slow_;
+    double                          recovery_random_pose_probability_;
+    typename sample_uniform_t::Ptr  uniform_pose_sampler_;
 
-    virtual void doApply(ParticleSet &particle_set) = 0;
-    virtual void doApplyRecovery(ParticleSet &particle_set) = 0;
+    virtual void doApply(sample_set_t &sample_set) = 0;
+    virtual void doApplyRecovery(sample_set_t &sample_set) = 0;
 
     inline void updateRecovery(sample_set_t &particle_set)
     {

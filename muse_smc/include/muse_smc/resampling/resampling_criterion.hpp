@@ -14,7 +14,7 @@ public:
     ResamplingCriterion() = default;
     virtual ~ResamplingCriterion() = default;
 
-    virtual void prediction(prediction_model_t::Result::Ptr &step) = 0;
+    virtual void prediction(typename prediction_model_t::Result::Ptr &step) = 0;
     virtual void update() = 0;
     virtual void resample() = 0;
 

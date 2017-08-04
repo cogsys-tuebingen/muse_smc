@@ -10,10 +10,10 @@ template<typename sample_t>
 class PredictionModel {
 public:
     using sample_set_t = SampleSet<sample_t>;
-    using Ptr = std::shared_ptr<PredictionModel>;
+    using Ptr = std::shared_ptr<PredictionModel<sample_t>>;
 
     struct Result {
-        using Ptr = std::shared_ptr<PredictionModel::Result>;
+        using Ptr = std::shared_ptr<PredictionModel<sample_t>::Result>;
 
         Result() = default;
 
@@ -74,9 +74,9 @@ public:
         id_ = id;
     }
 
-    Result::Ptr predict(const Data::ConstPtr         &data,
-                        const Time                    &until,
-                        sample_set_t::state_iterator_t states) = 0;
+    typename Result::Ptr predict(const Data::ConstPtr                   &data,
+                                 const Time                             &until,
+                                 typename sample_set_t::state_iterator_t states) = 0;
 
 protected:
     std::string         name_;

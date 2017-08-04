@@ -12,12 +12,14 @@ template<typename sample_t>
 class UpdateModel {
 public:
     using sample_set_t = SampleSet<sample_t>;
+    using state_space_t = StateSpace<sample_t>;
     using Ptr = std::shared_ptr<UpdateModel>;
+
 
     UpdateModel() = default;
     virtual ~UpdateModel() = default;
 
-    inline const static string Type()
+    inline const static std::string Type()
     {
         return "muse::UpdateModel";
     }
@@ -43,8 +45,8 @@ public:
     }
 
     virtual void apply(const Data::ConstPtr &data,
-                       const StateSpace<sample_t>::ConstPtr &state_space,
-                       sample_set_t::weight_iterator_t weights) = 0;
+                       const typename state_space_t::ConstPtr &state_space,
+                       typename sample_set_t::weight_iterator_t weights) = 0;
 
 protected:
     std::string name_;

@@ -41,7 +41,7 @@ public:
         id_ = id;
     }
 
-    virtual void apply(sample_set_t::sample_insertion_t &insertion) = 0;
+    virtual void apply(typename sample_set_t::sample_insertion_t &insertion) = 0;
     virtual void apply(sample_t &sample) = 0;
     virtual void update() = 0;
 
