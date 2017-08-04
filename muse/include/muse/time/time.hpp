@@ -1,7 +1,7 @@
 #ifndef TIME_HPP
 #define TIME_HPP
 
-#include <chrono>
+#include <muse/time/duration.hpp>
 
 namespace muse {
 class Time {
@@ -13,6 +13,11 @@ public:
 
     Time(const double seconds) :
         time_(std::chrono::nanoseconds(static_cast<int64_t>(seconds * 1e9)))
+    {
+    }
+
+    Time(const int64_t &nanoseconds) :
+        time_(duration_t(nanoseconds))
     {
     }
 
@@ -31,49 +36,59 @@ public:
         return std::chrono::duration_cast<std::chrono::nanoseconds>(time_.time_since_epoch()).count() * 1e-9;
     }
 
+    inline int64_t nanoseconds() const
+    {
+        return std::chrono::duration_cast<std::chrono::nanoseconds>(time_.time_since_epoch()).count();
+    }
+
     inline Time static now()
     {
         return Time(clock_t::now());
     }
+
+    inline bool operator == (const muse::Time &other) const
+    {
+        return time_ == other.time_;
+    }
+
+    inline bool operator != (const muse::Time &other) const
+    {
+        return time_ != other.time_;
+    }
+
+    inline bool operator <= (const muse::Time &other) const
+    {
+        return time_ <= other.time_;
+    }
+
+    inline bool operator >= (const muse::Time &other) const
+    {
+         return time_ >= other.time_;
+    }
+
+    inline bool operator > (const muse::Time &other) const
+    {
+         return time_ > other.time_;
+    }
+
+    inline bool operator < (const muse::Time &other) const
+    {
+         return time_ < other.time_;
+    }
+
+    inline muse::Time operator - (const muse::Duration &d) const
+    {
+        return muse::Time(time_ - d.duration());
+    }
+
+    inline muse::Time operator + (const muse::Duration &d) const
+    {
+        return muse::Time(time_ + d.duration());
+    }
+
 private:
     time_t time_;
-
-
 };
 }
-inline bool operator == (const muse::Time &a,
-                         const muse::Time &b)
-{
-    return a.time() == b.time();
-}
 
-inline bool operator != (const muse::Time &a,
-                         const muse::Time &b)
-{
-    return a.time() != b.time();
-}
-
-inline bool operator <= (const muse::Time &a,
-                         const muse::Time &b)
-{
-    return a.time() <= b.time();
-}
-
-inline bool operator >= (const muse::Time &a,
-                         const muse::Time &b)
-{
-    return a.time() >= b.time();
-}
-
-inline bool operator > (const muse::Time &a,
-                         const muse::Time &b)
-{
-    return a.time() > b.time();
-}
-
-inline bool operator < (const muse::Time &a,
-                        const muse::Time &b)
-{
-    return a.time() < b.time();
-}
 #endif // TIME_HPP
