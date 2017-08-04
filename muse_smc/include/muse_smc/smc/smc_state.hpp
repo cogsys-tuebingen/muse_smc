@@ -5,10 +5,10 @@
 
 namespace muse_smc {
 template<typename sample_t>
-class FilterState
+class SMCState
 {
 public:
-    using Ptr = std::shared_ptr<FilterState>;
+    using Ptr = std::shared_ptr<SMCState>;
     using sample_set_t = SampleSet<sample_t>;
 
     virtual void publish(const typename sample_set_t::Ptr &sample_set) = 0;

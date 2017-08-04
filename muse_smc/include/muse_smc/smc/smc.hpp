@@ -8,7 +8,7 @@
 #include <muse_smc/samples/sample_set.hpp>
 #include <muse_smc/resampling/resampling.hpp>
 #include <muse_smc/resampling/resampling_criterion.hpp>
-#include <muse_smc/filter/filter_state.hpp>
+#include <muse_smc/smc/smc_state.hpp>
 #include <muse_smc/utility/synchronized_priority_queue.hpp>
 
 #include <memory>
@@ -36,7 +36,7 @@ public:
     using normal_sampling_t     = SamplingNormal<sample_t>;
     using uniform_sampling_t    = SamplingUniform<sample_t>;
     using resampling_t          = Resampling<sample_t>;
-    using filter_state_t        = FilterState<sample_t>;
+    using filter_state_t        = SMCState<sample_t>;
     using update_queue_t        =
     muse_smc::synchronized::priority_queue<typename update_t::Ptr,
     std::deque<typename update_t::Ptr>,
