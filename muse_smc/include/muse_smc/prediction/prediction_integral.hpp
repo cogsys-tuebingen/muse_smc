@@ -1,4 +1,4 @@
-#ifndef PREDICTION_INTEGRAL_HPP
+ #ifndef PREDICTION_INTEGRAL_HPP
 #define PREDICTION_INTEGRAL_HPP
 
 #include <muse_smc/prediction/prediction_model.hpp>

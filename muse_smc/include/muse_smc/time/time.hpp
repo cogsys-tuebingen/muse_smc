@@ -10,6 +10,10 @@ public:
     using time_t  = clock_t::time_point;
     using duration_t = clock_t::duration;
 
+    Time() :
+        time_(duration_t(0))
+    {
+    }
 
     Time(const double seconds) :
         time_(std::chrono::nanoseconds(static_cast<int64_t>(seconds * 1e9)))
@@ -39,6 +43,11 @@ public:
     inline int64_t nanoseconds() const
     {
         return std::chrono::duration_cast<std::chrono::nanoseconds>(time_.time_since_epoch()).count();
+    }
+
+    inline bool isZero() const
+    {
+        return time_ == time_t(duration_t(0));
     }
 
     inline Time static now()

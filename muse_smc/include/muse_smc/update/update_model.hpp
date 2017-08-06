@@ -6,7 +6,6 @@
 #include <muse_smc/data/data.hpp>
 #include <muse_smc/state_space/state_space.hpp>
 #include <muse_smc/samples/sample_set.hpp>
-#include <muse_smc/prediction/prediction_integral.hpp>
 
 namespace muse_smc {
 template<typename sample_t>
@@ -14,9 +13,7 @@ class UpdateModel {
 public:
     using sample_set_t = SampleSet<sample_t>;
     using state_space_t = StateSpace<sample_t>;
-    using prediction_integral_t = PredictionIntegral<sample_t>;
     using Ptr = std::shared_ptr<UpdateModel>;
-
 
     UpdateModel()
     {
@@ -52,7 +49,6 @@ public:
     virtual void apply(const Data::ConstPtr &data,
                        const typename state_space_t::ConstPtr &state_space,
                        typename sample_set_t::weight_iterator_t weights) = 0;
-    virtual bool canApplyUpdate(const typename prediction_integral_t::Ptr &prediction_integral) = 0;
 
 protected:
     std::string          name_;

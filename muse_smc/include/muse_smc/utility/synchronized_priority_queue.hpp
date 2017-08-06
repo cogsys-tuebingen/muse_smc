@@ -22,6 +22,12 @@ public:
         return q_.empty();
     }
 
+    inline bool hasElements() const
+    {
+        return !empty();
+    }
+
+
     inline std::size_t size() const
     {
         lock_t l(mutex_);

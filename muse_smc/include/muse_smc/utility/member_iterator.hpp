@@ -97,22 +97,32 @@ public:
 template<typename Data, typename T, T Data::*Member>
 class MemberDecorator {
 public:
-    using iterator      = MemberIterator<Data, T, Member>;
-    using notify_update = delegate<void(const T&)>;
-    using notify_touch  = delegate<void()>;
+    using iterator        = MemberIterator<Data, T, Member>;
+    using notify_update   = delegate<void(const T&)>;
+    using notify_touch    = delegate<void()>;
+    using notify_finished = delegate<void()>;
 
-    /**
-     * @brief MemberDecorator constructor.
-     * @param data   - the data structure which shall be iterated
-     * @param update - on update callback
-     */
     MemberDecorator(std::buffered_vector<Data> &data,
+                    notify_touch                touch,
                     notify_update               update,
-                    notify_touch                touch) :
+                    notify_finished             finished) :
         data_(data),
         untouched_(true),
         touch_(touch),
-        update_(update)
+        update_(update),
+        finished_(finished)
+    {
+    }
+
+
+    MemberDecorator(std::buffered_vector<Data> &data,
+                    notify_touch                touch,
+                    notify_update               update) :
+        data_(data),
+        untouched_(true),
+        touch_(touch),
+        update_(update),
+        finished_([](){return;})
     {
     }
 
@@ -121,8 +131,15 @@ public:
         data_(data),
         untouched_(true),
         touch_(touch),
-        update_([](){return;})
+        update_([](){return;}),
+        finished_([](){return;})
     {
+    }
+
+    virtual ~MemberDecorator()
+    {
+        if(!untouched_)
+            finished_();
     }
 
     /**
@@ -164,6 +181,7 @@ private:
     bool                       untouched_;
     notify_touch               touch_;    /// notify wether an iterator is in use or not
     notify_update              update_;    /// on update callback
+    notify_finished            finished_;
 };
 }
 #endif // PARTICLE_SET_MEMBER_ITERATOR_HPP

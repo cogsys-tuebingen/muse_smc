@@ -75,6 +75,7 @@ public:
             doApplyRecovery(sample_set);
     }
 
+
     inline bool canApplyResampling(const typename prediction_integral_t::Ptr &prediction_integral) = 0;
 
 

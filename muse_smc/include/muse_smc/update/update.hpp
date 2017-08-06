@@ -64,7 +64,7 @@ public:
         model_->update(data_, state_space, weights);
     }
 
-    inline Time getStamp() const
+    inline Time& getStamp() const
     {
         return data_->getTimeFrame().end;
     }

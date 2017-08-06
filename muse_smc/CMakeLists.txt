@@ -27,6 +27,8 @@ catkin_package(
                     muse_smc_show_headers.cmake
 )
 
+add_definitions("-DUSE_DOTTY")
+
 include_directories(
   include
   ${Eigen3_INCLUDE_DIRS}

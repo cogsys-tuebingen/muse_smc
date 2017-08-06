@@ -59,7 +59,7 @@ public:
         return model_->predict(data_, until, states);
     }
 
-    inline const Time & getStamp() const
+    inline const Time& getStamp() const
     {
         return data_->getTimeFrame().start;
     }

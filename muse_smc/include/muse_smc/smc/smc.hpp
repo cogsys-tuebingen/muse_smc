@@ -9,6 +9,7 @@
 #include <muse_smc/resampling/resampling.hpp>
 #include <muse_smc/smc/smc_state.hpp>
 #include <muse_smc/utility/synchronized_priority_queue.hpp>
+#include <muse_smc/utility/dotty.hpp>
 
 #include <memory>
 #include <thread>
@@ -17,6 +18,7 @@
 #include <condition_variable>
 #include <map>
 
+
 namespace muse_smc {
 template<typename sample_t>
 class SMC
@@ -24,7 +26,10 @@ class SMC
 public:
     using Ptr                   = std::shared_ptr<SMC>;
     using mutex_t               = std::mutex;
+    using condition_variable_t = std::condition_variable;
     using lock_t                = std::unique_lock<mutex_t>;
+    using thread_t              = std::thread;
+    using atomic_bool_t         = std::atomic_bool;
 
     /// filter specific type defs
     using sample_set_t          = SampleSet<sample_t>;
@@ -48,12 +53,15 @@ public:
 
     SMC() :
         request_init_state_(false),
-        request_init_uniform_(false)
+        request_init_uniform_(false),
+        worker_thread_active_(false),
+        worker_thread_exit_(false)
     {
     }
 
     virtual ~SMC()
     {
+        end();
     }
 
     void setup(const typename sample_set_t::Ptr            &sample_set,
@@ -69,16 +77,35 @@ public:
         resampling_          = resampling;
         prediction_integral_ = prediction_integral;
         state_publisher_     = state_publisher;
+
+#ifdef USE_DOTTY
+        dotty_.reset(new Dotty);
+#endif
+
     }
 
-    void start()
+    bool start()
     {
-
+        if(!worker_thread_active_) {
+            lock_t l(worker_thread_mutex_);
+            worker_thread_exit_ = false;
+            worker_thread_ = thread_t([this](){loop();});
+            worker_thread_.detach();
+            return true;
+        }
+        return false;
     }
 
-    void end()
+    bool end()
     {
+        if(!worker_thread_active_)
+            return false;
 
+        worker_thread_exit_ = true;
+        notify_event_.notify_one();
+        if(worker_thread_.joinable()) {
+            worker_thread_.join();
+        }
     }
 
     void addPrediction(const typename prediction_t::Ptr &prediction)
@@ -105,10 +132,12 @@ public:
         request_init_uniform_ = true;
     }
 
+    /*++  todo : insert dotty ***/
+
+
 protected:
     /// functions to apply to the sample set
     typename sample_set_t::Ptr           sample_set_;
-    Time                                 sample_set_time_;
     typename uniform_sampling_t::Ptr     sample_uniform_;
     typename normal_sampling_t::Ptr      sample_normal_;
     typename resampling_t::Ptr           resampling_;
@@ -116,20 +145,30 @@ protected:
     typename filter_state_t::Ptr         state_publisher_;
 
     /// requests
-    std::mutex                      init_state_mutex_;
-    typename sample_t::state_t      init_state_;
-    typename sample_t::covariance_t init_state_covariance_;
-    std::atomic_bool                request_init_state_;
-    std::atomic_bool                request_init_uniform_;
+    std::mutex                          init_state_mutex_;
+    typename sample_t::state_t          init_state_;
+    typename sample_t::covariance_t     init_state_covariance_;
+    atomic_bool_t                       request_init_state_;
+    atomic_bool_t                       request_init_uniform_;
 
     /// processing queues
-    update_queue_t                  update_queue_;
-    prediction_queue_t              prediction_queue_;
+    update_queue_t                      update_queue_;
+    prediction_queue_t                  prediction_queue_;
 
     /// background thread
-    std::thread                     worker_thread_;
+    mutex_t                             worker_thread_mutex_;
+    thread_t                            worker_thread_;
+    atomic_bool_t                       worker_thread_active_;
+    atomic_bool_t                       worker_thread_exit_;
+    condition_variable_t                notify_event_;
+    mutable mutex_t                     notify_event_mutex_;
+    condition_variable_t                notify_prediction_;
+    mutable mutex_t                     notify_prediction_mutex_;
 
-
+    /// debugging
+#ifdef USE_DOTTY
+    Dotty::Ptr                          dotty_;
+#endif
 
     bool hasUpdates()
     {
@@ -147,21 +186,117 @@ protected:
             sample_normal_->apply(init_state_,
                                   init_state_covariance_,
                                   sample_set_->getInsertion());
+            state_publisher_->publishIntermidiate(sample_set_);
         }
         if(request_init_uniform_) {
             sample_uniform_->apply(sample_set_->getInsertion());
+            state_publisher_->publishIntermidiate(sample_set_);
+        }
+    }
+
+    void predict(const Time &until)
+    {
+        auto wait_for_prediction = [this] () {
+            if(prediction_queue_.empty()) {
+                lock_t l(notify_prediction_mutex_);
+                notify_prediction_.wait(l);
+            }
+        };
+
+        const Time &time_stamp = sample_set_->getStamp();
+        while(until > time_stamp) {
+            wait_for_prediction();
+            typename prediction_t::Ptr prediction = prediction_queue_.pop();
+            if(prediction->getStamp() < time_stamp) {
+                /// drop odometry messages which are too old
+                continue;
+            }
+
+            /*
+             * There must be more logic behind this.
+             * -> we have to check if motion was fully applied
+             * +-> if so check if the timestamp is equal to 'until'
+             * -> split and retries have to be handled.
+             */
+
+            /// mutate time stamp
+            typename prediction_result_t::Ptr prediction_result = prediction->apply(until, sample_set_->getStateIterator());
+            if(prediction_result.success()) {
+                prediction_integral_->add(prediction_result);
+                sample_set_->setStamp(prediction_result->applied->getTimeFrame().end);
+
+#ifdef USE_DOTTY
+                dotty_->addPrediction(prediction_result->applied->getTimeFrame().end, static_cast<bool>(prediction_result->left_to_apply));
+#endif
+
+                if(prediction_result->left_to_apply) {
+                    typename prediction_t::Ptr prediction_left_to_apply
+                            (new prediction_t(prediction_result->left_to_apply, prediction->getModel()));
+                    prediction_queue_.emplace(prediction_left_to_apply);
+                    break;
+                }
+            } else {
+                prediction_queue_.emplace(prediction);
+            }
         }
     }
 
     void loop()
     {
+        worker_thread_active_ = true;
+        lock_t notify_event_mutex_lock(notify_event_mutex_);
 
+        while(!worker_thread_exit_) {
+            notify_event_.wait(notify_event_mutex_lock);
+
+            if(worker_thread_exit_)
+                break;
+
+            if(sample_set_->getSampleSize() == 0) {
+                sample_uniform_->apply(*sample_set_);
+            }
+
+            while(update_queue_.hasElements()) {
+                if(worker_thread_exit_)
+                    break;
+
+                requests(); /// process all request that came in
+
+                typename update_t::Ptr u = update_queue_.pop();
+                const Time &t = u->getStamp();
+                const Time &sample_set_stamp = sample_set_->getStamp();
+
+                if(t >= sample_set_stamp) {
+                    predict(t);
+                    if(t > sample_set_stamp) {
+                        update_queue_.emplace(u);
+                    } else if (t == sample_set_stamp) {
+                        if(/* motion model integral != zero ... */ true) {
+                            u->apply(sample_set_->getWeightIterator());
+
+#ifdef USE_DOTTY
+                            dotty_->addState(sample_set_stamp);
+                            dotty_->addUpdate(u->getStamp(), u->getModelName());
+#endif
+
+                        }
+                    } else {
+                        std::cerr << "Motion model seems not to be able to interpolate!" << std::endl;
+                    }
+                }
+                if(resample()) {
+                    state_publisher_->publish(sample_set_);
+                } else {
+                    state_publisher_->publishIntermidiate(sample_set_);
+                }
+            }
+        }
+        worker_thread_active_ = false;
     }
 
-    void resample()
+    bool resample()
     {
-
-
+        return true;
     }
 
 };

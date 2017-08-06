@@ -7,6 +7,8 @@
 #include <muse_smc/utility/buffered_vector.hpp>
 #include <muse_smc/utility/member_iterator.hpp>
 
+#include <muse_smc/time/time.hpp>
+
 #include <muse_smc/samples/sample_density.hpp>
 #include <muse_smc/samples/sample_insertion.hpp>
 
@@ -29,9 +31,11 @@ public:
     SampleSet& operator = (const SampleSet &other) = delete;
 
     SampleSet(const std::string                    &frame_id,
+              const Time                           &time_stamp,
               const std::size_t                     sample_size,
               const typename sample_density_t::Ptr &density) :
         frame_id_(frame_id),
+        stamp_(time_stamp),
         minimum_sample_size_(sample_size),
         maximum_sample_size_(sample_size),
         maximum_weight_(0.0),
@@ -44,10 +48,12 @@ public:
     }
 
     SampleSet(const std::string &frame_id,
+              const Time        &time_stamp,
               const std::size_t sample_size_minimum,
               const std::size_t sample_size_maxmimum,
               const typename sample_density_t::Ptr &density) :
         frame_id_(frame_id),
+        stamp_(time_stamp),
         minimum_sample_size_(sample_size_minimum),
         maximum_sample_size_(sample_size_maxmimum),
         maximum_weight_(0.0),
@@ -59,7 +65,6 @@ public:
     {
     }
 
-
     inline SampleSet& operator = (SampleSet &&other) = default;
 
 
@@ -67,7 +72,8 @@ public:
     {
         return weight_iterator_t(*p_t_1_,
                                 weight_iterator_t::notify_update::template from<sample_set_t, &sample_set_t::weightUpdate>(this),
-                                weight_iterator_t::notify_touch::template from<sample_set_t, &sample_set_t::weightStatisticReset>(this));
+                                weight_iterator_t::notify_touch::template from<sample_set_t, &sample_set_t::weightStatisticReset>(this),
+                                weight_iterator_t::notify_finished::template from<sample_set_t, &sample_set_t::normalizeWeights>(this));
     }
 
     inline state_iterator_t getStateIterator()
@@ -134,6 +140,16 @@ public:
         return frame_id_;
     }
 
+    inline Time& getStamp() const
+    {
+        return stamp_;
+    }
+
+    inline void setStamp(const Time &time)
+    {
+        stamp_ = time;
+    }
+
     inline double getMaximumWeight() const
     {
         return maximum_weight_;
@@ -161,6 +177,7 @@ public:
 
 private:
     std::string             frame_id_;
+    Time                    stamp_;
     std::size_t             minimum_sample_size_;
     std::size_t             maximum_sample_size_;
 
