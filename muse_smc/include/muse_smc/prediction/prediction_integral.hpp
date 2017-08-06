@@ -4,7 +4,7 @@
 #include <muse_smc/prediction/prediction_model.hpp>
 
 namespace muse_smc {
-template<typename sample_t, typename data_t>
+template<typename sample_t>
 class PredictionIntegral
 {
 public:
@@ -14,9 +14,13 @@ public:
     PredictionIntegral() = default;
     virtual ~PredictionIntegral() = default;
 
-    virtual void add(prediction_model_t::Result::Ptr &step) = 0;
+    virtual void add(typename prediction_model_t::Result::Ptr &step) = 0;
     virtual void reset() = 0;
-    virtual data_t get() = 0;
+
+    /**
+      * define minus
+      * define if predictions were applied
+      */
 
 };
 }

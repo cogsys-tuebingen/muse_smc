@@ -7,7 +7,6 @@
 #include <muse_smc/sampling/sampling_uniform.hpp>
 #include <muse_smc/samples/sample_set.hpp>
 #include <muse_smc/resampling/resampling.hpp>
-#include <muse_smc/resampling/resampling_criterion.hpp>
 #include <muse_smc/smc/smc_state.hpp>
 #include <muse_smc/utility/synchronized_priority_queue.hpp>
 
@@ -32,7 +31,7 @@ public:
     using update_t              = Update<sample_t>;
     using prediction_t          = Prediction<sample_t>;
     using prediction_result_t   = typename prediction_t::predition_model_t::Result;
-    using resampling_criterion_t= ResamplingCriterion<sample_t>;
+    using prediction_integral_t = PredictionIntegral<sample_t>;
     using normal_sampling_t     = SamplingNormal<sample_t>;
     using uniform_sampling_t    = SamplingUniform<sample_t>;
     using resampling_t          = Resampling<sample_t>;
@@ -61,14 +60,14 @@ public:
                const typename uniform_sampling_t::Ptr      &sample_uniform,
                const typename normal_sampling_t::Ptr       &sample_normal,
                const typename resampling_t::Ptr            &resampling,
-               const typename resampling_criterion_t::Ptr  &resampling_criterion,
+               const typename prediction_integral_t::Ptr   &prediction_integral,
                const typename filter_state_t::Ptr          &state_publisher)
     {
         sample_set_          = sample_set;
         sample_uniform_      = sample_uniform;
         sample_normal_       = sample_normal;
         resampling_          = resampling;
-        prediction_integral_ = resampling_criterion;
+        prediction_integral_ = prediction_integral;
         state_publisher_     = state_publisher;
     }
 
@@ -109,10 +108,11 @@ public:
 protected:
     /// functions to apply to the sample set
     typename sample_set_t::Ptr           sample_set_;
+    Time                                 sample_set_time_;
     typename uniform_sampling_t::Ptr     sample_uniform_;
     typename normal_sampling_t::Ptr      sample_normal_;
     typename resampling_t::Ptr           resampling_;
-    typename resampling_criterion_t::Ptr prediction_integral_;
+    typename prediction_integral_t::Ptr  prediction_integral_;
     typename filter_state_t::Ptr         state_publisher_;
 
     /// requests
@@ -125,6 +125,11 @@ protected:
     /// processing queues
     update_queue_t                  update_queue_;
     prediction_queue_t              prediction_queue_;
+
+    /// background thread
+    std::thread                     worker_thread_;
+
+
 
     bool hasUpdates()
     {
