@@ -11,6 +11,7 @@ public:
     using Ptr = std::shared_ptr<PredictionIntegral>;
     using prediction_model_t = PredictionModel<sample_t>;
 
+
     PredictionIntegral() = default;
     virtual ~PredictionIntegral() = default;
 

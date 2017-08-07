@@ -52,6 +52,7 @@ public:
     typename prediction_t::Greater>;
 
     SMC() :
+        updates_applied_after_resampling_(0ul),
         request_init_state_(false),
         request_init_uniform_(false),
         worker_thread_active_(false),
@@ -68,16 +69,16 @@ public:
                const typename uniform_sampling_t::Ptr      &sample_uniform,
                const typename normal_sampling_t::Ptr       &sample_normal,
                const typename resampling_t::Ptr            &resampling,
-               const typename prediction_integral_t::Ptr   &prediction_integral,
                const typename filter_state_t::Ptr          &state_publisher)
     {
         sample_set_          = sample_set;
         sample_uniform_      = sample_uniform;
         sample_normal_       = sample_normal;
         resampling_          = resampling;
-        prediction_integral_ = prediction_integral;
         state_publisher_     = state_publisher;
 
+        prediction_integral_update_.reset(new prediction_integral_t);
+        prediction_integral_resampling_.reset(new prediction_integral_t);
 #ifdef USE_DOTTY
         dotty_.reset(new Dotty);
 #endif
@@ -141,7 +142,9 @@ protected:
     typename uniform_sampling_t::Ptr     sample_uniform_;
     typename normal_sampling_t::Ptr      sample_normal_;
     typename resampling_t::Ptr           resampling_;
-    typename prediction_integral_t::Ptr  prediction_integral_;
+    typename prediction_integral_t::Ptr  prediction_integral_update_;
+    typename prediction_integral_t::Ptr  prediction_integral_resampling_;
+    std::size_t                          updates_applied_after_resampling_;
     typename filter_state_t::Ptr         state_publisher_;
 
     /// requests
@@ -222,7 +225,8 @@ protected:
             /// mutate time stamp
             typename prediction_result_t::Ptr prediction_result = prediction->apply(until, sample_set_->getStateIterator());
             if(prediction_result.success()) {
-                prediction_integral_->add(prediction_result);
+                prediction_integral_update_->add(prediction_result);
+                prediction_integral_resampling_->add(prediction_result);
                 sample_set_->setStamp(prediction_result->applied->getTimeFrame().end);
 
 #ifdef USE_DOTTY
@@ -271,20 +275,24 @@ protected:
                     if(t > sample_set_stamp) {
                         update_queue_.emplace(u);
                     } else if (t == sample_set_stamp) {
-                        if(/* motion model integral != zero ... */ true) {
+                        if(!prediction_integral_update_->isZero()) {
                             u->apply(sample_set_->getWeightIterator());
-
+                            prediction_integral_update_->reset();
+                            ++updates_applied_after_resampling_;
 #ifdef USE_DOTTY
                             dotty_->addState(sample_set_stamp);
                             dotty_->addUpdate(u->getStamp(), u->getModelName());
 #endif
-
                         }
                     } else {
                         std::cerr << "Motion model seems not to be able to interpolate!" << std::endl;
                     }
                 }
-                if(resample()) {
+                if(!prediction_integral_resampling_->isZero() &&
+                        updates_applied_after_resampling_ > 0ul) {
+                    resampling_->apply(sample_set_);
+                    updates_applied_after_resampling_ = 0ul;
+
                     state_publisher_->publish(sample_set_);
                 } else {
                     state_publisher_->publishIntermidiate(sample_set_);
@@ -293,12 +301,6 @@ protected:
         }
         worker_thread_active_ = false;
     }
-
-    bool resample()
-    {
-        return true;
-    }
-
 };
 }
 
