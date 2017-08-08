@@ -9,16 +9,17 @@
  * Default sample type.
  */
 namespace muse {
-template<typename StateT>
+template<typename state_t>
 struct Sample
 {
-    using Ptr              = std::shared_ptr<Sample<StateT>>;
-    using allocator_t      = std::allocator<Sample<StateT>>;
-    using state_t          = StateT;
+    using Ptr              = std::shared_ptr<Sample<state_t>>;
+    using allocator_t      = std::allocator<Sample<state_t>>;
+    using state_t          = state_t;
+    using transform_t      = state_t;
     using state_covariance = std::vector<double>;
 
 
-    StateT state;
+    state_t state;
     double weight;
 
     inline Sample() :
@@ -31,7 +32,7 @@ struct Sample
     {
     }
 
-    inline Sample(const StateT &state,
+    inline Sample(const state_t &state,
                   const double weight) :
         state(state),
         weight(weight)

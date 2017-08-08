@@ -13,6 +13,7 @@ public:
     using Ptr                     = std::shared_ptr<StateSpace>;
     using ConstPtr                = std::shared_ptr<StateSpace const>;
     using state_t                 = typename sample_t::state_t;
+    using state_space_transform_t = typename sample_t::transform_t;
     using state_space_boundary_t  = typename sample_t::state_space_boundary_t;
 
 
@@ -38,10 +39,10 @@ public:
         return true;
     }
 
-    virtual inline state_space_boundary_t getMin()    const = 0;
-    virtual inline state_space_boundary_t getMax()    const = 0;
-    virtual inline state_space_boundary_t getOrigin() const = 0;
-    virtual inline bool isAvailable()     const = 0;
+    virtual inline state_space_boundary_t  getMin()    const = 0;
+    virtual inline state_space_boundary_t  getMax()    const = 0;
+    virtual inline state_space_transform_t getOrigin() const = 0;
+    virtual inline bool isAvailable()      const = 0;
 
     inline std::string getFrame() const
     {

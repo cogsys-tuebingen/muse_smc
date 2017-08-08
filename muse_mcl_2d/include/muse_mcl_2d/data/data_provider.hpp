@@ -13,16 +13,8 @@ namespace muse_mcl_2d {
 class DataProvider : public muse_smc::DataProvider<Pose2D>
 {
 public:
-    inline void setup(const TFProvider::Ptr &tf_provider,
-                      ros::NodeHandle       &nh_private)
-    {
-        tf_provider_ = tf_provider;
-        doSetup(nh_private);
-    }
-
-protected:
-    TFProvider::Ptr  tf_provider_;
-    virtual void doSetup(ros::NodeHandle &nh_private) = 0;
+    inline virtual void setup(const TFProvider::Ptr &tf_provider,
+                              ros::NodeHandle       &nh_private) = 0;
 };
 }
 

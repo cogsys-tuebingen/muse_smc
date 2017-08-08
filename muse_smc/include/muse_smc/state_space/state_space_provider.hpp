@@ -39,7 +39,7 @@ public:
         id_ = id;
     }
 
-    virtual state_space_t::ConstPtr getStateSpace() const = 0;
+    virtual typename state_space_t::ConstPtr getStateSpace() const = 0;
 
 protected:
     std::string  name_;

@@ -3,6 +3,7 @@
 
 #include <memory>
 
+#include <muse_mcl_2d/math/point_2d.hpp>
 #include <muse_mcl_2d/math/pose_2d.hpp>
 #include <muse_mcl_2d/math/covariance_2d.hpp>
 
@@ -12,6 +13,8 @@ public:
     using Ptr              = std::shared_ptr<Sample2D>;
     using allocator_t      = std::allocator<Sample2D>;
     using state_t          = Pose2D;
+    using state_space_boundary_t = Point2D;
+    using transform_t      = Transform2D;
     using state_covariance = Covariance2D;
 
     double weight;
