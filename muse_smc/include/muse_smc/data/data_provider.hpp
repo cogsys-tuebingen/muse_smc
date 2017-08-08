@@ -12,10 +12,10 @@ namespace muse_smc {
 template<typename sample_t>
 class DataProvider {
 public:
-    typedef std::shared_ptr<DataProvider>              Ptr;
-    typedef delegate<void(const Data::ConstPtr&)>      callback_t;
-    typedef Signal<callback_t>                         signal_t;
-    typedef signal_t::Connection                       connection_t;
+    using Ptr          = std::shared_ptr<DataProvider<sample_t>>;
+    using callback_t   = delegate<void(const Data::ConstPtr&)>;
+    using signal_t     = Signal<callback_t>;
+    using connection_t = signal_t::Connection;
 
     DataProvider() = default;
     virtual ~DataProvider() = default;
@@ -30,7 +30,7 @@ public:
         return name_;
     }
 
-    void setup(const std::string     &name)
+    void setName(const std::string &name)
     {
         name_ = name;
     }
@@ -73,6 +73,7 @@ public:
     }
 
 protected:
+    std::size_t       id_;
     std::string       name_;
     signal_t          data_received_;
 };

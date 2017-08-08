@@ -1,0 +1,4 @@
+#ifndef MAP_PROVIDER_HPP
+#define MAP_PROVIDER_HPP
+
+#endif // MAP_PROVIDER_HPP

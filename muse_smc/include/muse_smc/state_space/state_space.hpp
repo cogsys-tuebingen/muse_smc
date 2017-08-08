@@ -10,9 +10,10 @@ namespace muse_smc {
 template<typename sample_t>
 class StateSpace {
 public:
-    using Ptr =  std::shared_ptr<StateSpace>;
-    using ConstPtr = std::shared_ptr<StateSpace const>;
-    using state_t = typename sample_t::state_t;
+    using Ptr                     = std::shared_ptr<StateSpace>;
+    using ConstPtr                = std::shared_ptr<StateSpace const>;
+    using state_t                 = typename sample_t::state_t;
+    using state_space_boundary_t  = typename sample_t::state_space_boundary_t;
 
 
     StateSpace(const std::string &frame) :
@@ -32,14 +33,14 @@ public:
     {
     }
 
-    virtual bool validate(const state_t &) const
+    virtual bool validate(const state_space_boundary_t &) const
     {
         return true;
     }
 
-    virtual inline state_t getMin()    const = 0;
-    virtual inline state_t getMax()    const = 0;
-    virtual inline state_t getOrigin() const = 0;
+    virtual inline state_space_boundary_t getMin()    const = 0;
+    virtual inline state_space_boundary_t getMax()    const = 0;
+    virtual inline state_space_boundary_t getOrigin() const = 0;
     virtual inline bool isAvailable()     const = 0;
 
     inline std::string getFrame() const

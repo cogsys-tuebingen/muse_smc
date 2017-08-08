@@ -17,6 +17,7 @@ struct Sample
     using state_t          = StateT;
     using state_covariance = std::vector<double>;
 
+
     StateT state;
     double weight;
 

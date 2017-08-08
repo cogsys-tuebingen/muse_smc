@@ -1,47 +1,43 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(muse_mcl_2d)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
-
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  cslibs_boost_geometry
   cslibs_indexed_storage
-  cslibs_vectormaps
-  muse_mcl
   nav_msgs
   pcl_ros
   pluginlib
   roscpp
   rostest
   sensor_msgs
+  muse_smc
 )
 
-catkin_package()
+find_package(Eigen3 REQUIRED)
 
+catkin_package(
+    INCLUDE_DIRS    include
+)
 
-#add_library(${PROJECT_NAME}_particle_filter
-#    src/particle_filter.cpp
-#)
+include_directories(
+    include
+    ${Eigen3_INCLUDE_DIRS}
+    ${catkin_INCLUDE_DIRS}
+)
 
-#add_dependencies(${PROJECT_NAME}_particle_filter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_library(${PROJECT_NAME}_compilation
+    src/compilation.cpp
+)
 
-#target_link_libraries(${PROJECT_NAME}_particle_filter
-#    ${catkin_LIBRARIES}
-#    ${tinyXML_LIBRARIES}
-#)
+target_link_libraries(${PROJECT_NAME}_compilation
+    ${catkin_LIBRARIES}
+)
 
+#install(FILES plugins.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-#add_executable(${PROJECT_NAME}_node
-#    src/muse_mcl_node.cpp
-#)
+#install(TARGETS ${PROJECT_NAME}_providers ${PROJECT_NAME}_models
+#        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 
-#add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-#target_link_libraries(${PROJECT_NAME}_node
-#    ${catkin_LIBRARIES}
-#    ${PROJECT_NAME}_particle_filter
-#)
+install(DIRECTORY include/${PROJECT_NAME}/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
