@@ -2,6 +2,7 @@
 #define VECTOR_2D_HPP
 
 #include <cmath>
+#include <Eigen/Core>
 
 namespace muse_mcl_2d {
 class Vector2D {
@@ -100,6 +101,11 @@ public:
         x_ /= d;
         y_ /= d;
         return *this;
+    }
+
+    inline Eigen::Vector2d toEigen() const
+    {
+        return Eigen::Vector2d(x_, y_);
     }
 
 private:

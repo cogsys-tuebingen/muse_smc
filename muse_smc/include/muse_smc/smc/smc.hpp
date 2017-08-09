@@ -10,6 +10,7 @@
 #include <muse_smc/smc/smc_state.hpp>
 #include <muse_smc/utility/synchronized_priority_queue.hpp>
 #include <muse_smc/utility/dotty.hpp>
+#include <muse_smc/time/rate.hpp>
 
 #include <memory>
 #include <thread>
@@ -17,6 +18,12 @@
 #include <queue>
 #include <condition_variable>
 #include <map>
+
+/***
+ * Distance thresholds for resampling and update throttling are
+ * currently left out of the game. Questionable is, if time
+ * thresholds respectively rates can be used instead.
+ */
 
 
 namespace muse_smc {
@@ -69,7 +76,8 @@ public:
                const typename uniform_sampling_t::Ptr      &sample_uniform,
                const typename normal_sampling_t::Ptr       &sample_normal,
                const typename resampling_t::Ptr            &resampling,
-               const typename filter_state_t::Ptr          &state_publisher)
+               const typename filter_state_t::Ptr          &state_publisher,
+               const Rate                                  &preferred_filter_state_update_rate)
     {
         sample_set_          = sample_set;
         sample_uniform_      = sample_uniform;
@@ -133,9 +141,6 @@ public:
         request_init_uniform_ = true;
     }
 
-    /*++  todo : insert dotty ***/
-
-
 protected:
     /// functions to apply to the sample set
     typename sample_set_t::Ptr           sample_set_;
@@ -143,8 +148,11 @@ protected:
     typename normal_sampling_t::Ptr      sample_normal_;
     typename resampling_t::Ptr           resampling_;
     typename prediction_integral_t::Ptr  prediction_integral_update_;
+
     typename prediction_integral_t::Ptr  prediction_integral_resampling_;
     std::size_t                          updates_applied_after_resampling_;
+
+
     typename filter_state_t::Ptr         state_publisher_;
 
     /// requests

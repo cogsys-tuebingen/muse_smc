@@ -75,10 +75,6 @@ public:
             doApplyRecovery(sample_set);
     }
 
-
-    inline bool canApplyResampling(const typename prediction_integral_t::Ptr &prediction_integral) = 0;
-
-
     inline void resetRecovery()
     {
         recovery_fast_ = 0.0;

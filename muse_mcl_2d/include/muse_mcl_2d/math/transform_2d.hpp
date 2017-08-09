@@ -6,7 +6,7 @@
 namespace muse_mcl_2d {
 class Transform2D {
 public:
-    Transform2D() :
+    inline Transform2D() :
         translation_(0.0, 0.0),
         yaw_(0.0),
         sin_(0.0),
@@ -14,7 +14,7 @@ public:
     {
     }
 
-    Transform2D(const double x,
+    inline Transform2D(const double x,
                 const double y) :
         translation_(x, y),
         yaw_(0.0),
@@ -23,7 +23,7 @@ public:
     {
     }
 
-    Transform2D(const Vector2D &translation) :
+    inline Transform2D(const Vector2D &translation) :
         translation_(translation),
         yaw_(0.0),
         sin_(0.0),
@@ -31,7 +31,7 @@ public:
     {
     }
 
-    Transform2D(const double yaw,
+    inline Transform2D(const double yaw,
                 const double x,
                 const double y) :
         translation_(x, y),
@@ -41,7 +41,7 @@ public:
     {
     }
 
-    Transform2D(const Vector2D &translation,
+    inline Transform2D(const Vector2D &translation,
                 const double yaw) :
         translation_(translation),
         yaw_(yaw),
@@ -50,14 +50,14 @@ public:
     {
     }
 
-    Vector2D operator * (const Vector2D &v)
+    inline Vector2D operator * (const Vector2D &v)
     {
         return Vector2D(cos_ * v.x() - sin_ * v.y() + translation_.x(),
                         sin_ * v.x() + cos_ * v.y() + translation_.y());
 
     }
 
-    Transform2D operator * (const Transform2D &other)
+    inline Transform2D operator * (const Transform2D &other)
     {
         Transform2D t;
         t.sin_ = sin_ * other.cos_ + other.sin_ * cos_;
@@ -69,7 +69,7 @@ public:
     }
 
 
-    Transform2D & operator *= (const Transform2D &other)
+    inline Transform2D & operator *= (const Transform2D &other)
     {
 
         const double s = sin_ * other.cos_ + other.sin_ * cos_;
@@ -80,6 +80,26 @@ public:
         sin_ = s;
         cos_ = c;
         return *this;
+    }
+
+    inline Vector2D & translation()
+    {
+        return translation_;
+    }
+
+    inline Vector2D const & translation() const
+    {
+        return translation_;
+    }
+
+    inline double & yaw()
+    {
+        return yaw_;
+    }
+
+    inline double yaw() const
+    {
+        return yaw_;
     }
 
 private:
