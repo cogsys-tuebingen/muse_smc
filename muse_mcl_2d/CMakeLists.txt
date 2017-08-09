@@ -4,15 +4,38 @@ project(muse_mcl_2d)
 find_package(catkin REQUIRED COMPONENTS
   cslibs_indexed_storage
   nav_msgs
+  sensor_msgs
   pcl_ros
   pluginlib
   roscpp
   rostest
-  sensor_msgs
   muse_smc
+  visualization_msgs
+  pluginlib
+  geometry_msgs
+  message_generation
+  std_msgs
 )
 
 find_package(Eigen3 REQUIRED)
+
+add_service_files(
+   FILES
+   GlobalInitialization.srv
+   PoseInitialization.srv
+)
+
+add_message_files(
+    FILES
+    SampleMsg.msg
+    SampleSetMsg.msg
+)
+
+generate_messages(
+   DEPENDENCIES
+   std_msgs
+   geometry_msgs
+)
 
 catkin_package(
     INCLUDE_DIRS    include
@@ -29,6 +52,16 @@ add_library(${PROJECT_NAME}_compilation
 )
 
 target_link_libraries(${PROJECT_NAME}_compilation
+    ${catkin_LIBRARIES}
+)
+
+add_executable(${PROJECT_NAME}_node
+    src/muse_mcl_2d_node.cpp
+)
+
+add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(${PROJECT_NAME}_node
     ${catkin_LIBRARIES}
 )
 

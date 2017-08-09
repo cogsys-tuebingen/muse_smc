@@ -30,9 +30,9 @@ find_package(catkin REQUIRED COMPONENTS
     sensor_msgs
     tf
     roscpp
+    cslibs_indexed_storage
     visualization_msgs
     pluginlib
-    cslibs_indexed_storage
     geometry_msgs
     message_generation
     std_msgs

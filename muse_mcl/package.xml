@@ -33,12 +33,12 @@
   <run_depend>visualization_msgs</run_depend>
   <run_depend>geometry_msgs</run_depend>
   <run_depend>message_runtime</run_depend>
+  <run_depend>std_msgs</run_depend>
   <run_depend>pluginlib</run_depend>
   <run_depend>tinyxml</run_depend>
   <run_depend>eigen</run_depend>
   <run_depend>boost</run_depend>
   <run_depend>cslibs_indexed_storage</run_depend>
-  <run_depend>std_msgs</run_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

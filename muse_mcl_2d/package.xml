@@ -50,6 +50,11 @@
   <build_depend>rostest</build_depend>
   <build_depend>sensor_msgs</build_depend>
   <build_depend>muse_smc</build_depend>
+  <build_depend>visualization_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>message_runtime</build_depend>
+  <build_depend>std_msgs</build_depend>
+
 
   <run_depend>cslibs_boost_geometry</run_depend>
   <run_depend>cslibs_indexed_storage</run_depend>
@@ -61,7 +66,10 @@
   <run_depend>rostest</run_depend>
   <run_depend>sensor_msgs</run_depend>
   <run_depend>muse_smc</run_depend>
-
+  <run_depend>visualization_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>message_runtime</run_depend>
+  <run_depend>std_msgs</run_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
