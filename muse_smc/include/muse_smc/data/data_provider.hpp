@@ -22,7 +22,7 @@ public:
 
     inline const static std::string Type()
     {
-        return "muse::DataProvider";
+        return "muse_smc::DataProvider";
     }
 
     inline std::string getName() const

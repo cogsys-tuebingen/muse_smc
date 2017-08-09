@@ -34,7 +34,7 @@ public:
 
     inline const static std::string Type()
     {
-        return "muse::Resampling";
+        return "muse_smc::Resampling";
     }
 
     inline void setName(const std::string &name)

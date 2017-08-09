@@ -16,7 +16,7 @@ public:
 
     inline const static std::string Type()
     {
-        return "muse::StateSpaceProvider";
+        return "muse_smc::StateSpaceProvider";
     }
 
     inline std::string getName() const

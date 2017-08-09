@@ -51,7 +51,7 @@ public:
 
     inline static const std::string Type()
     {
-        return "muse::PredictionModel";
+        return "muse_smc::PredictionModel";
     }
 
     inline const std::string& getName() const

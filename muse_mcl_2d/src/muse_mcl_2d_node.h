@@ -1,15 +1,17 @@
 #ifndef MUSE_MCL_NODE_H
 #define MUSE_MCL_NODE_H
 
-#include <muse_mcl/particle_filter/particle_filter.hpp>
+#include <muse_smc/smc/smc.hpp>
 
 #include <muse_mcl/GlobalInitialization.h>
 #include <muse_mcl/PoseInitialization.h>
 
-#include <muse_mcl/tf/tf_provider.hpp>
+#include <muse_mcl_2d/tf/tf_provider.hpp>
 
-#include <muse_mcl/providers/provider_data.hpp>
-#include <muse_mcl/providers/provider_map.hpp>
+#include <muse_mcl_2d/data/data_provider.hpp>
+#include <muse_mcl_2d/map/map_provider.hpp>
+
+
 
 #include <muse_mcl/update/update_forwarder.hpp>
 #include <muse_mcl/prediction/prediction_forwarder.hpp>
