@@ -1,4 +1,4 @@
-#include "muse_mcl_node.h"
+#include "muse_mcl_2d_node.h"
 
 using namespace muse_mcl;
 

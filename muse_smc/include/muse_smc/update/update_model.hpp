@@ -23,7 +23,7 @@ public:
 
     inline const static std::string Type()
     {
-        return "muse::UpdateModel";
+        return "muse_smc::UpdateModel";
     }
 
     inline const std::string& getName() const

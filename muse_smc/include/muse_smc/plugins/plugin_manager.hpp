@@ -12,7 +12,7 @@
 
 #include <muse_mcl/utility/delegate.hpp>
 
-namespace muse_mcl
+namespace muse_smc
 {
 
 template <class M>

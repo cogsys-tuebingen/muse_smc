@@ -21,7 +21,7 @@ public:
 
     inline const static std::string Type()
     {
-        return "muse::SamplingNormal";
+        return "muse_smc::SamplingNormal";
     }
 
     inline std::string getName() const

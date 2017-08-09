@@ -6,7 +6,7 @@
 #include <ros/node_handle.h>
 #include <boost/regex.hpp>
 
-namespace muse_mcl {
+namespace muse_smc {
 class PluginLoader
 {
 public:

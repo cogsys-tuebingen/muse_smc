@@ -5,12 +5,13 @@
 
 #include "plugin_manager.hpp"
 
-namespace muse_mcl {
+namespace muse_smc {
 template<typename PluginType, typename ... setup_args_t>
 class PluginFactory {
 public:
     PluginFactory() :
-        plugin_manager(PluginType::Type())
+        plugin_manager(PluginType::Type()),
+        plugin_id_(0)
     {
         plugin_manager.load();
     }
@@ -22,7 +23,9 @@ public:
         auto constructor = plugin_manager.getConstructor(class_name);
         if(constructor) {
             typename PluginType::Ptr plugin = constructor();
-            plugin->setup(plugin_name, arguments...);
+            plugin->setName(plugin_name);
+            plugin->setId(++plugin_id_);
+            plugin->setup(arguments...);
             return plugin;
         } else {
             return nullptr;
@@ -36,7 +39,7 @@ public:
 
 protected:
     PluginManager<PluginType> plugin_manager;
-
+    std::size_t               plugin_id_;
 };
 }
 #endif /* PLUGIN_FACTORY_HPP */
