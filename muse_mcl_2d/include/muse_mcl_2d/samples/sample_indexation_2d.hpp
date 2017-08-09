@@ -42,18 +42,18 @@ public:
     inline index_t create(const Sample2D &sample) const
     {
         return index_t({
-                             static_cast<int>(std::floor(sample.state.x()            * resolution_inv_[0])),
-                             static_cast<int>(std::floor(sample.state.y()            * resolution_inv_[1])),
-                             static_cast<int>(std::floor((sample.state.yaw() + M_PI) * resolution_inv_[2])),
+                             static_cast<int>(std::floor(sample.state.tx()            * resolution_inv_[0])),
+                             static_cast<int>(std::floor(sample.state.ty()            * resolution_inv_[1])),
+                             static_cast<int>(std::floor((sample.state.yaw() + M_PI)  * resolution_inv_[2])),
                          });
     }
 
     inline index_t create(const Sample2D::state_t &state) const
     {
         return index_t({
-                             static_cast<int>(std::floor(state.x()            * resolution_inv_[0])),
-                             static_cast<int>(std::floor(state.y()            * resolution_inv_[1])),
-                             static_cast<int>(std::floor((state.yaw() + M_PI) * resolution_inv_[2])),
+                             static_cast<int>(std::floor(state.tx()            * resolution_inv_[0])),
+                             static_cast<int>(std::floor(state.ty()            * resolution_inv_[1])),
+                             static_cast<int>(std::floor((state.yaw() + M_PI)  * resolution_inv_[2])),
                          });
     }
 

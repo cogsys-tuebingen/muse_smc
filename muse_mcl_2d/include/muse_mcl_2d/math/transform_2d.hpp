@@ -82,6 +82,26 @@ public:
         return *this;
     }
 
+    inline double & tx()
+    {
+        return translation_.x();
+    }
+
+    inline double tx() const
+    {
+        return translation_.x();
+    }
+
+    inline double & ty()
+    {
+        return translation_.y();
+    }
+
+    inline double ty() const
+    {
+        return translation_.y();
+    }
+
     inline Vector2D & translation()
     {
         return translation_;

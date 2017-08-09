@@ -2,13 +2,16 @@
 #define COVARIANCE_2D_HPP
 
 #include <array>
+#include <vector>
 #include <Eigen/Core>
 
 
 namespace muse_mcl_2d {
 class Covariance2D {
 public:
-    using data_t = std::array<double, 9>;
+    const static std::size_t step_ = 3;
+    const static std::size_t size_ = step_ * step_;
+    using data_t = std::array<double, size_>;
 
     Covariance2D()
     {
@@ -22,19 +25,27 @@ public:
 
     inline double & operator () (const std::size_t i, const std::size_t j)
     {
-        return data_[size_ * i + j];
+        return data_[step_ * i + j];
     }
 
     inline double const & operator () (const std::size_t i, const std::size_t j) const
     {
-        return data_[size_ * i + j];
+        return data_[step_ * i + j];
     }
 
-    inline void fromEigen(const Eigen::Matrix3d &e)
+    inline void from(const std::vector<double> &data)
     {
         for(std::size_t i = 0 ; i < size_ ; ++i) {
-            for(std::size_t j = 0 ; j < size_ ; ++j) {
-                 data_[size_ * i + j] = e(i,j);
+            data_[i] = data[i];
+        }
+    }
+
+
+    inline void from(const Eigen::Matrix3d &e)
+    {
+        for(std::size_t i = 0 ; i < step_ ; ++i) {
+            for(std::size_t j = 0 ; j < step_ ; ++j) {
+                 data_[step_ * i + j] = e(i,j);
             }
         }
     }
@@ -42,9 +53,9 @@ public:
     inline Eigen::Matrix3d toEigen() const
     {
         Eigen::Matrix3d e;
-        for(std::size_t i = 0 ; i < size_ ; ++i) {
-            for(std::size_t j = 0 ; j < size_ ; ++j) {
-                e(i,j) = data_[size_ * i + j];
+        for(std::size_t i = 0 ; i < step_ ; ++i) {
+            for(std::size_t j = 0 ; j < step_ ; ++j) {
+                e(i,j) = data_[step_ * i + j];
             }
         }
         return e;
@@ -52,15 +63,14 @@ public:
 
     inline void toEigen(Eigen::Matrix3d &e) const
     {
-        for(std::size_t i = 0 ; i < size_ ; ++i) {
-            for(std::size_t j = 0 ; j < size_ ; ++j) {
-                e(i,j) = data_[size_ * i + j];
+        for(std::size_t i = 0 ; i < step_ ; ++i) {
+            for(std::size_t j = 0 ; j < step_ ; ++j) {
+                e(i,j) = data_[step_ * i + j];
             }
         }
     }
 
 private:
-    const static std::size_t size_ = 3;
     data_t data_;
 
 

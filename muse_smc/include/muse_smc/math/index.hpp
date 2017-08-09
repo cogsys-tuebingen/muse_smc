@@ -16,7 +16,7 @@ namespace math {
 template<std::size_t _Nm>
 struct Index : public std::array<int, _Nm>
 {
-    using Base = std::array<int, _Nm>;
+    using base_t = std::array<int, _Nm>;
 
     /**
      * @brief Index default constructor.
@@ -24,7 +24,7 @@ struct Index : public std::array<int, _Nm>
      */
     Index(const int i = 0)
     {
-        Base::fill(i);
+        base_t::fill(i);
     }
 
     /**
@@ -38,14 +38,14 @@ struct Index : public std::array<int, _Nm>
 
     void operator = (const int i)
     {
-        Base::fill(i);
+        base_t::fill(i);
     }
 
-    void operator = (const Base &other)
+    void operator = (const base_t &other)
     {
         for(std::size_t __n = 0 ; __n < _Nm ; ++__n) {
-            Base::_AT_Type::_S_ref(Base::_M_elems, __n) =
-                Base::_AT_Type::_S_ref(other._M_elems, __n);
+            base_t::_AT_Type::_S_ref(base_t::_M_elems, __n) =
+                base_t::_AT_Type::_S_ref(other._M_elems, __n);
         }
     }
 
@@ -56,9 +56,9 @@ struct Index : public std::array<int, _Nm>
     inline void max(const Index &other)
     {
         for(std::size_t __n = 0 ; __n < _Nm ; ++__n) {
-            Base::_AT_Type::_S_ref(Base::_M_elems, __n) =
-                    std::max(Base::_AT_Type::_S_ref(Base::_M_elems, __n),
-                             Base::_AT_Type::_S_ref(other._M_elems, __n));
+            base_t::_AT_Type::_S_ref(base_t::_M_elems, __n) =
+                    std::max(base_t::_AT_Type::_S_ref(base_t::_M_elems, __n),
+                             base_t::_AT_Type::_S_ref(other._M_elems, __n));
         }
     }
 
@@ -69,9 +69,9 @@ struct Index : public std::array<int, _Nm>
     inline void min(const Index &other)
     {
         for(std::size_t __n = 0 ; __n < _Nm ; ++__n) {
-            Base::_AT_Type::_S_ref(Base::_M_elems, __n) =
-                    std::min(Base::_AT_Type::_S_ref(Base::_M_elems, __n),
-                             Base::_AT_Type::_S_ref(other._M_elems, __n));
+            base_t::_AT_Type::_S_ref(base_t::_M_elems, __n) =
+                    std::min(base_t::_AT_Type::_S_ref(base_t::_M_elems, __n),
+                             base_t::_AT_Type::_S_ref(other._M_elems, __n));
         }
     }
 
@@ -86,9 +86,9 @@ struct Index : public std::array<int, _Nm>
     {
         Index r;
         for(std::size_t __n = 0 ; __n < _Nm ; ++__n) {
-            Base::_AT_Type::_S_ref(r._M_elems, __n) =
-                    std::max(Base::_AT_Type::_S_ref(a._M_elems, __n),
-                             Base::_AT_Type::_S_ref(b._M_elems, __n));
+            base_t::_AT_Type::_S_ref(r._M_elems, __n) =
+                    std::max(base_t::_AT_Type::_S_ref(a._M_elems, __n),
+                             base_t::_AT_Type::_S_ref(b._M_elems, __n));
         }
         return r;
     }
@@ -104,9 +104,9 @@ struct Index : public std::array<int, _Nm>
     {
         Index r;
         for(std::size_t __n = 0 ; __n < _Nm ; ++__n) {
-            Base::_AT_Type::_S_ref(r._M_elems, __n) =
-                    std::min(Base::_AT_Type::_S_ref(a._M_elems, __n),
-                             Base::_AT_Type::_S_ref(b._M_elems, __n));
+            base_t::_AT_Type::_S_ref(r._M_elems, __n) =
+                    std::min(base_t::_AT_Type::_S_ref(a._M_elems, __n),
+                             base_t::_AT_Type::_S_ref(b._M_elems, __n));
         }
         return r;
     }
@@ -117,10 +117,10 @@ struct Index : public std::array<int, _Nm>
 
 //// primitive mathematical operators
 template<std::size_t _Nm>
-inline muse_mcl::math::Index<_Nm> operator - (const muse_mcl::math::Index<_Nm>& __one,
-                                               const muse_mcl::math::Index<_Nm>& __two)
+inline muse_smc::math::Index<_Nm> operator - (const muse_smc::math::Index<_Nm>& __one,
+                                               const muse_smc::math::Index<_Nm>& __two)
 {
-    muse_mcl::math::Index<_Nm> __res;
+    muse_smc::math::Index<_Nm> __res;
     for(std::size_t i = 0 ; i < _Nm; ++i)
         __res[i] = __one[i] - __two[i];
 
@@ -128,10 +128,10 @@ inline muse_mcl::math::Index<_Nm> operator - (const muse_mcl::math::Index<_Nm>& 
 }
 
 template<std::size_t _Nm>
-inline muse_mcl::math::Index<_Nm> operator + (const muse_mcl::math::Index<_Nm>& __one,
-                                               const muse_mcl::math::Index<_Nm>& __two)
+inline muse_smc::math::Index<_Nm> operator + (const muse_smc::math::Index<_Nm>& __one,
+                                               const muse_smc::math::Index<_Nm>& __two)
 {
-    muse_mcl::math::Index<_Nm> __res;
+    muse_smc::math::Index<_Nm> __res;
     for(std::size_t i = 0 ; i < _Nm; ++i)
         __res[i] = __one[i] + __two[i];
 
@@ -139,10 +139,10 @@ inline muse_mcl::math::Index<_Nm> operator + (const muse_mcl::math::Index<_Nm>& 
 }
 
 template<std::size_t _Nm>
-inline muse_mcl::math::Index<_Nm> operator - (const muse_mcl::math::Index<_Nm>& __idx,
+inline muse_smc::math::Index<_Nm> operator - (const muse_smc::math::Index<_Nm>& __idx,
                                                const int __scalar)
 {
-    muse_mcl::math::Index<_Nm> __res;
+    muse_smc::math::Index<_Nm> __res;
     for(std::size_t i = 0 ; i < _Nm; ++i)
         __res[i] = __idx[i] - __scalar;
 
@@ -150,10 +150,10 @@ inline muse_mcl::math::Index<_Nm> operator - (const muse_mcl::math::Index<_Nm>& 
 }
 
 template<std::size_t _Nm>
-inline muse_mcl::math::Index<_Nm> operator + (const muse_mcl::math::Index<_Nm>& __idx,
+inline muse_smc::math::Index<_Nm> operator + (const muse_smc::math::Index<_Nm>& __idx,
                                                const int __scalar)
 {
-    muse_mcl::math::Index<_Nm> __res;
+    muse_smc::math::Index<_Nm> __res;
     for(std::size_t i = 0 ; i < _Nm; ++i)
         __res[i] = __idx[i] + __scalar;
 
@@ -161,8 +161,8 @@ inline muse_mcl::math::Index<_Nm> operator + (const muse_mcl::math::Index<_Nm>& 
 }
 
 template<std::size_t _Nm>
-inline muse_mcl::math::Index<_Nm> operator < (const muse_mcl::math::Index<_Nm> &__one,
-                                              const muse_mcl::math::Index<_Nm> &__two)
+inline muse_smc::math::Index<_Nm> operator < (const muse_smc::math::Index<_Nm> &__one,
+                                              const muse_smc::math::Index<_Nm> &__two)
 {
     bool less = true;
     for(std::size_t i = 0 ; i< _Nm; ++i)
@@ -171,8 +171,8 @@ inline muse_mcl::math::Index<_Nm> operator < (const muse_mcl::math::Index<_Nm> &
 }
 
 template<std::size_t _Nm>
-inline muse_mcl::math::Index<_Nm> operator > (const muse_mcl::math::Index<_Nm> &__one,
-                                              const muse_mcl::math::Index<_Nm> &__two)
+inline muse_smc::math::Index<_Nm> operator > (const muse_smc::math::Index<_Nm> &__one,
+                                              const muse_smc::math::Index<_Nm> &__two)
 {
     bool greater = true;
     for(std::size_t i = 0 ; i< _Nm; ++i)
@@ -181,8 +181,8 @@ inline muse_mcl::math::Index<_Nm> operator > (const muse_mcl::math::Index<_Nm> &
 }
 
 template<std::size_t _Nm>
-inline muse_mcl::math::Index<_Nm> operator <= (const muse_mcl::math::Index<_Nm> &__one,
-                                               const muse_mcl::math::Index<_Nm> &__two)
+inline muse_smc::math::Index<_Nm> operator <= (const muse_smc::math::Index<_Nm> &__one,
+                                               const muse_smc::math::Index<_Nm> &__two)
 {
     bool less_equal = true;
     for(std::size_t i = 0 ; i< _Nm; ++i)
@@ -191,8 +191,8 @@ inline muse_mcl::math::Index<_Nm> operator <= (const muse_mcl::math::Index<_Nm> 
 }
 
 template<std::size_t _Nm>
-inline muse_mcl::math::Index<_Nm> operator >= (const muse_mcl::math::Index<_Nm> &__one,
-                                               const muse_mcl::math::Index<_Nm> &__two)
+inline muse_smc::math::Index<_Nm> operator >= (const muse_smc::math::Index<_Nm> &__one,
+                                               const muse_smc::math::Index<_Nm> &__two)
 {
     bool greater_equal = true;
     for(std::size_t i = 0 ; i< _Nm; ++i)

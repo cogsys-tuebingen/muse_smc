@@ -46,23 +46,23 @@ struct SampleDensityData2D {
         return *this;
     }
 
-    virtual ~Data()
+    virtual ~SampleDensityData2D()
     {
     }
 
 
     SampleDensityData2D(const Sample2D &sample)
     {
-        samples_.emplace_back(&sample);
-        distribution_.add(sample.state.translation().toEigen(), sample.weight);
-        angular_mean_.add(sample.state.yaw(), sample.weight);
+        samples.emplace_back(&sample);
+        distribution.add(sample.state.translation().toEigen(), sample.weight);
+        angular_mean.add(sample.state.yaw(), sample.weight);
      }
 
     inline void merge(const SampleDensityData2D &other)
     {
-        samples.insert(samples_.end(), other.samples.begin(), other.samples.end());
-        distribution_ += other.distribution;
-        angular_mean_ += other.angular_mean;
+        samples.insert(samples.end(), other.samples.begin(), other.samples.end());
+        distribution += other.distribution;
+        angular_mean += other.angular_mean;
     }
 
 };

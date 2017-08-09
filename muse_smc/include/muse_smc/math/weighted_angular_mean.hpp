@@ -3,7 +3,7 @@
 
 #include <memory>
 #include <complex>
-#include <muse_mcl/math/angle.hpp>
+#include <muse_smc/math/angle.hpp>
 
 namespace muse_smc {
 namespace math {
