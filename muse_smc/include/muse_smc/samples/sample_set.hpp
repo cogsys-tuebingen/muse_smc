@@ -186,7 +186,7 @@ private:
     double                  weight_sum_;
 
     std::shared_ptr<sample_vector_t> p_t_1_;
-    std::shared_ptr<sample_vector_t> p_t_1_density_;
+    typename sample_density_t::Ptr   p_t_1_density_;
     std::shared_ptr<sample_vector_t> p_t_;
 
     void weightStatisticReset()
@@ -213,7 +213,7 @@ private:
     void insertionClosed()
     {
         std::swap(p_t_, p_t_1_);
-        p_t_1_density_->cluster();
+        p_t_1_density_->estimate();
     }
 };
 }

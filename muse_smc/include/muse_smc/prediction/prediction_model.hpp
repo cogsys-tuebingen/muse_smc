@@ -3,6 +3,8 @@
 
 #include <muse_smc/data/data.hpp>
 #include <muse_smc/samples/sample_set.hpp>
+
+
 #include <memory>
 
 namespace muse_smc {

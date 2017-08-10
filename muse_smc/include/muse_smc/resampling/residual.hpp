@@ -3,7 +3,7 @@
 
 #include "resampling.hpp"
 
-namespace muse {
+namespace muse_smc {
 template<typename sample_t>
 class Residual : public Resampling<sample_t>
 {
@@ -11,15 +11,17 @@ public:
     Residual() = default;
 
 protected:
-    virtual void doApply(sample_set_t &particle_set) override
+    using sample_set_t = typename Resampling<sample_t>::sample_set_t;
+
+    virtual void doApply(sample_set_t &sample_set) override
     {
-        const sample_set_t::sample_vector_t &p_t_1 = particle_set.getSamples();
+        const typename sample_set_t::sample_vector_t &p_t_1 = sample_set.getSamples();
         const std::size_t size = p_t_1.size();
         if(size == 0) {
             return;
         }
 
-        sample_set_t::sample_insertion_t i_p_t = particle_set.getInsertion();
+        typename sample_set_t::sample_insertion_t i_p_t = sample_set.getInsertion();
 
         std::vector<double> u(size);
         std::vector<double> w_residual(size);
@@ -31,9 +33,9 @@ protected:
             for(std::size_t i = 0 ; i < size ; ++i) {
                 const auto &sample = p_t_1[i];
                 u[i] = (i + u_static) / size;
-                std::size_t copies = std::floor(sample.weight_ * size);
+                std::size_t copies = std::floor(sample.weight * size);
 
-                w_residual[i] = size * sample.weight_ - copies;
+                w_residual[i] = size * sample.weight - copies;
                 n_w_residual += w_residual[i];
 
                 for(std::size_t i = 0 ; i < copies && i_p_t_size < size ;
@@ -67,12 +69,12 @@ protected:
         }
     }
 
-    virtual void doApplyRecovery(sample_set_t &particle_set) override
+    virtual void doApplyRecovery(sample_set_t &sample_set) override
     {
-        uniform_pose_sampler_->update();
+        Resampling<sample_t>::uniform_pose_sampler_->update();
 
-        const sample_set_t::sample_vector_t &p_t_1 = particle_set.getSamples();
-        sample_set_t::sample_insertion_t i_p_t = particle_set.getInsertion();
+        const typename sample_set_t::sample_vector_t &p_t_1 = sample_set.getSamples();
+        typename sample_set_t::sample_insertion_t i_p_t = sample_set.getInsertion();
 
         math::random::Uniform<1> rng_recovery(0.0, 1.0);
 
@@ -85,21 +87,21 @@ protected:
             math::random::Uniform<1> rng(0.0, 1.0);
             double u_static = rng.get();
             for(std::size_t i = 0 ; i < size ; ++i) {
-                const auto &sample = p_t_1[i];
+                const auto &sample_p_t_1 = p_t_1[i];
                 u[i] = (i + u_static) / size;
-                std::size_t copies = std::floor(sample.weight_ * size);
+                std::size_t copies = std::floor(sample_p_t_1.weight * size);
 
-                w_residual[i] = size * sample.weight_ - copies;
+                w_residual[i] = size * sample_p_t_1.weight - copies;
                 n_w_residual += w_residual[i];
 
-                Particle particle;
+                sample_t sample;
                 for(std::size_t i = 0 ; i < copies && i_p_t_size < size ;
                     ++i ,++i_p_t_size) {
                     const double recovery_probability = rng_recovery.get();
-                    if(recovery_probability < recovery_random_pose_probability_) {
-                        uniform_pose_sampler_->apply(particle);
-                        particle.weight_ = recovery_probability;
-                        i_p_t.insert(particle);
+                    if(recovery_probability < Resampling<sample_t>::recovery_random_pose_probability_) {
+                        Resampling<sample_t>::uniform_pose_sampler_->apply(sample);
+                        sample.weight = recovery_probability;
+                        i_p_t.insert(sample);
                     } else {
                         i_p_t.insert(sample);
                     }
@@ -118,7 +120,7 @@ protected:
                 return u >= cumsum_last && u < cumsum;
             };
 
-            Particle particle;
+            sample_t sample;
             for(std::size_t i = i_p_t_size ; i < size ; ++i) {
                 while(!in_range(*u_it)) {
                     ++p_t_1_it;
@@ -128,10 +130,10 @@ protected:
                 }
 
                 const double recovery_probability = rng_recovery.get();
-                if(recovery_probability < recovery_random_pose_probability_) {
-                    uniform_pose_sampler_->apply(particle);
-                    particle.weight_ = recovery_probability;
-                    i_p_t.insert(particle);
+                if(recovery_probability < Resampling<sample_t>::recovery_random_pose_probability_) {
+                    Resampling<sample_t>::uniform_pose_sampler_->apply(sample);
+                    sample.weight = recovery_probability;
+                    i_p_t.insert(sample);
                 } else {
                     i_p_t.insert(*p_t_1_it);
                 }

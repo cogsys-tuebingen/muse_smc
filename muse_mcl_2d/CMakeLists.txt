@@ -47,6 +47,19 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
 )
 
+add_library(${PROJECT_NAME}_resampling_
+#    src/resampling/kld_2d.cpp
+    src/resampling/systematic_2d.cpp
+    src/resampling/residual_2d.cpp
+    src/resampling/stratified_2d.cpp
+    src/resampling/wheel_2d.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}_resampling_
+    ${catkin_LIBRARIES}
+)
+
+
 add_library(${PROJECT_NAME}_compilation
     src/compilation.cpp
 )
@@ -55,16 +68,16 @@ target_link_libraries(${PROJECT_NAME}_compilation
     ${catkin_LIBRARIES}
 )
 
-add_executable(${PROJECT_NAME}_node
-    src/muse_mcl_2d_node.cpp
-    src/state_publisher.cpp
-)
+#add_executable(${PROJECT_NAME}_node
+#    src/muse_mcl_2d_node.cpp
+#    src/state_publisher.cpp
+#)
 
-add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-target_link_libraries(${PROJECT_NAME}_node
-    ${catkin_LIBRARIES}
-)
+#target_link_libraries(${PROJECT_NAME}_node
+#    ${catkin_LIBRARIES}
+#)
 
 #install(FILES plugins.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 

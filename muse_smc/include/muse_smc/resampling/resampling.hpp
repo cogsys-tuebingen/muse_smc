@@ -57,9 +57,9 @@ public:
         id_ = id;
     }
 
-    inline void setup(const typename sample_uniform_t::Ptr &uniform_pose_sampler,
-                      const double                          recovery_alpha_fast = 0.0,
-                      const double                          recovery_alpha_slow = 0.0)
+    virtual inline void setup(const typename sample_uniform_t::Ptr &uniform_pose_sampler,
+                              const double                          recovery_alpha_fast = 0.0,
+                              const double                          recovery_alpha_slow = 0.0)
     {
         uniform_pose_sampler_ = uniform_pose_sampler;
         recovery_alpha_fast_  = recovery_alpha_fast;

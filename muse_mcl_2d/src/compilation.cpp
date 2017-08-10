@@ -13,3 +13,5 @@
 #include <muse_mcl_2d/samples/sample_indexation_2d.hpp>
 #include <muse_mcl_2d/tf/tf_provider.hpp>
 #include <muse_mcl_2d/tf/tf_publisher.hpp>
+
+#include <muse_smc/plugins/plugin_factory.hpp>

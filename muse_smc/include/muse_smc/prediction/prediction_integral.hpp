@@ -8,7 +8,7 @@ template<typename sample_t>
 class PredictionIntegral
 {
 public:
-    using Ptr = std::shared_ptr<PredictionIntegral>;
+    using Ptr = std::shared_ptr<PredictionIntegral<sample_t>>;
     using prediction_model_t = PredictionModel<sample_t>;
 
 
@@ -17,6 +17,7 @@ public:
 
     virtual void add(typename prediction_model_t::Result::Ptr &step) = 0;
     virtual void reset() = 0;
+    virtual bool isZero() const = 0;
 
     /**
       * define minus

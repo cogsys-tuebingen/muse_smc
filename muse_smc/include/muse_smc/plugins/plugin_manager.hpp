@@ -10,11 +10,9 @@
 #include <functional>
 #include <typeindex>
 
-#include <muse_mcl/utility/delegate.hpp>
+#include <muse_smc/utility/delegate.hpp>
 
-namespace muse_smc
-{
-
+namespace muse_smc {
 template <class M>
 class PluginManagerImp
 {
