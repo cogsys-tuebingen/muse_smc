@@ -79,7 +79,7 @@ target_link_libraries(${PROJECT_NAME}_compilation
 #    ${catkin_LIBRARIES}
 #)
 
-#install(FILES plugins.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+install(FILES plugins.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 #install(TARGETS ${PROJECT_NAME}_providers ${PROJECT_NAME}_models
 #        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
