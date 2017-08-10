@@ -19,6 +19,9 @@ namespace muse_mcl_2d {
 class SampleDensity2D : public muse_smc::SampleDensity<Sample2D>
 {
 public:
+    using Ptr = std::shared_ptr<SampleDensity2D>;
+    using ConstPtr = std::shared_ptr<SampleDensity2D const>;
+
     using indexation_t              = SampleIndexation2D;
     using sample_data_t             = SampleDensityData2D;
     using clustering_t              = SampleClustering2D;
@@ -75,6 +78,11 @@ public:
     inline angular_mean_map_t const & clusterAngularMeans() const
     {
         return cluster_angular_means_;
+    }
+
+    inline std::size_t histogramSize() const
+    {
+        return kdtree_->size();
     }
 
 protected:

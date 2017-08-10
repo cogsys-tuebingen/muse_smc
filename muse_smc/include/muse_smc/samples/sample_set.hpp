@@ -175,6 +175,11 @@ public:
         return *p_t_1_;
     }
 
+    inline typename sample_density_t::ConstPtr getDensity() const
+    {
+        return p_t_1_density_;
+    }
+
 private:
     std::string             frame_id_;
     Time                    stamp_;
