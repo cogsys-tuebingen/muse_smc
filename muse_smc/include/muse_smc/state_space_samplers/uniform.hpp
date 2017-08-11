@@ -4,7 +4,7 @@
 #include <memory>
 
 #include <muse_smc/math/random.hpp>
-#include "sampler_arguments.hpp"
+#include "traits.hpp"
 
 namespace muse_smc {
 namespace state_space_samplers {

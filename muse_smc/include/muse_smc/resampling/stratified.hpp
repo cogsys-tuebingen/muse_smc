@@ -55,7 +55,7 @@ protected:
     }
     virtual void doApplyRecovery(sample_set_t &sample_set) override
     {
-        Resampling<sample_t>::uniform_pose_sampler_->update();
+        Resampling<sample_t>::uniform_pose_sampler_->update(sample_set.getFrame());
 
         /// initalize particle new particle set
         const typename sample_set_t::sample_vector_t &p_t_1 = sample_set.getSamples();

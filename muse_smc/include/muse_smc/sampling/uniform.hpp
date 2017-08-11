@@ -43,7 +43,7 @@ public:
 
     virtual void apply(sample_set_t &sample_set) = 0;
     virtual void apply(sample_t &sample) = 0;
-    virtual void update() = 0;
+    virtual bool update(const std::string &frame) = 0;
 
 protected:
     std::string name_;

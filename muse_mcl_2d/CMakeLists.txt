@@ -63,7 +63,7 @@ target_link_libraries(${PROJECT_NAME}_resampling_
 add_library(${PROJECT_NAME}_sampling_
     src/sampling/normal_2d.cpp
 #    src/sampling/uniform_primary_map_2d.cpp
-#    src/sampling/uniform_all_maps_2d.cpp
+    src/sampling/uniform_all_maps_2d.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}_sampling_
