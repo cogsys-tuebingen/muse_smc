@@ -54,6 +54,7 @@ public:
 
         return true;
     }
+
     virtual void apply(sample_set_t &particle_set) override
     {
         if(sample_size_ < particle_set.getMinimumSampleSize() ||
@@ -88,6 +89,7 @@ public:
             insertion.insert(sample);
         }
     }
+
     virtual void apply(Sample2D &sample) override
     {
         const ros::Time sampling_start = ros::Time::now();
