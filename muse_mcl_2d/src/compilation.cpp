@@ -1,6 +1,6 @@
 #include <muse_mcl_2d/data/data_provider.hpp>
-#include <muse_mcl_2d/map/map.hpp>
-#include <muse_mcl_2d/map/map_provider.hpp>
+#include <muse_mcl_2d/map/map_2d.hpp>
+#include <muse_mcl_2d/map/map_provider_2d.hpp>
 #include <muse_mcl_2d/math/covariance_2d.hpp>
 #include <muse_mcl_2d/math/point_2d.hpp>
 #include <muse_mcl_2d/math/pose_2d.hpp>

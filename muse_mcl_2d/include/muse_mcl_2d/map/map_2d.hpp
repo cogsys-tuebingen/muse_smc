@@ -1,5 +1,5 @@
-#ifndef MAP_HPP
-#define MAP_HPP
+#ifndef MAP_2D_HPP
+#define MAP_2D_HPP
 
 #include <ros/ros.h>
 
@@ -8,7 +8,7 @@
 #include <muse_mcl_2d/math/point_2d.hpp>
 
 namespace muse_mcl_2d {
-class Map : public muse_smc::StateSpace<Sample2D>
+class Map2D : public muse_smc::StateSpace<Sample2D>
 {
 public:
     using limits_t = std::numeric_limits<double>;
@@ -36,9 +36,9 @@ public:
     }
 
 protected:
-    Map() = delete;
+    Map2D() = delete;
 };
 }
 
 
-#endif // MAP_HPP
+#endif // MAP_2D_HPP

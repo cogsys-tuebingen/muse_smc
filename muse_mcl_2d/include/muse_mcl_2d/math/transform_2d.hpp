@@ -82,6 +82,16 @@ public:
         return *this;
     }
 
+    inline Transform2D inverse() const
+    {
+        Transform2D t;
+        t.yaw_ = -yaw_;
+        t.sin_ = -sin_;
+        t.cos_ = cos_;
+        t.translation_ = t * t.translation_;
+        return t;
+    }
+
     inline double & tx()
     {
         return translation_.x();
@@ -120,6 +130,20 @@ public:
     inline double yaw() const
     {
         return yaw_;
+    }
+
+    inline Eigen::Vector3d toEigen() const
+    {
+        return Eigen::Vector3d(translation_.x(), translation_.y(), yaw_);
+    }
+
+    inline void setFrom(const Eigen::Vector3d &eigen)
+    {
+        translation_.x() = eigen(0);
+        translation_.y() = eigen(1);
+        yaw_ = eigen(2);
+        sin_ = std::sin(yaw_);
+        cos_ = std::cos(yaw_);
     }
 
 private:

@@ -15,7 +15,7 @@ public:
     using state_t          = Pose2D;
     using state_space_boundary_t = Point2D;
     using transform_t      = Transform2D;
-    using state_covariance = Covariance2D;
+    using covariance_t     = Covariance2D;
 
     double weight;
     Pose2D state;

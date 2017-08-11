@@ -135,7 +135,7 @@ public:
          return p_t_1_->size();
     }
 
-    inline std::string const & getFrameID() const
+    inline std::string const & getFrame() const
     {
         return frame_id_;
     }

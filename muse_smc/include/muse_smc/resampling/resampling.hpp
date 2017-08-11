@@ -2,7 +2,7 @@
 #define RESAMPLING_HPP
 
 #include <muse_smc/samples/sample_set.hpp>
-#include <muse_smc/sampling/sampling_uniform.hpp>
+#include <muse_smc/sampling/uniform.hpp>
 #include <muse_smc/prediction/prediction_integral.hpp>
 
 #include <muse_smc/math/random.hpp>
@@ -17,7 +17,7 @@ class Resampling
 public:
     using Ptr = std::shared_ptr<Resampling>;
     using sample_set_t = SampleSet<sample_t>;
-    using sample_uniform_t = SamplingUniform<sample_t>;
+    using sample_uniform_t = UniformSampling<sample_t>;
     using prediction_integral_t = PredictionIntegral<sample_t>;
 
     Resampling() :

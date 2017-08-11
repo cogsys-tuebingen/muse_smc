@@ -108,6 +108,17 @@ public:
         return Eigen::Vector2d(x_, y_);
     }
 
+    inline Vector2D min(const Vector2D &other) const
+    {
+        return Vector2D(std::min(x_, other.x_),
+                        std::min(y_, other.y_));
+    }
+
+    inline Vector2D max(const Vector2D &other) const
+    {
+        return Vector2D(std::max(x_, other.x_),
+                        std::max(y_, other.y_));
+    }
 private:
     double x_;
     double y_;

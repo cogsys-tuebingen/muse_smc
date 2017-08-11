@@ -1,5 +1,5 @@
-#ifndef POSE_GENERATION_UNIFORM_HPP
-#define POSE_GENERATION_UNIFORM_HPP
+#ifndef UNIFORM_HPP
+#define UNIFORM_HPP
 
 #include <memory>
 #include <vector>
@@ -8,13 +8,13 @@
 
 namespace muse_smc {
 template<typename sample_t>
-class SamplingUniform {
+class UniformSampling {
 public:
-    typedef std::shared_ptr<SamplingUniform> Ptr;
+    typedef std::shared_ptr<UniformSampling> Ptr;
     using   sample_set_t = SampleSet<sample_t>;
 
-    SamplingUniform() = default;
-    virtual ~SamplingUniform() = default;
+    UniformSampling() = default;
+    virtual ~UniformSampling() = default;
 
     inline const static std::string Type()
     {
@@ -41,7 +41,7 @@ public:
         id_ = id;
     }
 
-    virtual void apply(typename sample_set_t::sample_insertion_t &insertion) = 0;
+    virtual void apply(sample_set_t &sample_set) = 0;
     virtual void apply(sample_t &sample) = 0;
     virtual void update() = 0;
 
@@ -51,4 +51,4 @@ protected:
 };
 }
 
-#endif // POSE_GENERATION_UNIFORM_HPP
+#endif // UNIFORM_HPP

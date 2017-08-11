@@ -3,8 +3,8 @@
 
 #include <muse_smc/prediction/prediction.hpp>
 #include <muse_smc/update/update.hpp>
-#include <muse_smc/sampling/sampling_normal.hpp>
-#include <muse_smc/sampling/sampling_uniform.hpp>
+#include <muse_smc/sampling/normal.hpp>
+#include <muse_smc/sampling/uniform.hpp>
 #include <muse_smc/samples/sample_set.hpp>
 #include <muse_smc/resampling/resampling.hpp>
 #include <muse_smc/smc/smc_state.hpp>
@@ -44,8 +44,8 @@ public:
     using prediction_t          = Prediction<sample_t>;
     using prediction_result_t   = typename prediction_t::predition_model_t::Result;
     using prediction_integral_t = PredictionIntegral<sample_t>;
-    using normal_sampling_t     = SamplingNormal<sample_t>;
-    using uniform_sampling_t    = SamplingUniform<sample_t>;
+    using normal_sampling_t     = NormalSampling<sample_t>;
+    using uniform_sampling_t    = UniformSampling<sample_t>;
     using resampling_t          = Resampling<sample_t>;
     using filter_state_t        = SMCState<sample_t>;
     using update_queue_t        =
