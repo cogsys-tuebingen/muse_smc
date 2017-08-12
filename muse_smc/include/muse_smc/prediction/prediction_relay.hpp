@@ -15,20 +15,20 @@ public:
     using prediction_t = Prediction<sample_t>;
     using prediction_model_t = PredictionModel<sample_t>;
     using data_t = Data;
-    using map_t  = std::pair<prediction_model_t::Ptr, data_provider_t::Ptr>;
+    using map_t  = std::pair<typename prediction_model_t::Ptr, typename data_provider_t::Ptr>;
 
 
-    PredictionRelay(const smc_t::Ptr &smc) :
+    PredictionRelay(const typename smc_t::Ptr &smc) :
         smc_(smc)
     {
     }
 
-    inline void relay(const prediction_model_t::Ptr &p,
-                      const data_provider_t::Ptr &d)
+    inline void relay(const typename prediction_model_t::Ptr &p,
+                      const typename data_provider_t::Ptr &d)
     {
-        auto callback = [this, p](const data_t::ConstPtr &data)
+        auto callback = [this, p](const typename data_t::ConstPtr &data)
         {
-            prediction_t::Ptr prediction(data, p);
+            typename prediction_t::Ptr prediction(data, p);
             smc_->addPrediction(prediction);
         };
 
@@ -36,8 +36,8 @@ public:
     }
 
 private:
-    smc_t::Ptr smc_;
-    data_provider_t::connection_t::Ptr handle_;
+    typename smc_t::Ptr smc_;
+    typename data_provider_t::connection_t::Ptr handle_;
 };
 }
 

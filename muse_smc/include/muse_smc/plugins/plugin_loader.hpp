@@ -16,37 +16,16 @@ public:
         parseLaunchFile();
     }
 
-    template<typename PluginType, typename ... Arguments>
-    inline bool load(std::map<std::string, typename PluginType::Ptr> &plugins,
-                     const Arguments&... arguments)
+    template<typename plugin_t, typename ... arguments_t>
+    inline void load(typename plugin_t::Ptr &plugin,
+                     const arguments_t&... arguments)
     {
-        plugins.clear();
-
-        /// all in the launch file entered plugins have been retrieved now
-        /// now we load the ones related to this ProviderManager
-        static PluginFactory<PluginType, Arguments...> factory;
+        static PluginFactory<plugin_t, arguments_t ...> factory;
         for(const auto &entry : plugins_found_) {
             const std::string &name = entry.first;
             const std::string &base_class_name = entry.second.base_class_name;
             const std::string &class_name = entry.second.class_name;
-            if(base_class_name == PluginType::Type()) {
-                plugins[name] = factory.create(class_name, name, arguments...);
-            }
-        }
-
-        return plugins.size() > 0;
-    }
-
-    template<typename PluginType, typename ... Arguments>
-    inline void load(typename PluginType::Ptr &plugin,
-                     const Arguments&... arguments)
-    {
-        static PluginFactory<PluginType, Arguments...> factory;
-        for(const auto &entry : plugins_found_) {
-            const std::string &name = entry.first;
-            const std::string &base_class_name = entry.second.base_class_name;
-            const std::string &class_name = entry.second.class_name;
-            if(base_class_name == PluginType::Type()) {
+            if(base_class_name == plugin_t::Type()) {
                 plugin = factory.create(class_name, name, arguments...);
             }
         }

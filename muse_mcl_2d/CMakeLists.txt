@@ -70,25 +70,16 @@ target_link_libraries(${PROJECT_NAME}_sampling_
     ${catkin_LIBRARIES}
 )
 
-
-add_library(${PROJECT_NAME}_compilation
-    src/compilation.cpp
+add_executable(${PROJECT_NAME}_node
+    src/node/muse_mcl_2d_node.cpp
+    src/state/state_publisher.cpp
 )
 
-target_link_libraries(${PROJECT_NAME}_compilation
+add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(${PROJECT_NAME}_node
     ${catkin_LIBRARIES}
 )
-
-#add_executable(${PROJECT_NAME}_node
-#    src/muse_mcl_2d_node.cpp
-#    src/state_publisher.cpp
-#)
-
-#add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-#target_link_libraries(${PROJECT_NAME}_node
-#    ${catkin_LIBRARIES}
-#)
 
 install(FILES plugins.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 

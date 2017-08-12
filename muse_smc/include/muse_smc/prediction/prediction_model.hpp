@@ -76,9 +76,11 @@ public:
         id_ = id;
     }
 
-    typename Result::Ptr predict(const Data::ConstPtr                   &data,
-                                 const Time                             &until,
-                                 typename sample_set_t::state_iterator_t states) = 0;
+    typename Result::Ptr predict(const Data::ConstPtr                    &data,
+                                 const Time                              &until,
+                                 typename sample_set_t::state_iterator_t  states)
+    {
+    }
 
 protected:
     std::string         name_;

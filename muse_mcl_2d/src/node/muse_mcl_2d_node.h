@@ -1,31 +1,32 @@
 #ifndef MUSE_MCL_NODE_H
 #define MUSE_MCL_NODE_H
 
-#include <muse_smc/smc/smc.hpp>
 
-#include <muse_mcl/GlobalInitialization.h>
-#include <muse_mcl/PoseInitialization.h>
+#include <muse_mcl_2d/GlobalInitialization.h>
+#include <muse_mcl_2d/PoseInitialization.h>
 
 #include <muse_mcl_2d/tf/tf_provider.hpp>
+#include <muse_mcl_2d/data/data_provider_2d.hpp>
+#include <muse_mcl_2d/map/map_provider_2d.hpp>
+#include <muse_mcl_2d/update/update_model_2d.hpp>
+#include <muse_mcl_2d/prediction/prediction_model_2d.hpp>
+#include <muse_mcl_2d/sampling/uniform_2d.hpp>
+#include <muse_mcl_2d/sampling/normal_2d.hpp>
 
-#include <muse_mcl_2d/data/data_provider.hpp>
-#include <muse_mcl_2d/map/map_provider.hpp>
 
+#include <muse_smc/smc/smc.hpp>
+#include <muse_smc/update/update_relay.hpp>
+#include <muse_smc/prediction/prediction_relay.hpp>
+#include <muse_smc/plugins/plugin_loader.hpp>
+#include <muse_smc/plugins/plugin_factory.hpp>
 
-
-#include <muse_mcl/update/update_forwarder.hpp>
-#include <muse_mcl/prediction/prediction_forwarder.hpp>
-#include <muse_mcl/particle_filter/particle_filter.hpp>
-
-#include <muse_mcl/plugins/plugin_loader.hpp>
-#include <muse_mcl/plugins/plugin_factory.hpp>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 
 #include <tf/time_cache.h>
 
 #include <ros/ros.h>
 
-namespace muse_mcl {
+namespace muse_mcl_2d {
 class MuseMCLNode
 {
 public:
@@ -36,18 +37,22 @@ public:
 
     void start();
 
-    bool requestGlobalInitialization(muse_mcl::GlobalInitialization::Request &req,
-                                     muse_mcl::GlobalInitialization::Response &res);
+    bool requestGlobalInitialization(muse_mcl_2d::GlobalInitialization::Request &req,
+                                     muse_mcl_2d::GlobalInitialization::Response &res);
 
-    bool requestPoseInitialization(muse_mcl::PoseInitialization::Request &req,
-                                   muse_mcl::PoseInitialization::Response &res);
+    bool requestPoseInitialization(muse_mcl_2d::PoseInitialization::Request &req,
+                                   muse_mcl_2d::PoseInitialization::Response &res);
 
     void poseInitialization(const geometry_msgs::PoseWithCovarianceStampedConstPtr &msg);
 
 private:
-    using MapProviders  = std::map<std::string, ProviderMap::Ptr>;
-    using DataProviders = std::map<std::string, ProviderData::Ptr>;
-    using UpdateModels  = std::map<std::string, ModelUpdate::Ptr>;
+    using map_provider_map_t     = std::map<std::string, MapProvider2D::Ptr>;
+    using data_provider_map_t    = std::map<std::string, DataProvider2D::Ptr>;
+    using update_model_map_t     = std::map<std::string, UpdateModel2D::Ptr>;
+    using Resampling2D           = muse_smc::Resampling<Sample2D>;
+    using UpdateRelay2D          = muse_smc::UpdateRelay<Sample2D>;
+    using PredictionRelay2D      = muse_smc::PredictionRelay<Sample2D>;
+    using smc_t                  = muse_smc::SMC<Sample2D>;
 
     ros::NodeHandle             nh_private_;
     ros::NodeHandle             nh_public_;
@@ -58,23 +63,23 @@ private:
     //// data providers
     TFProvider::Ptr             tf_provider_frontend_;  /// for data providers and data conversion
     TFProvider::Ptr             tf_provider_backend_;   /// for the backend (the particle filter and the sensor updates)
-    MapProviders                map_providers_;
-    DataProviders               data_providers_;
+    map_provider_map_t          map_providers_;
+    data_provider_map_t         data_providers_;
 
-    ParticleFilter::Ptr         particle_filter_;
+    smc_t::Ptr                  particle_filter_;
 
     //// prediction & update
-    UpdateModels                update_models_;
-    ModelPrediction::Ptr        prediction_model_;
+    update_model_map_t          update_models_;
+    PredictionModel2D::Ptr      prediction_model_;
 
     /// sampling & resampling
-    SamplingUniform::Ptr        uniform_sampling_;
-    SamplingNormal::Ptr         normal_sampling_;
-    Resampling::Ptr             resampling_;
+    UniformSampling2D::Ptr      uniform_sampling_;
+    NormalSampling2D::Ptr       normal_sampling_;
+    Resampling2D::Ptr           resampling_;
 
 
-    UpdateForwarder::Ptr        update_forwarder_;
-    PredictionForwarder::Ptr    predicition_forwarder_;
+    UpdateRelay2D::Ptr          update_forwarder_;
+    PredictionRelay2D::Ptr      predicition_forwarder_;
 
     void checkPoseInitialization();
 

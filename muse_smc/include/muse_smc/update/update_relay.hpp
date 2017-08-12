@@ -21,10 +21,10 @@ public:
     using data_t = Data;
     using state_space_provider_t = StateSpaceProvider<sample_t>;
     using state_space_t = StateSpace<sample_t>;
-    using arguments_t = std::pair<data_provider_t::Ptr, state_space_provider_t::Ptr>;
-    using map_t = std::map<update_model_t::Ptr, arguments_t>;
+    using arguments_t = std::pair<typename data_provider_t::Ptr, typename state_space_provider_t::Ptr>;
+    using map_t = std::map<typename update_model_t::Ptr, arguments_t>;
 
-    UpdateRelay(const smc_t::Ptr &smc) :
+    UpdateRelay(const typename smc_t::Ptr &smc) :
         smc_(smc)
     {
     }
@@ -36,10 +36,10 @@ public:
             const auto &d = e.second.first;
             const auto &s = e.second.second;
 
-            auto callback = [this, u, s](const Data::ConstPtr &data) {
-                StateSpace::ConstPtr ss = s->getStateSpace();
+            auto callback = [this, u, s](const typename Data::ConstPtr &data) {
+                typename state_space_t::ConstPtr ss = s->getStateSpace();
                 if(ss) {
-                    update_t::Ptr up(new update_t(data, ss, u));
+                    typename update_t::Ptr up(new update_t(data, ss, u));
                     smc_->addUpdate(up);
                 } else {
                     std::cerr << "[UpdateRelay]: " << s->getName() << " supplied state space which was zero!" << std::endl;
@@ -51,8 +51,8 @@ public:
     }
 
 private:
-    smc_t::Ptr smc_;
-    std::vector<data_provider_t::connection_t::Ptr> handles_;
+    typename smc_t::Ptr smc_;
+    std::vector<typename data_provider_t::connection_t::Ptr> handles_;
 
 };
 

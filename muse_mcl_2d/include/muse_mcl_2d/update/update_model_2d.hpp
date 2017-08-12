@@ -10,6 +10,8 @@ namespace muse_mcl_2d {
 class UpdateModel2D : public muse_smc::UpdateModel<Sample2D>
 {
 public:
+    using Ptr = std::shared_ptr<UpdateModel2D>;
+
     UpdateModel2D() = default;
     virtual ~UpdateModel2D() = default;
 
@@ -21,14 +23,15 @@ public:
 
         world_frame_      = nh.param<std::string>("world_frame", "world");
         robot_base_frame_ = nh.param<std::string>("robot_base_frame", "base_link");
-        tf_timeout_       = ros::Duration(nh_private.param<double>(param_name("tf_timeout"), 0.1));
+        tf_timeout_       = ros::Duration(nh.param<double>(param_name("tf_timeout"), 0.1));
         doSetup(nh);
     }
 
 protected:
     TFProvider::Ptr tf_;
-    std::string world_frame_;
-    std::string robot_base_frame_;
+    ros::Duration   tf_timeout_;
+    std::string     world_frame_;
+    std::string     robot_base_frame_;
 
     virtual void doSetup(ros::NodeHandle &nh) = 0;
 

@@ -232,7 +232,7 @@ protected:
 
             /// mutate time stamp
             typename prediction_result_t::Ptr prediction_result = prediction->apply(until, sample_set_->getStateIterator());
-            if(prediction_result.success()) {
+            if(prediction_result->success()) {
                 prediction_integral_update_->add(prediction_result);
                 prediction_integral_resampling_->add(prediction_result);
                 sample_set_->setStamp(prediction_result->applied->getTimeFrame().end);

@@ -7,6 +7,26 @@
 
 namespace muse_smc {
 template<typename plugin_t>
+class PluginID
+{
+public:
+    static std::size_t getID()
+    {
+        static PluginID<plugin_t> id;
+        return ++id.id_;
+    }
+private:
+    PluginID() :
+        id_(0)
+    {
+    }
+
+    std::size_t id_;
+
+
+};
+
+template<typename plugin_t, typename ... setup_args_t>
 class PluginFactory {
 public:
     PluginFactory() :
@@ -16,10 +36,9 @@ public:
         plugin_manager.load();
     }
 
-    template<typename ... setup_args_t>
-    typename plugin_t::Ptr create(const std::string &class_name,
-                                  const std::string &plugin_name,
-                                  const setup_args_t&...arguments)
+    typename plugin_t::Ptr create(const std::string  &class_name,
+                                  const std::string  &plugin_name,
+                                  const setup_args_t &...arguments)
     {
         auto constructor = plugin_manager.getConstructor(class_name);
         if(constructor) {
@@ -33,20 +52,6 @@ public:
         }
     }
 
-    typename plugin_t::Ptr create(const std::string &class_name,
-                                  const std::string &plugin_name)
-    {
-        auto constructor = plugin_manager.getConstructor(class_name);
-        if(constructor) {
-            typename plugin_t::Ptr plugin = constructor();
-            plugin->setName(plugin_name);
-            plugin->setId(++plugin_id_);
-            return plugin;
-        } else {
-            return nullptr;
-        }
-    }
-
     static const std::string Type()
     {
         return plugin_t::Type();
@@ -54,7 +59,10 @@ public:
 
 protected:
     PluginManager<plugin_t> plugin_manager;
-    std::size_t               plugin_id_;
+    std::size_t             plugin_id_;
 };
+
+///// specialize without parameter pack
+
 }
 #endif /* PLUGIN_FACTORY_HPP */

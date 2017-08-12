@@ -71,8 +71,8 @@ public:
     inline weight_iterator_t getWeightIterator()
     {
         return weight_iterator_t(*p_t_1_,
-                                weight_iterator_t::notify_update::template from<sample_set_t, &sample_set_t::weightUpdate>(this),
-                                weight_iterator_t::notify_touch::template from<sample_set_t, &sample_set_t::weightStatisticReset>(this),
+                                weight_iterator_t::notify_update::template   from<sample_set_t, &sample_set_t::weightUpdate>(this),
+                                weight_iterator_t::notify_touch::template    from<sample_set_t, &sample_set_t::weightStatisticReset>(this),
                                 weight_iterator_t::notify_finished::template from<sample_set_t, &sample_set_t::normalizeWeights>(this));
     }
 
@@ -140,7 +140,7 @@ public:
         return frame_id_;
     }
 
-    inline Time& getStamp() const
+    inline Time const & getStamp() const
     {
         return stamp_;
     }

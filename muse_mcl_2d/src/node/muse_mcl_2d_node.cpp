@@ -1,6 +1,8 @@
 #include "muse_mcl_2d_node.h"
 
-using namespace muse_mcl;
+#include <muse_mcl_2d/math/convert.hpp>
+
+using namespace muse_mcl_2d;
 
 MuseMCLNode::MuseMCLNode() :
     nh_private_("~"),
@@ -41,30 +43,33 @@ void MuseMCLNode::start()
     }
 }
 
-bool MuseMCLNode::requestGlobalInitialization(muse_mcl::GlobalInitialization::Request &req,
-                                              muse_mcl::GlobalInitialization::Response &res)
+bool MuseMCLNode::requestGlobalInitialization(muse_mcl_2d::GlobalInitialization::Request &req,
+                                              muse_mcl_2d::GlobalInitialization::Response &res)
 {
-    particle_filter_->requestGlobalInitialization();
+    particle_filter_->requestUniformInitialization();
     res.success = true;
     return true;
 }
 
-bool MuseMCLNode::requestPoseInitialization(muse_mcl::PoseInitialization::Request &req,
-                                            muse_mcl::PoseInitialization::Response &res)
+bool MuseMCLNode::requestPoseInitialization(muse_mcl_2d::PoseInitialization::Request &req,
+                                            muse_mcl_2d::PoseInitialization::Response &res)
 {
     auto convert_pose = [&req]() {
         tf::Pose p;
         tf::poseMsgToTF(req.pose.pose, p);
-        return math::Pose(p);
+        return from(p);
     };
     auto convert_covariance = [&req]() {
-        std::vector<double> v(36, 0.0);
-        for(std::size_t i = 0 ; i < 36 ; ++i) {
-            v[i] = req.pose.covariance[i];
+        Covariance2D cov;
+        for(std::size_t i = 0 ; i < 2 ; ++i) {
+            for(std::size_t j = 0 ; j < 2 ; ++j) {
+                cov(i,j) = req.pose.covariance[6*i+j];
+            }
         }
-        return math::Covariance(v);
+        cov(2,2) = req.pose.covariance[6*5+5];
+        return cov;
     };
-    particle_filter_->requestPoseInitialization(convert_pose(), convert_covariance());
+    particle_filter_->requestStateInitialization(convert_pose(), convert_covariance());
     res.success = true;
     return true;
 }
@@ -74,26 +79,29 @@ void MuseMCLNode::poseInitialization(const geometry_msgs::PoseWithCovarianceStam
     auto convert_pose = [&msg]() {
         tf::Pose p;
         tf::poseMsgToTF(msg->pose.pose, p);
-        return math::Pose(p);
+        return from(p);
     };
     auto convert_covariance = [&msg]() {
-        std::vector<double> v(36, 0.0);
-        for(std::size_t i = 0 ; i < 36 ; ++i) {
-            v[i] = msg->pose.covariance[i];
+        Covariance2D cov;
+        for(std::size_t i = 0 ; i < 2 ; ++i) {
+            for(std::size_t j = 0 ; j < 2 ; ++j) {
+                cov(i,j) = msg->pose.covariance[6*i+j];
+            }
         }
-        return math::Covariance(v);
+        cov(2,2) = msg->pose.covariance[6*5+5];
+        return cov;
     };
 
-    particle_filter_->requestPoseInitialization(convert_pose(), convert_covariance());
+    particle_filter_->requestStateInitialization(convert_pose(), convert_covariance());
 }
 
 bool MuseMCLNode::setup()
 {
     /// load all plugins
-    PluginLoader loader(nh_private_);
+    muse_smc::PluginLoader loader(nh_private_);
 
     {   /// Update Models
-        loader.load<ModelUpdate, TFProvider::Ptr, ros::NodeHandle&>(update_models_, tf_provider_backend_, nh_private_);
+        loader.load<UpdateModel2D, TFProvider::Ptr, ros::NodeHandle&>(update_models_, tf_provider_backend_, nh_private_);
         if(update_models_.empty()) {
             ROS_ERROR_STREAM("No update model functions were found!");
             return false;
