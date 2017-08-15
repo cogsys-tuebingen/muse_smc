@@ -10,6 +10,8 @@ namespace muse_mcl_2d {
 class PredictionModel2D : public muse_smc::PredictionModel<Sample2D>
 {
 public:
+    using Ptr = std::shared_ptr<PredictionModel2D>;
+
     PredictionModel2D() = default;
     virtual ~PredictionModel2D() = default;
 

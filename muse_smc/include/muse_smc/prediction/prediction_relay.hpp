@@ -28,7 +28,7 @@ public:
     {
         auto callback = [this, p](const typename data_t::ConstPtr &data)
         {
-            typename prediction_t::Ptr prediction(data, p);
+            typename prediction_t::Ptr prediction(new prediction_t(data, p));
             smc_->addPrediction(prediction);
         };
 

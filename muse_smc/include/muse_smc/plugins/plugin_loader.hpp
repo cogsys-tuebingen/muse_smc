@@ -17,6 +17,27 @@ public:
     }
 
     template<typename plugin_t, typename ... arguments_t>
+    inline bool load(std::map<std::string, typename plugin_t::Ptr> &plugins,
+                     const arguments_t&... arguments)
+    {
+        plugins.clear();
+
+        /// all in the launch file entered plugins have been retrieved now
+        /// now we load the ones related to this ProviderManager
+        static PluginFactory<plugin_t, arguments_t...> factory;
+        for(const auto &entry : plugins_found_) {
+            const std::string &name = entry.first;
+            const std::string &base_class_name = entry.second.base_class_name;
+            const std::string &class_name = entry.second.class_name;
+            if(base_class_name == plugin_t::Type()) {
+                plugins[name] = factory.create(class_name, name, arguments...);
+            }
+        }
+
+        return plugins.size() > 0;
+    }
+
+    template<typename plugin_t, typename ... arguments_t>
     inline void load(typename plugin_t::Ptr &plugin,
                      const arguments_t&... arguments)
     {

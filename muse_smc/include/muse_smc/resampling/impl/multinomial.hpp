@@ -1,17 +1,20 @@
 #ifndef MULTINOMIAL_HPP
 #define MULTINOMIAL_HPP
 
-#include "resampling.hpp"
+#include <muse_smc/samples/sample_set.hpp>
+#include <muse_smc/math/random.hpp>
+#include <muse_smc/sampling/uniform.hpp>
 
-namespace muse {
+namespace muse_smc {
+namespace impl {
 template<typename sample_t>
-class Multinomial : public Resampling<sample_t>
+class Multinomial
 {
 public:
-    Multinomial() = default;
+    using sample_set_t = SampleSet<sample_t>;
+    using uniform_sampling_t = UniformSampling<sample_t>;
 
-protected:
-    virtual void doApply(sample_set_t &particle_set) override
+    inline static void apply(sample_set_t &sample_set)
     {
         const sample_set_t::sample_vector_t &p_t_1 = particle_set.getSamples();
         const std::size_t size = p_t_1.size();
@@ -51,8 +54,16 @@ protected:
             }
         }
     }
-    virtual void doApplyRecovery(ParticleSet &particle_set) override
+    inline static  void applyRecovery(typename uniform_sampling_t::Ptr uniform_pose_sampler,
+                                      const double recovery_random_pose_probability,
+                                      sample_set_t &sample_set)
     {
+        if(!uniform_pose_sampler->update(sample_set.getFrame())) {
+            std::cerr << "[Multinomial]: Updating uniform sampler didn't work, switching to normal resampling!°" << std::endl;
+            apply(sample_set);
+            return;
+        }
+
         const sample_set_t::sample_vector_t &p_t_1 = particle_set.getSamples();
         sample_set_t::sample_insertion_t i_p_t = particle_set.getInsertion();
 
@@ -86,8 +97,8 @@ protected:
                     cumsum += p_t_1_it->weight_;
                 }
                 const double recovery_probability = rng_recovery.get();
-                if(recovery_probability < recovery_random_pose_probability_) {
-                    uniform_pose_sampler_->apply(particle);
+                if(recovery_probability < recovery_random_pose_probability) {
+                    uniform_pose_sampler->apply(particle);
                     particle.weight_ = recovery_probability;
                 } else {
                     particle.pose_ = p_t_1_it->pose_;
@@ -97,6 +108,7 @@ protected:
         }
     }
 };
+}
 }
 
 

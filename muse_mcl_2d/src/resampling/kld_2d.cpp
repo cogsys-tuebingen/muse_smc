@@ -1,32 +1,24 @@
 #include <muse_smc/math/random.hpp>
-#include <muse_smc/resampling/resampling.hpp>
 
-#include <muse_mcl_2d/samples/sample_2d.hpp>
+#include <muse_mcl_2d/resampling/resampling_2d.hpp>
 #include <muse_mcl_2d/samples/sample_density_2d.hpp>
 
-#include <ros/ros.h>
-
-#include <class_loader/class_loader_register_macro.h>
 
 namespace muse_mcl_2d {
-using Resampling = muse_smc::Resampling<muse_mcl_2d::Sample2D>;
-class KLD2D : public Resampling
+class KLD2D : public Resampling2D
 {
 public:
-    void setup(const typename sample_uniform_t::Ptr &uniform_pose_sampler,
-               ros::NodeHandle &nh)
-    {
-        auto param_name = [this](const std::string &name){return name_ + "/" + name;};
-        Resampling::setup(uniform_pose_sampler,
-                          nh.param(param_name("recovery_alpha_fast"), 0.0),
-                          nh.param(param_name("recovery_alpha_slow"), 0.0));
 
-        kld_error_ = nh.param(param_name("kld_error"), 0.01);
-        kld_z_     = nh.param(param_name("kld_z"), 0.99);
-    }
 protected:
     double  kld_error_;
     double  kld_z_;
+
+    virtual void doSetup(ros::NodeHandle &nh) override
+    {
+        auto param_name = [this](const std::string &name){return name_ + "/" + name;};
+        kld_error_ = nh.param(param_name("kld_error"), 0.01);
+        kld_z_     = nh.param(param_name("kld_z"), 0.99);
+    }
 
     void doApply(sample_set_t &sample_set)
     {
@@ -126,6 +118,6 @@ protected:
 };
 }
 
-CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d::KLD2D, muse_mcl_2d::Resampling)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d::KLD2D, muse_mcl_2d::Resampling2D)
 
 

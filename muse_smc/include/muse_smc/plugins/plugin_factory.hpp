@@ -22,8 +22,6 @@ private:
     }
 
     std::size_t id_;
-
-
 };
 
 template<typename plugin_t, typename ... setup_args_t>

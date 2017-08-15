@@ -96,7 +96,7 @@ protected:
 
     inline void updateRecovery(sample_set_t &particle_set)
     {
-        const double weight_average = particle_set.getWeightAverage();
+        const double weight_average = particle_set.getAverageWeight();
         if(recovery_slow_ == 0.0) {
             recovery_slow_ = weight_average;
         } else {

@@ -10,9 +10,11 @@
 #include <muse_mcl_2d/tf/tf_provider.hpp>
 
 namespace muse_mcl_2d {
-class DataProvider2D : public muse_smc::DataProvider<Pose2D>
+class DataProvider2D : public muse_smc::DataProvider<Sample2D>
 {
 public:
+    using Ptr = std::shared_ptr<DataProvider2D>;
+
     inline virtual void setup(const TFProvider::Ptr &tf_provider,
                               ros::NodeHandle       &nh_private) = 0;
 };

@@ -1,19 +1,20 @@
 #ifndef STRATIFIED_HPP
 #define STRATIFIED_HPP
 
-#include "resampling.hpp"
+#include <muse_smc/samples/sample_set.hpp>
+#include <muse_smc/math/random.hpp>
+#include <muse_smc/sampling/uniform.hpp>
 
 namespace muse_smc {
+namespace impl {
 template<typename sample_t>
-class Stratified : public Resampling<sample_t>
+class Stratified
 {
 public:
-    Stratified() = default;
+    using sample_set_t = SampleSet<sample_t>;
+    using uniform_sampling_t = UniformSampling<sample_t>;
 
-protected:
-    using sample_set_t = typename Resampling<sample_t>::sample_set_t;
-
-    virtual void doApply(sample_set_t &sample_set) override
+    inline static void apply(sample_set_t &sample_set)
     {
         /// initalize particle new particle set
         const typename sample_set_t::sample_vector_t &p_t_1 = sample_set.getSamples();
@@ -53,9 +54,16 @@ protected:
             }
         }
     }
-    virtual void doApplyRecovery(sample_set_t &sample_set) override
+
+    inline static  void applyRecovery(typename uniform_sampling_t::Ptr uniform_pose_sampler,
+                                      const double recovery_random_pose_probability,
+                                      sample_set_t &sample_set)
     {
-        Resampling<sample_t>::uniform_pose_sampler_->update(sample_set.getFrame());
+        if(!uniform_pose_sampler->update(sample_set.getFrame())) {
+            std::cerr << "[Stratified]: Updating uniform sampler didn't work, switching to normal resampling!°" << std::endl;
+            apply(sample_set);
+            return;
+        }
 
         /// initalize particle new particle set
         const typename sample_set_t::sample_vector_t &p_t_1 = sample_set.getSamples();
@@ -90,8 +98,8 @@ protected:
                     cumsum += p_t_1_it->weight;
                 }
                 const double recovery_probability = rng_recovery.get();
-                if(recovery_probability < Resampling<sample_t>::recovery_random_pose_probability_) {
-                    Resampling<sample_t>::uniform_pose_sampler_->apply(sample);
+                if(recovery_probability < recovery_random_pose_probability) {
+                    uniform_pose_sampler->apply(sample);
                     sample.weight = recovery_probability;
                     i_p_t.insert(sample);
                 } else {
@@ -101,6 +109,7 @@ protected:
         }
     }
 };
+}
 }
 
 #endif // STRATIFIED_HPP

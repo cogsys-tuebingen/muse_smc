@@ -115,6 +115,7 @@ public:
         if(worker_thread_.joinable()) {
             worker_thread_.join();
         }
+        return true;
     }
 
     void addPrediction(const typename prediction_t::Ptr &prediction)
@@ -132,7 +133,7 @@ public:
     {
         lock_t l(init_state_mutex_);
         init_state_ = state;
-        init_state_covariance_;
+        init_state_covariance_ = covariance;
         request_init_state_ = true;
     }
 
@@ -196,11 +197,11 @@ protected:
         if(request_init_state_) {
             sample_normal_->apply(init_state_,
                                   init_state_covariance_,
-                                  sample_set_->getInsertion());
+                                  *sample_set_);
             state_publisher_->publishIntermidiate(sample_set_);
         }
         if(request_init_uniform_) {
-            sample_uniform_->apply(sample_set_->getInsertion());
+            sample_uniform_->apply(*sample_set_);
             state_publisher_->publishIntermidiate(sample_set_);
         }
     }
@@ -298,7 +299,7 @@ protected:
                 }
                 if(!prediction_integral_resampling_->isZero() &&
                         updates_applied_after_resampling_ > 0ul) {
-                    resampling_->apply(sample_set_);
+                    resampling_->apply(*sample_set_);
                     updates_applied_after_resampling_ = 0ul;
 
                     state_publisher_->publish(sample_set_);

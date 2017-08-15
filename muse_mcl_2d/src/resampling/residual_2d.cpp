@@ -1,24 +1,30 @@
-#include <muse_smc/resampling/residual.hpp>
-#include <muse_mcl_2d/samples/sample_2d.hpp>
+#include <muse_smc/resampling/impl/residual.hpp>
 
-#include <ros/ros.h>
-
-#include <class_loader/class_loader_register_macro.h>
+#include <muse_mcl_2d/resampling/resampling_2d.hpp>
 
 namespace muse_mcl_2d {
-using Resampling = muse_smc::Resampling<muse_mcl_2d::Sample2D>;
-class Residual : public muse_smc::Residual<muse_mcl_2d::Sample2D>
+class Residual : public Resampling2D
 {
 public:
-    void setup(const typename sample_uniform_t::Ptr &uniform_pose_sampler,
-               ros::NodeHandle &nh)
+
+protected:
+    virtual void doSetup(ros::NodeHandle &nh) override
     {
-        auto param_name = [this](const std::string &name){return name_ + "/" + name;};
-        muse_smc::Residual<muse_mcl_2d::Sample2D>::setup(uniform_pose_sampler,
-                                                         nh.param(param_name("recovery_alpha_fast"), 0.0),
-                                                         nh.param(param_name("recovery_alpha_slow"), 0.0));
     }
+
+    virtual void doApply(sample_set_t &sample_set) override
+    {
+        muse_smc::impl::Residual<Sample2D>::apply(sample_set);
+    }
+
+    virtual void doApplyRecovery(sample_set_t &sample_set) override
+    {
+        muse_smc::impl::Residual<Sample2D>::applyRecovery(uniform_pose_sampler_,
+                                                          recovery_random_pose_probability_,
+                                                          sample_set);
+    }
+
 };
 }
 
-CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d::Residual, muse_mcl_2d::Resampling)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d::Residual, muse_mcl_2d::Resampling2D)

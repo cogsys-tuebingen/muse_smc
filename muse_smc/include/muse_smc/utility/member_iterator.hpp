@@ -94,15 +94,15 @@ public:
  * @brief The MemberDecorator class is used to retrieve member iterators for begin and
  *        end of the data structure, as well as for the type setup.
  */
-template<typename Data, typename T, T Data::*Member>
+template<typename data_t, typename data_allocator_t, typename T, T data_t::*Member>
 class MemberDecorator {
 public:
-    using iterator        = MemberIterator<Data, T, Member>;
+    using iterator        = MemberIterator<data_t, T, Member>;
     using notify_update   = delegate<void(const T&)>;
     using notify_touch    = delegate<void()>;
     using notify_finished = delegate<void()>;
 
-    MemberDecorator(std::buffered_vector<Data> &data,
+    MemberDecorator(std::buffered_vector<data_t> &data,
                     notify_touch                touch,
                     notify_update               update,
                     notify_finished             finished) :
@@ -115,7 +115,7 @@ public:
     }
 
 
-    MemberDecorator(std::buffered_vector<Data> &data,
+    MemberDecorator(std::buffered_vector<data_t> &data,
                     notify_touch                touch,
                     notify_update               update) :
         data_(data),
@@ -126,7 +126,7 @@ public:
     {
     }
 
-    MemberDecorator(std::buffered_vector<Data> &data,
+    MemberDecorator(std::buffered_vector<data_t> &data,
                     notify_touch touch) :
         data_(data),
         untouched_(true),
@@ -135,6 +135,16 @@ public:
         finished_([](){return;})
     {
     }
+
+    MemberDecorator(std::buffered_vector<data_t> &data) :
+        data_(data),
+        untouched_(true),
+        touch_([](){return;}),
+        update_([](){return;}),
+        finished_([](){return;})
+    {
+    }
+
 
     virtual ~MemberDecorator()
     {
@@ -171,13 +181,13 @@ public:
      * @brief getData allows read only access encapsulated data.
      * @return  const reference
      */
-    inline const std::buffered_vector<Data>& getData() const
+    inline const std::buffered_vector<data_t>& getData() const
     {
         return data_;
     }
 
 private:
-    std::buffered_vector<Data> &data_;      /// the container to be iterated
+    std::buffered_vector<data_t> &data_;      /// the container to be iterated
     bool                       untouched_;
     notify_touch               touch_;    /// notify wether an iterator is in use or not
     notify_update              update_;    /// on update callback

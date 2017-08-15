@@ -21,8 +21,8 @@ public:
     using sample_vector_t    = std::buffered_vector<sample_t, typename sample_t::allocator_t>;
     using sample_density_t   = SampleDensity<sample_t>;
     using sample_insertion_t = SampleInsertion<sample_t>;
-    using state_iterator_t   = MemberDecorator<sample_t, typename sample_t::state_t, &sample_t::state>;
-    using weight_iterator_t  = MemberDecorator<sample_t, double, &sample_t::weight>;
+    using state_iterator_t   = MemberDecorator<sample_t, typename sample_t::allocator_t, typename sample_t::state_t, &sample_t::state>;
+    using weight_iterator_t  = MemberDecorator<sample_t, typename sample_t::allocator_t, double, &sample_t::weight>;
 
     using Ptr = std::shared_ptr<sample_set_t>;
     using ConstPtr = std::shared_ptr<sample_set_t const>;
@@ -71,15 +71,14 @@ public:
     inline weight_iterator_t getWeightIterator()
     {
         return weight_iterator_t(*p_t_1_,
-                                weight_iterator_t::notify_update::template   from<sample_set_t, &sample_set_t::weightUpdate>(this),
                                 weight_iterator_t::notify_touch::template    from<sample_set_t, &sample_set_t::weightStatisticReset>(this),
+                                weight_iterator_t::notify_update::template   from<sample_set_t, &sample_set_t::weightUpdate>(this),
                                 weight_iterator_t::notify_finished::template from<sample_set_t, &sample_set_t::normalizeWeights>(this));
     }
 
     inline state_iterator_t getStateIterator()
     {
-        return state_iterator_t(*p_t_1_,
-                               state_iterator_t::notify_touch::template from<sample_set_t, &sample_set_t::resetIndexationStatistic>(this));
+        return state_iterator_t(*p_t_1_);
     }
 
     inline sample_insertion_t getInsertion()
@@ -201,7 +200,7 @@ private:
         weight_sum_     = 0.0;
     }
 
-    void weightUpdate(const double weight)
+    void weightUpdate(const double &weight)
     {
         weight_sum_ += weight;
         if(weight > maximum_weight_)

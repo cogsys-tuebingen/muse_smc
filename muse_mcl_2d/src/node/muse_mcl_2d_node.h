@@ -12,7 +12,7 @@
 #include <muse_mcl_2d/prediction/prediction_model_2d.hpp>
 #include <muse_mcl_2d/sampling/uniform_2d.hpp>
 #include <muse_mcl_2d/sampling/normal_2d.hpp>
-
+#include <muse_mcl_2d/resampling/resampling_2d.hpp>
 
 #include <muse_smc/smc/smc.hpp>
 #include <muse_smc/update/update_relay.hpp>
@@ -49,10 +49,12 @@ private:
     using map_provider_map_t     = std::map<std::string, MapProvider2D::Ptr>;
     using data_provider_map_t    = std::map<std::string, DataProvider2D::Ptr>;
     using update_model_map_t     = std::map<std::string, UpdateModel2D::Ptr>;
-    using Resampling2D           = muse_smc::Resampling<Sample2D>;
+
     using UpdateRelay2D          = muse_smc::UpdateRelay<Sample2D>;
     using PredictionRelay2D      = muse_smc::PredictionRelay<Sample2D>;
     using smc_t                  = muse_smc::SMC<Sample2D>;
+
+    using update_model_mapping_t = UpdateRelay2D::map_t;
 
     ros::NodeHandle             nh_private_;
     ros::NodeHandle             nh_public_;
@@ -82,6 +84,9 @@ private:
     PredictionRelay2D::Ptr      predicition_forwarder_;
 
     void checkPoseInitialization();
+    bool getUpdateModelProviderMapping(update_model_mapping_t &update_mapping);
+    bool getPredictionProvider(DataProvider2D::Ptr &prediction_provider);
+
 
 };
 }

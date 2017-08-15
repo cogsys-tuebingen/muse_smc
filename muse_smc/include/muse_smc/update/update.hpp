@@ -61,10 +61,10 @@ public:
 
     inline void apply(typename sample_set_t::weight_iterator_t weights)
     {
-        model_->update(data_, state_space, weights);
+        model_->apply(data_, state_space, weights);
     }
 
-    inline Time& getStamp() const
+    inline Time const & getStamp() const
     {
         return data_->getTimeFrame().end;
     }

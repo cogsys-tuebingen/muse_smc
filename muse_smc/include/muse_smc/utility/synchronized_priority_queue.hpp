@@ -34,7 +34,7 @@ public:
         return q_.size();
     }
 
-    inline _Tp pop() const
+    inline _Tp pop()
     {
         lock_t l(mutex_);
         _Tp t = q_.top();
