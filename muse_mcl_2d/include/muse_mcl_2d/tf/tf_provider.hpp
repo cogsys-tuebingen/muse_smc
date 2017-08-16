@@ -3,6 +3,7 @@
 
 #include <muse_smc/utility/delegate.hpp>
 
+#include <muse_mcl_2d/math/transform_2d.hpp>
 #include <tf/transform_listener.h>
 #include <memory>
 #include <mutex>
@@ -14,6 +15,71 @@ public:
 
     TFProvider()
     {
+    }
+
+    inline bool lookupTransform(const std::string    &target_frame,
+                                const std::string    &source_frame,
+                                const ros::Time      &time,
+                                StampedTransform2D   &transform)
+    {
+        tf::Transform tf_transform;
+        if(lookupTransform(target_frame, source_frame,time, tf_transform)) {
+            convert(tf_transform, transform.data());
+            transform.time() = muse_smc::Time(time.toNSec());
+            return true;
+        }
+        return false;
+    }
+
+    inline bool lookupTransform(const std::string    &target_frame,
+                                const std::string    &source_frame,
+                                const ros::Time      &time,
+                                StampedTransform2D   &transform,
+                                const ros::Duration  &timeout)
+    {
+        tf::Transform tf_transform;
+        if(lookupTransform(target_frame,
+                           source_frame,
+                           time,
+                           tf_transform,
+                           timeout)) {
+            convert(tf_transform, transform.data());
+            transform.time() = muse_smc::Time(time.toNSec());
+            return true;
+        }
+        return false;
+    }
+
+
+    inline bool lookupTransform(const std::string    &target_frame,
+                                const std::string    &source_frame,
+                                const ros::Time      &time,
+                                Transform2D          &transform)
+    {
+        tf::Transform tf_transform;
+        if(lookupTransform(target_frame, source_frame, time, tf_transform)) {
+            convert(tf_transform, transform);
+            return true;
+        }
+        return false;
+    }
+
+    inline bool lookupTransform(const std::string    &target_frame,
+                                const std::string    &source_frame,
+                                const ros::Time      &time,
+                                Transform2D          &transform,
+                                const ros::Duration  &timeout)
+    {
+        tf::Transform tf_transform;
+        if(lookupTransform(target_frame,
+                           source_frame,
+                           time,
+                           tf_transform,
+                           timeout)) {
+            convert(tf_transform, transform);
+            return true;
+        }
+        return false;
     }
 
     inline bool lookupTransform(const std::string    &target_frame,
@@ -105,6 +171,13 @@ public:
 protected:
     std::mutex mutex_;
     tf::TransformListener tf_;
+
+    inline void convert(const tf::Transform &src, Transform2D &dst)
+    {
+        const tf::Vector3 &origin = src.getOrigin();
+        const tf::Quaternion &rotation = src.getRotation();
+        dst.setFrom(origin.x(), origin.y(), tf::getYaw(rotation));
+    }
 };
 }
 #endif // TF_PROVIDER_HPP

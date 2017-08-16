@@ -25,6 +25,11 @@ public:
     {
     }
 
+    Time(const uint64_t &nanoseconds) :
+        time_(duration_t(static_cast<int64_t>(nanoseconds)))
+    {
+    }
+
     Time(const time_t &time) :
         time_(time)
     {

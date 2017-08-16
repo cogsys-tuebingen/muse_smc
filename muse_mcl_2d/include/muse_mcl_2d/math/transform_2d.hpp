@@ -2,6 +2,7 @@
 #define TRANSFORM_2D_HPP
 
 #include <muse_mcl_2d/math/vector_2d.hpp>
+#include <muse_smc/utility/stamped.hpp>
 
 namespace muse_mcl_2d {
 class Transform2D {
@@ -32,8 +33,8 @@ public:
     }
 
     inline Transform2D(const double yaw,
-                const double x,
-                const double y) :
+                       const double x,
+                       const double y) :
         translation_(x, y),
         yaw_(yaw),
         sin_(std::sin(yaw_)),
@@ -146,12 +147,26 @@ public:
         cos_ = std::cos(yaw_);
     }
 
+    inline void setFrom(const double x,
+                        const double y,
+                        const double yaw)
+    {
+        translation_.x() = x;
+        translation_.y() = y;
+        yaw_ = yaw;
+        sin_ = std::sin(yaw_);
+        cos_ = std::cos(yaw_);
+    }
+
 private:
     Vector2D translation_;
     double   yaw_;
     double   sin_;
     double   cos_;
 };
+
+using StampedTransform2D = muse_smc::Stamped<Transform2D>;
+
 }
 
 
