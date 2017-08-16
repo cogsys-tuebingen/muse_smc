@@ -288,6 +288,7 @@ bool MuseMCLNode::getUpdateModelProviderMapping(update_model_mapping_t &update_m
         DataProvider2D::Ptr data_provider = data_providers_.at(data_provider_name);
         update_mapping[update_model] = std::make_pair(data_provider, map_provider);
     }
+    return true;
 }
 
 bool MuseMCLNode::getPredictionProvider(DataProvider2D::Ptr &prediction_provider)
