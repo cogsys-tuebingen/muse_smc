@@ -13,7 +13,7 @@ public:
     using Ptr = std::shared_ptr<MapProvider2D>;
     using ConstPtr = std::shared_ptr<MapProvider2D const>;
 
-    inline virtual void setup(ros::NodeHandle &nh) = 0;
+    virtual void setup(ros::NodeHandle &nh) = 0;
 };
 }
 

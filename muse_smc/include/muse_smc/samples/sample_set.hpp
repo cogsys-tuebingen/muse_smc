@@ -21,8 +21,8 @@ public:
     using sample_vector_t    = std::buffered_vector<sample_t, typename sample_t::allocator_t>;
     using sample_density_t   = SampleDensity<sample_t>;
     using sample_insertion_t = SampleInsertion<sample_t>;
-    using state_iterator_t   = MemberDecorator<sample_t, typename sample_t::allocator_t, typename sample_t::state_t, &sample_t::state>;
-    using weight_iterator_t  = MemberDecorator<sample_t, typename sample_t::allocator_t, double, &sample_t::weight>;
+    using state_iterator_t   = MemberDecorator<sample_t, sample_vector_t, typename sample_t::state_t, &sample_t::state>;
+    using weight_iterator_t  = MemberDecorator<sample_t, sample_vector_t, double, &sample_t::weight>;
 
     using Ptr = std::shared_ptr<sample_set_t>;
     using ConstPtr = std::shared_ptr<sample_set_t const>;
