@@ -13,6 +13,9 @@
 #include <muse_mcl_2d/sampling/uniform_2d.hpp>
 #include <muse_mcl_2d/sampling/normal_2d.hpp>
 #include <muse_mcl_2d/resampling/resampling_2d.hpp>
+#include <muse_mcl_2d/samples/sample_density_2d.hpp>
+
+#include "../state/state_publisher.h"
 
 #include <muse_smc/smc/smc.hpp>
 #include <muse_smc/update/update_relay.hpp>
@@ -53,6 +56,7 @@ private:
     using UpdateRelay2D          = muse_smc::UpdateRelay<Sample2D>;
     using PredictionRelay2D      = muse_smc::PredictionRelay<Sample2D>;
     using smc_t                  = muse_smc::SMC<Sample2D>;
+    using sample_set_t           = muse_smc::SampleSet<Sample2D>;
 
     using update_model_mapping_t = UpdateRelay2D::map_t;
 
@@ -69,6 +73,10 @@ private:
     data_provider_map_t         data_providers_;
 
     smc_t::Ptr                  particle_filter_;
+    sample_set_t::Ptr           sample_set_;
+    SampleDensity2D::Ptr        sample_density_;
+    StatePublisher::Ptr         state_publisher_;
+
 
     //// prediction & update
     update_model_map_t          update_models_;
@@ -79,13 +87,13 @@ private:
     NormalSampling2D::Ptr       normal_sampling_;
     Resampling2D::Ptr           resampling_;
 
-
     UpdateRelay2D::Ptr          update_forwarder_;
     PredictionRelay2D::Ptr      predicition_forwarder_;
 
     void checkPoseInitialization();
     bool getUpdateModelProviderMapping(update_model_mapping_t &update_mapping);
     bool getPredictionProvider(DataProvider2D::Ptr &prediction_provider);
+
 
 
 };

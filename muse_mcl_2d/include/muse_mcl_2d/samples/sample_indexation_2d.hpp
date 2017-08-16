@@ -8,9 +8,9 @@
 namespace muse_mcl_2d {
 class SampleIndexation2D {
 public:
-    using resolution_t = std::array<double, 3>;
+    using resolution_t = std::array<double, 2>;
     using index_t      = muse_smc::math::Index<3>;
-    using size_t       = std::array<std::size_t, 3>;
+    using size_t       = std::array<std::size_t, 2>;
 
     SampleIndexation2D()
     {
@@ -20,8 +20,7 @@ public:
     SampleIndexation2D(const resolution_t &resolution) :
         resolution_(resolution),
         resolution_inv_{1.0 / resolution[0],
-                        1.0 / resolution[1],
-                        1.0 / resolution[2]}
+                        1.0 / resolution[1]}
     {
     }
 
@@ -30,8 +29,7 @@ public:
         resolution_ = resolution;
         resolution_inv_ =
                {1.0 / resolution[0],
-                1.0 / resolution[1],
-                1.0 / resolution[2]};
+                1.0 / resolution[1]};
     }
 
     inline resolution_t const & getResolution() const
@@ -43,8 +41,8 @@ public:
     {
         return index_t({
                              static_cast<int>(std::floor(sample.state.tx()            * resolution_inv_[0])),
-                             static_cast<int>(std::floor(sample.state.ty()            * resolution_inv_[1])),
-                             static_cast<int>(std::floor((sample.state.yaw() + M_PI)  * resolution_inv_[2])),
+                             static_cast<int>(std::floor(sample.state.ty()            * resolution_inv_[0])),
+                             static_cast<int>(std::floor((sample.state.yaw() + M_PI)  * resolution_inv_[1])),
                          });
     }
 
@@ -52,8 +50,8 @@ public:
     {
         return index_t({
                              static_cast<int>(std::floor(state.tx()            * resolution_inv_[0])),
-                             static_cast<int>(std::floor(state.ty()            * resolution_inv_[1])),
-                             static_cast<int>(std::floor((state.yaw() + M_PI)  * resolution_inv_[2])),
+                             static_cast<int>(std::floor(state.ty()            * resolution_inv_[0])),
+                             static_cast<int>(std::floor((state.yaw() + M_PI)  * resolution_inv_[1])),
                          });
     }
 
@@ -61,8 +59,8 @@ public:
     {
         return index_t({
                              static_cast<int>(std::floor(state[0] / resolution_[0])),
-                             static_cast<int>(std::floor(state[1] / resolution_[1])),
-                             static_cast<int>(std::floor((state[2] + M_PI) / resolution_[2]))
+                             static_cast<int>(std::floor(state[1] / resolution_[0])),
+                             static_cast<int>(std::floor((state[2] + M_PI) / resolution_[1]))
                          });
     }
 

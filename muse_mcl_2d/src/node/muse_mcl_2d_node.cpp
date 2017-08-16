@@ -1,6 +1,7 @@
 #include "muse_mcl_2d_node.h"
 
 #include <muse_mcl_2d/math/convert.hpp>
+#include <muse_smc/math/angle.hpp>
 
 using namespace muse_mcl_2d;
 
@@ -183,12 +184,44 @@ bool MuseMCLNode::setup()
     }
 
     //// set up the necessary functions for the particle filter
-    particle_filter_.reset(new smc_t);
-//    particle_filter_->setup;
+    {
 
-    //// set up the froward data functionality
-    //// calculate the mapping
+        const std::string world_frame = nh_private_.param<std::string>("world_frame", "/world");
+        const std::string odom_frame  = nh_private_.param<std::string>("odom_frame", "/odom");
+        const std::string base_frame  = nh_private_.param<std::string>("base_frame", "/base_link");
 
+        auto param_name = [](const std::string &param){return "particle_filter/" + param;};
+
+        const double resolution_linear  = nh_private_.param<double>(param_name("resolution_linear"), 0.1);
+        const double resolution_angular = muse_smc::math::angle::toRad(
+                        nh_private_.param<double>(param_name("resolution_angular"), 5.0));
+        const double preferred_rate = nh_private_.param<double>(param_name("preferred_rate"), 60.0);
+
+
+        const std::size_t sample_size = nh_private_.param<int>(param_name("sample_size"), 0);
+        const std::size_t minimum_sample_size = sample_size == 0 ? nh_private_.param<int>(param_name("minimum_sample_size"), 0) : sample_size;
+        const std::size_t maximum_sample_size = sample_size == 0 ? nh_private_.param<int>(param_name("maximum_sample_size"), 0) : sample_size;
+        if(minimum_sample_size == 0) {
+            ROS_ERROR_STREAM("Minimum sample size cannot be zero!");
+            return false;
+        }
+        if(maximum_sample_size < minimum_sample_size) {
+            ROS_ERROR_STREAM("Maximum sample size cannot be smaller than minimum sample size!");
+            return false;
+        }
+
+        SampleIndexation2D::resolution_t resolution{resolution_linear, resolution_angular};
+        sample_density_.reset(new SampleDensity2D(SampleIndexation2D(resolution), maximum_sample_size));
+        sample_set_.reset(new sample_set_t(world_frame,
+                                           muse_smc::Time(ros::Time::now().toNSec()),
+                                           minimum_sample_size,
+                                           maximum_sample_size,
+                                           sample_density_));
+        state_publisher_.reset(new StatePublisher);
+
+        particle_filter_.reset(new smc_t);
+        particle_filter_->setup(sample_set_, uniform_sampling_, normal_sampling_, resampling_, state_publisher_, muse_smc::Rate(preferred_rate));
+    }
 
     predicition_forwarder_.reset(new PredictionRelay2D(particle_filter_));
     DataProvider2D::Ptr prediction_provider;
