@@ -77,16 +77,18 @@ public:
                const typename normal_sampling_t::Ptr       &sample_normal,
                const typename resampling_t::Ptr            &resampling,
                const typename filter_state_t::Ptr          &state_publisher,
+               const typename prediction_integral_t::Ptr   &prediction_integral_updates,
+               const typename prediction_integral_t::Ptr   &prediction_integral_resmpling,
                const Rate                                  &preferred_filter_state_update_rate)
     {
-        sample_set_          = sample_set;
-        sample_uniform_      = sample_uniform;
-        sample_normal_       = sample_normal;
-        resampling_          = resampling;
-        state_publisher_     = state_publisher;
+        sample_set_                     = sample_set;
+        sample_uniform_                 = sample_uniform;
+        sample_normal_                  = sample_normal;
+        resampling_                     = resampling;
+        state_publisher_                = state_publisher;
+        prediction_integral_update_     = prediction_integral_updates;
+        prediction_integral_resampling_ = prediction_integral_resmpling;
 
-        prediction_integral_update_.reset(new prediction_integral_t);
-        prediction_integral_resampling_.reset(new prediction_integral_t);
 #ifdef USE_DOTTY
         dotty_.reset(new Dotty);
 #endif

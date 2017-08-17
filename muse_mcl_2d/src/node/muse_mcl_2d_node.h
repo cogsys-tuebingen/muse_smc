@@ -5,6 +5,7 @@
 #include <muse_mcl_2d/GlobalInitialization.h>
 #include <muse_mcl_2d/PoseInitialization.h>
 
+#include <muse_mcl_2d/prediction/prediction_integral_2d.hpp>
 #include <muse_mcl_2d/tf/tf_provider.hpp>
 #include <muse_mcl_2d/data/data_provider_2d.hpp>
 #include <muse_mcl_2d/map/map_provider_2d.hpp>

@@ -220,7 +220,7 @@ bool MuseMCLNode::setup()
         state_publisher_.reset(new StatePublisher);
 
         particle_filter_.reset(new smc_t);
-        particle_filter_->setup(sample_set_, uniform_sampling_, normal_sampling_, resampling_, state_publisher_, muse_smc::Rate(preferred_rate));
+   //     particle_filter_->setup(sample_set_, uniform_sampling_, normal_sampling_, resampling_, state_publisher_, muse_smc::Rate(preferred_rate));
     }
 
     predicition_forwarder_.reset(new PredictionRelay2D(particle_filter_));
