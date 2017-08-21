@@ -3,6 +3,7 @@
 
 #include <muse_mcl_2d/math/vector_2d.hpp>
 #include <muse_smc/utility/stamped.hpp>
+#include <muse_smc/math/angle.hpp>
 
 namespace muse_mcl_2d {
 class Transform2D {
@@ -158,11 +159,31 @@ public:
         cos_ = std::cos(yaw_);
     }
 
+    inline Transform2D interpolate(const Transform2D &other,
+                                   const double ratio) const
+    {
+        assert(ratio  >= 0.0);
+        assert(ration <= 1.0);
+        if(ratio == 0.0) {
+            return *this;
+        }
+        if(ratio == 1.0) {
+            return other;
+        }
+
+        const  double ratio_inverse = 1.0 - ratio;
+        const  Vector2D translation = translation_ * ratio_inverse + other.translation_ * ratio;
+        const  double   yaw = muse_smc::math::angle::normalize(yaw_ * ratio_inverse + other.yaw_ * ratio);
+        return Transform2D(translation, yaw);
+    }
+
 private:
     Vector2D translation_;
     double   yaw_;
     double   sin_;
     double   cos_;
+
+
 };
 
 using StampedTransform2D = muse_smc::Stamped<Transform2D>;

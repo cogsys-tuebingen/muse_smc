@@ -20,32 +20,32 @@ public:
     {
     }
 
-    inline Vector2D operator * (const double d)
+    inline Vector2D operator * (const double d) const
     {
         return Vector2D(x_ * d, y_ * d);
     }
 
-    inline Vector2D operator / (const double d)
+    inline Vector2D operator / (const double d) const
     {
         return Vector2D(x_ / d, y_ / d);
     }
 
-    inline Vector2D operator + (const Vector2D &other)
+    inline Vector2D operator + (const Vector2D &other) const
     {
         return Vector2D(x_ + other.x_, y_ + other.y_);
     }
 
-    inline Vector2D operator - (const Vector2D &other)
+    inline Vector2D operator - (const Vector2D &other) const
     {
         return Vector2D(x_ - other.x_, y_ - other.y_);
     }
 
-    inline double dot (const Vector2D &other)
+    inline double dot (const Vector2D &other) const
     {
         return x_ * other.x_ + y_ * other.y_;
     }
 
-    inline double len () const
+    inline double length () const
     {
         return std::hypot(x_, y_);
     }
@@ -119,6 +119,7 @@ public:
         return Vector2D(std::max(x_, other.x_),
                         std::max(y_, other.y_));
     }
+
 private:
     double x_;
     double y_;
