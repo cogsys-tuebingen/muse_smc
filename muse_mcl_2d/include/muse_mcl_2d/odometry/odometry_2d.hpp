@@ -5,7 +5,7 @@
 
 #include <muse_mcl_2d/math/pose_2d.hpp>
 #include <muse_mcl_2d/math/transform_2d.hpp>
-w
+
 namespace muse_mcl_2d {
 class Odometry2D : public muse_smc::Data {
 public:
@@ -74,8 +74,8 @@ public:
         if(!time_frame_.within(split_time))
             return false;
 
-        const double ratio = (split_time - time_frame_.start).toSec() /
-                              time_frame_.duration().toSec();
+        const double ratio = (split_time - time_frame_.start).seconds() /
+                              time_frame_.duration().seconds();
 
         Pose2D split_pose = start_pose_.interpolate(end_pose_, ratio);
         a.reset(new Odometry2D(frame_, time_frame_t(time_frame_.start, split_time), start_pose_, split_pose));

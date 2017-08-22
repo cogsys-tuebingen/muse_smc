@@ -72,7 +72,8 @@ target_link_libraries(${PROJECT_NAME}_sampling_
 
 add_executable(${PROJECT_NAME}_node
     src/node/muse_mcl_2d_node.cpp
-    src/state/state_publisher.cpp
+    src/node/state_publisher_2d.cpp
+    src/node/sample_set_publisher_2d.cpp
 )
 
 add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

@@ -5,12 +5,29 @@
 
 #include <muse_mcl_2d/samples/sample_2d.hpp>
 #include <muse_mcl_2d/tf/tf_provider.hpp>
+#include <muse_mcl_2d/odometry/odometry_2d.hpp>
 
 namespace muse_mcl_2d {
 class PredictionModel2D : public muse_smc::PredictionModel<Sample2D>
 {
 public:
     using Ptr = std::shared_ptr<PredictionModel2D>;
+
+    struct Result2D : public Result
+    {
+        Result2D(const double linear_distance_abs,
+                 const double angular_distance_abs,
+                 const Odometry2D::ConstPtr &applied,
+                 const Odometry2D::ConstPtr &left_to_apply) :
+            Result(applied, left_to_apply),
+            linear_distance_abs(linear_distance_abs),
+            angular_distance_abs(angular_distance_abs)
+        {
+        }
+
+        const double linear_distance_abs;
+        const double angular_distance_abs;
+    };
 
     PredictionModel2D() = default;
     virtual ~PredictionModel2D() = default;

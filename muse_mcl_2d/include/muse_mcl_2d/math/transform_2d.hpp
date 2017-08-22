@@ -124,10 +124,13 @@ public:
         return translation_;
     }
 
-    inline double & yaw()
+    inline void setYaw(const double yaw)
     {
-        return yaw_;
+        yaw_ = yaw;
+        sin_ = std::sin(yaw_);
+        cos_ = std::cos(yaw_);
     }
+
 
     inline double yaw() const
     {

@@ -33,7 +33,7 @@ namespace muse_smc {
             return time >= start && time <= end;
         }
 
-        inline Time::duration_t duration() const
+        inline Duration duration() const
         {
             return end.time() - start.time();
         }

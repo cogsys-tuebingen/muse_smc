@@ -5,21 +5,21 @@
 
 using namespace muse_mcl_2d;
 
-MuseMCLNode::MuseMCLNode() :
+MuseMCL2DNode::MuseMCL2DNode() :
     nh_private_("~"),
     tf_provider_frontend_(new TFProvider),
     tf_provider_backend_(new TFProvider)
 {
 }
 
-MuseMCLNode::~MuseMCLNode()
+MuseMCL2DNode::~MuseMCL2DNode()
 {
     for(auto &d : data_providers_) {
         d.second->disable();
     }
 }
 
-void MuseMCLNode::start()
+void MuseMCL2DNode::start()
 {
     for(auto &d : data_providers_) {
         d.second->enable();
@@ -44,7 +44,7 @@ void MuseMCLNode::start()
     }
 }
 
-bool MuseMCLNode::requestGlobalInitialization(muse_mcl_2d::GlobalInitialization::Request &req,
+bool MuseMCL2DNode::requestGlobalInitialization(muse_mcl_2d::GlobalInitialization::Request &req,
                                               muse_mcl_2d::GlobalInitialization::Response &res)
 {
     particle_filter_->requestUniformInitialization();
@@ -52,7 +52,7 @@ bool MuseMCLNode::requestGlobalInitialization(muse_mcl_2d::GlobalInitialization:
     return true;
 }
 
-bool MuseMCLNode::requestPoseInitialization(muse_mcl_2d::PoseInitialization::Request &req,
+bool MuseMCL2DNode::requestPoseInitialization(muse_mcl_2d::PoseInitialization::Request &req,
                                             muse_mcl_2d::PoseInitialization::Response &res)
 {
     auto convert_pose = [&req]() {
@@ -75,7 +75,7 @@ bool MuseMCLNode::requestPoseInitialization(muse_mcl_2d::PoseInitialization::Req
     return true;
 }
 
-void MuseMCLNode::poseInitialization(const geometry_msgs::PoseWithCovarianceStampedConstPtr &msg)
+void MuseMCL2DNode::poseInitialization(const geometry_msgs::PoseWithCovarianceStampedConstPtr &msg)
 {
     auto convert_pose = [&msg]() {
         tf::Pose p;
@@ -96,7 +96,7 @@ void MuseMCLNode::poseInitialization(const geometry_msgs::PoseWithCovarianceStam
     particle_filter_->requestStateInitialization(convert_pose(), convert_covariance());
 }
 
-bool MuseMCLNode::setup()
+bool MuseMCL2DNode::setup()
 {
     /// load all plugins
     muse_smc::PluginLoader loader(nh_private_);
@@ -116,7 +116,15 @@ bool MuseMCLNode::setup()
         ROS_INFO_STREAM("Loaded update function models.");
         ROS_INFO_STREAM(update_model_list);
     }
+    {
+        /// setup the integrals
+        prediction_integrals_.reset(new prediction_integrals_t(PredictionIntegral2D::Ptr(new PredictionIntegral2D)));
+        for(const auto &u : update_models_) {
+            prediction_integrals_->set(PredictionIntegral2D::Ptr(new PredictionIntegral2D),
+                                       u.second->getId());
+        }
 
+    }
     {   /// Prediction Model
         loader.load<PredictionModel2D, TFProvider::Ptr, ros::NodeHandle&>(prediction_model_, tf_provider_backend_, nh_private_);
         if(!prediction_model_) {
@@ -219,8 +227,14 @@ bool MuseMCLNode::setup()
                                            sample_density_));
         state_publisher_.reset(new StatePublisher);
 
+
         particle_filter_.reset(new smc_t);
-   //     particle_filter_->setup(sample_set_, uniform_sampling_, normal_sampling_, resampling_, state_publisher_, muse_smc::Rate(preferred_rate));
+        particle_filter_->setup(sample_set_,
+                                uniform_sampling_, normal_sampling_,
+                                resampling_,
+                                state_publisher_,
+                                prediction_integrals_,
+                                muse_smc::Rate(preferred_rate));
     }
 
     predicition_forwarder_.reset(new PredictionRelay2D(particle_filter_));
@@ -239,14 +253,14 @@ bool MuseMCLNode::setup()
     }
     update_forwarder_->relay(update_mapping);
 
-    initialization_service_pose_    = nh_private_.advertiseService("/muse_mcl/pose_initialization", &MuseMCLNode::requestPoseInitialization, this);
-    initialization_service_global_  = nh_private_.advertiseService("/muse_mcl/global_initialization", &MuseMCLNode::requestGlobalInitialization, this);
-    initialization_subscriber_pose_ = nh_private_.subscribe("/initialpose", 1, &MuseMCLNode::poseInitialization, this);
+    initialization_service_pose_    = nh_private_.advertiseService("/muse_mcl/pose_initialization", &MuseMCL2DNode::requestPoseInitialization, this);
+    initialization_service_global_  = nh_private_.advertiseService("/muse_mcl/global_initialization", &MuseMCL2DNode::requestGlobalInitialization, this);
+    initialization_subscriber_pose_ = nh_private_.subscribe("/initialpose", 1, &MuseMCL2DNode::poseInitialization, this);
 
     return true;
 }
 
-void MuseMCLNode::checkPoseInitialization()
+void MuseMCL2DNode::checkPoseInitialization()
 {
     if(nh_private_.hasParam("initialization/pose") &&
             nh_private_.hasParam("initialization/covariance")) {
@@ -290,7 +304,7 @@ void MuseMCLNode::checkPoseInitialization()
     }
 }
 
-bool MuseMCLNode::getUpdateModelProviderMapping(update_model_mapping_t &update_mapping)
+bool MuseMCL2DNode::getUpdateModelProviderMapping(update_model_mapping_t &update_mapping)
 {
     for(auto &u : update_models_) {
         const std::string update_model_name = u.first;
@@ -324,7 +338,7 @@ bool MuseMCLNode::getUpdateModelProviderMapping(update_model_mapping_t &update_m
     return true;
 }
 
-bool MuseMCLNode::getPredictionProvider(DataProvider2D::Ptr &prediction_provider)
+bool MuseMCL2DNode::getPredictionProvider(DataProvider2D::Ptr &prediction_provider)
 {
     const std::string param_name = prediction_model_->getName() + "/data_provider";
     const std::string provider_name =  nh_private_.param<std::string>(param_name, "");
@@ -343,7 +357,7 @@ int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "muse_mcl");
 
-    MuseMCLNode node;
+    MuseMCL2DNode node;
     if(node.setup()) {
         node.start();
     } else {

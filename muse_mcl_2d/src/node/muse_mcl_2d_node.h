@@ -16,7 +16,7 @@
 #include <muse_mcl_2d/resampling/resampling_2d.hpp>
 #include <muse_mcl_2d/samples/sample_density_2d.hpp>
 
-#include "../state/state_publisher.h"
+#include "state_publisher_2d.h"
 
 #include <muse_smc/smc/smc.hpp>
 #include <muse_smc/update/update_relay.hpp>
@@ -31,11 +31,11 @@
 #include <ros/ros.h>
 
 namespace muse_mcl_2d {
-class MuseMCLNode
+class MuseMCL2DNode
 {
 public:
-    MuseMCLNode();
-    virtual ~MuseMCLNode();
+    MuseMCL2DNode();
+    virtual ~MuseMCL2DNode();
 
     bool setup();
 
@@ -58,6 +58,7 @@ private:
     using PredictionRelay2D      = muse_smc::PredictionRelay<Sample2D>;
     using smc_t                  = muse_smc::SMC<Sample2D>;
     using sample_set_t           = muse_smc::SampleSet<Sample2D>;
+    using prediction_integrals_t = muse_smc::PredictionIntegrals<Sample2D>;
 
     using update_model_mapping_t = UpdateRelay2D::map_t;
 
@@ -74,7 +75,9 @@ private:
     data_provider_map_t         data_providers_;
 
     smc_t::Ptr                  particle_filter_;
+    prediction_integrals_t::Ptr prediction_integrals_;
     sample_set_t::Ptr           sample_set_;
+
     SampleDensity2D::Ptr        sample_density_;
     StatePublisher::Ptr         state_publisher_;
 

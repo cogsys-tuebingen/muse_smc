@@ -31,12 +31,6 @@ public:
         {
         }
 
-        Result(const Result &other) :
-            applied(other.applied),
-            left_to_apply(other.left_to_apply)
-        {
-        }
-
         inline bool success() const
         {
             return static_cast<bool>(applied);

@@ -25,7 +25,7 @@ public:
         tf::Transform tf_transform;
         if(lookupTransform(target_frame, source_frame,time, tf_transform)) {
             convert(tf_transform, transform.data());
-            transform.time() = muse_smc::Time(time.toNSec());
+            transform.stamp() = muse_smc::Time(time.toNSec());
             return true;
         }
         return false;
@@ -44,7 +44,7 @@ public:
                            tf_transform,
                            timeout)) {
             convert(tf_transform, transform.data());
-            transform.time() = muse_smc::Time(time.toNSec());
+            transform.stamp() = muse_smc::Time(time.toNSec());
             return true;
         }
         return false;

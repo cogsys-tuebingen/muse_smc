@@ -79,6 +79,10 @@ public:
         return model_->getName();
     }
 
+    inline std::size_t getModelId() const
+    {
+        return model_->getId();
+    }
 
 private:
     const Data::ConstPtr                    data_;

@@ -16,7 +16,10 @@ public:
 
     virtual ~PredictionIntegral2D() = default;
 
-    virtual void add(typename prediction_model_t::Result::Ptr &step) = 0;
+    virtual void add(typename prediction_model_t::Result::Ptr &step) override
+    {
+
+    }
 
     virtual void reset() override
     {

@@ -15,14 +15,14 @@ public:
     {
     }
 
-    inline Time & time()
+    inline Time & stamp()
     {
         return time_;
     }
 
-    inline Time const & time() const
+    inline Time const & stamp() const
     {
-        return time;
+        return stamp;
     }
 
     inline T & data()

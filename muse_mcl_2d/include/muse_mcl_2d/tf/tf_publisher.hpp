@@ -8,6 +8,10 @@
 #include <atomic>
 #include <condition_variable>
 
+#include <muse_mcl_2d/math/transform_2d.hpp>
+#include <muse_mcl_2d/tf/tf_provider.hpp>
+#include <muse_mcl_2d/math/convert.hpp>
+
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
@@ -35,16 +39,17 @@ public:
      * @param world_frame   - the world fram
      */
     TFPublisher(const double rate,
-                       const std::string &odom_frame,
-                       const std::string &base_frame,
-                       const std::string &world_frame,
-                       const double timeout = 0.1) :
+                const std::string &odom_frame,
+                const std::string &base_frame,
+                const std::string &world_frame,
+                const double timeout = 0.1) :
         odom_frame_(odom_frame),
         base_frame_(base_frame),
         world_frame_(world_frame),
         timeout_(timeout),
         running_(false),
         stop_(false),
+        w_T_b_(Transform2D(), muse_smc::Time(ros::Time::now().toNSec())),
         wait_for_transform_(true),
         tf_rate_(rate)
     {
@@ -74,17 +79,15 @@ public:
             worker_thread_.join();
     }
 
-    inline void setTransform(const tf::StampedTransform &w_t_b)
+    inline void setTransform(const StampedTransform2D &w_t_b)
     {
         std::unique_lock<std::mutex> l(tf_mutex_);
         w_T_b_ = w_t_b;
 
-        tf::StampedTransform b_T_o;
-        if(tf_listener_.waitForTransform(base_frame_, odom_frame_, w_T_b_.stamp_, timeout_)) {
-            tf_listener_.lookupTransform(base_frame_, odom_frame_, w_T_b_.stamp_, b_T_o);
-
-            w_T_o_ = tf::StampedTransform(static_cast<tf::Transform>(w_T_b_) * b_T_o,
-                                          w_T_b_.stamp_, world_frame_, odom_frame_);
+        Transform2D b_T_o;
+        if(tf_listener_.lookupTransform(base_frame_, odom_frame_, ros::Time(w_T_b_.stamp().seconds()), b_T_o, timeout_)) {
+            Transform2D w_T_o = w_T_b_.data() * b_T_o;
+            w_T_o_ = tf::StampedTransform(from(w_T_o), ros::Time(w_T_b_.stamp().seconds()), world_frame_, odom_frame_);
 
             tf_time_of_transform_ = w_T_o_.stamp_;
         }
@@ -108,11 +111,13 @@ private:
     std::atomic_bool         stop_;
     std::thread              worker_thread_;
     std::mutex               tf_mutex_;
-    tf::StampedTransform     w_T_o_;
-    tf::StampedTransform     w_T_b_;
-    std::atomic_bool         wait_for_transform_;
+
     tf::TransformBroadcaster tf_broadcaster_;
-    tf::TransformListener    tf_listener_;
+    TFProvider               tf_listener_;
+
+    tf::StampedTransform     w_T_o_;
+    StampedTransform2D       w_T_b_;
+    std::atomic_bool         wait_for_transform_;
     ros::Rate                tf_rate_;
     ros::Time                tf_time_of_transform_;
 
