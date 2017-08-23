@@ -4,7 +4,8 @@
 #include <tf/tf.h>
 
 
-using namespace muse_mcl;
+using namespace muse_mcl_2d_gridmaps;
+using namespace muse_mcl_2d;
 using namespace maps;
 
 DistanceGridMap::DistanceGridMap(const nav_msgs::OccupancyGrid &occupancy_grid,
@@ -27,7 +28,7 @@ DistanceGridMap::DistanceGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupa
 {
 }
 
-double DistanceGridMap::at(const math::Point &point) const
+double DistanceGridMap::at(const muse_mcl_2d::Point2D &point) const
 {
     Index i;
     toIndex(point, i);

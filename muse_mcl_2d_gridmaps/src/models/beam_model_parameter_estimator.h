@@ -9,7 +9,7 @@
 
 #include <muse_mcl/utility/csv_logger.hpp>
 
-namespace muse_mcl {
+namespace muse_mcl_2d_gridmaps {
 class BeamModelParameterEstimator
 {
 public:

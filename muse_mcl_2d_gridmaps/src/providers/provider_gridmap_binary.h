@@ -7,17 +7,18 @@
 #include <thread>
 #include <atomic>
 #include <condition_variable>
-#include <muse_mcl/providers/provider_map.hpp>
+#include <muse_mcl_2d/map/map_provider_2d.hpp>
 #include <muse_mcl_2d_gridmaps/maps//binary_gridmap.h>
 
 
-namespace muse_mcl {
-class ProviderGridmapBinary : public ProviderMap
+namespace muse_mcl_2d_gridmaps {
+class ProviderGridmapBinary : public muse_mcl_2d::MapProvider2D
 {
 public:
     ProviderGridmapBinary();
 
-    Map::ConstPtr getMap() const override;
+    state_space_t::ConstPtr getStateSpace() const override;
+    void setup(ros::NodeHandle &nh_private) override;
 
 protected:
     ros::Subscriber source_;
@@ -31,7 +32,6 @@ protected:
     std::atomic_bool         loading_;
     std::thread              worker_;
 
-    void doSetup(ros::NodeHandle &nh_private) override;
     void callback(const nav_msgs::OccupancyGridConstPtr &msg);
 
 

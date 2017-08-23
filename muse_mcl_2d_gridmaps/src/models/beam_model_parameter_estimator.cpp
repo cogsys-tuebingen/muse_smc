@@ -1,6 +1,6 @@
 #include "beam_model_parameter_estimator.h"
 
-using namespace muse_mcl;
+using namespace muse_mcl_2d_gridmaps;
 
 #include <cmath>
 #include <assert.h>

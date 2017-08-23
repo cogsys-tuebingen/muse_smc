@@ -1,11 +1,9 @@
 #ifndef BRESENHAM_HPP
 #define BRESENHAM_HPP
 
-#include <muse_mcl/map/map.hpp>
-
 #include <array>
 
-namespace muse_mcl {
+namespace muse_mcl_2d_gridmaps {
 namespace algorithms {
 template<typename T>
 class Bresenham

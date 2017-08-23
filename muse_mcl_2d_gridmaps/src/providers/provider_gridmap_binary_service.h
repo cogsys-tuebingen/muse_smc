@@ -10,7 +10,7 @@
 #include <muse_mcl/providers/provider_map.hpp>
 #include <muse_mcl_2d_gridmaps/maps//binary_gridmap.h>
 
-namespace muse_mcl {
+namespace muse_mcl_2d_gridmaps {
 class ProviderGridmapBinaryService : public ProviderMap
 {
 public:

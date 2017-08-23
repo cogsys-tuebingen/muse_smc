@@ -11,7 +11,7 @@
 #include <muse_mcl_2d_gridmaps/maps//distance_gridmap.h>
 
 
-namespace muse_mcl {
+namespace muse_mcl_2d_gridmaps {
 class ProviderGridmapDistanceService : public ProviderMap
 {
 public:

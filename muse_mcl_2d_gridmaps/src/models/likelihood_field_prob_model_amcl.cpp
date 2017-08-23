@@ -6,7 +6,7 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl::LikelihoodFieldProbModelAMCL, muse_mcl::ModelUpdate)
 
-using namespace muse_mcl;
+using namespace muse_mcl_2d_gridmaps;
 
 LikelihoodFieldProbModelAMCL::LikelihoodFieldProbModelAMCL()
 {

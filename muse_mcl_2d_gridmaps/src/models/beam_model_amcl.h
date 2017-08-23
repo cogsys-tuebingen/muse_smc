@@ -4,7 +4,7 @@
 
 #include <muse_mcl/update/update.hpp>
 
-namespace muse_mcl {
+namespace muse_mcl_2d_gridmaps {
 class BeamModelAMCL : public ModelUpdate
 {
 public:

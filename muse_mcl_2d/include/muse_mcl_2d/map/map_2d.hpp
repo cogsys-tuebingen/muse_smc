@@ -13,6 +13,11 @@ class Map2D : public muse_smc::StateSpace<Sample2D>
 public:
     using limits_t = std::numeric_limits<double>;
 
+    inline Map2D(const std::string &frame) :
+        muse_smc::StateSpace<Sample2D>(frame)
+    {
+    }
+
     virtual state_space_boundary_t getMin() const
     {
         return Point2D(limits_t::lowest(),

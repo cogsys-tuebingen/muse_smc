@@ -1,10 +1,10 @@
 #ifndef LIKELIHOODFIELD_PROB_MODEL_AMCL_H
 #define LIKELIHOODFIELD_PROB_MODEL_AMCL_H
 
-#include <muse_mcl/update/update.hpp>
+#include <muse_mcl_2d/update/update_model_2d.hpp>
 
-namespace muse_mcl {
-class LikelihoodFieldProbModelAMCL : public ModelUpdate
+namespace muse_mcl_2d_gridmaps {
+class LikelihoodFieldProbModelAMCL : public muse_mcl_2d::UpdateModel2D
 {
 public:
     LikelihoodFieldProbModelAMCL();

@@ -8,10 +8,10 @@
 #include <muse_mcl_2d/map/map_2d.hpp>
 #include <muse_mcl_2d_gridmaps/algorithms/bresenham.hpp>
 
-namespace muse_mcl {
+namespace muse_mcl_2d_gridmaps {
 namespace maps {
 template<typename T>
-class GridMap : public Map
+class GridMap : public muse_mcl_2d::Map2D
 {
 public:
     using Ptr           = std::shared_ptr<GridMap>;
@@ -25,7 +25,7 @@ public:
             const std::size_t height,
             const std::size_t width,
             const std::string frame) :
-        Map(frame),
+        Map2D(frame),
         resolution_(resolution),
         height_(height),
         width_(width),
@@ -49,27 +49,26 @@ public:
         }
     }
 
-    virtual inline math::Point getMin() const override
+    virtual inline muse_mcl_2d::Point2D getMin() const override
     {
-        math::Point p;
+        muse_mcl_2d::Point2D p;
         fromIndex({0,0},p);
         return p;
     }
 
-    virtual inline math::Point getMax() const override
+    virtual inline muse_mcl_2d::Point2D getMax() const override
     {
-        math::Point p;
+        muse_mcl_2d::Point2D p;
         fromIndex({(int)width_-1,(int)height_-1},p);
         return p;
     }
 
-    virtual inline math::Pose getOrigin() const
+    virtual inline muse_mcl_2d::Pose2D getOrigin() const
     {
-        math::Pose::Vector3d origin(origin_x_, origin_y_, origin_phi_);
-        return math::Pose(origin);
+        return muse_mcl_2d::Pose2D(origin_x_, origin_y_, origin_phi_);
     }
 
-    inline bool toIndex(const math::Point &p,
+    inline bool toIndex(const muse_mcl_2d::Point2D &p,
                         Index &i) const
     {
         double _x = p.x();
@@ -92,7 +91,7 @@ public:
     }
 
     inline void fromIndex(const Index &i,
-                          math::Point &p) const
+                          muse_mcl_2d::Point2D &p) const
     {
         double &_x = p.x();
         double &_y = p.y();
@@ -123,7 +122,7 @@ public:
         return data_ptr_[width_ * idy + idx];
     }
 
-    inline T& at(const math::Point &point)
+    inline T& at(const muse_mcl_2d::Point2D &point)
     {
         Index i;
         toIndex(point, i);
@@ -133,7 +132,7 @@ public:
         return at(i[0], i[1]);
     }
 
-    inline const T& at(const math::Point &point) const
+    inline const T& at(const muse_mcl_2d::Point2D &point) const
     {
         Index i;
         toIndex(point, i);
@@ -149,8 +148,8 @@ public:
         return LineIterator(start, _end, width_, data_ptr_);
     }
 
-    inline LineIterator getLineIterator(const math::Point &start,
-                                        const math::Point &end) const
+    inline LineIterator getLineIterator(const muse_mcl_2d::Point2D &start,
+                                        const muse_mcl_2d::Point2D &end) const
     {
         Index start_index;
         Index end_index;

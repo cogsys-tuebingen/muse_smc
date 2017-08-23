@@ -7,7 +7,7 @@
 CLASS_LOADER_REGISTER_CLASS(muse_mcl::BeamModelMLE, muse_mcl::ModelUpdate)
 
 
-using namespace muse_mcl;
+using namespace muse_mcl_2d_gridmaps;
 
 BeamModelMLE::BeamModelMLE()
 {

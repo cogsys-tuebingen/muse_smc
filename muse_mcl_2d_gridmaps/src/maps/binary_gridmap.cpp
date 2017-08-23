@@ -1,7 +1,8 @@
 #include <muse_mcl_2d_gridmaps/maps/binary_gridmap.h>
 #include <tf/tf.h>
 
-using namespace muse_mcl;
+using namespace muse_mcl_2d;
+using namespace muse_mcl_2d_gridmaps;
 using namespace maps;
 
 BinaryGridMap::BinaryGridMap(const nav_msgs::OccupancyGrid &occupancy_grid,
@@ -24,7 +25,8 @@ BinaryGridMap::BinaryGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupancy_
 {
 }
 
-double BinaryGridMap::getRange(const math::Point &from, const math::Point &to) const
+double BinaryGridMap::getRange(const muse_mcl_2d::Point2D &from,
+                               const muse_mcl_2d::Point2D &to) const
 {
     LineIterator it = getLineIterator(from, to);
     while(!it.done()) {
@@ -36,15 +38,15 @@ double BinaryGridMap::getRange(const math::Point &from, const math::Point &to) c
     if(it.invalid())
         return -1;
 
-    math::Point end;
+    muse_mcl_2d::Point2D end;
     fromIndex({it.x(), it.y()}, end);
-    return end.distance(from);
+    return  (end - from).length();
 }
 
-bool BinaryGridMap::validate(const math::Pose &p) const
+bool BinaryGridMap::validate(const muse_mcl_2d::Pose2D &p) const
 {
     Index index;
-    if(toIndex(p.getOrigin(), index))
+    if(toIndex(p.translation(), index))
         return at(index[0], index[1]) == 0;
     return false;
 }

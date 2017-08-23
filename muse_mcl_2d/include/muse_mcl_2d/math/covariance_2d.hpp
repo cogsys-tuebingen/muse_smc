@@ -3,7 +3,7 @@
 
 #include <array>
 #include <vector>
-#include <Eigen/Core>
+#include <eigen3/Eigen/Core>
 
 
 namespace muse_mcl_2d {

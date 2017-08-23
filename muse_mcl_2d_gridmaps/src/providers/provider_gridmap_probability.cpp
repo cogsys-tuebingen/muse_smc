@@ -3,7 +3,7 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl::ProviderGridmapProbability, muse_mcl::ProviderMap)
 
-using namespace muse_mcl;
+using namespace muse_mcl_2d_gridmapss;
 
 ProviderGridmapProbability::ProviderGridmapProbability() :
     loading_(false)

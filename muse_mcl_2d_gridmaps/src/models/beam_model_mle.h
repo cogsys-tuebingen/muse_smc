@@ -6,7 +6,7 @@
 #include <muse_mcl/update/update.hpp>
 #include "beam_model_parameter_estimator.h"
 
-namespace muse_mcl {
+namespace muse_mcl_2d_gridmaps {
 class BeamModelMLE : public ModelUpdate
 {
 public:

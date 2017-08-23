@@ -4,7 +4,7 @@
 #include "gridmap.hpp"
 #include <nav_msgs/OccupancyGrid.h>
 
-namespace muse_mcl {
+namespace muse_mcl_2d_gridmaps {
 namespace maps {
 class ProbabilityGridMap : public GridMap<double>
 {

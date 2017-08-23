@@ -1,7 +1,8 @@
 #include <muse_mcl_2d_gridmaps/maps/probability_gridmap.h>
 #include <tf/tf.h>
 
-using namespace muse_mcl;
+using namespace muse_mcl_2d_gridmaps;
+using namespace muse_mcl_2d;
 using namespace maps;
 
 ProbabilityGridMap::ProbabilityGridMap(const nav_msgs::OccupancyGrid &occupancy_grid) :

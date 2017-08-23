@@ -1,9 +1,9 @@
 #include "provider_gridmap_binary.h"
 
-using namespace muse_mcl;
+using namespace muse_mcl_2d_gridmaps;
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl::ProviderGridmapBinary, muse_mcl::ProviderMap)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::ProviderGridmapBinary, muse_mcl::ProviderMap)
 
 ProviderGridmapBinary::ProviderGridmapBinary() :
     loading_(false)
