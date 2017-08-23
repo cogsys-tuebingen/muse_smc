@@ -2,7 +2,7 @@
 #define VECTOR_2D_HPP
 
 #include <cmath>
-#include <Eigen/Core>
+#include <eigen3/Eigen/Core>
 
 namespace muse_mcl_2d {
 class Vector2D {

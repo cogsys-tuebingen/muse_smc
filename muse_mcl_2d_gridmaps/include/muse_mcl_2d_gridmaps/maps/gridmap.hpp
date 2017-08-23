@@ -5,8 +5,7 @@
 #include <vector>
 #include <cmath>
 
-#include <muse_mcl/map/map.hpp>
-
+#include <muse_mcl_2d/map/map_2d.hpp>
 #include <muse_mcl_2d_gridmaps/algorithms/bresenham.hpp>
 
 namespace muse_mcl {

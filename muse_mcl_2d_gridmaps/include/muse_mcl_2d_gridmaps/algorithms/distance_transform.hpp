@@ -1,11 +1,11 @@
 #ifndef DISTANCE_TRANSFORM_HPP
 #define DISTANCE_TRANSFORM_HPP
-#include <muse_mcl/map/map.hpp>
 
 #include <array>
 #include <queue>
+#include <cmath>
 
-namespace muse_mcl {
+namespace muse_mcl_2d_gridmaps {
 namespace algorithms {
 namespace distance_transform {
 struct DistanceCache {

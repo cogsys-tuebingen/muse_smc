@@ -39,6 +39,8 @@ generate_messages(
 
 catkin_package(
     INCLUDE_DIRS    include
+    CATKIN_DEPENDS  muse_smc
+    DEPENDS         Eigen3
 )
 
 include_directories(

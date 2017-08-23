@@ -2,16 +2,17 @@ cmake_minimum_required(VERSION 2.8.3)
 project(muse_mcl_2d_gridmaps)
 
 find_package(catkin REQUIRED COMPONENTS
-  muse_mcl
+  muse_mcl_2d
   muse_mcl_2d_laser
   nav_msgs
   pluginlib
   roscpp
   rostest
   tf
-  cslibs_indexed_storage # REMOVE THIS
 )
+
 find_package(OpenCV REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -22,6 +23,7 @@ catkin_package(
 
 include_directories(
   include
+  ${Eigen3_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
 )
