@@ -1,20 +1,19 @@
-#ifndef SYNCHRONIZED_PRIORITY_QUEUE_HPP
-#define SYNCHRONIZED_PRIORITY_QUEUE_HPP
+#ifndef SYNCHRONIZED_QUEUE_HPP
+#define SYNCHRONIZED_QUEUE_HPP
 
 #include <queue>
 #include <mutex>
 
 namespace muse_smc {
 namespace synchronized {
-template<typename _Tp, typename _Sequence = std::vector<_Tp>,
-         typename _Compare  = std::less<typename _Sequence::value_type>>
-class priority_queue
+template<typename _Tp, typename _Sequence = std::vector<_Tp>>
+class queue
 {
 public:
     using mutex_t = std::mutex;
     using lock_t  = std::unique_lock<mutex_t>;
 
-    priority_queue() = default;
+    queue() = default;
 
     inline bool empty() const
     {
@@ -50,10 +49,11 @@ public:
 
 private:
     mutable mutex_t mutex_;
-    std::priority_queue<_Tp, _Sequence, _Compare> q_;
+    std::queue<_Tp, _Sequence> q_;
 
 };
 }
 }
 
-#endif // SYNCHRONIZED_PRIORITY_QUEUE_HPP
+
+#endif // SYNCHRONIZED_QUEUE_HPP

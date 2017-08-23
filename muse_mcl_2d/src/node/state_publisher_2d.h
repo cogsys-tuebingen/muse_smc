@@ -26,14 +26,18 @@ private:
     TFPublisher::Ptr            tf_publisher_;
     SampleSetPublisher2D::Ptr   sample_publisher_;
 
-    std::string        world_frame_;
-    std::string        odom_frame_;
-    std::string        base_frame_;
-    double             tf_rate_;
+    std::string                 world_frame_;
+    std::string                 odom_frame_;
+    std::string                 base_frame_;
 
-    StampedTransform2D latest_w_T_b_;
+    ros::Time                   last_state_publication_;
+    ros::Duration               cycle_time_state_publication_;
 
 
+    StampedTransform2D          latest_w_T_b_;
+
+
+    void publishState(const typename sample_set_t::Ptr &sample_set);
 
 };
 }

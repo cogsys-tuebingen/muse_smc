@@ -166,7 +166,7 @@ public:
                                    const double ratio) const
     {
         assert(ratio  >= 0.0);
-        assert(ration <= 1.0);
+        assert(ratio <= 1.0);
         if(ratio == 0.0) {
             return *this;
         }

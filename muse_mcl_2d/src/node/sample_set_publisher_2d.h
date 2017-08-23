@@ -2,14 +2,73 @@
 #define SAMPLE_SET_PUBLISHER_2D_H
 
 #include <memory>
+#include <thread>
+#include <atomic>
+#include <condition_variable>
+
+#include <ros/node_handle.h>
+#include <ros/publisher.h>
+
+#include <geometry_msgs/PoseArray.h>
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
+#include <visualization_msgs/MarkerArray.h>
+
+#include <muse_smc/utility/synchronized_queue.hpp>
+#include <muse_smc/samples/sample_set.hpp>
+
+#include <muse_mcl_2d/samples/sample_2d.hpp>
+#include <muse_mcl_2d/SampleSetMsg.h>
 
 namespace muse_mcl_2d {
 class SampleSetPublisher2D
 {
 public:
     using Ptr = std::shared_ptr<SampleSetPublisher2D>;
+    using sample_set_t    = muse_smc::SampleSet<Sample2D>;
+    using sample_vector_t = sample_set_t::sample_vector_t;
+    using time_t          = muse_smc::Time;
+    using lock_t          = std::unique_lock<std::mutex>;
 
     SampleSetPublisher2D();
+    virtual ~SampleSetPublisher2D();
+
+    void setup(ros::NodeHandle &nh);
+    bool start();
+    bool end();
+
+    void add(const sample_vector_t &sample_vector,
+             const double           weight_maximum,
+             const Pose2D          &mean,
+             const Covariance2D    &covariance,
+             const time_t &stamp);
+
+private:
+    std::atomic_bool                    running_;
+    std::atomic_bool                    stop_;
+    std::thread                         worker_thread_;
+    std::condition_variable             notify_;
+    std::mutex                          notify_mutex_;
+
+    std::mutex                          data_mutex_;
+    std::queue<sample_vector_t::Ptr>    queue_samples_;
+    std::queue<double>                  queue_maximum_weight_;
+    std::queue<Pose2D>                  queue_means_;
+    std::queue<Covariance2D>            queue_covariances_;
+    std::queue<time_t>                  queue_stamps_;
+
+    ros::Publisher                      pub_markers_;
+    ros::Publisher                      pub_samples_;
+    ros::Publisher                      pub_poses_;
+    ros::Publisher                      pub_mean_;
+
+    std::string                         world_frame_;
+
+    bool publish_poses_;
+    bool publish_markers_;
+    bool publish_samples_;
+    bool publish_mean_;
+
+    void loop();
 };
 }
 

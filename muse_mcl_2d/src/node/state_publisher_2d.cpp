@@ -16,7 +16,7 @@ StatePublisher::~StatePublisher()
 
 void StatePublisher::setup(ros::NodeHandle &nh)
 {
-    const double pub_rate_poses = nh.param<double>("pub_rate_poses", 30.0);
+    const double pub_rate_state = nh.param<double>("pub_rate_state", 0.0);
     const double pub_rate_tf    = nh.param<double>("pub_rate_tf", 30.0);
 
     world_frame_ = nh.param<std::string>("world_frame", "/world");
@@ -25,6 +25,14 @@ void StatePublisher::setup(ros::NodeHandle &nh)
 
     tf_publisher_.reset(new TFPublisher(pub_rate_tf, odom_frame_, base_frame_, world_frame_/*, tf_timeout */));
     tf_publisher_->start();
+
+    if(pub_rate_state != 0.0) {
+        cycle_time_state_publication_ = ros::Duration(1.0 / pub_rate_state);
+    } else {
+        cycle_time_state_publication_ = ros::Duration(0.0);
+    }
+
+    last_state_publication_ = ros::Time::now();
 }
 
 void StatePublisher::publish(const sample_set_t::Ptr &sample_set)
@@ -64,11 +72,20 @@ void StatePublisher::publish(const sample_set_t::Ptr &sample_set)
         tf_publisher_->setTransform(latest_w_T_b_);
     }
     /// publish the particle set state
-    publishIntermidiate(sample_set);
+    publishState(sample_set);
 }
 
 void StatePublisher::publishIntermidiate(const sample_set_t::Ptr &sample_set)
 {
+    const ros::Time now = ros::Time::now();
+    const ros::Time expected = last_state_publication_ + cycle_time_state_publication_;
+    if(now > expected) {
+       last_state_publication_ = expected;
+        publishState(sample_set);
+    }
+}
 
-
+void StatePublisher::publishState(const sample_set_t::Ptr &sample_set)
+{
+        //// here we put the async publisher into ...
 }

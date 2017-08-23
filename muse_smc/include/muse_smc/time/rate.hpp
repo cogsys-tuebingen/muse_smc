@@ -40,7 +40,7 @@ public:
         return expected_cycle_time_;
     }
 
-    bool sleep()
+    inline bool sleep()
     {
         Time expected_end = start_ + expected_cycle_time_;
         Time actual_end = Time::now();
@@ -66,10 +66,8 @@ public:
         return sleep_time.sleep();
     }
 
-
-
 private:
-    Time    start_;
+    Time     start_;
     Duration actual_cycle_time_;
     Duration expected_cycle_time_;
 };
