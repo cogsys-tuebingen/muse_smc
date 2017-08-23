@@ -195,8 +195,6 @@ bool MuseMCL2DNode::setup()
     {
 
         const std::string world_frame = nh_private_.param<std::string>("world_frame", "/world");
-        const std::string odom_frame  = nh_private_.param<std::string>("odom_frame", "/odom");
-        const std::string base_frame  = nh_private_.param<std::string>("base_frame", "/base_link");
 
         auto param_name = [](const std::string &param){return "particle_filter/" + param;};
 
@@ -226,7 +224,7 @@ bool MuseMCL2DNode::setup()
                                            maximum_sample_size,
                                            sample_density_));
         state_publisher_.reset(new StatePublisher);
-
+        state_publisher_->setup(nh_private_);
 
         particle_filter_.reset(new smc_t);
         particle_filter_->setup(sample_set_,

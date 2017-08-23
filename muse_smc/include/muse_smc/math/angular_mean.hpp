@@ -77,6 +77,11 @@ public:
         mean = mean_;
     }
 
+    inline double getCovariance() const
+    {
+        return -2.0 * std::log(std::hypot(complex_mean_.real(), complex_mean_.imag()));
+    }
+
 private:
     mutable bool    dirty_;
     mutable double  mean_;

@@ -22,7 +22,7 @@ public:
         tf_ = tf;
 
         world_frame_      = nh.param<std::string>("world_frame", "world");
-        robot_base_frame_ = nh.param<std::string>("robot_base_frame", "base_link");
+        robot_base_frame_ = nh.param<std::string>("base_frame",  "base_link");
         tf_timeout_       = ros::Duration(nh.param<double>(param_name("tf_timeout"), 0.1));
         doSetup(nh);
     }

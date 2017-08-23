@@ -35,6 +35,7 @@ private:
 
 
     StampedTransform2D          latest_w_T_b_;
+    Covariance2D                latest_w_T_b_covariance_;
 
 
     void publishState(const typename sample_set_t::Ptr &sample_set);
