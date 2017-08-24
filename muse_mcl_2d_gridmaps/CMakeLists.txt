@@ -16,7 +16,7 @@ find_package(Eigen3 REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}_maps
+  LIBRARIES ${PROJECT_NAME}_maps ${PROJECT_NAME}_providers ${PROJECT_NAME}_models
 #  CATKIN_DEPENDS muse_mcl nav_msgs pluginlib roscpp rostest
 #  DEPENDS system_lib
 )

@@ -3,7 +3,7 @@
       <param name="/use_sim_time" value="true" />
 
       <!--- muse amcl parameters -->
-    <group ns="muse_mcl">
+    <group ns="muse_mcl_2d">
         <param name="world_frame"     value="/world" />
         <param name="odom_frame"      value="/odom" />
         <param name="base_frame"      value="/base_link" />

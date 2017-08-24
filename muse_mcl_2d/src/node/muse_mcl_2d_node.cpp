@@ -99,7 +99,7 @@ void MuseMCL2DNode::poseInitialization(const geometry_msgs::PoseWithCovarianceSt
 bool MuseMCL2DNode::setup()
 {
     /// load all plugins
-    muse_smc::PluginLoader loader(nh_private_);
+    muse_smc::PluginLoader loader("muse_mcl_2d", nh_private_);
 
     {   /// Update Models
         loader.load<UpdateModel2D, TFProvider::Ptr, ros::NodeHandle&>(update_models_, tf_provider_backend_, nh_private_);
@@ -165,7 +165,7 @@ bool MuseMCL2DNode::setup()
         ROS_INFO_STREAM(data_provider_list);
     }
     { /// sampling algorithms
-        loader.load<UniformSampling2D,  map_provider_map_t, TFProvider::Ptr, ros::NodeHandle&>(uniform_sampling_, map_providers_, tf_provider_backend_, nh_private_);
+        loader.load<UniformSampling2D, map_provider_map_t, TFProvider::Ptr, ros::NodeHandle&>(uniform_sampling_, map_providers_, tf_provider_backend_, nh_private_);
         if(!uniform_sampling_) {
             ROS_ERROR_STREAM("No uniform sampling function was found!");
             ROS_ERROR_STREAM("Setup is incomplete and is aborted!");
@@ -251,8 +251,8 @@ bool MuseMCL2DNode::setup()
     }
     update_forwarder_->relay(update_mapping);
 
-    initialization_service_pose_    = nh_private_.advertiseService("/muse_mcl/pose_initialization", &MuseMCL2DNode::requestPoseInitialization, this);
-    initialization_service_global_  = nh_private_.advertiseService("/muse_mcl/global_initialization", &MuseMCL2DNode::requestGlobalInitialization, this);
+    initialization_service_pose_    = nh_private_.advertiseService("/muse_mcl_2d/pose_initialization", &MuseMCL2DNode::requestPoseInitialization, this);
+    initialization_service_global_  = nh_private_.advertiseService("/muse_mcl_2d/global_initialization", &MuseMCL2DNode::requestGlobalInitialization, this);
     initialization_subscriber_pose_ = nh_private_.subscribe("/initialpose", 1, &MuseMCL2DNode::poseInitialization, this);
 
     return true;
@@ -353,13 +353,14 @@ bool MuseMCL2DNode::getPredictionProvider(DataProvider2D::Ptr &prediction_provid
 
 int main(int argc, char *argv[])
 {
-    ros::init(argc, argv, "muse_mcl");
+    ros::init(argc, argv, "muse_mcl_2d");
 
     MuseMCL2DNode node;
     if(node.setup()) {
+        ROS_INFO_STREAM("Node is set up and ready to start!");
         node.start();
     } else {
-        ROS_ERROR_STREAM("[muse_mcl]: Could not set up the node!");
+        ROS_ERROR_STREAM("Could not set up the node!");
     }
     return 0;
 }

@@ -19,7 +19,6 @@
      <description>Systematic resampling.</description>
    </class>
 </library>
-,
 <library path="libmuse_mcl_2d_sampling">
     <!-- Pose Generation -->
     <class type="muse_mcl_2d::Normal2D" base_class_type="muse_mcl_2d::NormalSampling2D">

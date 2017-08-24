@@ -27,8 +27,8 @@ private:
 template<typename plugin_t, typename ... setup_args_t>
 class PluginFactory {
 public:
-    PluginFactory() :
-        plugin_manager(plugin_t::Type()),
+    PluginFactory(const std::string &package_name) :
+        plugin_manager(plugin_t::Type(), package_name),
         plugin_id_(0)
     {
         plugin_manager.load();

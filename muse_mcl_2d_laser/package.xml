@@ -25,6 +25,6 @@
   <run_depend>tf</run_depend>
 
   <export>
-  <muse_mcl plugin="${prefix}/plugins.xml" />
+  <muse_mcl_2d plugin="${prefix}/plugins.xml" />
   </export>
 </package>

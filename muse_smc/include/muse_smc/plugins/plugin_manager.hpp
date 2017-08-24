@@ -24,8 +24,9 @@ protected:
     typedef std::map<std::string, PluginConstructorM> Constructors;
 
 protected:
-    PluginManagerImp(const std::string& full_name)
-        : plugins_loaded_(false), full_name_(full_name), loader_("muse_smc", full_name)
+    PluginManagerImp(const std::string& full_name,
+                     const std::string& package_name)
+        : plugins_loaded_(false), full_name_(full_name), loader_(package_name, full_name)
     {
     }
 
@@ -126,8 +127,7 @@ protected:
             std::string tags = readString(class_element, "tags");
 
             available_classes.emplace(lookup_name, [loader, lookup_name]() {
-                std::cerr << loader->getLibraryPath() << std::endl;
-                return std::shared_ptr<M> { loader->createUnmanagedInstance<M>(lookup_name) };
+                 return std::shared_ptr<M> { loader->createUnmanagedInstance<M>(lookup_name) };
             });
         }
     }
@@ -179,12 +179,13 @@ public:
     typedef typename Parent::PluginConstructorM Constructor;
     typedef typename Parent::Constructors Constructors;
 
-    PluginManager(const std::string& full_name)
+    PluginManager(const std::string& full_name,
+                  const std::string& package_name)
     {
         std::unique_lock<std::mutex> lock(PluginManagerLocker::getMutex());
         if(i_count == 0) {
             ++i_count;
-            instance = new Parent(full_name);
+            instance = new Parent(full_name, package_name);
         }
     }
 

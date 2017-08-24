@@ -10,7 +10,9 @@ namespace muse_smc {
 class PluginLoader
 {
 public:
-    PluginLoader(ros::NodeHandle &nh_private) :
+    PluginLoader(const std::string &package_name,
+                 ros::NodeHandle &nh_private) :
+        package_name_(package_name),
         nh_private_(nh_private)
     {
         parseLaunchFile();
@@ -24,7 +26,7 @@ public:
 
         /// all in the launch file entered plugins have been retrieved now
         /// now we load the ones related to this ProviderManager
-        static PluginFactory<plugin_t, arguments_t...> factory;
+        static PluginFactory<plugin_t, arguments_t...> factory(package_name_);
         for(const auto &entry : plugins_found_) {
             const std::string &name = entry.first;
             const std::string &base_class_name = entry.second.base_class_name;
@@ -41,7 +43,7 @@ public:
     inline void load(typename plugin_t::Ptr &plugin,
                      const arguments_t&... arguments)
     {
-        static PluginFactory<plugin_t, arguments_t ...> factory;
+        static PluginFactory<plugin_t, arguments_t ...> factory(package_name_);
         for(const auto &entry : plugins_found_) {
             const std::string &name = entry.first;
             const std::string &base_class_name = entry.second.base_class_name;
@@ -67,6 +69,7 @@ private:
         std::string base_class_name;
     };
 
+    std::string     package_name_;
     ros::NodeHandle nh_private_;
     std::map<std::string, LaunchEntry> plugins_found_;
 
