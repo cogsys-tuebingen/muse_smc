@@ -1,7 +1,5 @@
 #include "differential_drive.h"
 
-#include <muse_mcl_2d_odometry/odometry/odometry.hpp>
-
 #include <muse_smc/math/angle.hpp>
 
 #include <class_loader/class_loader_register_macro.h>
@@ -14,18 +12,18 @@ DifferentialDrive::Result::Ptr DifferentialDrive::apply(const muse_smc::Data::Co
                                                         const muse_smc::Time           &until,
                                                         sample_set_t::state_iterator_t  states)
 {
-    Odometry::ConstPtr apply;
-    Odometry::ConstPtr leave;
+    Odometry2D::ConstPtr apply;
+    Odometry2D::ConstPtr leave;
     if(until < data->getTimeFrame().end) {
-        Odometry::ConstPtr original = std::dynamic_pointer_cast<Odometry const>(data);
+        Odometry2D::ConstPtr original = std::dynamic_pointer_cast<Odometry2D const>(data);
         if(!original->split(until, apply, leave)) {
             apply = original;
         }
     } else {
-        apply = std::dynamic_pointer_cast<Odometry const>(data);
+        apply = std::dynamic_pointer_cast<Odometry2D const>(data);
     }
 
-    const Odometry &odometry = *apply;
+    const Odometry2D &odometry = *apply;
 
 
     const double delta_trans = odometry.getDeltaLinear();
@@ -73,9 +71,9 @@ DifferentialDrive::Result::Ptr DifferentialDrive::apply(const muse_smc::Data::Co
     }
 
     for(muse_mcl_2d::Pose2D &sample : states) {
-        const double delta_rot_hat1  = math::angle::difference(delta_rot1, rng_delta_rot_hat1_->get());
+        const double delta_rot_hat1  = muse_smc::math::angle::difference(delta_rot1, rng_delta_rot_hat1_->get());
         const double delta_trans_hat = delta_trans - rng_delta_trans_hat_->get();
-        const double delta_rot_hat2  = math::angle::difference(delta_rot2, rng_delta_rot_hat2_->get());
+        const double delta_rot_hat2  = muse_smc::math::angle::difference(delta_rot2, rng_delta_rot_hat2_->get());
         const double tx = sample.tx() + delta_trans_hat * std::cos(sample.yaw() + delta_rot_hat1);
         const double ty = sample.ty() + delta_trans_hat * std::sin(sample.yaw() + delta_rot_hat1);
         const double yaw = muse_smc::math::angle::normalize(sample.yaw() + delta_rot_hat1 + delta_rot_hat2);

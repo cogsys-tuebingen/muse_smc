@@ -1,6 +1,6 @@
 #include "odometry_provider_2d.h"
 
-#include <muse_mcl_2d_odometry/odometry/odometry.hpp>
+#include <muse_mcl_2d/odometry/odometry_2d.hpp>
 
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_odometry::OdometryProvider2D, muse_mcl_2d::DataProvider2D)
@@ -20,10 +20,10 @@ void OdometryProvider2D::callback(const nav_msgs::OdometryConstPtr &msg)
     if(last_msg_) {
         muse_smc::TimeFrame time_frame(last_msg_->header.stamp.toNSec(),
                                        msg->header.stamp.toNSec());
-        Odometry::Ptr odometry(new Odometry(msg->header.frame_id,
-                                            time_frame,
-                                            to_pose(last_msg_),
-                                            to_pose(msg)));
+        Odometry2D::Ptr odometry(new Odometry2D(msg->header.frame_id,
+                                                time_frame,
+                                                to_pose(last_msg_),
+                                                to_pose(msg)));
         data_received_(odometry);
     }
     last_msg_ = msg;

@@ -1,7 +1,5 @@
 #include "omni_drive.h"
 
-#include <muse_mcl_2d_odometry/odometry/odometry.hpp>
-
 #include <muse_smc/math/angle.hpp>
 
 #include <class_loader/class_loader_register_macro.h>
@@ -10,27 +8,22 @@ CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_odometry::OmniDrive, muse_mcl_2d::Predic
 using namespace muse_mcl_2d_odometry;
 using namespace muse_mcl_2d;
 
-OmniDrive::OmniDrive()
-{
-
-}
-
 OmniDrive::Result::Ptr OmniDrive::apply(const muse_smc::Data::ConstPtr &data,
                                         const muse_smc::Time           &until,
                                         sample_set_t::state_iterator_t  states)
 {
-    Odometry::ConstPtr apply;
-    Odometry::ConstPtr leave;
+    Odometry2D::ConstPtr apply;
+    Odometry2D::ConstPtr leave;
     if(until < data->getTimeFrame().end) {
-        Odometry::ConstPtr original = std::dynamic_pointer_cast<Odometry const>(data);
+        Odometry2D::ConstPtr original = std::dynamic_pointer_cast<Odometry2D const>(data);
         if(!original->split(until, apply, leave)) {
             apply = original;
         }
     } else {
-        apply = std::dynamic_pointer_cast<Odometry const>(data);
+        apply = std::dynamic_pointer_cast<Odometry2D const>(data);
     }
 
-    const Odometry &odometry = *apply;
+    const Odometry2D &odometry = *apply;
 
     const double delta_trans = odometry.getDeltaLinear();
     const double delta_rot   = odometry.getDeltaAngular();
@@ -76,9 +69,9 @@ OmniDrive::Result::Ptr OmniDrive::apply(const muse_smc::Data::ConstPtr &data,
 
         const double cos_delta_bearing  = std::cos(delta_bearing);
         const double sin_delta_bearing  = std::sin(delta_bearing);
-        const double delta_trans_hat    = delta_trans + rng_delta_trans_hat->get();
-        const double delta_rot_hat      = delta_rot + rng_delta_rot_hat->get();
-        const double delta_strafe_hat   = 0.0 + rng_delta_strafe_hat->get();
+        const double delta_trans_hat    = delta_trans + rng_delta_trans_hat_->get();
+        const double delta_rot_hat      = delta_rot + rng_delta_rot_hat_->get();
+        const double delta_strafe_hat   = 0.0 + rng_delta_strafe_hat_->get();
         tx  += (delta_trans_hat * cos_delta_bearing + delta_strafe_hat * sin_delta_bearing);
         ty  += (delta_trans_hat * sin_delta_bearing - delta_strafe_hat * cos_delta_bearing);
         yaw += delta_rot_hat;

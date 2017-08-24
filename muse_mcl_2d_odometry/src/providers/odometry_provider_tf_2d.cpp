@@ -1,6 +1,6 @@
 #include "odometry_provider_tf_2d.h"
 
-#include <muse_mcl_2d_odometry/odometry/odometry.hpp>
+#include <muse_mcl_2d/odometry/odometry_2d.hpp>
 #include <tf/tf.h>
 
 #include <class_loader/class_loader_register_macro.h>
@@ -52,10 +52,10 @@ void OdometryProviderTF2D::loop()
         if(tf_.lookupTransform(odom_frame_, base_frame_, now, o_T_b2, timeout_)) {
             if(initialized_) {
                 muse_smc::TimeFrame time_frame(o_T_b1_.stamp(), o_T_b2.stamp());
-                Odometry::Ptr odometry(new Odometry(odom_frame_,
-                                                    time_frame,
-                                                    o_T_b1_.data(),
-                                                    o_T_b2.data()));
+                Odometry2D::Ptr odometry(new Odometry2D(odom_frame_,
+                                                        time_frame,
+                                                        o_T_b1_.data(),
+                                                        o_T_b2.data()));
                 data_received_(odometry);
             } else {
                 initialized_ = true;
