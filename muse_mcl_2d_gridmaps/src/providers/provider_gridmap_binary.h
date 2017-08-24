@@ -7,9 +7,9 @@
 #include <thread>
 #include <atomic>
 #include <condition_variable>
-#include <muse_mcl_2d/map/map_provider_2d.hpp>
-#include <muse_mcl_2d_gridmaps/maps//binary_gridmap.h>
 
+#include <muse_mcl_2d/map/map_provider_2d.hpp>
+#include <muse_mcl_2d_gridmaps/maps/binary_gridmap.h>
 
 namespace muse_mcl_2d_gridmaps {
 class ProviderGridmapBinary : public muse_mcl_2d::MapProvider2D
@@ -18,7 +18,7 @@ public:
     ProviderGridmapBinary();
 
     state_space_t::ConstPtr getStateSpace() const override;
-    void setup(ros::NodeHandle &nh_private) override;
+    void setup(ros::NodeHandle &nh) override;
 
 protected:
     ros::Subscriber source_;

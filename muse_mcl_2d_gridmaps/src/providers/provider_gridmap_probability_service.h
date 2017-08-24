@@ -7,16 +7,18 @@
 #include <thread>
 #include <atomic>
 #include <condition_variable>
-#include <muse_mcl/providers/provider_map.hpp>
-#include <muse_mcl_2d_gridmaps/maps//probability_gridmap.h>
+
+#include <muse_mcl_2d/map/map_provider_2d.hpp>
+#include <muse_mcl_2d_gridmaps/maps/probability_gridmap.h>
 
 namespace muse_mcl_2d_gridmaps {
-class ProviderGridmapProbabilityService : public ProviderMap
+class ProviderGridmapProbabilityService : public muse_mcl_2d::MapProvider2D
 {
 public:
     ProviderGridmapProbabilityService();
 
-    Map::ConstPtr getMap() const override;
+    state_space_t::ConstPtr getStateSpace() const override;
+    void setup(ros::NodeHandle &nh) override;
 
 protected:
     mutable ros::ServiceClient source_;
@@ -28,8 +30,6 @@ protected:
     mutable maps::ProbabilityGridMap::Ptr map_;
     mutable std::atomic_bool              loading_;
     mutable std::thread                   worker_;
-
-    void doSetup(ros::NodeHandle &nh_private) override;
 
 };
 }

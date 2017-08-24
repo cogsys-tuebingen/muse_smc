@@ -13,6 +13,7 @@ class UpdateModel {
 public:
     using sample_set_t = SampleSet<sample_t>;
     using state_space_t = StateSpace<sample_t>;
+    using data_t = Data;
     using Ptr = std::shared_ptr<UpdateModel>;
 
     UpdateModel()

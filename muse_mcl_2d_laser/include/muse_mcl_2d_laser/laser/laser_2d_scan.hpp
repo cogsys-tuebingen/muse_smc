@@ -1,32 +1,35 @@
 #ifndef LASER_SCAN_2D_HPP
 #define LASER_SCAN_2D_HPP
 
-#include <muse_mcl/math/point.hpp>
-#include <muse_mcl/data/data.hpp>
+#include <muse_mcl_2d/math/point_2d.hpp>
+#include <muse_smc/data/data.hpp>
 
 #include <limits>
 
-namespace muse_mcl {
-class LaserScan2D : public muse_mcl::Data
+namespace muse_mcl_2d_laser {
+class LaserScan2D : public muse_smc::Data
 {
 public:
+    using point_t = muse_mcl_2d::Point2D;
+    using time_frame_t = muse_smc::TimeFrame;
+
     struct Ray {
-        const double       angle_;
-        const double       range_;
-        const math::Point  point_;
-        const bool         valid_;
+        const double  angle_;
+        const double  range_;
+        const point_t point_;
+        const bool    valid_;
 
         Ray(const double angle,
             const double range) :
             angle_(angle),
             range_(range),
-            point_(math::Point(std::cos(angle) * range_,
+            point_(point_t(std::cos(angle) * range_,
                                std::sin(angle) * range_)),
             valid_(true)
         {
         }
 
-        Ray(const math::Point &pt) :
+        Ray(const point_t &pt) :
             angle_(std::atan2(pt.y(), pt.x())),
             range_(std::hypot(pt.y(), pt.x())),
             point_(pt),
@@ -37,7 +40,7 @@ public:
         Ray() :
             angle_(std::numeric_limits<double>::infinity()),
             range_(std::numeric_limits<double>::infinity()),
-            point_(math::Point()),
+            point_(point_t()),
             valid_(false)
         {
         }
@@ -56,7 +59,7 @@ public:
     }
 
     LaserScan2D(const std::string &frame,
-                const TimeFrame &time_frame) :
+                const time_frame_t &time_frame) :
         Data(frame, time_frame),
         range_min_(0.0),
         range_max_(std::numeric_limits<double>::max()),

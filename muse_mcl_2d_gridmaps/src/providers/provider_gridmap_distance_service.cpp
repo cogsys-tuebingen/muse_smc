@@ -1,23 +1,36 @@
 #include "provider_gridmap_distance_service.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl::ProviderGridmapDistanceService, muse_mcl::ProviderMap)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::ProviderGridmapDistanceService, muse_mcl_2d::MapProvider2D)
 
 using namespace muse_mcl_2d_gridmaps;
+using namespace muse_mcl_2d;
 
 ProviderGridmapDistanceService::ProviderGridmapDistanceService() :
     loading_(false)
 {
 }
 
-Map::ConstPtr ProviderGridmapDistanceService::getMap() const
+void ProviderGridmapDistanceService::setup(ros::NodeHandle &nh)
+{
+    auto param_name = [this](const std::string &name){return name_ + "/" + name;};
+    service_name_ = nh.param<std::string>(param_name("service"), "/static_map");
+    binarization_threshold_ = nh.param<double>(param_name("threshold"), 0.5);
+    kernel_size_ = std::max(nh.param<int>(param_name("kernel_size"), 5), 5);
+    kernel_size_ += 1 - (kernel_size_ % 2);
+    blocking_ = nh.param<bool>(param_name("blocking"), false);
+    source_   = nh.serviceClient<nav_msgs::GetMap>(service_name_);
+}
+
+
+ProviderGridmapDistanceService::state_space_t::ConstPtr ProviderGridmapDistanceService::getStateSpace() const
 {
     nav_msgs::GetMap req;
     if(source_.call(req)) {
         /// conversion can take time
         /// we allow concurrent loading, this way, the front end thread is not blocking.
         if(!loading_) {
-            if(!map_ || req.response.map.info.map_load_time > map_->getStamp()) {
+            if(!map_ || muse_smc::Time(req.response.map.info.map_load_time.toNSec()) > map_->getStamp()) {
                 loading_ = true;
 
                 auto load = [this, req]() {
@@ -52,13 +65,4 @@ Map::ConstPtr ProviderGridmapDistanceService::getMap() const
 
 }
 
-void ProviderGridmapDistanceService::doSetup(ros::NodeHandle &nh_private)
-{
-    service_name_ = nh_private.param<std::string>(privateParameter("service"), "/static_map");
-    binarization_threshold_ = nh_private.param<double>(privateParameter("threshold"), 0.5);
-    kernel_size_ = std::max(nh_private.param<int>(privateParameter("kernel_size"), 5), 5);
-    kernel_size_ += 1 - (kernel_size_ % 2);
-    blocking_ = nh_private.param<bool>(privateParameter("blocking"), false);
-    source_   = nh_private.serviceClient<nav_msgs::GetMap>(service_name_);
-}
 

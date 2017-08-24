@@ -52,14 +52,14 @@ public:
     {
     }
 
-    inline Vector2D operator * (const Vector2D &v)
+    inline Vector2D operator * (const Vector2D &v) const
     {
         return Vector2D(cos_ * v.x() - sin_ * v.y() + translation_.x(),
                         sin_ * v.x() + cos_ * v.y() + translation_.y());
 
     }
 
-    inline Transform2D operator * (const Transform2D &other)
+    inline Transform2D operator * (const Transform2D &other) const
     {
         Transform2D t;
         t.sin_ = sin_ * other.cos_ + other.sin_ * cos_;

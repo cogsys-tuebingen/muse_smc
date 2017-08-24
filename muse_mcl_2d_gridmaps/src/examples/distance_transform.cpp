@@ -4,7 +4,7 @@
 
 int main(int argc, char *argv[])
 {
-    muse_mcl::algorithms::DistanceTransform<uint8_t> d(0.05, 2.0, 127);
+    muse_mcl_2d_gridmaps::algorithms::DistanceTransform<uint8_t> d(0.05, 2.0, 127);
 
     std::vector<uint8_t> data(200 * 200, 0);
 

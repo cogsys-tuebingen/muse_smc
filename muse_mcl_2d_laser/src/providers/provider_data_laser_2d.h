@@ -3,13 +3,15 @@
 
 #include <sensor_msgs/LaserScan.h>
 
-#include <muse_mcl/providers/provider_data.hpp>
+#include <muse_mcl_2d/data/data_provider_2d.hpp>
 
-namespace muse_mcl {
-class ProviderDataLaser2D : public muse_mcl::ProviderData
+namespace muse_mcl_2d_laser {
+class LaserProvider2D : public muse_mcl_2d::DataProvider2D
 {
 public:
-    ProviderDataLaser2D() = default;
+    using point_t = muse_mcl_2d::Point2D;
+
+    LaserProvider2D() = default;
 
 protected:
     ros::Subscriber source_;                    /// the subscriber to be used
@@ -26,9 +28,8 @@ protected:
     ros::Duration   time_offset_;
     ros::Time       time_of_last_measurement_;
 
-    virtual void doSetup(ros::NodeHandle &nh_private) override;
     void callback(const sensor_msgs::LaserScanConstPtr &msg);
-
+    virtual void doSetup(ros::NodeHandle &nh) override;
 };
 }
 

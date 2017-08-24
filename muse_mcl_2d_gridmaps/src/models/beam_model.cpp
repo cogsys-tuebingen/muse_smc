@@ -4,7 +4,7 @@
 #include <muse_mcl_2d_gridmaps/maps/binary_gridmap.h>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl::BeamModel, muse_mcl::ModelUpdate)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::BeamModel, muse_mcl_2d::UpdateModel2D)
 
 using namespace muse_mcl_2d_gridmaps;
 
@@ -12,36 +12,36 @@ BeamModel::BeamModel()
 {
 }
 
-void BeamModel::update(const Data::ConstPtr  &data,
-                       const Map::ConstPtr   &map,
-                       ParticleSet::Weights   set)
+void BeamModel::apply(const data_t::ConstPtr          &data,
+                      const state_space_t::ConstPtr   &map,
+                      sample_set_t::weight_iterator_t set)
 {
     if(!map->isType<maps::BinaryGridMap>()) {
         return;
     }
 
     const maps::BinaryGridMap &gridmap = map->as<maps::BinaryGridMap>();
-    const LaserScan2D         &laser_data = data->as<LaserScan2D>();
-    const LaserScan2D::Rays   &laser_rays = laser_data.getRays();
+    const muse_mcl_2d_laser::LaserScan2D        &laser_data = data->as<muse_mcl_2d_laser::LaserScan2D>();
+    const muse_mcl_2d_laser::LaserScan2D::Rays  &laser_rays = laser_data.getRays();
 
     /// laser to base transform
-    tf::Transform b_T_l;
-    tf::Transform m_T_w;
-    if(!tf_provider_->lookupTransform(robot_base_frame_,
-                                      laser_data.getFrame(),
-                                      laser_data.getTimeFrame().end,
-                                      b_T_l,
-                                      tf_timeout_))
+    muse_mcl_2d::Transform2D b_T_l;
+    muse_mcl_2d::Transform2D m_T_w;
+    if(!tf_->lookupTransform(robot_base_frame_,
+                             laser_data.getFrame(),
+                             ros::Time(laser_data.getTimeFrame().end.seconds()),
+                             b_T_l,
+                             tf_timeout_))
         return;
-    if(!tf_provider_->lookupTransform(world_frame_,
-                                     gridmap.getFrame(),
-                                     laser_data.getTimeFrame().end,
-                                     m_T_w,
-                                     tf_timeout_))
+    if(!tf_->lookupTransform(world_frame_,
+                             gridmap.getFrame(),
+                             ros::Time(laser_data.getTimeFrame().end.seconds()),
+                             m_T_w,
+                             tf_timeout_))
         return;
 
-    const LaserScan2D::Rays rays = laser_data.getRays();
-    const ParticleSet::Weights::iterator end = set.end();
+    const muse_mcl_2d_laser::LaserScan2D::Rays rays = laser_data.getRays();
+    const auto end = set.end();
     const std::size_t rays_size = rays.size();
     const std::size_t ray_step  = std::max(1ul, rays_size / max_beams_);
     const double range_max = laser_data.getRangeMax();
@@ -56,7 +56,7 @@ void BeamModel::update(const Data::ConstPtr  &data,
     auto p_short = [this](const double ray_range, const double map_range) {
         if(ray_range < map_range) {
             return z_short_ *
-                   (1.0 / (1.0 - std::exp(-lambda_short_  * map_range))) *
+                    (1.0 / (1.0 - std::exp(-lambda_short_  * map_range))) *
                     lambda_short_ * exp(-lambda_short_ * ray_range);
         }
         return 0.0;
@@ -79,7 +79,7 @@ void BeamModel::update(const Data::ConstPtr  &data,
     };
 
     for(auto it = set.begin() ; it != end ; ++it) {
-        const math::Pose m_T_l = m_T_w * it.getData().pose_ * b_T_l; /// laser scanner pose in map coordinates
+        const muse_mcl_2d::Pose2D m_T_l = m_T_w * it.getData().state * b_T_l; /// laser scanner pose in map coordinates
         double p = 0.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
@@ -88,9 +88,9 @@ void BeamModel::update(const Data::ConstPtr  &data,
                 continue;
             }
 
-            const double        ray_range = ray.range_;
-            const math::Point   ray_end_point = m_T_l.getPose() * ray.point_;
-            const double        map_range = gridmap.getRange(m_T_l.getOrigin(), ray_end_point);
+            const double                 ray_range = ray.range_;
+            const muse_mcl_2d::Point2D   ray_end_point = m_T_l * ray.point_;
+            const double                 map_range = gridmap.getRange(m_T_l.translation(), ray_end_point);
             const double pz = probability(ray_range, map_range);
             p += std::log(pz);
         }
@@ -98,16 +98,18 @@ void BeamModel::update(const Data::ConstPtr  &data,
     }
 }
 
-void BeamModel::doSetup(ros::NodeHandle &nh_private)
+void BeamModel::doSetup(ros::NodeHandle &nh)
 {
-    max_beams_    = nh_private.param(privateParameter("max_beams"), 30);
-    z_hit_        = nh_private.param(privateParameter("z_hit"), 0.8);
-    z_short_      = nh_private.param(privateParameter("z_short"), 0.1);
-    z_max_        = nh_private.param(privateParameter("z_max"), 0.05);
-    z_rand_       = nh_private.param(privateParameter("z_rand"), 0.05);
-    sigma_hit_    = nh_private.param(privateParameter("sigma_hit"), 0.15);
+    auto param_name = [this](const std::string &name){return name_ + "/" + name;};
+
+    max_beams_    = nh.param(param_name("max_beams"), 30);
+    z_hit_        = nh.param(param_name("z_hit"), 0.8);
+    z_short_      = nh.param(param_name("z_short"), 0.1);
+    z_max_        = nh.param(param_name("z_max"), 0.05);
+    z_rand_       = nh.param(param_name("z_rand"), 0.05);
+    sigma_hit_    = nh.param(param_name("sigma_hit"), 0.15);
     denominator_exponenten_hit_ = 0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
     denominator_hit_            = 1.0 / std::sqrt(2.0 * M_PI * sigma_hit_);
-    lambda_short_ = nh_private.param(privateParameter("lambda_short"), 0.01);
-    chi_outlier_  = nh_private.param(privateParameter("chi_outlier"), 0.05);
+    lambda_short_ = nh.param(param_name("lambda_short"), 0.01);
+    chi_outlier_  = nh.param(param_name("chi_outlier"), 0.05);
 }

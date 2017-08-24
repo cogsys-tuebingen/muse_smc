@@ -8,7 +8,7 @@ project(muse_mcl_2d_laser)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  muse_mcl
+  muse_mcl_2d
   pluginlib
   roscpp
   rostest

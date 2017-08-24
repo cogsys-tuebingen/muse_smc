@@ -7,14 +7,14 @@
 #include <cmath>
 #include <iostream>
 
-#include <muse_mcl/utility/csv_logger.hpp>
+#include <muse_smc/utility/csv_logger.hpp>
 
 namespace muse_mcl_2d_gridmaps {
 class BeamModelParameterEstimator
 {
 public:
     using Ptr = std::shared_ptr<BeamModelParameterEstimator>;
-    using ParameterLogger = CSVLogger<double,double,double,double,double,double>;
+    using ParameterLogger = muse_smc::CSVLogger<double,double,double,double,double,double>;
 
     struct Parameters {
         double z_hit;

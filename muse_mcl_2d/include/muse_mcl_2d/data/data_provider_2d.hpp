@@ -15,8 +15,20 @@ class DataProvider2D : public muse_smc::DataProvider<Sample2D>
 public:
     using Ptr = std::shared_ptr<DataProvider2D>;
 
-    virtual void setup(const TFProvider::Ptr &tf_provider,
-                       ros::NodeHandle       &nh_private) = 0;
+    void setup(const TFProvider::Ptr &tf,
+               ros::NodeHandle       &nh)
+    {
+        auto param_name = [this](const std::string &name){return name_ + "/" + name;};
+        tf_ = tf;
+        tf_timeout_       = ros::Duration(nh.param<double>(param_name("tf_timeout"), 0.1));
+    }
+
+protected:
+    TFProvider::Ptr tf_;
+    ros::Duration   tf_timeout_;
+
+    virtual void doSetup(ros::NodeHandle &nh) = 0;
+
 };
 }
 

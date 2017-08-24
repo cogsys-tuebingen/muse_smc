@@ -9,9 +9,9 @@ class LikelihoodFieldProbModelAMCL : public muse_mcl_2d::UpdateModel2D
 public:
     LikelihoodFieldProbModelAMCL();
 
-    virtual void update(const Data::ConstPtr &data,
-                        const Map::ConstPtr &map,
-                        ParticleSet::Weights set) override;
+    virtual void apply(const data_t::ConstPtr        &data,
+                       const state_space_t::ConstPtr &map,
+                       sample_set_t::weight_iterator_t set) override;
 
 protected:
     std::size_t max_beams_;
@@ -28,7 +28,7 @@ protected:
     std::vector<char>   observation_mask_;
     std::vector<double> observation_probability_buffer_;
 
-    virtual void doSetup(ros::NodeHandle &nh_private) override;
+    virtual void doSetup(ros::NodeHandle &nh) override;
 
 };
 }
