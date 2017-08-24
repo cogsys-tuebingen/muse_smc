@@ -12,6 +12,11 @@ class UpdateModel2D : public muse_smc::UpdateModel<Sample2D>
 public:
     using Ptr = std::shared_ptr<UpdateModel2D>;
 
+    inline const static std::string Type()
+    {
+        return "muse_mcl_2d::UpdateModel2D";
+    }
+
     UpdateModel2D() = default;
     virtual ~UpdateModel2D() = default;
 

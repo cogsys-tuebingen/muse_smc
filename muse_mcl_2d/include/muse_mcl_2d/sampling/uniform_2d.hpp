@@ -15,6 +15,11 @@ class UniformSampling2D : public muse_smc::UniformSampling<Sample2D>
 public:
     using Ptr = std::shared_ptr<UniformSampling2D>;
 
+    inline const static std::string Type()
+    {
+        return "muse_mcl_2d::UniformSampling2D";
+    }
+
     UniformSampling2D() = default;
     virtual ~UniformSampling2D() = default;
 

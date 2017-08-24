@@ -14,6 +14,11 @@ class Resampling2D : public muse_smc::Resampling<muse_mcl_2d::Sample2D>
 public:
     using Ptr = std::shared_ptr<Resampling2D>;
 
+    inline const static std::string Type()
+    {
+        return "muse_mcl_2d::Resampling2D";
+    }
+
     void setup(const typename sample_uniform_t::Ptr &uniform_pose_sampler,
                ros::NodeHandle &nh)
     {

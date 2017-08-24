@@ -32,6 +32,11 @@ public:
     PredictionModel2D() = default;
     virtual ~PredictionModel2D() = default;
 
+    inline const static std::string Type()
+    {
+        return "muse_mcl_2d::PredictionModel2D";
+    }
+
     inline void setup(const TFProvider::Ptr &tf,
                       ros::NodeHandle &nh)
     {

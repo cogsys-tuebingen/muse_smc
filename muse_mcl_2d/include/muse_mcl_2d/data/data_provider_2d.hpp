@@ -15,6 +15,11 @@ class DataProvider2D : public muse_smc::DataProvider<Sample2D>
 public:
     using Ptr = std::shared_ptr<DataProvider2D>;
 
+    inline const static std::string Type()
+    {
+        return "muse_mcl_2d::DataProvider2D";
+    }
+
     void setup(const TFProvider::Ptr &tf,
                ros::NodeHandle       &nh)
     {

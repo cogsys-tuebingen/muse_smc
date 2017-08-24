@@ -16,6 +16,11 @@ class NormalSampling2D : public muse_smc::NormalSampling<Sample2D>
 public:
     using Ptr = std::shared_ptr<NormalSampling2D>;
 
+    inline const static std::string Type()
+    {
+        return "muse_mcl_2d::NormalSampling2D";
+    }
+
     NormalSampling2D() = default;
     virtual ~NormalSampling2D() = default;
 

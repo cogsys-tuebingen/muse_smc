@@ -1,6 +1,6 @@
 <library path="libmuse_mcl_2d_resampling">
    <!-- Resampling -->
-   <class type="muse_mcl_2d::KLD2D" base_class_type="muse_mcl::Resampling">
+   <class type="muse_mcl_2d::KLD2D" base_class_type="muse_mcl_2d::Resampling2D">
      <description>2D resampling with adaptive sample size.</description>
    </class>
    <class type="muse_mcl_2d::Multinomial" base_class_type="muse_mcl_2d::Resampling2D">
