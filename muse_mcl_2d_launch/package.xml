@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>muse_mcl_launch</name>
+  <name>muse_mcl_2d_launch</name>
   <version>0.0.1</version>
   <description>The muse_mcl_launch package contains files for the muse amcl project.</description>
 
