@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   cslibs_boost_geometry
   cslibs_indexed_storage
   cslibs_vectormaps
-  muse_mcl
+  muse_smc
   nav_msgs
   pcl_ros
   pluginlib

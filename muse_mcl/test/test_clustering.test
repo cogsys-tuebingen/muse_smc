@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-    <test test-name="muse_mcl_test_node_clustering" pkg="muse_mcl" type="muse_mcl_test_node_clustering">
-        <param name="test_distribution_a"  value="$(find muse_mcl)/test/res/test_pose_distribution_a_1000.yaml"  />
-        <param name="test_distribution_b"  value="$(find muse_mcl)/test/res/test_pose_distribution_b_1000.yaml"  />
-    </test>
-</launch>

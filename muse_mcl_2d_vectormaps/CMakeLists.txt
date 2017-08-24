@@ -4,7 +4,7 @@ project(muse_mcl_2d_vectormaps)
 find_package(catkin REQUIRED COMPONENTS
   cslibs_boost_geometry
   cslibs_vectormaps
-  muse_mcl
+  muse_smc
   pluginlib
   roscpp
   rostest

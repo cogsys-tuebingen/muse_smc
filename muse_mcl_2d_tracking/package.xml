@@ -43,7 +43,7 @@
   <build_depend>cslibs_boost_geometry</build_depend>
   <build_depend>cslibs_indexed_storage</build_depend>
   <build_depend>cslibs_vectormaps</build_depend>
-  <build_depend>muse_mcl</build_depend>
+  <build_depend>muse_smc</build_depend>
   <build_depend>nav_msgs</build_depend>
   <build_depend>pcl_ros</build_depend>
   <build_depend>pluginlib</build_depend>
@@ -53,7 +53,7 @@
   <run_depend>cslibs_boost_geometry</run_depend>
   <run_depend>cslibs_indexed_storage</run_depend>
   <run_depend>cslibs_vectormaps</run_depend>
-  <run_depend>muse_mcl</run_depend>
+  <run_depend>muse_smc</run_depend>
   <run_depend>nav_msgs</run_depend>
   <run_depend>pcl_ros</run_depend>
   <run_depend>pluginlib</run_depend>

@@ -11,14 +11,14 @@
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>cslibs_boost_geometry</build_depend>
   <build_depend>cslibs_vectormaps</build_depend>
-  <build_depend>muse_mcl</build_depend>
+  <build_depend>muse_smc</build_depend>
   <build_depend>pluginlib</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>rostest</build_depend>
   <build_depend>cslibs_indexed_storage</build_depend> <!-- REMOVE THIS -->
   <run_depend>cslibs_boost_geometry</run_depend>
   <run_depend>cslibs_vectormaps</run_depend>
-  <run_depend>muse_mcl</run_depend>
+  <run_depend>muse_smc</run_depend>
   <run_depend>pluginlib</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>rostest</run_depend>
