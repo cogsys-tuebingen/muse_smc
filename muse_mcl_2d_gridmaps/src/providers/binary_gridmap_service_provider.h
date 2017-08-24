@@ -12,10 +12,10 @@
 #include <muse_mcl_2d_gridmaps/maps/binary_gridmap.h>
 
 namespace muse_mcl_2d_gridmaps {
-class ProviderGridmapBinaryService : public muse_mcl_2d::MapProvider2D
+class BinaryGridmapServiceProvider : public muse_mcl_2d::MapProvider2D
 {
 public:
-    ProviderGridmapBinaryService();
+    BinaryGridmapServiceProvider();
 
     state_space_t::ConstPtr getStateSpace() const override;
     void setup(ros::NodeHandle &nh) override;

@@ -39,12 +39,12 @@ target_link_libraries(${PROJECT_NAME}_maps
 )
 
 add_library(${PROJECT_NAME}_providers SHARED
-    src/providers/provider_gridmap_binary.cpp
-    src/providers/provider_gridmap_distance.cpp
-    src/providers/provider_gridmap_probability.cpp
-    src/providers/provider_gridmap_binary_service.cpp
-    src/providers/provider_gridmap_distance_service.cpp
-    src/providers/provider_gridmap_probability_service.cpp
+    src/providers/binary_gridmap_provider.cpp
+    src/providers/distance_gridmap_provider.cpp
+    src/providers/probability_gridmap_provider.cpp
+    src/providers/binary_gridmap_service_provider.cpp
+    src/providers/distance_gridmap_service_provider.cpp
+    src/providers/probability_gridmap_service_provider.cpp
 )
 target_link_libraries(${PROJECT_NAME}_providers
     ${catkin_LIBRARIES}

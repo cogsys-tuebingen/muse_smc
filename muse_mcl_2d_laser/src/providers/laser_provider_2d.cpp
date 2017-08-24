@@ -1,4 +1,4 @@
-#include "provider_data_laser_2d.h"
+#include "laser_provider_2d.h"
 
 #include <muse_mcl_2d_laser/laser/laser_2d_scan.hpp>
 

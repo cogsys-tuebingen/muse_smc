@@ -1,29 +1,26 @@
-#include "provider_gridmap_binary_service.h"
-
-#include <nav_msgs/GetMap.h>
+#include "probability_gridmap_service_provider.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::ProviderGridmapBinaryService, muse_mcl_2d::MapProvider2D)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::ProbabilityGridmapServiceProvider, muse_mcl_2d::MapProvider2D)
 
 using namespace muse_mcl_2d_gridmaps;
 using namespace muse_mcl_2d;
 
-ProviderGridmapBinaryService::ProviderGridmapBinaryService() :
+ProbabilityGridmapServiceProvider::ProbabilityGridmapServiceProvider() :
     loading_(false)
 {
 }
 
-void ProviderGridmapBinaryService::setup(ros::NodeHandle &nh)
+void ProbabilityGridmapServiceProvider::setup(ros::NodeHandle &nh_private)
 {
     auto param_name = [this](const std::string &name){return name_ + "/" + name;};
-    service_name_ = nh.param<std::string>(param_name("service"), "/static_map");
-    binarization_threshold_ = nh.param<double>(param_name("threshold"), 0.5);
-    source_= nh.serviceClient<nav_msgs::GetMap>(service_name_);
-    blocking_ = nh.param<double>(param_name("blocking"), false);
+    service_name_ = nh_private.param<std::string>(param_name("service"), "/static_map");
+    source_ = nh_private.serviceClient<nav_msgs::GetMap>(service_name_);
+    blocking_ = nh_private.param<bool>(param_name("blocking"), false);
 }
 
 
-ProviderGridmapBinaryService::state_space_t::ConstPtr ProviderGridmapBinaryService::getStateSpace() const
+ProbabilityGridmapServiceProvider::state_space_t::ConstPtr ProbabilityGridmapServiceProvider::getStateSpace() const
 {
     nav_msgs::GetMap req;
     if(source_.call(req)) {
@@ -34,17 +31,18 @@ ProviderGridmapBinaryService::state_space_t::ConstPtr ProviderGridmapBinaryServi
                 loading_ = true;
 
                 auto load = [this, req]() {
-                    maps::BinaryGridMap::Ptr map(new maps::BinaryGridMap(req.response.map, binarization_threshold_));
+                    maps::ProbabilityGridMap::Ptr map(new maps::ProbabilityGridMap(req.response.map));
                     std::unique_lock<std::mutex>l(map_mutex_);
                     map_ = map;
                     loading_ = false;
                 };
                 auto load_blocking = [this, req]() {
-                   std::unique_lock<std::mutex> l(map_mutex_);
-                   map_.reset(new maps::BinaryGridMap(req.response.map, binarization_threshold_));
-                   loading_ = false;
-                   map_loaded_.notify_one();
+                    std::unique_lock<std::mutex>l(map_mutex_);
+                    map_.reset(new maps::ProbabilityGridMap(req.response.map));
+                    loading_ = false;
+                    map_loaded_.notify_one();
                 };
+
                 if(blocking_) {
                     worker_ = std::thread(load_blocking);
                 } else {
@@ -59,5 +57,6 @@ ProviderGridmapBinaryService::state_space_t::ConstPtr ProviderGridmapBinaryServi
         map_loaded_.wait(l);
     }
     return map_;
+
 }
 

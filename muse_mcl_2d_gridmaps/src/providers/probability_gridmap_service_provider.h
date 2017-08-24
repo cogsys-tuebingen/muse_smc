@@ -12,10 +12,10 @@
 #include <muse_mcl_2d_gridmaps/maps/probability_gridmap.h>
 
 namespace muse_mcl_2d_gridmaps {
-class ProviderGridmapProbabilityService : public muse_mcl_2d::MapProvider2D
+class ProbabilityGridmapServiceProvider : public muse_mcl_2d::MapProvider2D
 {
 public:
-    ProviderGridmapProbabilityService();
+    ProbabilityGridmapServiceProvider();
 
     state_space_t::ConstPtr getStateSpace() const override;
     void setup(ros::NodeHandle &nh) override;

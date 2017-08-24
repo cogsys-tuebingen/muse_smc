@@ -13,10 +13,10 @@
 
 
 namespace muse_mcl_2d_gridmaps {
-class ProviderGridmapDistanceService : public muse_mcl_2d::MapProvider2D
+class DistanceGridmapServiceProvider : public muse_mcl_2d::MapProvider2D
 {
 public:
-    ProviderGridmapDistanceService();
+    DistanceGridmapServiceProvider();
 
     state_space_t::ConstPtr getStateSpace() const override;
     void setup(ros::NodeHandle &nh) override;

@@ -1,6 +1,6 @@
 <library path="libmuse_mcl_2d_laser">
    <!-- Data Providers -->
-   <class type="muse_mcl::ProviderDataLaser2D" base_class_type="muse_mcl::ProviderData">
+   <class type="muse_mcl_2d_laser::LaserProvider2D" base_class_type="muse_mcl_2d::DataProvider2D">
       <description>Provides 2D laserscans with the possible to define a linear and angular FOV.</description>
    </class>
 </library>

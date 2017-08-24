@@ -1,26 +1,29 @@
-#include "provider_gridmap_probability_service.h"
+#include "distance_gridmap_service_provider.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::ProviderGridmapProbabilityService, muse_mcl_2d::MapProvider2D)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::DistanceGridmapServiceProvider, muse_mcl_2d::MapProvider2D)
 
 using namespace muse_mcl_2d_gridmaps;
 using namespace muse_mcl_2d;
 
-ProviderGridmapProbabilityService::ProviderGridmapProbabilityService() :
+DistanceGridmapServiceProvider::DistanceGridmapServiceProvider() :
     loading_(false)
 {
 }
 
-void ProviderGridmapProbabilityService::setup(ros::NodeHandle &nh_private)
+void DistanceGridmapServiceProvider::setup(ros::NodeHandle &nh)
 {
     auto param_name = [this](const std::string &name){return name_ + "/" + name;};
-    service_name_ = nh_private.param<std::string>(param_name("service"), "/static_map");
-    source_ = nh_private.serviceClient<nav_msgs::GetMap>(service_name_);
-    blocking_ = nh_private.param<bool>(param_name("blocking"), false);
+    service_name_ = nh.param<std::string>(param_name("service"), "/static_map");
+    binarization_threshold_ = nh.param<double>(param_name("threshold"), 0.5);
+    kernel_size_ = std::max(nh.param<int>(param_name("kernel_size"), 5), 5);
+    kernel_size_ += 1 - (kernel_size_ % 2);
+    blocking_ = nh.param<bool>(param_name("blocking"), false);
+    source_   = nh.serviceClient<nav_msgs::GetMap>(service_name_);
 }
 
 
-ProviderGridmapProbabilityService::state_space_t::ConstPtr ProviderGridmapProbabilityService::getStateSpace() const
+DistanceGridmapServiceProvider::state_space_t::ConstPtr DistanceGridmapServiceProvider::getStateSpace() const
 {
     nav_msgs::GetMap req;
     if(source_.call(req)) {
@@ -31,14 +34,14 @@ ProviderGridmapProbabilityService::state_space_t::ConstPtr ProviderGridmapProbab
                 loading_ = true;
 
                 auto load = [this, req]() {
-                    maps::ProbabilityGridMap::Ptr map(new maps::ProbabilityGridMap(req.response.map));
+                    maps::DistanceGridMap::Ptr map(new maps::DistanceGridMap(req.response.map, binarization_threshold_, kernel_size_));
                     std::unique_lock<std::mutex>l(map_mutex_);
                     map_ = map;
                     loading_ = false;
                 };
                 auto load_blocking = [this, req]() {
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    map_.reset(new maps::ProbabilityGridMap(req.response.map));
+                    map_.reset(new maps::DistanceGridMap(req.response.map, binarization_threshold_, kernel_size_));
                     loading_ = false;
                     map_loaded_.notify_one();
                 };
@@ -49,14 +52,17 @@ ProviderGridmapProbabilityService::state_space_t::ConstPtr ProviderGridmapProbab
                     worker_ = std::thread(load);
                 }
                 worker_.detach();
+            } else if(blocking_) {
+                map_loaded_.notify_one();
             }
         }
     }
     std::unique_lock<std::mutex> l(map_mutex_);
-    if(!map_ && blocking_) {
+    if(blocking_) {
         map_loaded_.wait(l);
     }
     return map_;
 
 }
+
 

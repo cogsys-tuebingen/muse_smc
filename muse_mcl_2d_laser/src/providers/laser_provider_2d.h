@@ -1,5 +1,5 @@
-#ifndef DATA_PROVIDER_LASER_2D_H
-#define DATA_PROVIDER_LASER_2D_H
+#ifndef LASER_PROVIDER_2D_H
+#define LASER_PROVIDER_2D_H
 
 #include <sensor_msgs/LaserScan.h>
 
@@ -33,4 +33,4 @@ protected:
 };
 }
 
-#endif // DATA_PROVIDER_LASER_2D_H
+#endif // LASER_PROVIDER_2D_H

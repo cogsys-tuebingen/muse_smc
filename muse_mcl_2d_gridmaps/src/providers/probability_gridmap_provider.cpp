@@ -1,17 +1,17 @@
-#include "provider_gridmap_probability.h"
+#include "probability_gridmap_provider.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::ProviderGridmapProbability, muse_mcl_2d::MapProvider2D)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::ProbabilityGridmapProvider, muse_mcl_2d::MapProvider2D)
 
 using namespace muse_mcl_2d_gridmaps;
 using namespace muse_mcl_2d;
 
-ProviderGridmapProbability::ProviderGridmapProbability() :
+ProbabilityGridmapProvider::ProbabilityGridmapProvider() :
     loading_(false)
 {
 }
 
-ProviderGridmapProbability::state_space_t::ConstPtr ProviderGridmapProbability::getStateSpace() const
+ProbabilityGridmapProvider::state_space_t::ConstPtr ProbabilityGridmapProvider::getStateSpace() const
 {
     std::unique_lock<std::mutex> l(map_mutex_);
     if(!map_ && blocking_) {
@@ -20,15 +20,15 @@ ProviderGridmapProbability::state_space_t::ConstPtr ProviderGridmapProbability::
     return map_;
 }
 
-void ProviderGridmapProbability::setup(ros::NodeHandle &nh)
+void ProbabilityGridmapProvider::setup(ros::NodeHandle &nh)
 {
     auto param_name = [this](const std::string &name){return name_ + "/" + name;};
     topic_ = nh.param<std::string>(param_name("topic"), "/map");
-    source_= nh.subscribe(topic_, 1, &ProviderGridmapProbability::callback, this);
+    source_= nh.subscribe(topic_, 1, &ProbabilityGridmapProvider::callback, this);
     blocking_ = nh.param<bool>(param_name("blocking"), false);
 }
 
-void ProviderGridmapProbability::callback(const nav_msgs::OccupancyGridConstPtr &msg)
+void ProbabilityGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr &msg)
 {
     /// conversion can take time
     /// we allow concurrent loading, this way, the front end thread is not blocking.
