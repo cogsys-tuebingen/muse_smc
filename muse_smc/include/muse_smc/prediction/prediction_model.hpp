@@ -15,7 +15,7 @@ public:
     using Ptr = std::shared_ptr<PredictionModel<sample_t>>;
 
     struct Result {
-        using Ptr = std::shared_ptr<PredictionModel<sample_t>::Result>;
+        using Ptr = std::shared_ptr<Result>;
 
         Result() = default;
 
@@ -70,9 +70,9 @@ public:
         id_ = id;
     }
 
-    virtual typename Result::Ptr predict(const Data::ConstPtr                    &data,
-                                         const Time                              &until,
-                                         typename sample_set_t::state_iterator_t  states) = 0;
+    virtual typename Result::Ptr apply(const Data::ConstPtr                    &data,
+                                       const Time                              &until,
+                                       typename sample_set_t::state_iterator_t  states) = 0;
 
 protected:
     std::string         name_;

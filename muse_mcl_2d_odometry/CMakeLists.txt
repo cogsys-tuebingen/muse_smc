@@ -19,8 +19,8 @@ include_directories(
 
 
 add_library(${PROJECT_NAME}_providers
-    src/providers/data_provider_odometry.cpp
-    src/providers/data_provider_odometry_tf.cpp
+    src/providers/odometry_provider_2d.cpp
+    src/providers/odometry_provider_tf_2d.cpp
 )
 target_link_libraries(${PROJECT_NAME}_providers
     ${catkin_LIBRARIES}
@@ -29,7 +29,6 @@ target_link_libraries(${PROJECT_NAME}_providers
 add_library(${PROJECT_NAME}_models
     src/models/differential_drive.cpp
     src/models/differential_drive_abs.cpp
-    src/models/differential_drive_amcl.cpp
     src/models/omni_drive.cpp
 )
 target_link_libraries(${PROJECT_NAME}_models

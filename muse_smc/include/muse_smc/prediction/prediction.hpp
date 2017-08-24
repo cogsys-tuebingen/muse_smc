@@ -50,13 +50,13 @@ public:
     inline typename predition_model_t::Result operator ()
         (const Time &until, typename sample_set_t::state_iterator_t states)
     {
-        return model_->predict(data_, until, states);
+        return model_->apply(data_, until, states);
     }
 
     inline typename predition_model_t::Result::Ptr apply(const Time  &until,
                                                          typename sample_set_t::state_iterator_t states)
     {
-        return model_->predict(data_, until, states);
+        return model_->apply(data_, until, states);
     }
 
     inline const Time& getStamp() const

@@ -4,13 +4,13 @@
 #include <nav_msgs/Odometry.h>
 #include <ros/ros.h>
 
-#include <muse_mcl/providers/provider_data.hpp>
+#include <muse_mcl_2d/data/data_provider_2d.hpp>
 
-namespace muse_mcl {
-class ProviderDataOdometry  : public muse_mcl::ProviderData
+namespace muse_mcl_2d_odometry {
+class OdometryProvider2D : public muse_mcl_2d::DataProvider2D
 {
 public:
-    ProviderDataOdometry() = default;
+    OdometryProvider2D() = default;
 
 protected:
     ros::Subscriber source_;
@@ -18,8 +18,8 @@ protected:
 
     nav_msgs::Odometry::ConstPtr last_msg_;
 
-    virtual void doSetup(ros::NodeHandle &nh_private) override;
     void callback(const nav_msgs::OdometryConstPtr &msg);
+    virtual void doSetup(ros::NodeHandle &nh) override;
 
 };
 }

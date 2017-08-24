@@ -1,17 +1,19 @@
 #ifndef OMNI_DRIVE_H
 #define OMNI_DRIVE_H
 
-#include <muse_mcl/prediction/model_prediction.hpp>
+#include <muse_smc/math/random.hpp>
 
-namespace muse_mcl {
-class OmniDrive : public ModelPrediction
+#include <muse_mcl_2d/prediction/prediction_model_2d.hpp>
+
+namespace muse_mcl_2d_odometry {
+class OmniDrive : public muse_mcl_2d::PredictionModel2D
 {
 public:
-    OmniDrive();
+    OmniDrive() = default;
 
-    virtual Result doPredict(const Data::ConstPtr &data,
-                           const ros::Time      &until,
-                           ParticleSet::Poses set) override;
+    virtual Result::Ptr apply(const muse_smc::Data::ConstPtr          &data,
+                              const muse_smc::Time                    &until,
+                              sample_set_t::state_iterator_t  states) override;
 
 protected:
     unsigned int seed_;
@@ -20,6 +22,10 @@ protected:
     double alpha_3_;
     double alpha_4_;
     double alpha_5_;
+
+    muse_smc::math::random::Normal<1>::Ptr rng_delta_trans_hat_;
+    muse_smc::math::random::Normal<1>::Ptr rng_delta_rot_hat_;
+    muse_smc::math::random::Normal<1>::Ptr rng_delta_strafe_hat_;
 
     virtual void doSetup(ros::NodeHandle &nh) override;
 
