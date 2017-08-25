@@ -10,8 +10,15 @@
 #include <muse_smc/resampling/resampling.hpp>
 #include <muse_smc/smc/smc_state.hpp>
 #include <muse_smc/utility/synchronized_priority_queue.hpp>
-#include <muse_smc/utility/dotty.hpp>
 #include <muse_smc/time/rate.hpp>
+
+
+#ifdef MUSE_SMC_USE_DOTTY
+#include <muse_smc/utility/dotty.hpp>
+#endif
+#ifdef MUSE_SMC_LOG_STATE
+#include <muse_smc/utility/csv_logger.hpp>
+#endif
 
 #include <memory>
 #include <thread>
@@ -89,10 +96,13 @@ public:
         state_publisher_                = state_publisher;
         prediction_integrals_           = prediction_integrals;
 
-#ifdef USE_DOTTY
+#ifdef MUSE_SMC_USE_DOTTY
         dotty_.reset(new Dotty);
 #endif
-
+#ifdef MUSE_SMC_LOG_STATE
+        SMCFilterStateLogger::Header log_header = {"predictions, updates, time_ratio"};
+        log_.reset(new SMCFilterStateLogger(log_header));
+#endif
     }
 
     bool start()
@@ -123,11 +133,19 @@ public:
     void addPrediction(const typename prediction_t::Ptr &prediction)
     {
         prediction_queue_.emplace(prediction);
+
+#ifdef MUSE_SMC_LOG_STATE
+        log();
+#endif
     }
 
     void addUpdate(const typename update_t::Ptr &update)
     {
         update_queue_.emplace(update);
+
+#ifdef MUSE_SMC_LOG_STATE
+        log();
+#endif
     }
 
     void requestStateInitialization(const typename sample_t::state_t &state,
@@ -177,9 +195,17 @@ protected:
     condition_variable_t                  notify_prediction_;
     mutable mutex_t                       notify_prediction_mutex_;
 
-    /// debugging
-#ifdef USE_DOTTY
+#ifdef MUSE_SMC_USE_DOTTY
     Dotty::Ptr                          dotty_;
+#endif
+#ifdef MUSE_SMC_LOG_STATE
+    SMCFilterStateLogger::Ptr           log_;
+    void log()
+    {
+        log_->log(prediction_queue_.size(),
+                  update_queue_.size(),
+                  sample_set_->getStamp().seconds() / ros::Time::now().toSec());
+    }
 #endif
 
     bool hasUpdates()
@@ -224,20 +250,13 @@ protected:
                 continue;
             }
 
-            /*
-             * There must be more logic behind this.
-             * -> we have to check if motion was fully applied
-             * +-> if so check if the timestamp is equal to 'until'
-             * -> split and retries have to be handled.
-             */
-
             /// mutate time stamp
             typename prediction_result_t::Ptr prediction_result = prediction->apply(until, sample_set_->getStateIterator());
             if(prediction_result->success()) {
                 prediction_integrals_->add(prediction_result);
                 sample_set_->setStamp(prediction_result->applied->getTimeFrame().end);
 
-#ifdef USE_DOTTY
+#ifdef MUSE_SMC_USE_DOTTY
                 dotty_->addPrediction(prediction_result->applied->getTimeFrame().end, static_cast<bool>(prediction_result->left_to_apply));
 #endif
 
@@ -288,7 +307,11 @@ protected:
                             u->apply(sample_set_->getWeightIterator());
                             prediction_integrals_->reset(model_id);
                             ++updates_applied_after_resampling_;
-#ifdef USE_DOTTY
+
+#ifdef MUSE_SMC_LOG_STATE
+            log();
+#endif
+#ifdef MUSE_SMC_USE_DOTTY
                             dotty_->addState(sample_set_stamp);
                             dotty_->addUpdate(u->getStamp(), u->getModelName());
 #endif

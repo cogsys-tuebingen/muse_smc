@@ -77,7 +77,7 @@ private:
             std::stringstream ss;
             long s, ms;
             getTime(s, ms);
-            ss << "/tmp/muse_filter_state" << getTime() << ".log";
+            ss << "/tmp/muse_filter_state_" << getTime() << ".log";
             out_.open(ss.str());
         }
 
@@ -149,7 +149,7 @@ private:
 
 };
 
-using FilterStateLoggerDefault = CSVLogger<std::size_t, std::size_t, double, double, double>;
+using SMCFilterStateLogger = CSVLogger<std::size_t, std::size_t, double>;
 
 }
 

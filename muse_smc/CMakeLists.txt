@@ -28,18 +28,14 @@ catkin_package(
                     muse_smc_show_headers.cmake
 )
 
-add_definitions("-DUSE_DOTTY")
+add_definitions("-DMUSE_SMC_USE_DOTTY")
+add_definitions("-DMUSE_SMC_LOG_STATE")
 
 include_directories(
   include
   ${Eigen3_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
 )
-
-add_executable (test_compile
-    src/test_compile.cpp
-)
-
 
 install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})

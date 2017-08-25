@@ -2,6 +2,7 @@
 #define STATE_PUBLISHER_H
 
 #include <muse_smc/smc/smc_state.hpp>
+#include <muse_smc/utility/csv_logger.hpp>
 
 #include <muse_mcl_2d/samples/sample_2d.hpp>
 #include <muse_mcl_2d/tf/tf_publisher.hpp>
@@ -37,7 +38,10 @@ private:
     StampedTransform2D          latest_w_T_b_;
     Covariance2D                latest_w_T_b_covariance_;
 
+#ifdef LOG_FILTER_STATE
 
+
+#endif
     void publishState(const typename sample_set_t::Ptr &sample_set);
 
 };

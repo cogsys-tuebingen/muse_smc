@@ -73,6 +73,9 @@ target_link_libraries(${PROJECT_NAME}_sampling
     ${catkin_LIBRARIES}
 )
 
+add_definitions("-DMUSE_SMC_USE_DOTTY")
+add_definitions("-DMUSE_SMC_LOG_STATE")
+
 add_executable(${PROJECT_NAME}_node
     src/node/muse_mcl_2d_node.cpp
     src/node/state_publisher_2d.cpp

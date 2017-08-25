@@ -2,6 +2,7 @@
 #define TIME_HPP
 
 #include <muse_smc/time/duration.hpp>
+#include <ctime>
 
 namespace muse_smc {
 class Time {
@@ -103,6 +104,14 @@ public:
     inline Time operator + (const Duration &d) const
     {
         return Time(time_ + d.duration());
+    }
+
+    inline std::string string() const
+    {
+        const int64_t ns = nanoseconds();
+        const int64_t s = ns / static_cast<int64_t>(1e9);
+        const int64_t ms = (ns % static_cast<int64_t>(1e9));
+        return std::to_string(s) + "." + std::to_string(ms);
     }
 
 private:

@@ -33,6 +33,10 @@ public:
             const std::string &class_name = entry.second.class_name;
             if(base_class_name == plugin_t::Type()) {
                 plugins[name] = factory.create(class_name, name, arguments...);
+                if(!plugins[name]) {
+                    std::cerr << "[PluginFactory]: Could not create plugin, empty constructor received!" << std::endl;
+                    plugins.erase(name);
+                }
             }
         }
 
