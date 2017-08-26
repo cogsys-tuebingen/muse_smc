@@ -50,7 +50,7 @@ void StatePublisher::publish(const sample_set_t::Ptr &sample_set)
         return;
     }
 
-    const SampleDensity2D::cluster_map_t &clusters = density->clusters();
+    const SampleDensity2D::cluster_map_t      &clusters      = density->clusters();
     const SampleDensity2D::distribution_map_t &distributions = density->clusterDistributions();
     const SampleDensity2D::angular_mean_map_t &angular_means = density->clusterAngularMeans();
 
@@ -82,6 +82,7 @@ void StatePublisher::publish(const sample_set_t::Ptr &sample_set)
 
         /// make sure that TF gets published first #most important
         tf_publisher_->setTransform(latest_w_T_b_);
+        std::cout << latest_w_T_b_.data().str() << std::endl;
     }
     /// publish the particle set state
     publishState(sample_set);
@@ -99,7 +100,6 @@ void StatePublisher::publishIntermidiate(const sample_set_t::Ptr &sample_set)
 
 void StatePublisher::publishState(const sample_set_t::Ptr &sample_set)
 {
-    std::cerr << " +++ publishing the state" << std::endl;
     sample_publisher_->add(sample_set->getSamples(),
                            sample_set->getMaximumWeight(),
                            latest_w_T_b_,

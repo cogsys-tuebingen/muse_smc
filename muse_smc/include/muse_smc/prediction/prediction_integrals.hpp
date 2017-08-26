@@ -39,9 +39,20 @@ public:
         return global_accumulator_;
     }
 
+
+    inline bool thresholdExceeded(const id_t id) const
+    {
+        return accumulators_.at(id)->thresholdExceeded();
+    }
+
     inline bool isZero(const id_t id) const
     {
         return accumulators_.at(id)->isZero();
+    }
+
+    inline bool thresholdExceeded() const
+    {
+        return global_accumulator_->thresholdExceeded();
     }
 
     inline bool isZero() const
@@ -67,7 +78,7 @@ public:
         global_accumulator_->reset();
     }
 
-    inline void add(typename prediction_model_t::Result::Ptr &step)
+    inline void add(const typename prediction_model_t::Result::ConstPtr &step)
     {
         for(auto &a : accumulators_) {
             a.second->add(step);

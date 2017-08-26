@@ -15,16 +15,10 @@ public:
     PredictionIntegral() = default;
     virtual ~PredictionIntegral() = default;
 
-    virtual void add(typename prediction_model_t::Result::Ptr &step) = 0;
-
+    virtual void add(const typename prediction_model_t::Result::ConstPtr &step) = 0;
     virtual void reset() = 0;
+    virtual bool thresholdExceeded() const = 0;
     virtual bool isZero() const = 0;
-
-    /**
-      * define minus
-      * define if predictions were applied
-      */
-
 };
 }
 

@@ -133,7 +133,7 @@ public:
     void addPrediction(const typename prediction_t::Ptr &prediction)
     {
         prediction_queue_.emplace(prediction);
-
+        notify_prediction_.notify_one();
 #ifdef MUSE_SMC_LOG_STATE
         log();
 #endif
@@ -142,7 +142,7 @@ public:
     void addUpdate(const typename update_t::Ptr &update)
     {
         update_queue_.emplace(update);
-
+        notify_event_.notify_one();
 #ifdef MUSE_SMC_LOG_STATE
         log();
 #endif

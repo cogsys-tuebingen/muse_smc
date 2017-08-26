@@ -16,7 +16,16 @@ void LaserProvider2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
             return;
     }
 
-    LaserScan2D::Ptr laserscan(new LaserScan2D(msg->header.frame_id));
+    const ros::Time start_stamp   = msg->header.stamp;
+    ros::Duration delta_stamp     = ros::Duration(msg->time_increment);
+    if(delta_stamp <= ros::Duration(0.0)) {
+        delta_stamp = ros::Duration(msg->scan_time / static_cast<double>(msg->ranges.size()));
+    }
+    const ros::Time end_stamp = msg->header.stamp + delta_stamp * msg->ranges.size();
+
+    LaserScan2D::time_frame_t time_frame(start_stamp.toNSec(), end_stamp.toNSec());
+    LaserScan2D::Ptr laserscan(new LaserScan2D(msg->header.frame_id,
+                                               time_frame));
 
     auto convert = [&laserscan, &msg, this] () {
         const auto range_min       = msg->range_min;
@@ -40,7 +49,7 @@ void LaserProvider2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
         }
     };
 
-    auto convertUndistorted = [&laserscan, &msg, this] () {
+    auto convertUndistorted = [&laserscan, &msg, &start_stamp, &delta_stamp, &end_stamp, this] () {
         const auto range_min       = msg->range_min;
         const auto range_max       = msg->range_max;
         const auto &ranges         = msg->ranges;
@@ -49,20 +58,17 @@ void LaserProvider2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
         auto angle                 = msg->angle_min;
         auto &rays                  = laserscan->getRays();
 
-        const ros::Time end_time = msg->header.stamp;
-        const ros::Time start_time = end_time - ros::Duration(msg->scan_time);
-
         tf::StampedTransform fixed_T_end;
         if(!tf_->lookupTransform(undistortion_fixed_frame_,
                                           sensor_frame,
-                                          end_time,
+                                          end_stamp,
                                           fixed_T_end,
                                           undistortion_tf_timeout_)) {
             return false;
         }
         if(!tf_->waitForTransform(undistortion_fixed_frame_,
                                            sensor_frame,
-                                           start_time,
+                                           start_stamp,
                                            undistortion_tf_timeout_)) {
             return false;
         }
@@ -71,8 +77,7 @@ void LaserProvider2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
             return false; /// this will avoid a division by zero and will end up in an empty scan message
         }
 
-        ros::Time     stamp = start_time;
-        ros::Duration stamp_delta = (end_time - start_time) * (1.0 / ranges.size());
+        ros::Time           stamp       = start_stamp;
         const tf::Transform end_T_fixed = fixed_T_end.inverse();
 
         laserscan->setAngleInterval(std::max(angle_min_, (double) msg->angle_min),
@@ -93,7 +98,7 @@ void LaserProvider2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
                 rays.emplace_back(LaserScan2D::Ray());
             }
             angle += angle_increment;
-            stamp += stamp_delta;
+            stamp += delta_stamp;
         }
         return true;
     };

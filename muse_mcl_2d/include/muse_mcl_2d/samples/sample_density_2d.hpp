@@ -51,7 +51,6 @@ public:
     {
         clustering_impl_.clear();
         kdtree_->clear();
-
     }
 
     inline virtual void insert(const Sample2D &sample) override
@@ -67,17 +66,17 @@ public:
 
     inline cluster_map_t const & clusters() const
     {
-        return clusters_;
+        return clustering_impl_.clusters;
     }
 
     inline distribution_map_t const & clusterDistributions() const
     {
-        return cluster_distributions_;
+        return clustering_impl_.distributions;
     }
 
     inline angular_mean_map_t const & clusterAngularMeans() const
     {
-        return cluster_angular_means_;
+        return clustering_impl_.angular_means;
     }
 
     inline std::size_t histogramSize() const
@@ -90,11 +89,6 @@ protected:
     std::shared_ptr<cis_kd_tree_buffered_t> kdtree_;
 
     clustering_t                            clustering_impl_;
-    cluster_map_t                           clusters_;
-    distribution_map_t                      cluster_distributions_;
-    angular_mean_map_t                      cluster_angular_means_;
-
-
 };
 }
 

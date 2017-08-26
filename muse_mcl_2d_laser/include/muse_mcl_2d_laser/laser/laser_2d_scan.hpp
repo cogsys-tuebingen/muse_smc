@@ -49,15 +49,6 @@ public:
     using Ptr  = std::shared_ptr<LaserScan2D>;
     using Rays = std::vector<Ray>;
 
-    LaserScan2D(const std::string &frame) :
-        Data(frame),
-        range_min_(0.0),
-        range_max_(std::numeric_limits<double>::max()),
-        angle_min_(-M_PI),
-        angle_max_(+M_PI)
-    {
-    }
-
     LaserScan2D(const std::string &frame,
                 const time_frame_t &time_frame) :
         Data(frame, time_frame),

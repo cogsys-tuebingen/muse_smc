@@ -16,8 +16,10 @@ public:
 
     struct Result {
         using Ptr = std::shared_ptr<Result>;
+        using ConstPtr = std::shared_ptr<Result const>;
 
         Result() = default;
+        virtual ~Result() = default;
 
         Result(const Data::ConstPtr &applied) :
             applied(applied)
@@ -34,6 +36,19 @@ public:
         inline bool success() const
         {
             return static_cast<bool>(applied);
+        }
+
+        template<typename T>
+        bool isType() const
+        {
+            const T *t = dynamic_cast<const T*>(this);
+            return t != nullptr;
+        }
+
+        template<typename T>
+        T const & as() const
+        {
+            return dynamic_cast<const T&>(*this);
         }
 
         const Data::ConstPtr applied;

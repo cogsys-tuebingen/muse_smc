@@ -106,7 +106,7 @@ public:
         return Time(time_ + d.duration());
     }
 
-    inline std::string string() const
+    inline std::string str() const
     {
         const int64_t ns = nanoseconds();
         const int64_t s = ns / static_cast<int64_t>(1e9);
