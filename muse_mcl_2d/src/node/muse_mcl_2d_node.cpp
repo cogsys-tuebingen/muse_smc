@@ -25,7 +25,10 @@ void MuseMCL2DNode::start()
         d.second->enable();
     }
 
-    particle_filter_->start();
+    if(!particle_filter_->start()) {
+        ROS_ERROR_STREAM("Couldn't start the filter!");
+        return;
+    }
 
     /// check if there is an initial pose set
     checkPoseInitialization();
@@ -33,11 +36,13 @@ void MuseMCL2DNode::start()
     double node_rate = nh_private_.param<double>("node_rate", 60.0);
     if(node_rate == 0.0) {
         /// unlimited speed
+        ROS_INFO_STREAM("Spinning without rate!");
         ros::spin();
     } else {
         /// limited speed
         ros::WallRate r(node_rate);
         while(ros::ok()) {
+            ROS_INFO_STREAM("Spinning with" << node_rate << "Hz!");
             ros::spinOnce();
             r.sleep();
         }
@@ -151,7 +156,7 @@ bool MuseMCL2DNode::setup()
         ROS_INFO_STREAM(map_provider_list);
     }
     {   /// Data Providers
-        loader.load<DataProvider2D,TFProvider::Ptr, ros::NodeHandle&>(data_providers_, tf_provider_frontend_, nh_private_);
+        loader.load<DataProvider2D, TFProvider::Ptr, ros::NodeHandle&>(data_providers_, tf_provider_frontend_, nh_private_);
         if(data_providers_.empty()) {
             ROS_ERROR_STREAM("No data provider was found!");
             return false;

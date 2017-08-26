@@ -26,6 +26,7 @@ public:
         auto param_name = [this](const std::string &name){return name_ + "/" + name;};
         tf_ = tf;
         tf_timeout_       = ros::Duration(nh.param<double>(param_name("tf_timeout"), 0.1));
+        doSetup(nh);
     }
 
 protected:

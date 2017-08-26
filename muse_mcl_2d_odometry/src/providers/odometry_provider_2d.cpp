@@ -10,6 +10,8 @@ using namespace muse_mcl_2d;
 
 void OdometryProvider2D::callback(const nav_msgs::OdometryConstPtr &msg)
 {
+    std::cout << "received odometry" << std::endl;
+
     auto to_pose = [](const nav_msgs::OdometryConstPtr &msg)
     {
         return Pose2D(msg->pose.pose.position.x,
