@@ -7,16 +7,28 @@
 namespace muse_mcl_2d {
 class Vector2D {
 public:
-    Vector2D() :
+    inline Vector2D() :
         x_(0.0),
         y_(0.0)
     {
     }
 
-    Vector2D(const double x,
-            const double y) :
+    inline Vector2D(const double x,
+             const double y) :
         x_(x),
         y_(y)
+    {
+    }
+
+    inline Vector2D(const Vector2D &other) :
+        x_(other.x_),
+        y_(other.y_)
+    {
+    }
+
+    inline Vector2D(Vector2D &&other) :
+        x_(other.x_),
+        y_(other.y_)
     {
     }
 
@@ -100,6 +112,20 @@ public:
     {
         x_ /= d;
         y_ /= d;
+        return *this;
+    }
+
+    inline Vector2D& operator = (const Vector2D &other)
+    {
+        x_ = other.x_;
+        y_ = other.y_;
+        return *this;
+    }
+
+    inline Vector2D& operator = (Vector2D &&other)
+    {
+        x_ = other.x_;
+        y_ = other.y_;
         return *this;
     }
 

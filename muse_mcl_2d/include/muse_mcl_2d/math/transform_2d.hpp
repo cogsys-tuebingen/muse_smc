@@ -52,6 +52,22 @@ public:
     {
     }
 
+    inline Transform2D(const Transform2D &other) :
+        translation_(other.translation_),
+        yaw_(other.yaw_),
+        sin_(other.sin_),
+        cos_(other.cos_)
+    {
+    }
+
+    inline Transform2D(Transform2D &&other) :
+        translation_(other.translation_),
+        yaw_(other.yaw_),
+        sin_(other.sin_),
+        cos_(other.cos_)
+    {
+    }
+
     inline Vector2D operator * (const Vector2D &v) const
     {
         return Vector2D(cos_ * v.x() - sin_ * v.y() + translation_.x(),
@@ -71,14 +87,27 @@ public:
 
     inline Transform2D & operator *= (const Transform2D &other)
     {
-
-        const double s = sin_ * other.cos_ + other.sin_ * cos_;
-        const double c = cos_ = cos_ * other.cos_ - other.sin_ * sin_;
         translation_.x() = cos_ * other.translation_.x() - sin_ * other.translation_.y() + translation_.x();
         translation_.y() = sin_ * other.translation_.x() + cos_ * other.translation_.y() + translation_.y();
-        yaw_ = std::acos(c);
-        sin_ = s;
-        cos_ = c;
+        setYaw(muse_smc::math::angle::normalize(yaw_ + other.yaw_));
+        return *this;
+    }
+
+    inline Transform2D& operator = (const Transform2D &other)
+    {
+        yaw_ = other.yaw_;
+        sin_ = other.sin_;
+        cos_ = other.cos_;
+        translation_ = other.translation_;
+        return *this;
+    }
+
+    inline Transform2D& operator = (Transform2D &&other)
+    {
+        yaw_ = other.yaw_;
+        sin_ = other.sin_;
+        cos_ = other.cos_;
+        translation_ = other.translation_;
         return *this;
     }
 
