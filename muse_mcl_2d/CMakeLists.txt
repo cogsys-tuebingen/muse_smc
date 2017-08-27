@@ -88,6 +88,11 @@ target_link_libraries(${PROJECT_NAME}_node
     ${catkin_LIBRARIES}
 )
 
+add_unit_test_gtest(${PROJECT_NAME}_test_transform2d
+    test/test_transform2d.cpp
+    "${catkin_LIBRARIES}"
+)
+
 install(FILES plugins.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 install(TARGETS ${PROJECT_NAME}_resampling ${PROJECT_NAME}_sampling

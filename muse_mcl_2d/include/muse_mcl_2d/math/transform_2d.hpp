@@ -12,12 +12,12 @@ public:
         translation_(0.0, 0.0),
         yaw_(0.0),
         sin_(0.0),
-        cos_(0.0)
+        cos_(1.0)
     {
     }
 
     inline Transform2D(const double x,
-                const double y) :
+                       const double y) :
         translation_(x, y),
         yaw_(0.0),
         sin_(0.0),
@@ -33,9 +33,9 @@ public:
     {
     }
 
-    inline Transform2D(const double yaw,
-                       const double x,
-                       const double y) :
+    inline Transform2D(const double x,
+                       const double y,
+                       const double yaw) :
         translation_(x, y),
         yaw_(yaw),
         sin_(std::sin(yaw_)),
@@ -44,7 +44,7 @@ public:
     }
 
     inline Transform2D(const Vector2D &translation,
-                const double yaw) :
+                       const double yaw) :
         translation_(translation),
         yaw_(yaw),
         sin_(std::sin(yaw_)),
@@ -131,10 +131,19 @@ public:
         cos_ = std::cos(yaw_);
     }
 
-
     inline double yaw() const
     {
         return yaw_;
+    }
+
+    inline double sin() const
+    {
+        return sin_;
+    }
+
+    inline double cos() const
+    {
+        return cos_;
     }
 
     inline Eigen::Vector3d toEigen() const
