@@ -62,9 +62,7 @@ public:
     inline Transform2D operator * (const Transform2D &other) const
     {
         Transform2D t;
-        t.sin_ = sin_ * other.cos_ + other.sin_ * cos_;
-        t.cos_ = cos_ * other.cos_ - other.sin_ * sin_;
-        t.yaw_ = std::acos(t.cos_);
+        t.setYaw(muse_smc::math::angle::normalize(yaw_ + other.yaw_));
         t.translation_.x() = cos_ * other.translation_.x() - sin_ * other.translation_.y() + translation_.x();
         t.translation_.y() = sin_ * other.translation_.x() + cos_ * other.translation_.y() + translation_.y();
         return t;

@@ -1,8 +1,11 @@
 #include <gtest/gtest.h>
 
 #include <muse_mcl_2d/math/transform_2d.hpp>
+#include <muse_mcl_2d/math/point_2d.hpp>
+
 #include <muse_smc/math/random.hpp>
 #include <muse_smc/math/angle.hpp>
+
 #include <tf/tf.h>
 
 using namespace muse_mcl_2d;
@@ -182,11 +185,101 @@ TEST(Test_muse_mcl_2d, testTransformSetYaw)
 
 TEST(Test_muse_mcl_2d, testTransformTranslation)
 {
+    rng_t rng(-10.0, 10.0);
+    const double x_0 = rng.get();
+    const double y_0 = rng.get();
+    const double p_x = rng.get();
+    const double p_y = rng.get();
 
+    Transform2D t_0(x_0,y_0, 0.0);
+    EXPECT_EQ(t_0.yaw(), 0.0);
+    EXPECT_EQ(t_0.tx(),  x_0);
+    EXPECT_EQ(t_0.ty(),  y_0);
+    EXPECT_EQ(t_0.sin(), 0.0);
+    EXPECT_EQ(t_0.cos(), 1.0);
+
+    tf::Transform t_0_tf(tf::createIdentityQuaternion(),
+                         tf::Vector3(x_0,y_0,0.0));
+
+    Point2D   p(p_x, p_y);
+    tf::Point p_tf(p_x, p_y, 0.0);
+
+    p    = t_0 * p;
+    p_tf = t_0_tf * p_tf;
+    EXPECT_EQ(p.x(), p_x + x_0);
+    EXPECT_EQ(p.y(), p_y + y_0);
+    EXPECT_EQ(p.x(), p_tf.x());
+    EXPECT_EQ(p.y(), p_tf.y());
+
+    const double x_1 = rng.get();
+    const double y_1 = rng.get();
+
+    Transform2D t_1(x_1,y_1, 0.0);
+    tf::Transform t_1_tf(tf::createIdentityQuaternion(),
+                         tf::Vector3(x_1,y_1,0.0));
+
+    t_1 = t_0 * t_1;
+    t_1_tf = t_0_tf * t_1_tf;
+
+    EXPECT_EQ(t_1.tx(), x_1 + x_0);
+    EXPECT_EQ(t_1.ty(), y_1 + y_0);
+    EXPECT_EQ(t_1.tx(), t_1_tf.getOrigin().x());
+    EXPECT_EQ(t_1.ty(), t_1_tf.getOrigin().y());
+    EXPECT_EQ(t_1.cos(), 1.0);
+    EXPECT_EQ(t_1.sin(), 0.0);
+    EXPECT_EQ(t_1.yaw(), 0.0);
 }
 
 TEST(Test_muse_mcl_2d, testTransformRotation)
 {
+    rng_t rng(-10.0, 10.0);
+    const double yaw_0 = muse_smc::math::angle::normalize(rng.get());
+    const double sin_0 = std::sin(yaw_0);
+    const double cos_0 = std::cos(yaw_0);
+    const double p_x = rng.get();
+    const double p_y = rng.get();
+
+    Transform2D t_0(0.0,0.0,yaw_0);
+    EXPECT_EQ(t_0.yaw(), yaw_0);
+    EXPECT_EQ(t_0.tx(),  0.0);
+    EXPECT_EQ(t_0.ty(),  0.0);
+    EXPECT_EQ(t_0.sin(), sin_0);
+    EXPECT_EQ(t_0.cos(), cos_0);
+
+    tf::Transform t_0_tf(tf::createQuaternionFromYaw(yaw_0),
+                         tf::Vector3());
+
+    Point2D   p(p_x, p_y);
+    tf::Point p_tf(p_x, p_y, 0.0);
+
+    EXPECT_NEAR(p.x(), p_tf.x(), 1e-4);
+    EXPECT_NEAR(p.y(), p_tf.y(), 1e-4);
+
+    p    = t_0 * p;
+    p_tf = t_0_tf * p_tf;
+
+    EXPECT_NEAR(p.x(), p_tf.x(), 1e-4);
+    EXPECT_NEAR(p.y(), p_tf.y(), 1e-4);
+
+    const double yaw_1 = muse_smc::math::angle::normalize(rng.get());
+
+    Transform2D t_1(0.0, 0.0, yaw_1);
+    tf::Transform t_1_tf(tf::createQuaternionFromYaw(yaw_1),
+                         tf::Vector3());
+
+    EXPECT_EQ(t_0.tx(), 0.0);
+    EXPECT_EQ(t_0.ty(), 0.0);
+    EXPECT_EQ(t_1.tx(), 0.0);
+    EXPECT_EQ(t_1.ty(), 0.0);
+
+    t_1 = t_0 * t_1;
+    tf::Transform t_1_tf_ = t_0_tf * t_1_tf;
+
+    EXPECT_EQ(t_0.tx(), 0.0);
+    EXPECT_EQ(t_0.ty(), 0.0);
+    EXPECT_EQ(t_1.tx(), 0.0);
+    EXPECT_EQ(t_1.ty(), 0.0);
+    EXPECT_NEAR(t_1.yaw(), tf::getYaw(t_1_tf_.getRotation()), 1e-4);
 
 }
 
