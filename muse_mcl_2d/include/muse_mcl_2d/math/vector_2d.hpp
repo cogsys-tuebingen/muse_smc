@@ -14,7 +14,7 @@ public:
     }
 
     inline Vector2D(const double x,
-             const double y) :
+                    const double y) :
         x_(x),
         y_(y)
     {
@@ -117,15 +117,19 @@ public:
 
     inline Vector2D& operator = (const Vector2D &other)
     {
-        x_ = other.x_;
-        y_ = other.y_;
+        if(&other != this) {
+            x_ = other.x_;
+            y_ = other.y_;
+        }
         return *this;
     }
 
     inline Vector2D& operator = (Vector2D &&other)
     {
-        x_ = other.x_;
-        y_ = other.y_;
+        if(&other != this) {
+            x_ = other.x_;
+            y_ = other.y_;
+        }
         return *this;
     }
 

@@ -95,19 +95,23 @@ public:
 
     inline Transform2D& operator = (const Transform2D &other)
     {
-        yaw_ = other.yaw_;
-        sin_ = other.sin_;
-        cos_ = other.cos_;
-        translation_ = other.translation_;
+        if(&other != this) {
+            yaw_ = other.yaw_;
+            sin_ = other.sin_;
+            cos_ = other.cos_;
+            translation_ = other.translation_;
+        }
         return *this;
     }
 
     inline Transform2D& operator = (Transform2D &&other)
     {
-        yaw_ = other.yaw_;
-        sin_ = other.sin_;
-        cos_ = other.cos_;
-        translation_ = other.translation_;
+        if(&other != this) {
+            yaw_ = other.yaw_;
+            sin_ = other.sin_;
+            cos_ = other.cos_;
+            translation_ = other.translation_;
+        }
         return *this;
     }
 
@@ -219,8 +223,8 @@ public:
     inline std::string str() const
     {
         return std::to_string(translation_.x()) + " " +
-               std::to_string(translation_.y()) + " " +
-               std::to_string(yaw_);
+                std::to_string(translation_.y()) + " " +
+                std::to_string(yaw_);
     }
 
 private:

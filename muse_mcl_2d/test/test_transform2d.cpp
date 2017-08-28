@@ -232,7 +232,7 @@ TEST(Test_muse_mcl_2d, testTransformTranslation)
 
 TEST(Test_muse_mcl_2d, testTransformRotation)
 {
-    rng_t rng(-10.0, 10.0);
+    rng_t rng(-10.0, 10.0, 1ul);
     const double yaw_0 = muse_smc::math::angle::normalize(rng.get());
     const double sin_0 = std::sin(yaw_0);
     const double cos_0 = std::cos(yaw_0);
@@ -246,8 +246,8 @@ TEST(Test_muse_mcl_2d, testTransformRotation)
     EXPECT_EQ(t_0.sin(), sin_0);
     EXPECT_EQ(t_0.cos(), cos_0);
 
-    tf::Transform t_0_tf(tf::createQuaternionFromYaw(yaw_0),
-                         tf::Vector3());
+    tf::Transform t_0_tf = tf::Transform(tf::createQuaternionFromYaw(yaw_0),
+                                         tf::Vector3(0.0,0.0,0.0));
 
     Point2D   p(p_x, p_y);
     tf::Point p_tf(p_x, p_y, 0.0);
@@ -265,7 +265,7 @@ TEST(Test_muse_mcl_2d, testTransformRotation)
 
     Transform2D t_1(0.0, 0.0, yaw_1);
     tf::Transform t_1_tf(tf::createQuaternionFromYaw(yaw_1),
-                         tf::Vector3());
+                         tf::Vector3(0.0,0.0,0.0));
 
     EXPECT_EQ(t_0.tx(), 0.0);
     EXPECT_EQ(t_0.ty(), 0.0);
