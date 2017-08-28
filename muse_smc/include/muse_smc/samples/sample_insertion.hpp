@@ -45,7 +45,7 @@ public:
             return;
 
         data_.emplace_back(std::move(sample));
-        update_(sample);
+        update_(data_.back());
     }
 
     inline void insert(const sample_t &sample)
@@ -53,7 +53,7 @@ public:
         if(!open_)
             return;
         data_.push_back(sample);
-        update_(sample);
+        update_(data_.back());
     }
 
     inline bool canInsert() const

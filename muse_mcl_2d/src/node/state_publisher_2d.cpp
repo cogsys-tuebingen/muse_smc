@@ -82,6 +82,7 @@ void StatePublisher::publish(const sample_set_t::Ptr &sample_set)
 
         /// make sure that TF gets published first #most important
         tf_publisher_->setTransform(latest_w_T_b_);
+        std::cout << latest_w_T_b_.data() << std::endl;
     }
     /// publish the particle set state
     // publishState(sample_set);

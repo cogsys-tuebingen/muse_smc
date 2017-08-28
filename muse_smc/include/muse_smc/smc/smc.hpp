@@ -225,10 +225,12 @@ protected:
                                   init_state_covariance_,
                                   *sample_set_);
             state_publisher_->publishIntermidiate(sample_set_);
+            request_init_state_ = false;
         }
         if(request_init_uniform_) {
             sample_uniform_->apply(*sample_set_);
             state_publisher_->publishIntermidiate(sample_set_);
+            request_init_uniform_ = false;
         }
     }
 

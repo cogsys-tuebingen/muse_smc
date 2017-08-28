@@ -2,6 +2,7 @@
 #define TRANSFORM_2D_HPP
 
 #include <muse_mcl_2d/math/vector_2d.hpp>
+
 #include <muse_smc/utility/stamped.hpp>
 #include <muse_smc/math/angle.hpp>
 
@@ -238,6 +239,12 @@ private:
 
 
 };
+
+inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d::Transform2D &t)
+{
+    out << "[" << t.tx() << "," << t.ty() << "," << t.yaw() << "]";
+    return out;
+}
 
 using StampedTransform2D = muse_smc::Stamped<Transform2D>;
 }

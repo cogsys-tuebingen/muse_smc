@@ -25,7 +25,6 @@ void OdometryProvider2D::callback(const nav_msgs::OdometryConstPtr &msg)
                                                 to_pose(last_msg_),
                                                 to_pose(msg)));
 
-        std::cout << *odometry << std::endl;
         data_received_(odometry);
     }
     last_msg_ = msg;
