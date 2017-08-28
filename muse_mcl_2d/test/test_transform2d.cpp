@@ -232,7 +232,7 @@ TEST(Test_muse_mcl_2d, testTransformTranslation)
 
 TEST(Test_muse_mcl_2d, testTransformRotation)
 {
-    rng_t rng(-10.0, 10.0, 1ul);
+    rng_t rng(-10.0, 10.0);
     const double yaw_0 = muse_smc::math::angle::normalize(rng.get());
     const double sin_0 = std::sin(yaw_0);
     const double cos_0 = std::cos(yaw_0);
@@ -354,6 +354,52 @@ TEST(Test_muse_mcl_2d, testTransformFull)
 
 TEST(Test_muse_mcl_2d, testTransformInterpolation)
 {
+    rng_t rng(-10.0, 10.0);
+    const double x_0 = rng.get();
+    const double y_0 = rng.get();
+    const double yaw_0 = muse_smc::math::angle::normalize(rng.get());
+    const double ratio_0 = 0.25;
+    const double ratio_1 = 0.5;
+    const double ratio_2 = 0.75;
+
+    const tf::Transform tf_a(tf::createIdentityQuaternion(),
+                             tf::Vector3(0,0,0));
+    const tf::Transform tf_b(tf::createQuaternionFromYaw(yaw_0),
+                             tf::Vector3(x_0, y_0, 0.0));
+
+    const Transform2D a(0.0, 0.0, 0.0);
+    const Transform2D b(x_0, y_0, yaw_0);
+
+
+    tf::Transform tf_0;
+    tf_0.getOrigin().setInterpolate3(tf_a.getOrigin(), tf_b.getOrigin(), ratio_0);
+    tf_0.setRotation(tf::slerp(tf_a.getRotation(), tf_b.getRotation(), ratio_0));
+
+    Transform2D t_0 = a.interpolate(b, ratio_0);
+
+    EXPECT_NEAR(t_0.tx(), tf_0.getOrigin().x(), 1e-5);
+    EXPECT_NEAR(t_0.ty(), tf_0.getOrigin().y(), 1e-5);
+    EXPECT_NEAR(t_0.yaw(), tf::getYaw(tf_0.getRotation()), 1e-5);
+
+
+    tf::Transform tf_1;
+    tf_1.getOrigin().setInterpolate3(tf_a.getOrigin(), tf_b.getOrigin(), ratio_1);
+    tf_1.setRotation(tf::slerp(tf_a.getRotation(), tf_b.getRotation(), ratio_1));
+    Transform2D t_1 = a.interpolate(b, ratio_1);
+
+    EXPECT_NEAR(t_1.tx(), tf_1.getOrigin().x(), 1e-5);
+    EXPECT_NEAR(t_1.ty(), tf_1.getOrigin().y(), 1e-5);
+    EXPECT_NEAR(t_1.yaw(), tf::getYaw(tf_1.getRotation()), 1e-5);
+
+
+    tf::Transform tf_2;
+    tf_2.getOrigin().setInterpolate3(tf_a.getOrigin(), tf_b.getOrigin(), ratio_2);
+    tf_2.setRotation(tf::slerp(tf_a.getRotation(), tf_b.getRotation(), ratio_2));
+    Transform2D t_2 = a.interpolate(b, ratio_2);
+
+    EXPECT_NEAR(t_2.tx(), tf_2.getOrigin().x(), 1e-5);
+    EXPECT_NEAR(t_2.ty(), tf_2.getOrigin().y(), 1e-5);
+    EXPECT_NEAR(t_2.yaw(), tf::getYaw(tf_2.getRotation()), 1e-5);
 
 }
 
