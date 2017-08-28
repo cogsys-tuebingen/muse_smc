@@ -133,6 +133,11 @@ public:
         return *this;
     }
 
+    inline Vector2D operator -() const
+    {
+        return Vector2D(-x_, -y_);
+    }
+
     inline Eigen::Vector2d toEigen() const
     {
         return Eigen::Vector2d(x_, y_);

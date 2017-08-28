@@ -118,11 +118,14 @@ public:
     inline Transform2D inverse() const
     {
         Transform2D t;
-        t.yaw_ = -yaw_;
-        t.sin_ = -sin_;
-        t.cos_ = cos_;
-        t.translation_ = t * t.translation_;
+        t.setYaw(-yaw_);
+        t.translation_ = -(t * translation_);
         return t;
+    }
+
+    inline Transform2D operator -() const
+    {
+        return inverse();
     }
 
     inline double & tx()

@@ -20,6 +20,45 @@ public:
     double weight;
     Pose2D state;
 
+    Sample2D() :
+        weight(0.0),
+        state(Pose2D())
+    {
+    }
+
+    Sample2D(const Sample2D &other) :
+        weight(other.weight),
+        state(other.state)
+    {
+    }
+
+    Sample2D(Sample2D &&other) :
+        weight(other.weight),
+        state(other.state)
+    {
+    }
+
+
+    Sample2D& operator = (const Sample2D &other)
+    {
+        if(&other != this) {
+            weight = other.weight;
+            state  = other.state;
+        }
+        return *this;
+    }
+
+    Sample2D& operator = (Sample2D &&other)
+    {
+        if(&other != this) {
+            weight = other.weight;
+            state  = std::move(other.state);
+        }
+        return *this;
+    }
+
+
+
 };
 }
 
