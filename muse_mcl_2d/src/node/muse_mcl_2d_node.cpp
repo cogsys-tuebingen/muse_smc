@@ -278,7 +278,7 @@ void MuseMCL2DNode::checkPoseInitialization()
             ROS_ERROR_STREAM("The initialization pose is expected to have 3 values [x, y, yaw]");
             return;
         }
-        Pose2D pose = Pose2D(p_v[2], p_v[0], p_v[1]);
+        Pose2D pose = Pose2D(p_v[0], p_v[1], p_v[2]);
 
         if(c_v.size() != 9) {
             ROS_ERROR_STREAM("The initliazation covariance is expected to have 9 values.");

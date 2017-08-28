@@ -224,13 +224,6 @@ public:
         return Transform2D(translation, yaw);
     }
 
-    inline std::string str() const
-    {
-        return std::to_string(translation_.x()) + " " +
-                std::to_string(translation_.y()) + " " +
-                std::to_string(yaw_);
-    }
-
 private:
     Vector2D translation_;
     double   yaw_;

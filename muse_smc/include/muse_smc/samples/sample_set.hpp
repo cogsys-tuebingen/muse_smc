@@ -193,14 +193,14 @@ private:
     typename sample_density_t::Ptr   p_t_1_density_;
     std::shared_ptr<sample_vector_t> p_t_;
 
-    void weightStatisticReset()
+    inline void weightStatisticReset()
     {
         maximum_weight_ = 0.0;
         average_weight_ = 0.0;
         weight_sum_     = 0.0;
     }
 
-    void weightUpdate(const double &weight)
+    inline void weightUpdate(const double &weight)
     {
         weight_sum_ += weight;
         if(weight > maximum_weight_)
@@ -208,13 +208,13 @@ private:
         average_weight_ = weight_sum_ / p_t_1_->size();
     }
 
-    void insertionUpdate(const sample_t &sample)
+    inline void insertionUpdate(const sample_t &sample)
     {
         weightUpdate(sample.weight);
         p_t_1_density_->insert(sample);
     }
 
-    void insertionClosed()
+    inline void insertionClosed()
     {
         std::swap(p_t_, p_t_1_);
         p_t_1_density_->estimate();

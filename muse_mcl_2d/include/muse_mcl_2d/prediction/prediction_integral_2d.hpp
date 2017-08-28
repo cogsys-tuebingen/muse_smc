@@ -38,7 +38,7 @@ public:
 
     virtual bool thresholdExceeded() const override
     {
-        return linear_distance_abs_ > 0.5 || angular_distance_abs_ > 0.05;
+        return linear_distance_abs_ > 0.5 || angular_distance_abs_ > 0.1;
     }
 
     virtual bool isZero() const override
