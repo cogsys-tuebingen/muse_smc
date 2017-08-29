@@ -5,12 +5,13 @@
 #include <limits>
 
 #include <muse_smc/utility/buffered_vector.hpp>
-#include <muse_smc/utility/member_iterator.hpp>
 
 #include <muse_smc/time/time.hpp>
 
 #include <muse_smc/samples/sample_density.hpp>
 #include <muse_smc/samples/sample_insertion.hpp>
+#include <muse_smc/samples/sample_weight_iterator.hpp>
+#include <muse_smc/samples/sample_state_iterator.hpp>
 
 namespace muse_smc {
 template<typename sample_t>
@@ -21,8 +22,8 @@ public:
     using sample_vector_t    = std::buffered_vector<sample_t, typename sample_t::allocator_t>;
     using sample_density_t   = SampleDensity<sample_t>;
     using sample_insertion_t = SampleInsertion<sample_t>;
-    using state_iterator_t   = MemberDecorator<sample_t, sample_vector_t, typename sample_t::state_t, &sample_t::state>;
-    using weight_iterator_t  = MemberDecorator<sample_t, sample_vector_t, double, &sample_t::weight>;
+    using state_iterator_t   = StateIteration<sample_t>;
+    using weight_iterator_t  = WeightIteration<sample_t>;
 
     using Ptr = std::shared_ptr<sample_set_t>;
     using ConstPtr = std::shared_ptr<sample_set_t const>;
@@ -200,7 +201,7 @@ private:
         weight_sum_     = 0.0;
     }
 
-    inline void weightUpdate(const double &weight)
+    inline void weightUpdate(const double weight)
     {
         weight_sum_ += weight;
         if(weight > maximum_weight_)

@@ -277,8 +277,11 @@ public:
     inline void clear()
     {
         size_ = 0;
-        // let's spare some time
-    //    std::fill(data_.begin(), data_.end(), T());
+    }
+
+    inline T* data()
+    {
+        return data_.data();
     }
 
 private:

@@ -106,17 +106,18 @@ public:
         return Time(time_ + d.duration());
     }
 
-    inline std::string str() const
-    {
-        const int64_t ns = nanoseconds();
-        const int64_t s = ns / static_cast<int64_t>(1e9);
-        const int64_t ms = (ns % static_cast<int64_t>(1e9));
-        return std::to_string(s) + "." + std::to_string(ms);
-    }
-
 private:
     time_t time_;
 };
+}
+
+inline std::ostream & operator << (std::ostream &out, muse_smc::Time &time)
+{
+    const int64_t ns = time.nanoseconds();
+    const int64_t s = ns / static_cast<int64_t>(1e9);
+    const int64_t ms = (ns % static_cast<int64_t>(1e9));
+    out << std::to_string(s) + "." + std::to_string(ms);
+    return out;
 }
 
 #endif // TIME_HPP

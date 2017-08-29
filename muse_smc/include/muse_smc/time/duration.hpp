@@ -13,6 +13,11 @@ public:
     using time_t  = clock_t::time_point;
     using duration_t = clock_t::duration;
 
+    Duration() :
+        duration_(0l)
+    {
+    }
+
     Duration(const double seconds) :
         duration_(static_cast<int64_t>(std::floor(seconds * 1e9)))
     {
@@ -30,8 +35,17 @@ public:
 
     inline double seconds() const
     {
-        return duration_.count() * 1e-9;
+        return std::chrono::duration_cast<std::chrono::nanoseconds>(duration_).count() * 1e-9;
+    }
 
+    inline double milliseconds() const
+    {
+        return std::chrono::duration_cast<std::chrono::nanoseconds>(duration_).count() * 1e-6;
+    }
+
+    inline int64_t nanoseconds() const
+    {
+        return std::chrono::duration_cast<std::chrono::nanoseconds>(duration_).count();
     }
 
     inline duration_t duration() const
@@ -39,10 +53,6 @@ public:
         return duration_;
     }
 
-    inline int64_t nanoseconds() const
-    {
-        return duration_.count();
-    }
 
     inline bool sleep() const
     {
@@ -50,6 +60,11 @@ public:
             return false;
         std::this_thread::sleep_for(duration_);
         return true;
+    }
+
+    inline bool isZero() const
+    {
+        return duration_.count() == 0l;
     }
 
     inline muse_smc::Duration operator + (const muse_smc::Duration &other)

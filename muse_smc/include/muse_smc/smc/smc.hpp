@@ -279,6 +279,13 @@ protected:
         worker_thread_active_ = true;
         lock_t notify_event_mutex_lock(notify_event_mutex_);
 
+        //// DBG
+        Time     last = Time::now();
+        Time     now;
+        Duration dur;
+        std::cerr << "muse_smc is starting" << std::endl;
+        //// DBG
+
         while(!worker_thread_exit_) {
             notify_event_.wait(notify_event_mutex_lock);
 
@@ -299,8 +306,11 @@ protected:
                 const Time &t = u->getStamp();
                 const Time &sample_set_stamp = sample_set_->getStamp();
 
+                std::cout << "/// here" << std::endl;
                 if(t >= sample_set_stamp) {
                     predict(t);
+                    Time start = Time::now();
+
                     if(t > sample_set_stamp) {
                         update_queue_.emplace(u);
                     } else if (t == sample_set_stamp) {
@@ -309,20 +319,21 @@ protected:
                             u->apply(sample_set_->getWeightIterator());
                             prediction_integrals_->reset(model_id);
                             ++updates_applied_after_resampling_;
-
 #ifdef MUSE_SMC_LOG_STATE
-            log();
+                            log();
 #endif
 #ifdef MUSE_SMC_USE_DOTTY
                             dotty_->addState(sample_set_stamp);
                             dotty_->addUpdate(u->getStamp(), u->getModelName());
 #endif
                         }
+                        std::cout << "///" << (Time::now() - start).milliseconds() << std::endl;
                     } else {
                         std::cerr << "Motion model seems not to be able to interpolate!" << std::endl;
                     }
                 }
-                if(!prediction_integrals_->isZero() &&
+
+                if(prediction_integrals_->thresholdExceeded() &&
                         updates_applied_after_resampling_ > 0ul) {
                     resampling_->apply(*sample_set_);
                     updates_applied_after_resampling_ = 0ul;
@@ -333,6 +344,12 @@ protected:
                 } else {
                     state_publisher_->publishIntermidiate(sample_set_);
                 }
+                //// DBG
+                now = Time::now();
+                dur = now - last;
+                std::cerr << "rate " << 1.0 / dur.seconds() << update_queue_.size() << " " << prediction_queue_.size()<< std::endl;
+                last = now;
+                //// DBG
             }
         }
         worker_thread_active_ = false;

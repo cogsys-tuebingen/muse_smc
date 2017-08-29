@@ -22,9 +22,9 @@ public:
      * @param update    - on change notification callback
      * @param finshed   - on finish callback
      */
-    SampleInsertion(sample_vector_t &data,
-                    notify_update    update,
-                    notify_closed    close) :
+    inline SampleInsertion(sample_vector_t &data,
+                           notify_update    update,
+                           notify_closed    close) :
         data_(data),
         open_(true),
         update_(update),
