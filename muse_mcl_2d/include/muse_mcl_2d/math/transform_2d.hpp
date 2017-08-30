@@ -229,8 +229,6 @@ private:
     double   yaw_;
     double   sin_;
     double   cos_;
-
-
 };
 
 inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d::Transform2D &t)

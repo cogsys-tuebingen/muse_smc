@@ -68,11 +68,9 @@ public:
         return iterator_t(&(*data_.begin()));
     }
 
-
     inline iterator_t end() {
-        return iterator_t(&(*data_.begin()));
+        return iterator_t(&(*data_.end()));
     }
-
 
     inline const sample_vector_t& getData() const
     {

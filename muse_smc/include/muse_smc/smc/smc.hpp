@@ -237,15 +237,15 @@ protected:
     void predict(const Time &until)
     {
         auto wait_for_prediction = [this] () {
-            if(prediction_queue_.empty()) {
-                lock_t l(notify_prediction_mutex_);
-                notify_prediction_.wait(l);
-            }
+            lock_t l(notify_prediction_mutex_);
+            notify_prediction_.wait(l);
         };
 
         const Time &time_stamp = sample_set_->getStamp();
         while(until > time_stamp) {
-            wait_for_prediction();
+            if(prediction_queue_.empty())
+                wait_for_prediction();
+
             typename prediction_t::Ptr prediction = prediction_queue_.pop();
             if(prediction->getStamp() < time_stamp) {
                 /// drop odometry messages which are too old
@@ -283,7 +283,6 @@ protected:
         Time     last = Time::now();
         Time     now;
         Duration dur;
-        std::cerr << "muse_smc is starting" << std::endl;
         //// DBG
 
         while(!worker_thread_exit_) {
@@ -306,19 +305,23 @@ protected:
                 const Time &t = u->getStamp();
                 const Time &sample_set_stamp = sample_set_->getStamp();
 
-                std::cout << "/// here" << std::endl;
                 if(t >= sample_set_stamp) {
+                    std::cerr << "stamp until " << t << std::endl;
+                    std::cerr << "stamp before " << sample_set_stamp << std::endl;
                     predict(t);
-                    Time start = Time::now();
+                    std::cerr << "stamp after " << sample_set_stamp << std::endl;
 
                     if(t > sample_set_stamp) {
                         update_queue_.emplace(u);
                     } else if (t == sample_set_stamp) {
                         const auto model_id = u->getModelId();
                         if(!prediction_integrals_->isZero(model_id)) {
+                            now = Time::now();
                             u->apply(sample_set_->getWeightIterator());
                             prediction_integrals_->reset(model_id);
                             ++updates_applied_after_resampling_;
+                            std::cerr << "update " << (Time::now() - now).milliseconds() << std::endl;
+
 #ifdef MUSE_SMC_LOG_STATE
                             log();
 #endif
@@ -327,7 +330,6 @@ protected:
                             dotty_->addUpdate(u->getStamp(), u->getModelName());
 #endif
                         }
-                        std::cout << "///" << (Time::now() - start).milliseconds() << std::endl;
                     } else {
                         std::cerr << "Motion model seems not to be able to interpolate!" << std::endl;
                     }
@@ -335,6 +337,9 @@ protected:
 
                 if(prediction_integrals_->thresholdExceeded() &&
                         updates_applied_after_resampling_ > 0ul) {
+
+                    std::cout << "resampling" << std::endl;
+
                     resampling_->apply(*sample_set_);
                     updates_applied_after_resampling_ = 0ul;
                     prediction_integrals_->reset();
@@ -342,12 +347,16 @@ protected:
                     state_publisher_->publish(sample_set_);
                     sample_set_->resetWeights();
                 } else {
+                    now = Time::now();
                     state_publisher_->publishIntermidiate(sample_set_);
+                    std::cerr << "publish " << (Time::now() - now).milliseconds() << std::endl;
+
                 }
                 //// DBG
                 now = Time::now();
                 dur = now - last;
-                std::cerr << "rate " << 1.0 / dur.seconds() << update_queue_.size() << " " << prediction_queue_.size()<< std::endl;
+                std::cerr << "rate " << 1.0 / dur.seconds() << " " << update_queue_.size() << " " << prediction_queue_.size() << std::endl;
+                std::cerr << "size " << sample_set_->getSampleSize() << std::endl;
                 last = now;
                 //// DBG
             }

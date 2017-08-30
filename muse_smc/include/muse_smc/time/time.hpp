@@ -111,7 +111,7 @@ private:
 };
 }
 
-inline std::ostream & operator << (std::ostream &out, muse_smc::Time &time)
+inline std::ostream & operator << (std::ostream &out, const muse_smc::Time &time)
 {
     const int64_t ns = time.nanoseconds();
     const int64_t s = ns / static_cast<int64_t>(1e9);

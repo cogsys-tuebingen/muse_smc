@@ -88,6 +88,14 @@ target_link_libraries(${PROJECT_NAME}_node
     ${catkin_LIBRARIES}
 )
 
+add_executable(${PROJECT_NAME}_runtimes_iteration
+    test/runtimes_iteration.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}_runtimes_iteration
+    ${catkin_LIBRARIES}
+)
+
 add_unit_test_gtest(${PROJECT_NAME}_test_transform2d
     test/test_transform2d.cpp
     "${catkin_LIBRARIES}"

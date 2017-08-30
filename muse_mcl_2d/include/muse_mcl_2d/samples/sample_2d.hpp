@@ -7,6 +7,8 @@
 #include <muse_mcl_2d/math/pose_2d.hpp>
 #include <muse_mcl_2d/math/covariance_2d.hpp>
 
+#include <memory>
+
 namespace muse_mcl_2d {
 struct Sample2D {
 public:
@@ -56,10 +58,7 @@ public:
         }
         return *this;
     }
-
-
-
-};
+} __attribute__ ((aligned (64)));
 }
 
 

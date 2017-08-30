@@ -16,7 +16,7 @@ public:
     using notify_update = delegate<void(const double &)>;
 
 
-    inline explicit WeightIterator(sample_t *begin,
+    inline explicit WeightIterator(sample_t        *begin,
                                    notify_update    update) :
         data_(begin),
         update_(update)
@@ -46,7 +46,7 @@ public:
         return data_->weight;
     }
 
-    inline sample_t getData() const
+    inline const sample_t& getData() const
     {
         return *data_;
     }
@@ -94,11 +94,9 @@ public:
         return iterator_t(&(*data_.begin()), update_);
     }
 
-
     inline iterator_t end() {
-        return iterator_t(&(*data_.begin()), update_);
+        return iterator_t(&(*data_.end()), update_);
     }
-
 
     inline const sample_vector_t& getData() const
     {

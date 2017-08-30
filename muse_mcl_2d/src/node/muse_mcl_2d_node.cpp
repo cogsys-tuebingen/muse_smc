@@ -204,8 +204,7 @@ bool MuseMCL2DNode::setup()
         auto param_name = [](const std::string &param){return "particle_filter/" + param;};
 
         const double resolution_linear  = nh_private_.param<double>(param_name("resolution_linear"), 0.1);
-        const double resolution_angular = muse_smc::math::angle::toRad(
-                        nh_private_.param<double>(param_name("resolution_angular"), 5.0));
+        const double resolution_angular = muse_smc::math::angle::toRad(nh_private_.param<double>(param_name("resolution_angular"), 5.0));
         const double preferred_rate = nh_private_.param<double>(param_name("preferred_rate"), 60.0);
 
 

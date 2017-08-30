@@ -65,15 +65,13 @@ struct TimeFrame {
     {
         return end.time() - start.time();
     }
-
-    inline std::string toString() const
-    {
-        return "[" + std::to_string(start.seconds()) + " -> " + std::to_string(end.seconds()) + "]";
-    }
-
 };
 }
 
-
+inline std::ostream & operator << (std::ostream &out, const muse_smc::TimeFrame &time)
+{
+    std::cout << "[" << time.start << "," << time.end << "]";
+    return out;
+}
 
 #endif // TIME_FRAME_HPP

@@ -32,7 +32,7 @@ public:
     {
     }
 
-    virtual ~SampleInsertion()
+    inline virtual ~SampleInsertion()
     {
         if(open_) {
             close_();

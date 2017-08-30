@@ -24,7 +24,7 @@ public:
     virtual ~PredictionIntegrals() = default;
 
     inline void set(const typename prediction_integral_t::Ptr &accumulator,
-                               const id_t id)
+                    const id_t id)
     {
         accumulators_[id] = accumulator;
     }
