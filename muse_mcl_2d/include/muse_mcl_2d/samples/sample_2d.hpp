@@ -24,7 +24,7 @@ public:
 
     Sample2D() :
         weight(0.0),
-        state(Pose2D())
+        state(Pose2D(0.0,0.0))
     {
     }
 

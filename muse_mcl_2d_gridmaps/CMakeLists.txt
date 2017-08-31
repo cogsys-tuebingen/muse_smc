@@ -46,10 +46,12 @@ add_library(${PROJECT_NAME}_providers SHARED
     src/providers/distance_gridmap_service_provider.cpp
     src/providers/probability_gridmap_service_provider.cpp
 )
+
 target_link_libraries(${PROJECT_NAME}_providers
     ${catkin_LIBRARIES}
     ${PROJECT_NAME}_maps
 )
+
 add_library(${PROJECT_NAME}_models SHARED
     src/models/beam_model.cpp
     src/models/likelihood_field_model.cpp
@@ -59,6 +61,7 @@ add_library(${PROJECT_NAME}_models SHARED
     src/models/beam_model_mle.cpp
     src/models/beam_model_parameter_estimator.cpp
 )
+
 target_link_libraries(${PROJECT_NAME}_models
     ${catkin_LIBRARIES}
     ${PROJECT_NAME}_maps
@@ -67,6 +70,7 @@ target_link_libraries(${PROJECT_NAME}_models
 add_executable(${PROJECT_NAME}_example_distance_transform
     src/examples/distance_transform.cpp
 )
+
 target_link_libraries(${PROJECT_NAME}_example_distance_transform
     ${catkin_LIBRARIES}
     ${OpenCV_LIBRARIES}

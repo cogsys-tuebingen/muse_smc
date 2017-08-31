@@ -1,3 +1,6 @@
+#ifndef TRANSFORM_2D_LEGACY_HPP
+#define TRANSFORM_2D_LEGACY_HPP
+
 #ifndef TRANSFORM_2D_HPP
 #define TRANSFORM_2D_HPP
 
@@ -7,10 +10,9 @@
 #include <muse_smc/math/angle.hpp>
 
 namespace muse_mcl_2d {
-class Transform2D {
+class Transform2DLegacy {
 public:
-    [[deprecated]]
-    inline Transform2D() :
+    inline Transform2DLegacy() :
         translation_(0.0, 0.0),
         yaw_(0.0),
         sin_(0.0),
@@ -18,7 +20,7 @@ public:
     {
     }
 
-    inline Transform2D(const double x,
+    inline Transform2DLegacy(const double x,
                        const double y) :
         translation_(x, y),
         yaw_(0.0),
@@ -27,7 +29,7 @@ public:
     {
     }
 
-    inline Transform2D(const Vector2D &translation) :
+    inline Transform2DLegacy(const Vector2D &translation) :
         translation_(translation),
         yaw_(0.0),
         sin_(0.0),
@@ -35,7 +37,7 @@ public:
     {
     }
 
-    inline Transform2D(const double x,
+    inline Transform2DLegacy(const double x,
                        const double y,
                        const double yaw) :
         translation_(x, y),
@@ -45,7 +47,7 @@ public:
     {
     }
 
-    inline Transform2D(const Vector2D &translation,
+    inline Transform2DLegacy(const Vector2D &translation,
                        const double yaw) :
         translation_(translation),
         yaw_(yaw),
@@ -54,7 +56,7 @@ public:
     {
     }
 
-    inline Transform2D(const Transform2D &other) :
+    inline Transform2DLegacy(const Transform2DLegacy &other) :
         translation_(other.translation_),
         yaw_(other.yaw_),
         sin_(other.sin_),
@@ -62,7 +64,7 @@ public:
     {
     }
 
-    inline Transform2D(Transform2D &&other) :
+    inline Transform2DLegacy(Transform2DLegacy &&other) :
         translation_(other.translation_),
         yaw_(other.yaw_),
         sin_(other.sin_),
@@ -72,55 +74,30 @@ public:
 
     inline Vector2D operator * (const Vector2D &v) const
     {
-        if(yaw_ != 0.0)
-            return Vector2D(cos_ * v.x() - sin_ * v.y() + translation_.x(),
-                            sin_ * v.x() + cos_ * v.y() + translation_.y());
-        return v + translation_;
+        return Vector2D(cos_ * v.x() - sin_ * v.y() + translation_.x(),
+                        sin_ * v.x() + cos_ * v.y() + translation_.y());
+
     }
 
-    inline Transform2D operator * (const Transform2D &other) const
+    inline Transform2DLegacy operator * (const Transform2DLegacy &other) const
     {
-        if(yaw_ == 0.0) {
-            return Transform2D(other.translation_ + translation_,
-                               other.yaw_,
-                               other.sin_,
-                               other.cos_);
-        } else if(other.yaw_ == 0.0) {
-            return Transform2D((*this) * other.translation_,
-                               yaw_,
-                               sin_,
-                               cos_);
-        } else {
-            Transform2D t((*this) * other.translation_,
-                          muse_smc::math::angle::normalize(yaw_ + other.yaw_),
-                          sin_ * other.cos_ + cos_ * other.sin_,
-                          cos_ * other.cos_ - sin_ * other.sin_);
-            return t;
-        }
+        Transform2DLegacy t;
+        t.setYaw(muse_smc::math::angle::normalize(yaw_ + other.yaw_));
+        t.translation_.x() = cos_ * other.translation_.x() - sin_ * other.translation_.y() + translation_.x();
+        t.translation_.y() = sin_ * other.translation_.x() + cos_ * other.translation_.y() + translation_.y();
+        return t;
     }
 
 
-    inline Transform2D & operator *= (const Transform2D &other)
+    inline Transform2DLegacy & operator *= (const Transform2DLegacy &other)
     {
-        if(yaw_ == 0.0) {
-            translation_ += other.translation_;
-            yaw_ = other.yaw_;
-            sin_ = other.sin_;
-            cos_ = other.cos_;
-        } else if(other.yaw_ == 0.0) {
-            translation_ = (*this) * other.translation_;
-        } else {
-            translation_ = (*this) * other.translation_;
-            yaw_ = muse_smc::math::angle::normalize(yaw_ + other.yaw_);
-            const double s = sin_ * other.cos_ + cos_ * other.sin_;
-            const double c = cos_ * other.cos_ - sin_ * other.sin_;
-            sin_ = s;
-            cos_ = c;
-        }
+        translation_.x() = cos_ * other.translation_.x() - sin_ * other.translation_.y() + translation_.x();
+        translation_.y() = sin_ * other.translation_.x() + cos_ * other.translation_.y() + translation_.y();
+        setYaw(muse_smc::math::angle::normalize(yaw_ + other.yaw_));
         return *this;
     }
 
-    inline Transform2D& operator = (const Transform2D &other)
+    inline Transform2DLegacy& operator = (const Transform2DLegacy &other)
     {
         if(&other != this) {
             yaw_ = other.yaw_;
@@ -131,7 +108,7 @@ public:
         return *this;
     }
 
-    inline Transform2D& operator = (Transform2D &&other)
+    inline Transform2DLegacy& operator = (Transform2DLegacy &&other)
     {
         if(&other != this) {
             yaw_ = other.yaw_;
@@ -142,16 +119,15 @@ public:
         return *this;
     }
 
-    inline Transform2D inverse() const
+    inline Transform2DLegacy inverse() const
     {
-        return Transform2D(Vector2D(-cos_ * translation_.x() - sin_ * translation_.y(),
-                                     sin_ * translation_.x() - cos_ * translation_.y()),
-                           -yaw_,
-                           -sin_,
-                            cos_);
+        Transform2DLegacy t;
+        t.setYaw(-yaw_);
+        t.translation_ = -(t * translation_);
+        return t;
     }
 
-    inline Transform2D operator -() const
+    inline Transform2DLegacy operator -() const
     {
         return inverse();
     }
@@ -217,7 +193,9 @@ public:
     {
         translation_.x() = eigen(0);
         translation_.y() = eigen(1);
-        setYaw(eigen(2));
+        yaw_ = eigen(2);
+        sin_ = std::sin(yaw_);
+        cos_ = std::cos(yaw_);
     }
 
     inline void setFrom(const double x,
@@ -226,10 +204,12 @@ public:
     {
         translation_.x() = x;
         translation_.y() = y;
-        setYaw(yaw);
+        yaw_ = yaw;
+        sin_ = std::sin(yaw_);
+        cos_ = std::cos(yaw_);
     }
 
-    inline Transform2D interpolate(const Transform2D &other,
+    inline Transform2DLegacy interpolate(const Transform2DLegacy &other,
                                    const double ratio) const
     {
         assert(ratio  >= 0.0);
@@ -244,35 +224,27 @@ public:
         const  double ratio_inverse = 1.0 - ratio;
         const  Vector2D translation = translation_ * ratio_inverse + other.translation_ * ratio;
         const  double   yaw = muse_smc::math::angle::normalize(yaw_ * ratio_inverse + other.yaw_ * ratio);
-        return Transform2D(translation, yaw);
+        return Transform2DLegacy(translation, yaw);
     }
 
 private:
-    inline Transform2D(const Vector2D &translation,
-                       const double yaw,
-                       const double sin,
-                       const double cos) :
-        translation_(translation),
-        yaw_(yaw),
-        sin_(sin),
-        cos_(cos)
-    {
-    }
-
     Vector2D translation_;
     double   yaw_;
     double   sin_;
     double   cos_;
 };
 
-inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d::Transform2D &t)
+inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d::Transform2DLegacy &t)
 {
     out << "[" << t.tx() << "," << t.ty() << "," << t.yaw() << "]";
     return out;
 }
 
-using StampedTransform2D = muse_smc::Stamped<Transform2D>;
+using StampedTransform2D = muse_smc::Stamped<Transform2DLegacy>;
 }
 
 
 #endif // TRANSFORM_2D_HPP
+
+
+#endif // TRANSFORM_2D_LEGACY_HPP

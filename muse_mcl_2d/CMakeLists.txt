@@ -96,6 +96,14 @@ target_link_libraries(${PROJECT_NAME}_runtimes_iteration
     ${catkin_LIBRARIES}
 )
 
+add_executable(${PROJECT_NAME}_runtimes_math_op
+    test/runtimes_math_op.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}_runtimes_math_op
+    ${catkin_LIBRARIES}
+)
+
 add_unit_test_gtest(${PROJECT_NAME}_test_transform2d
     test/test_transform2d.cpp
     "${catkin_LIBRARIES}"
