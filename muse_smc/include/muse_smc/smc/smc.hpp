@@ -41,7 +41,7 @@ class SMC
 public:
     using Ptr                   = std::shared_ptr<SMC>;
     using mutex_t               = std::mutex;
-    using condition_variable_t = std::condition_variable;
+    using condition_variable_t  = std::condition_variable;
     using lock_t                = std::unique_lock<mutex_t>;
     using thread_t              = std::thread;
     using atomic_bool_t         = std::atomic_bool;

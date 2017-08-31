@@ -7,8 +7,8 @@
 namespace muse_smc {
 class Time {
 public:
-    using clock_t = std::chrono::high_resolution_clock;
-    using time_t  = clock_t::time_point;
+    using clock_t    = std::chrono::high_resolution_clock;
+    using time_t     = clock_t::time_point;
     using duration_t = clock_t::duration;
 
     Time() :
