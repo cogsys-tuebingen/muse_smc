@@ -306,10 +306,7 @@ protected:
                 const Time &sample_set_stamp = sample_set_->getStamp();
 
                 if(t >= sample_set_stamp) {
-                    std::cerr << "stamp until " << t << std::endl;
-                    std::cerr << "stamp before " << sample_set_stamp << std::endl;
                     predict(t);
-                    std::cerr << "stamp after " << sample_set_stamp << std::endl;
 
                     if(t > sample_set_stamp) {
                         update_queue_.emplace(u);
@@ -320,8 +317,6 @@ protected:
                             u->apply(sample_set_->getWeightIterator());
                             prediction_integrals_->reset(model_id);
                             ++updates_applied_after_resampling_;
-                            std::cerr << "update " << (Time::now() - now).milliseconds() << std::endl;
-
 #ifdef MUSE_SMC_LOG_STATE
                             log();
 #endif
@@ -349,14 +344,12 @@ protected:
                 } else {
                     now = Time::now();
                     state_publisher_->publishIntermidiate(sample_set_);
-                    std::cerr << "publish " << (Time::now() - now).milliseconds() << std::endl;
 
                 }
                 //// DBG
                 now = Time::now();
                 dur = now - last;
                 std::cerr << "rate " << 1.0 / dur.seconds() << " " << update_queue_.size() << " " << prediction_queue_.size() << std::endl;
-                std::cerr << "size " << sample_set_->getSampleSize() << std::endl;
                 last = now;
                 //// DBG
             }

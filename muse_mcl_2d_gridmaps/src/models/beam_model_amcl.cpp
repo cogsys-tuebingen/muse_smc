@@ -75,9 +75,11 @@ void BeamModelAMCL::apply(const data_t::ConstPtr          &data,
         return p_hit(z) + p_short(z, ray_range) + p_max(ray_range) + p_random(ray_range);
     };
 
+    double ms = 0.0;
     for(auto it = set.begin() ; it != end ; ++it) {
         const muse_mcl_2d::Pose2D m_T_l = m_T_w * it.getData().state * b_T_l; /// laser scanner pose in map coordinates
         double p = 1.0;
+        const muse_mcl_2d::Point2D  ray_start_point = m_T_l.translation();
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
             if(!ray.valid_) {
@@ -85,13 +87,16 @@ void BeamModelAMCL::apply(const data_t::ConstPtr          &data,
             } else {
                 const double                 ray_range = ray.range_;
                 const muse_mcl_2d::Point2D   ray_end_point = m_T_l * ray.point_;
-                const double                 map_range = gridmap.getRange(m_T_l.translation(), ray_end_point);
+                muse_smc::Time now = muse_smc::Time::now();
+                const double                 map_range = gridmap.getRange(ray_start_point, ray_end_point);
+                ms += (muse_smc::Time::now() - now).milliseconds();
                 const double pz = probability(ray_range, map_range);
                 p += pz * pz * pz;  /// @todo : fix the inprobable thing ;)
             }
         }
         *it *= p;
     }
+    std::cerr << "model : " << name_ << " " << ms << "ms" << std::endl;
 }
 
 void BeamModelAMCL::doSetup(ros::NodeHandle &nh)

@@ -27,8 +27,8 @@ public:
     {
         if(steep) {
             std::swap(start[0], start[1]);
-            std::swap(end[0], end[1]);
-            std::swap(size[0], size[1]);
+            std::swap(end[0],   end[1]);
+            std::swap(size[0],  size[1]);
         }
 
         delta_x = std::abs(end[0] - start[0]);

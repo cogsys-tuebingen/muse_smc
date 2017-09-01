@@ -1,9 +1,6 @@
 #ifndef TRANSFORM_2D_LEGACY_HPP
 #define TRANSFORM_2D_LEGACY_HPP
 
-#ifndef TRANSFORM_2D_HPP
-#define TRANSFORM_2D_HPP
-
 #include <muse_mcl_2d/math/vector_2d.hpp>
 
 #include <muse_smc/utility/stamped.hpp>
@@ -240,11 +237,7 @@ inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d::Transfo
     return out;
 }
 
-using StampedTransform2D = muse_smc::Stamped<Transform2DLegacy>;
+using StampedTransform2DLegacy = muse_smc::Stamped<Transform2DLegacy>;
 }
-
-
-#endif // TRANSFORM_2D_HPP
-
 
 #endif // TRANSFORM_2D_LEGACY_HPP
