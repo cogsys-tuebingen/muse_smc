@@ -62,6 +62,11 @@ public:
         return std::hypot(x_, y_);
     }
 
+    inline double length2() const
+    {
+        return x_ * x_ + y_ * y_;
+    }
+
     inline double angle() const
     {
         return std::atan2(y_, x_);
@@ -153,6 +158,11 @@ public:
     {
         return Vector2D(std::max(x_, other.x_),
                         std::max(y_, other.y_));
+    }
+
+    inline double distance(const Vector2D &other) const
+    {
+        return std::hypot(x_ - other.x_, y_ - other.y_);
     }
 
 private:

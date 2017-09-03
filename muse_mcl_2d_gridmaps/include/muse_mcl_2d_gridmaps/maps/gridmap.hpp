@@ -110,6 +110,28 @@ public:
         _y += origin_y_;
     }
 
+    inline void fromIndex(const LineIterator &it,
+                          muse_mcl_2d::Point2D &p) const
+    {
+        double &_x = p.x();
+        double &_y = p.y();
+        _x = it.x() * resolution_;
+        _y = it.y() * resolution_;
+        if(origin_phi_ != 0.0)  {
+            const double x =  cos_phi_ * _x -
+                              sin_phi_ * _y;
+            const double y =  sin_phi_ * _x +
+                              cos_phi_ * _y;
+
+            _x = x;
+            _y = y;
+        }
+        _x += origin_x_;
+        _y += origin_y_;
+    }
+
+
+
     inline T& at(const std::size_t idx,
                  const std::size_t idy)
     {

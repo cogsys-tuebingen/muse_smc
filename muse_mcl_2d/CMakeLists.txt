@@ -40,7 +40,7 @@ generate_messages(
 catkin_package(
     INCLUDE_DIRS    include
     LIBRARIES       ${PROJECT_NAME}_resampling ${PROJECT_NAME}_sampling
-    CATKIN_DEPENDS  muse_smc
+    CATKIN_DEPENDS  muse_smc cslibs_indexed_storage # remove
     DEPENDS         Eigen3
 )
 

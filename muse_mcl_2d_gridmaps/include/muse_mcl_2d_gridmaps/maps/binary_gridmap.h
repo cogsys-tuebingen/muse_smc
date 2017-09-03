@@ -15,7 +15,7 @@ public:
                   const double threshold = 1.0);
 
     double getRange(const muse_mcl_2d::Point2D &from,
-                    const muse_mcl_2d::Point2D &to) const;
+                    muse_mcl_2d::Point2D &to) const;
 
     virtual bool validate(const muse_mcl_2d::Pose2D &p) const;
 

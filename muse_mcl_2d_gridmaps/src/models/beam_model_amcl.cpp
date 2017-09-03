@@ -8,6 +8,8 @@ CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::BeamModelAMCL, muse_mcl_2d::Up
 
 using namespace muse_mcl_2d_gridmaps;
 
+#include <sensor_msgs/PointCloud.h>
+
 BeamModelAMCL::BeamModelAMCL()
 {
 }
@@ -85,8 +87,8 @@ void BeamModelAMCL::apply(const data_t::ConstPtr          &data,
             if(!ray.valid_) {
                 p += z_max_;
             } else {
-                const double                 ray_range = ray.range_;
-                const muse_mcl_2d::Point2D   ray_end_point = m_T_l * ray.point_;
+                const double           ray_range = ray.range_;
+                muse_mcl_2d::Point2D   ray_end_point = m_T_l * ray.point_;
                 muse_smc::Time now = muse_smc::Time::now();
                 const double                 map_range = gridmap.getRange(ray_start_point, ray_end_point);
                 ms += (muse_smc::Time::now() - now).milliseconds();
@@ -96,7 +98,7 @@ void BeamModelAMCL::apply(const data_t::ConstPtr          &data,
         }
         *it *= p;
     }
-    std::cerr << "model : " << name_ << " " << ms << "ms" << std::endl;
+    std::cerr << "model : " << name_ << " " << ms << "ms with " << set.getData().size() << " samples" << std::endl;
 }
 
 void BeamModelAMCL::doSetup(ros::NodeHandle &nh)

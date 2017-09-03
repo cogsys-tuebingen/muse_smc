@@ -301,6 +301,7 @@ protected:
 
                 requests(); /// process all request that came in
 
+                std::cerr << "queue " << update_queue_.size() << std::endl;
                 typename update_t::Ptr u = update_queue_.pop();
                 const Time &t = u->getStamp();
                 const Time &sample_set_stamp = sample_set_->getStamp();
@@ -324,6 +325,8 @@ protected:
                             dotty_->addState(sample_set_stamp);
                             dotty_->addUpdate(u->getStamp(), u->getModelName());
 #endif
+                        } else {
+                            std::cerr << "no motion" << std::endl;
                         }
                     } else {
                         std::cerr << "Motion model seems not to be able to interpolate!" << std::endl;

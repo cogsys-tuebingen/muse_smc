@@ -89,7 +89,7 @@ void BeamModel::apply(const data_t::ConstPtr          &data,
             }
 
             const double                 ray_range = ray.range_;
-            const muse_mcl_2d::Point2D   ray_end_point = m_T_l * ray.point_;
+            muse_mcl_2d::Point2D   ray_end_point = m_T_l * ray.point_;
             const double                 map_range = gridmap.getRange(m_T_l.translation(), ray_end_point);
             const double pz = probability(ray_range, map_range);
             p += std::log(pz);

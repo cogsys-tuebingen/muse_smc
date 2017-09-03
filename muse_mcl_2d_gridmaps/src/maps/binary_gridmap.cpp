@@ -26,7 +26,7 @@ BinaryGridMap::BinaryGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupancy_
 }
 
 double BinaryGridMap::getRange(const muse_mcl_2d::Point2D &from,
-                               const muse_mcl_2d::Point2D &to) const
+                               muse_mcl_2d::Point2D &to) const
 {
     LineIterator it = getLineIterator(from, to);
     while(!it.done()) {
@@ -38,9 +38,9 @@ double BinaryGridMap::getRange(const muse_mcl_2d::Point2D &from,
     if(it.invalid())
         return -1;
 
-    muse_mcl_2d::Point2D end;
-    fromIndex({it.x(), it.y()}, end);
-    return  (end - from).length();
+    fromIndex({it.x(), it.y()}, to);
+    return  std::sqrt((to - from).length2());
+
 }
 
 bool BinaryGridMap::validate(const muse_mcl_2d::Pose2D &p) const

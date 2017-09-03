@@ -1,7 +1,7 @@
 #include <muse_smc/time/time.hpp>
-#include <muse_smc/samples/sample_set.hpp>
 #include <muse_smc/math/random.hpp>
 #include <muse_smc/math/angle.hpp>
+#include <muse_smc/samples/sample_set.hpp>
 
 #include <muse_mcl_2d/samples/sample_density_2d.hpp>
 #include <muse_mcl_2d/samples/sample_2d.hpp>

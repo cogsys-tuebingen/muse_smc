@@ -25,6 +25,8 @@ protected:
     double      lambda_short_;
     double      chi_outlier_;
 
+    ros::Publisher  pub_points_;
+
     virtual void doSetup(ros::NodeHandle &nh) override;
 
 };
