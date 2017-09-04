@@ -206,7 +206,7 @@ bool MuseMCL2DNode::setup()
         const double resolution_linear  = nh_private_.param<double>(param_name("resolution_linear"), 0.1);
         const double resolution_angular = muse_smc::math::angle::toRad(nh_private_.param<double>(param_name("resolution_angular"), 5.0));
         const double preferred_rate = nh_private_.param<double>(param_name("preferred_rate"), 60.0);
-
+        const std::size_t minimum_update_cycles = nh_private_.param<int>(param_name("minimum_update_cycles"), 20);
 
         const std::size_t sample_size = nh_private_.param<int>(param_name("sample_size"), 0);
         const std::size_t minimum_sample_size = sample_size == 0 ? nh_private_.param<int>(param_name("minimum_sample_size"), 0) : sample_size;
@@ -236,7 +236,8 @@ bool MuseMCL2DNode::setup()
                                 resampling_,
                                 state_publisher_,
                                 prediction_integrals_,
-                                muse_smc::Rate(preferred_rate));
+                                muse_smc::Rate(preferred_rate),
+                                minimum_update_cycles);
     }
 
     predicition_forwarder_.reset(new PredictionRelay2D(particle_filter_));

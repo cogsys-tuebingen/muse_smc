@@ -11,6 +11,13 @@ public:
     using time_t  = clock_t::time_point;
     using duration_t = clock_t::duration;
 
+    Rate() :
+        start_(Time::now()),
+        actual_cycle_time_(0.0),
+        expected_cycle_time_(std::numeric_limits<double>::infinity())
+    {
+    }
+
     Rate(const double rate) :
         start_(Time::now()),
         actual_cycle_time_(0.0),

@@ -85,6 +85,15 @@ target_link_libraries(${PROJECT_NAME}_runtimes_get_range
     ${PROJECT_NAME}_maps
 )
 
+add_executable(${PROJECT_NAME}_runtimes_line_iterator
+    src/examples/runtimes_line_iterator.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}_runtimes_line_iterator
+    ${catkin_LIBRARIES}
+    ${PROJECT_NAME}_maps
+)
+
 install(FILES plugins.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 install(TARGETS ${PROJECT_NAME}_providers ${PROJECT_NAME}_models

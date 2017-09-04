@@ -87,14 +87,17 @@ public:
                const typename resampling_t::Ptr            &resampling,
                const typename filter_state_t::Ptr          &state_publisher,
                const typename prediction_integrals_t::Ptr  &prediction_integrals,
-               const Rate                                  &preferred_filter_state_update_rate)
+               const Rate                                  &preferred_filter_rate,
+               const std::size_t                            minimum_update_cycles)
     {
-        sample_set_                     = sample_set;
-        sample_uniform_                 = sample_uniform;
-        sample_normal_                  = sample_normal;
-        resampling_                     = resampling;
-        state_publisher_                = state_publisher;
-        prediction_integrals_           = prediction_integrals;
+        sample_set_             = sample_set;
+        sample_uniform_         = sample_uniform;
+        sample_normal_          = sample_normal;
+        resampling_             = resampling;
+        state_publisher_        = state_publisher;
+        prediction_integrals_   = prediction_integrals;
+        preferred_filter_rate_  = preferred_filter_rate;
+        minimum_update_cycles_  = minimum_update_cycles;
 
 #ifdef MUSE_SMC_USE_DOTTY
         dotty_.reset(new Dotty);
@@ -110,7 +113,7 @@ public:
         if(!worker_thread_active_) {
             lock_t l(worker_thread_mutex_);
             worker_thread_exit_ = false;
-            worker_thread_ = thread_t([this](){loop();});
+            worker_thread_      = thread_t([this](){loop();});
             worker_thread_.detach();
             return true;
         }
@@ -152,14 +155,14 @@ public:
                                     const typename sample_t::covariance_t &covariance)
     {
         lock_t l(init_state_mutex_);
-        init_state_ = state;
-        init_state_covariance_ = covariance;
-        request_init_state_ = true;
+        init_state_             = state;
+        init_state_covariance_  = covariance;
+        request_init_state_     = true;
     }
 
     void requestUniformInitialization()
     {
-        request_init_uniform_ = true;
+        request_init_uniform_   = true;
     }
 
 protected:
@@ -170,7 +173,9 @@ protected:
     typename resampling_t::Ptr            resampling_;
     typename prediction_integrals_t::Ptr  prediction_integrals_;
 
+    Rate                                  preferred_filter_rate_;
     std::size_t                           updates_applied_after_resampling_;
+    std::size_t                           minimum_update_cycles_;
 
     typename filter_state_t::Ptr          state_publisher_;
 
@@ -285,29 +290,31 @@ protected:
         Duration dur;
         //// DBG
 
+        sample_uniform_->apply(*sample_set_);
+
         while(!worker_thread_exit_) {
             notify_event_.wait(notify_event_mutex_lock);
 
             if(worker_thread_exit_)
                 break;
 
-            if(sample_set_->getSampleSize() == 0) {
-                sample_uniform_->apply(*sample_set_);
-            }
-
             while(update_queue_.hasElements()) {
                 if(worker_thread_exit_)
                     break;
 
-                requests(); /// process all request that came in
 
-                std::cerr << "queue " << update_queue_.size() << std::endl;
+                now = Time::now();
+                requests(); /// process all request that came in
+                std::cerr << "reuquests took :                           " << (Time::now() - now).milliseconds() << "ms" << std::endl;
+
                 typename update_t::Ptr u = update_queue_.pop();
                 const Time &t = u->getStamp();
                 const Time &sample_set_stamp = sample_set_->getStamp();
 
                 if(t >= sample_set_stamp) {
+                    now = Time::now();
                     predict(t);
+                    std::cerr << "predictions took :                         " << (Time::now() - now).milliseconds() << "ms" << std::endl;
 
                     if(t > sample_set_stamp) {
                         update_queue_.emplace(u);
@@ -316,6 +323,8 @@ protected:
                         if(!prediction_integrals_->isZero(model_id)) {
                             now = Time::now();
                             u->apply(sample_set_->getWeightIterator());
+                            std::cerr << "update took :                              " << (Time::now() - now).milliseconds() << "ms" << std::endl;
+
                             prediction_integrals_->reset(model_id);
                             ++updates_applied_after_resampling_;
 #ifdef MUSE_SMC_LOG_STATE
@@ -325,34 +334,36 @@ protected:
                             dotty_->addState(sample_set_stamp);
                             dotty_->addUpdate(u->getStamp(), u->getModelName());
 #endif
-                        } else {
-                            std::cerr << "no motion" << std::endl;
                         }
-                    } else {
-                        std::cerr << "Motion model seems not to be able to interpolate!" << std::endl;
                     }
                 }
 
                 if(prediction_integrals_->thresholdExceeded() &&
-                        updates_applied_after_resampling_ > 0ul) {
+                        updates_applied_after_resampling_ > updates_applied_after_resampling_) {
 
-                    std::cout << "resampling" << std::endl;
-
+                    now = Time::now();
                     resampling_->apply(*sample_set_);
+                    std::cerr << "resampling took :                          " << (Time::now() - now).milliseconds() << "ms" << std::endl;
                     updates_applied_after_resampling_ = 0ul;
                     prediction_integrals_->reset();
 
+                    now = Time::now();
                     state_publisher_->publish(sample_set_);
                     sample_set_->resetWeights();
+                    std::cerr << "state publication took :                   " << (Time::now() - now).milliseconds() << "ms" << std::endl;
+
                 } else {
                     now = Time::now();
                     state_publisher_->publishIntermidiate(sample_set_);
-
+                    std::cerr << "intermediate state publication took :      " << (Time::now() - now).milliseconds() << "ms" << std::endl;
                 }
                 //// DBG
                 now = Time::now();
                 dur = now - last;
-                std::cerr << "rate " << 1.0 / dur.seconds() << " " << update_queue_.size() << " " << prediction_queue_.size() << std::endl;
+                std::cerr << "rate " << 1.0 / dur.seconds() << " "
+                          << update_queue_.size() << " "
+                          << prediction_queue_.size() << " "
+                          << sample_set_->getSampleSize() << std::endl;
                 last = now;
                 //// DBG
             }

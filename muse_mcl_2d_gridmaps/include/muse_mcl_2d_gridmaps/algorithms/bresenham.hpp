@@ -83,10 +83,11 @@ public:
                index[1] >= size[1];
     }
 
-    inline T operator *() const
+    inline T& operator *() const
     {
         return data[data_pos];
     }
+
 
 private:
     inline int pos() const
