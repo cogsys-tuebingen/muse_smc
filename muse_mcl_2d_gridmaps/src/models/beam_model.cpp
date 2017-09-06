@@ -83,13 +83,13 @@ void BeamModel::apply(const data_t::ConstPtr          &data,
         double p = 0.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
-            if(!ray.valid_) {
+            if(!ray.valid) {
                 p += z_max_;
                 continue;
             }
 
-            const double                 ray_range = ray.range_;
-            muse_mcl_2d::Point2D   ray_end_point = m_T_l * ray.point_;
+            const double                 ray_range = ray.range;
+            muse_mcl_2d::Point2D   ray_end_point = m_T_l * ray.point;
             const double                 map_range = gridmap.getRange(m_T_l.translation(), ray_end_point);
             const double pz = probability(ray_range, map_range);
             p += std::log(pz);

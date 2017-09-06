@@ -58,7 +58,7 @@ public:
         }
         return *this;
     }
-} __attribute__ ((aligned (64)));
+} __attribute__ ((aligned (128)));
 }
 
 

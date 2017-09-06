@@ -11,7 +11,8 @@ class LaserProvider2D : public muse_mcl_2d::DataProvider2D
 public:
     using point_t = muse_mcl_2d::Point2D;
 
-    LaserProvider2D() = default;
+    LaserProvider2D();
+    virtual ~LaserProvider2D() = default;
 
 protected:
     ros::Subscriber source_;                    /// the subscriber to be used

@@ -8,6 +8,11 @@ CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_laser::LaserProvider2D, muse_mcl_2d::Dat
 using namespace muse_mcl_2d_laser;
 using namespace muse_mcl_2d;
 
+LaserProvider2D::LaserProvider2D() :
+    time_offset_(0.0)
+{
+}
+
 void LaserProvider2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
 {
     if(!time_offset_.isZero() &&
@@ -132,5 +137,8 @@ void LaserProvider2D::doSetup(ros::NodeHandle &nh)
     angle_max_ = nh.param<double>(param_name("angle_max"), M_PI);
     angle_min_ = nh.param<double>(param_name("angle_min"),-M_PI);
 
-    time_offset_ = ros::Rate(nh.param<double>(param_name("rate"), 0.0)).cycleTime();
+    double rate = nh.param<double>(param_name("rate"), 0.0);
+    if(rate > 0.0) {
+        time_offset_ = ros::Duration(1.0 / rate);
+    }
 }

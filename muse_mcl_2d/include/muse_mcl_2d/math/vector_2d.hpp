@@ -168,6 +168,6 @@ public:
 private:
     double x_;
     double y_;
-};
+} __attribute__ ((aligned (16)));
 }
 #endif // VECTOR_2D_HPP

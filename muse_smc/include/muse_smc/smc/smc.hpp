@@ -281,13 +281,13 @@ protected:
         worker_thread_active_ = true;
         lock_t notify_event_mutex_lock(notify_event_mutex_);
 
-        //// DBG
+        sample_uniform_->apply(*sample_set_);
+
+        /// DBG
         Time     last = Time::now();
         Time     now;
         Duration dur;
-        //// DBG
-
-        sample_uniform_->apply(*sample_set_);
+        /// DBG
 
         while(!worker_thread_exit_) {
             notify_event_.wait(notify_event_mutex_lock);
@@ -317,7 +317,6 @@ protected:
                         if(!prediction_integrals_->isZero(model_id)) {
                             now = Time::now();
                             u->apply(sample_set_->getWeightIterator());
-                            std::cerr << "update took :                              " << (Time::now() - now).milliseconds() << "ms" << "\n";
 
                             prediction_integrals_->reset(model_id);
                             ++updates_applied_after_resampling_;
@@ -336,17 +335,12 @@ protected:
                 if(prediction_integrals_->thresholdExceeded() &&
                         updates_applied_after_resampling_ > minimum_update_cycles_) {
 
-                    now = Time::now();
                     resampling_->apply(*sample_set_);
-                    std::cerr << "resampling took :                          " << (Time::now() - now).milliseconds() << "ms" << "\n";
                     updates_applied_after_resampling_ = 0ul;
                     prediction_integrals_->reset();
 
-                    now = Time::now();
                     state_publisher_->publish(sample_set_);
                     sample_set_->resetWeights();
-                    std::cerr << "state publication took :                   " << (Time::now() - now).milliseconds() << "ms" << "\n";
-
                 }
                 //// DBG
                 now = Time::now();

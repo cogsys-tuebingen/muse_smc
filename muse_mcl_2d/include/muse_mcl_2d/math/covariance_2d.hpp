@@ -72,9 +72,7 @@ public:
 
 private:
     data_t data_;
-
-
-};
+}__attribute__ ((aligned (128)));
 }
 
 #endif // COVARIANCE_2D_HPP

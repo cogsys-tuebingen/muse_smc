@@ -14,37 +14,54 @@ public:
     using time_frame_t = muse_smc::TimeFrame;
 
     struct Ray {
-        const double  angle_;
-        const double  range_;
-        const point_t point_;
-        const bool    valid_;
+        const double  angle;
+        const double  range;
+        const point_t point;
+        const bool    valid;
 
-        Ray(const double angle,
-            const double range) :
-            angle_(angle),
-            range_(range),
-            point_(point_t(std::cos(angle) * range_,
-                               std::sin(angle) * range_)),
-            valid_(true)
+        inline Ray(const double angle,
+                   const double range) :
+            angle(angle),
+            range(range),
+            point(point_t(std::cos(angle) * range,
+                          std::sin(angle) * range)),
+            valid(true)
         {
         }
 
-        Ray(const point_t &pt) :
-            angle_(std::atan2(pt.y(), pt.x())),
-            range_(std::hypot(pt.y(), pt.x())),
-            point_(pt),
-            valid_(true)
+        inline Ray(const point_t &pt) :
+                   angle(std::atan2(pt.y(), pt.x())),
+                   range(std::hypot(pt.y(), pt.x())),
+                   point(pt),
+                   valid(true)
         {
         }
 
-        Ray() :
-            angle_(std::numeric_limits<double>::infinity()),
-            range_(std::numeric_limits<double>::infinity()),
-            point_(point_t()),
-            valid_(false)
+        inline Ray() :
+            angle(std::numeric_limits<double>::infinity()),
+            range(std::numeric_limits<double>::infinity()),
+            point(point_t()),
+            valid(false)
         {
         }
-    };
+
+        inline Ray(const Ray &other) :
+            angle(other.angle),
+            range(other.range),
+            point(other.point),
+            valid(other.valid)
+        {
+        }
+
+        inline Ray(Ray &&other) :
+            angle(other.angle),
+            range(other.range),
+            point(std::move(other.point)),
+            valid(other.valid)
+        {
+        }
+
+    } __attribute__ ((aligned (64)));
 
     using Ptr  = std::shared_ptr<LaserScan2D>;
     using Rays = std::vector<Ray>;
@@ -104,7 +121,7 @@ public:
     }
 
 private:
-    Rays rays_;         /// only valid rays shall be contained here
+    Rays   rays_;         /// only valid rays shall be contained here
     double range_min_;
     double range_max_;
     double angle_min_;

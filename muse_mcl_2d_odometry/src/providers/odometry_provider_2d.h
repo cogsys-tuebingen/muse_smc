@@ -11,6 +11,7 @@ class OdometryProvider2D : public muse_mcl_2d::DataProvider2D
 {
 public:
     OdometryProvider2D() = default;
+    virtual ~OdometryProvider2D() = default;
 
 protected:
     ros::Subscriber source_;

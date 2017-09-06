@@ -25,7 +25,6 @@ OdometryProviderTF2D::~OdometryProviderTF2D()
         if(worker_thread_.joinable())
             worker_thread_.join();
     }
-
 }
 
 void OdometryProviderTF2D::doSetup(ros::NodeHandle &nh)
