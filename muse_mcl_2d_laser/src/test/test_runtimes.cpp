@@ -6,16 +6,14 @@
 int main(int argc, char *argv[])
 {
 
-    muse_mcl_2d_laser::LaserScan2D scan("test", muse_smc::TimeFrame());
-    std::cout << scan.getRays().size() << std::endl;
+    muse_mcl_2d_laser::LaserScan2D::Rays rays;
     for(std::size_t i = 0 ; i < 1000 ; ++i) {
-        auto r = muse_mcl_2d_laser::LaserScan2D::Ray(i,i);
-        scan.getRays().emplace_back(r);
+        rays.push_back(muse_mcl_2d_laser::LaserScan2D::Ray());
     }
 
     muse_smc::Time t = muse_smc::Time::now();
     double x,y;
-    for(auto &r : scan.getRays()) {
+    for(auto &r : rays) {
         x = r.point.x();
         y = r.point.y();
     }

@@ -83,7 +83,7 @@ void BeamModel::apply(const data_t::ConstPtr          &data,
         double p = 0.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
-            if(!ray.valid) {
+            if(!ray.valid()) {
                 p += z_max_;
                 continue;
             }

@@ -83,7 +83,7 @@ void BeamModelAMCL::apply(const data_t::ConstPtr          &data,
         const muse_mcl_2d::Point2D  ray_start_point = m_T_l.translation();
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
-            if(!ray.valid) {
+            if(!ray.valid()) {
                 p += z_max_;
             } else {
                 const double           ray_range = ray.range;

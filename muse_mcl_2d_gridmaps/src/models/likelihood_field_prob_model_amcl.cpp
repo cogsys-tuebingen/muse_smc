@@ -71,7 +71,7 @@ void LikelihoodFieldProbModelAMCL::apply(const data_t::ConstPtr          &data,
             std::size_t observation_index = 0;
             for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step, ++observation_index) {
                 const auto &ray = laser_rays[i];
-                if(!ray.valid)
+                if(!ray.valid())
                     continue;
 
                 const muse_mcl_2d::Point2D ray_end_point = m_T_l * ray.point;

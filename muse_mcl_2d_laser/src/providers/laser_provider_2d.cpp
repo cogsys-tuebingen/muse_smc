@@ -38,17 +38,17 @@ void LaserProvider2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
         const auto &ranges         = msg->ranges;
         const auto angle_increment = msg->angle_increment;
         auto angle                 = msg->angle_min;
-        auto &rays                  = laserscan->getRays();
-        laserscan->setAngleInterval(std::max(angle_min_, (double) msg->angle_min),
-                                    std::min(angle_max_, (double) msg->angle_max));
-        laserscan->setRangeInterval(std::max(range_min_, (double) range_min),
-                                    std::min(range_max_, (double) range_max));
+        auto &scan                 = *laserscan;
+        scan.setAngleInterval(std::max(angle_min_, (double) msg->angle_min),
+                              std::min(angle_max_, (double) msg->angle_max));
+        scan.setRangeInterval(std::max(range_min_, (double) range_min),
+                              std::min(range_max_, (double) range_max));
         for(const auto range : ranges) {
             if(range >= range_min && range <= range_max &&
                     angle >= angle_min_ && angle <= angle_max_) {
-                rays.emplace_back(LaserScan2D::Ray(angle, range));
+                scan.insert(angle, range);
             } else {
-                rays.emplace_back(LaserScan2D::Ray());
+                scan.insertInvalid();
             }
             angle += angle_increment;
         }
@@ -61,7 +61,7 @@ void LaserProvider2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
         const auto angle_increment = msg->angle_increment;
         const auto sensor_frame    = msg->header.frame_id;
         auto angle                 = msg->angle_min;
-        auto &rays                  = laserscan->getRays();
+        auto &scan                 = *laserscan;
 
         tf::StampedTransform fixed_T_end;
         if(!tf_->lookupTransform(undistortion_fixed_frame_,
@@ -85,10 +85,10 @@ void LaserProvider2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
         ros::Time           stamp       = start_stamp;
         const tf::Transform end_T_fixed = fixed_T_end.inverse();
 
-        laserscan->setAngleInterval(std::max(angle_min_, (double) msg->angle_min),
-                                    std::min(angle_max_,(double) msg->angle_max));
-        laserscan->setRangeInterval(std::max(range_min_,(double) range_min),
-                                    std::min(range_max_,(double) range_max));
+        scan.setAngleInterval(std::max(angle_min_, (double) msg->angle_min),
+                              std::min(angle_max_,(double) msg->angle_max));
+        scan.setRangeInterval(std::max(range_min_,(double) range_min),
+                              std::min(range_max_,(double) range_max));
 
         for(const auto range : ranges) {
             if(range >= range_min && range <= range_max &&
@@ -98,9 +98,9 @@ void LaserProvider2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
 
                 tf::Transform end_T_current = end_T_fixed * fixed_T_current;
                 tf::Point pt = end_T_current * tf::Point(std::cos(angle) * range, std::sin(angle) * range, 0.0);
-                rays.emplace_back(LaserScan2D::Ray(point_t(pt.x(), pt.y())));
+                scan.insert(point_t(pt.x(), pt.y()));
             } else {
-                rays.emplace_back(LaserScan2D::Ray());
+                scan.insertInvalid();
             }
             angle += angle_increment;
             stamp += delta_stamp;

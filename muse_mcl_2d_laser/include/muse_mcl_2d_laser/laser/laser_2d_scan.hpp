@@ -17,51 +17,50 @@ public:
         const double  angle;
         const double  range;
         const point_t point;
-        const bool    valid;
 
         inline Ray(const double angle,
                    const double range) :
             angle(angle),
             range(range),
             point(point_t(std::cos(angle) * range,
-                          std::sin(angle) * range)),
-            valid(true)
+                          std::sin(angle) * range))
         {
         }
 
         inline Ray(const point_t &pt) :
                    angle(std::atan2(pt.y(), pt.x())),
                    range(std::hypot(pt.y(), pt.x())),
-                   point(pt),
-                   valid(true)
+                   point(pt)
         {
         }
 
         inline Ray() :
-            angle(std::numeric_limits<double>::infinity()),
-            range(std::numeric_limits<double>::infinity()),
-            point(point_t()),
-            valid(false)
+            angle(0.0),
+            range(0.0),
+            point(point_t())
         {
         }
 
         inline Ray(const Ray &other) :
             angle(other.angle),
             range(other.range),
-            point(other.point),
-            valid(other.valid)
+            point(other.point)
         {
         }
 
         inline Ray(Ray &&other) :
             angle(other.angle),
             range(other.range),
-            point(std::move(other.point)),
-            valid(other.valid)
+            point(std::move(other.point))
         {
         }
 
-    } __attribute__ ((aligned (64)));
+        inline bool valid() const
+        {
+            return range != 0.0;
+        }
+
+    };
 
     using Ptr  = std::shared_ptr<LaserScan2D>;
     using Rays = std::vector<Ray>;
@@ -110,18 +109,30 @@ public:
         return angle_max_;
     }
 
-    inline const Rays& getRays() const
+    inline void insert(const double angle,
+                       const double range)
     {
-        return rays_;
+        rays_.emplace_back(Ray(angle, range));
     }
 
-    inline Rays& getRays()
+    inline void insert(const point_t &pt)
+    {
+        rays_.emplace_back(Ray(pt));
+    }
+
+    inline void insertInvalid()
+    {
+        rays_.emplace_back(Ray());
+    }
+
+    inline const Rays& getRays() const
     {
         return rays_;
     }
 
 private:
     Rays   rays_;         /// only valid rays shall be contained here
+
     double range_min_;
     double range_max_;
     double angle_min_;
