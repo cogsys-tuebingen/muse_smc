@@ -140,5 +140,6 @@ void LaserProvider2D::doSetup(ros::NodeHandle &nh)
     double rate = nh.param<double>(param_name("rate"), 0.0);
     if(rate > 0.0) {
         time_offset_ = ros::Duration(1.0 / rate);
+        ROS_INFO_STREAM(name_ << ": Throttling laser scan to rate of " << rate << "Hz!");
     }
 }

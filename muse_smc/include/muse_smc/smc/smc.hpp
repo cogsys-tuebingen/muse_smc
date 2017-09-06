@@ -19,6 +19,9 @@
 #ifdef MUSE_SMC_LOG_STATE
 #include <muse_smc/utility/csv_logger.hpp>
 #endif
+#ifdef MUSE_SMC_DEBUG
+#include <muse_smc/math/mean.hpp>
+#endif
 
 #include <memory>
 #include <thread>
@@ -283,11 +286,12 @@ protected:
 
         sample_uniform_->apply(*sample_set_);
 
-        /// DBG
+#ifdef MUSE_SMC_DEBUG
         Time     last = Time::now();
         Time     now;
         Duration dur;
-        /// DBG
+        math::statistic::Mean<1> mean_rate;
+#endif
 
         while(!worker_thread_exit_) {
             notify_event_.wait(notify_event_mutex_lock);
@@ -342,15 +346,22 @@ protected:
                     state_publisher_->publish(sample_set_);
                     sample_set_->resetWeights();
                 }
-                //// DBG
+
+#ifdef MUSE_SMC_DEBUG
                 now = Time::now();
                 dur = now - last;
-                std::cerr << "rate " << 1.0 / dur.seconds() << " "
-                          << update_queue_.size() << " "
-                          << prediction_queue_.size() << " "
-                          << sample_set_->getSampleSize() << "\n";
+                if(!dur.isZero() && !prediction_integrals_->isZero()) {
+                    const double rate = 1.0 / dur.seconds();
+                    mean_rate.add(rate);
+                    std::cout << "[MuseSMC]: \n"
+                              << " Mean rate   : " << mean_rate.get() << "Hz \n"
+                              << " current rate: " << rate << "Hz \n"
+                              << " sample size : " << sample_set_->getSampleSize() << "\n"
+                              << " update queue: " << update_queue_.size() << "\n"
+                              << " pred. queue : " << prediction_queue_.size() << "\n";
+                }
                 last = now;
-                //// DBG
+#endif
             }
         }
         worker_thread_active_ = false;

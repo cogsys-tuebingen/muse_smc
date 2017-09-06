@@ -17,6 +17,16 @@ public:
     {
     }
 
+
+    PredictionIntegral2D(const double linear_threshold,
+                         const double angular_threshold) :
+        linear_distance_abs_(0.0),
+        angular_distance_abs_(0.0),
+        linear_threshold_(linear_threshold),
+        angular_threshold_(angular_threshold)
+    {
+    }
+
     virtual ~PredictionIntegral2D() = default;
 
     virtual void add(const typename prediction_model_t::Result::ConstPtr &step) override
@@ -38,7 +48,8 @@ public:
 
     virtual bool thresholdExceeded() const override
     {
-        return linear_distance_abs_ > 0.5 || angular_distance_abs_ > 0.08;
+        return linear_distance_abs_ >= linear_threshold_
+            || angular_distance_abs_ >= angular_threshold_;
     }
 
     virtual bool isZero() const override
@@ -55,6 +66,9 @@ public:
 private:
     double linear_distance_abs_;
     double angular_distance_abs_;
+
+    double linear_threshold_;
+    double angular_threshold_;
 };
 }
 

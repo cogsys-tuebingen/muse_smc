@@ -121,15 +121,6 @@ bool MuseMCL2DNode::setup()
         ROS_INFO_STREAM("Loaded update function models.");
         ROS_INFO_STREAM(update_model_list);
     }
-    {
-        /// setup the integrals
-        prediction_integrals_.reset(new prediction_integrals_t(PredictionIntegral2D::Ptr(new PredictionIntegral2D)));
-        for(const auto &u : update_models_) {
-            prediction_integrals_->set(PredictionIntegral2D::Ptr(new PredictionIntegral2D),
-                                       u.second->getId());
-        }
-
-    }
     {   /// Prediction Model
         loader.load<PredictionModel2D, TFProvider::Ptr, ros::NodeHandle&>(prediction_model_, tf_provider_backend_, nh_private_);
         if(!prediction_model_) {
@@ -203,10 +194,19 @@ bool MuseMCL2DNode::setup()
 
         auto param_name = [](const std::string &param){return "particle_filter/" + param;};
 
-        const double resolution_linear  = nh_private_.param<double>(param_name("resolution_linear"), 0.1);
-        const double resolution_angular = muse_smc::math::angle::toRad(nh_private_.param<double>(param_name("resolution_angular"), 5.0));
-        const double preferred_rate = nh_private_.param<double>(param_name("preferred_rate"), 60.0);
-        const std::size_t minimum_update_cycles = nh_private_.param<int>(param_name("minimum_update_cycles"), 20);
+        const double resolution_linear              = nh_private_.param<double>(param_name("resolution_linear"), 0.1);
+        const double resolution_angular             = muse_smc::math::angle::toRad(nh_private_.param<double>(param_name("resolution_angular"), 5.0));
+        const double preferred_rate                 = nh_private_.param<double>(param_name("preferred_rate"), 60.0);
+        const std::size_t resampling_cycle     = nh_private_.param<int>(param_name("resampling_cycle"), 20);
+        const double resampling_threshold_linear    = nh_private_.param<double>(param_name("resampling_threshold_linear"), 0.1);
+        const double resampling_threshold_angular   = muse_smc::math::angle::toRad(nh_private_.param<double>(param_name("resampling_threshold_angular"), 5.0));
+
+        prediction_integrals_.reset(new prediction_integrals_t(PredictionIntegral2D::Ptr(new PredictionIntegral2D(resampling_threshold_linear,
+                                                                                                                  resampling_threshold_angular))));
+        for(const auto &u : update_models_) {
+            prediction_integrals_->set(PredictionIntegral2D::Ptr(new PredictionIntegral2D),
+                                       u.second->getId());
+        }
 
         const std::size_t sample_size = nh_private_.param<int>(param_name("sample_size"), 0);
         const std::size_t minimum_sample_size = sample_size == 0 ? nh_private_.param<int>(param_name("minimum_sample_size"), 0) : sample_size;
@@ -237,7 +237,7 @@ bool MuseMCL2DNode::setup()
                                 state_publisher_,
                                 prediction_integrals_,
                                 muse_smc::Rate(preferred_rate),
-                                minimum_update_cycles);
+                                resampling_cycle);
     }
 
     predicition_forwarder_.reset(new PredictionRelay2D(particle_filter_));

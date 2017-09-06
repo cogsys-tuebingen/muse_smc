@@ -40,7 +40,6 @@ protected:
 
         const std::size_t sample_size_minimum = std::max(sample_set.getMinimumSampleSize(), 2ul);
         const std::size_t sample_size_maximum = sample_set.getMaximumSampleSize();
-        std::cerr << "minimum sample size" << sample_size_minimum << "\n";
 
         auto kld = [this, &sample_set, &density, sample_size_maximum](const std::size_t current_size){
             const std::size_t k = density->histogramSize();

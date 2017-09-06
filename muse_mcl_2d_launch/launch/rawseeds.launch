@@ -35,10 +35,10 @@
             <param name="undistortion_tf_timeout"  value="0.1" />
             <param name="range_max"                value="10.0" />
             <param name="range_min"                value="0.1" />
+            <param name="rate"                     value="0.0" />
             <!-- <param name="angle_min" value="-3.1425" /> -->
             <!-- <param name="angle_max" value="3.1425" /> -->
             <param name="queue_size"               value="10" />
-            <param name="rate"                     value="1.0" />
         </group>
         <group ns="rear_laser">
           <param name="class"                    value="muse_mcl_2d_laser::LaserProvider2D" />
@@ -50,7 +50,7 @@
           <param name="range_max"                value="30.0" />
           <param name="range_min"                value="0.1" />
           <param name="queue_size"               value="10" />
-          <param name="rate"                     value="1.0" />
+          <param name="rate"                     value="0.0" />
           <!-- <param name="angle_min" value="-3.1425" /> -->
           <!-- <param name="angle_max" value="3.1425" /> -->
         </group>
@@ -135,9 +135,9 @@
         </group>
 
         <group ns="particle_filter">
-            <param name="resampling_threshold_linear"  value="0.1" />
-            <param name="resampling_threshold_angular" value="5.0" />
-            <param name="resampling_cycle"             value="50" />
+            <param name="resampling_threshold_linear"  value="0.05" />
+            <param name="resampling_threshold_angular" value="2.5" />
+            <param name="resampling_cycle"             value="10" />
             <param name="integrate_all_measurement"    value="false" />
 
            <!-- <param name="sample_size"     value="" /> -->             <!-- if set, maximum and minimum are this value -->
