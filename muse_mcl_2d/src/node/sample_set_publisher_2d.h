@@ -13,7 +13,6 @@
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <visualization_msgs/MarkerArray.h>
 
-#include <muse_smc/utility/synchronized_queue.hpp>
 #include <muse_smc/samples/sample_set.hpp>
 
 #include <muse_mcl_2d/samples/sample_2d.hpp>

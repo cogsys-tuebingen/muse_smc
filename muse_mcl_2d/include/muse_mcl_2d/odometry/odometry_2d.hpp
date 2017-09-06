@@ -16,6 +16,9 @@ public:
 
     Odometry2D(const std::string &frame) :
         Data(frame),
+        start_pose_(Transform2D::identity()),
+        end_pose_(Transform2D::identity()),
+        delta_rel_(Transform2D::identity()),
         delta_linear_(0.0),
         delta_angular_(0.0)
     {
@@ -24,6 +27,9 @@ public:
     Odometry2D(const std::string &frame,
                const time_frame_t &time_frame) :
         Data(frame, time_frame),
+        start_pose_(Transform2D::identity()),
+        end_pose_(Transform2D::identity()),
+        delta_rel_(Transform2D::identity()),
         delta_linear_(0.0),
         delta_angular_(0.0)
     {
@@ -33,9 +39,18 @@ public:
               const time_frame_t &time_frame,
               const Pose2D &start,
               const Pose2D &end) :
-        Data(frame, time_frame)
+       Data(frame, time_frame),
+       start_pose_(start),
+       end_pose_(start),
+       delta_rel_(Transform2D::identity())
     {
-        setPoses(start, end);
+        delta_rel_      = start.inverse() * end;
+        start_pose_     = start;
+        end_pose_       = end;
+
+        delta_lin_abs_  = end.translation() - start.translation();
+        delta_linear_   = delta_rel_.translation().length();
+        delta_angular_  = delta_rel_.yaw();
     }
 
     inline double getDeltaAngularAbs() const
@@ -92,18 +107,6 @@ private:
     Vector2D delta_lin_abs_;
     double   delta_linear_;
     double   delta_angular_;
-
-    inline void setPoses(const Pose2D &start,
-                         const Pose2D &end)
-    {
-        delta_rel_      = start.inverse() * end;
-        start_pose_     = start;
-        end_pose_       = end;
-
-        delta_lin_abs_  = end.translation() - start.translation();
-        delta_linear_   = delta_rel_.translation().length();
-        delta_angular_  = delta_rel_.yaw();
-    }
 };
 }
 

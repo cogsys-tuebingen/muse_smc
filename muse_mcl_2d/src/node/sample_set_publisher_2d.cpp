@@ -182,7 +182,7 @@ void SampleSetPublisher2D::loop()
     sample_vector_t::Ptr samples;
     Pose2D               mean;
     Covariance2D         covariance;
-    double               maximum_weight;
+    double               maximum_weight = 0.0;
 
     while(!stop_) {
         notify_.wait(notify_lock);

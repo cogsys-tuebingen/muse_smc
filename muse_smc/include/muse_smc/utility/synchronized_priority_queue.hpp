@@ -3,6 +3,18 @@
 
 #include <queue>
 #include <mutex>
+#include <ext/pb_ds/priority_queue.hpp>
+
+//using namespace std;
+
+//int main(int argc, char *argv[]) {
+//  __gnu_pbds::priority_queue<int, less<int>, __gnu_pbds::binary_heap_tag> pq;
+//  cout << (typeid(__gnu_pbds::container_traits<decltype(pq)>::invalidation_guarantee) == typeid(__gnu_pbds::basic_invalidation_guarantee)) << endl;
+//  // prints 1
+//  cout << (typeid(__gnu_pbds::container_traits<__gnu_pbds::priority_queue<int, less<int>, __gnu_pbds::binary_heap_tag>>::invalidation_guarantee) == typeid(__gnu_pbds::basic_invalidation_guarantee)) << endl;
+//  // prints 1
+//  return 0;
+//}
 
 namespace muse_smc {
 namespace synchronized {
@@ -13,6 +25,7 @@ class priority_queue
 public:
     using mutex_t = std::mutex;
     using lock_t  = std::unique_lock<mutex_t>;
+    using queue_t = std::priority_queue<_Tp, _Sequence, _Compare>;
 
     priority_queue() = default;
 
@@ -56,7 +69,7 @@ public:
 
 private:
     mutable mutex_t mutex_;
-    std::priority_queue<_Tp, _Sequence, _Compare> q_;
+    queue_t q_;
 
 };
 }

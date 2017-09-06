@@ -32,7 +32,7 @@ public:
 
     virtual state_space_transform_t getOrigin() const
     {
-        return Transform2D();
+        return Transform2D::identity();
     }
 
     virtual bool isAvailable() const

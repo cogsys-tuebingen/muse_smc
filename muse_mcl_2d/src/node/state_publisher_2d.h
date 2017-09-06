@@ -31,17 +31,9 @@ private:
     std::string                 odom_frame_;
     std::string                 base_frame_;
 
-    ros::Time                   last_state_publication_;
-    ros::Duration               cycle_time_state_publication_;
-
-
     StampedTransform2D          latest_w_T_b_;
     Covariance2D                latest_w_T_b_covariance_;
 
-#ifdef LOG_FILTER_STATE
-
-
-#endif
     void publishState(const typename sample_set_t::Ptr &sample_set);
 
 };

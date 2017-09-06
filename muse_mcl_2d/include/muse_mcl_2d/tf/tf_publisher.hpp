@@ -49,7 +49,7 @@ public:
         timeout_(timeout),
         running_(false),
         stop_(false),
-        w_T_b_(Transform2D(), muse_smc::Time(ros::Time::now().toNSec())),
+        w_T_b_(Transform2D::identity(), muse_smc::Time(ros::Time::now().toNSec())),
         wait_for_transform_(true),
         tf_rate_(rate)
     {
@@ -84,7 +84,7 @@ public:
         std::unique_lock<std::mutex> l(tf_mutex_);
         w_T_b_ = w_t_b;
 
-        Transform2D b_T_o;
+        Transform2D b_T_o = Transform2D::identity();
         if(tf_listener_.lookupTransform(base_frame_, odom_frame_, ros::Time(w_T_b_.stamp().seconds()), b_T_o, timeout_)) {
             Transform2D w_T_o = w_T_b_.data() * b_T_o;
             w_T_o_ = tf::StampedTransform(from(w_T_o), ros::Time(w_T_b_.stamp().seconds()), world_frame_, odom_frame_);

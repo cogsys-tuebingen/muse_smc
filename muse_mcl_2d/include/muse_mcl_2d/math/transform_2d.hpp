@@ -9,13 +9,17 @@
 namespace muse_mcl_2d {
 class Transform2D {
 public:
-    [[deprecated]]
     inline Transform2D() :
         translation_(0.0, 0.0),
         yaw_(0.0),
         sin_(0.0),
         cos_(1.0)
     {
+    }
+
+    static inline Transform2D identity()
+    {
+        return Transform2D(0.0, 0.0);
     }
 
     inline Transform2D(const double x,
