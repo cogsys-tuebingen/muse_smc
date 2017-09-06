@@ -16,7 +16,7 @@ StatePublisher::~StatePublisher()
 
 void StatePublisher::setup(ros::NodeHandle &nh)
 {
-    const double pub_rate_state = nh.param<double>("pub_rate_state", 0.0);
+    const double pub_rate_state = nh.param<double>("pub_rate_state", 10.0);
     const double pub_rate_tf    = nh.param<double>("pub_rate_tf", 30.0);
 
     world_frame_ = nh.param<std::string>("world_frame", "/world");
@@ -32,8 +32,6 @@ void StatePublisher::setup(ros::NodeHandle &nh)
 
     if(pub_rate_state != 0.0) {
         cycle_time_state_publication_ = ros::Duration(1.0 / pub_rate_state);
-    } else {
-        cycle_time_state_publication_ = ros::Duration(0.0);
     }
 
     last_state_publication_ = ros::Time::now();
@@ -46,7 +44,7 @@ void StatePublisher::publish(const sample_set_t::Ptr &sample_set)
             std::dynamic_pointer_cast<SampleDensity2D const>(sample_set->getDensity());
 
     if(!density) {
-        std::cerr << "[StatePublisher]: Incomaptible sample density estimation!" << std::endl;
+        std::cerr << "[StatePublisher]: Incomaptible sample density estimation!" << "\n";
         return;
     }
 

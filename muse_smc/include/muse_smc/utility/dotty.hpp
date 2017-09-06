@@ -138,7 +138,7 @@ private:
                 auto f = q_.front();
                 q_.pop();
                 q_lock.unlock();
-                out_ << f << std::endl;
+                out_ << f << "\n";
                 ++lines_;
 
                 if(lines_ >= 1000) {
@@ -161,6 +161,7 @@ private:
         dumpQ();
         writeEnd();
 
+        out_.flush();
         if(out_.is_open())
             out_.close();
 
@@ -206,12 +207,12 @@ private:
 
     inline void writeHeader()
     {
-        out_ << "digraph states {" << std::endl;
+        out_ << "digraph states {" << "\n";
     }
 
     inline void writeEnd()
     {
-        out_ << "}" << std::endl;
+        out_ << "}" << "\n";
     }
 };
 }

@@ -43,9 +43,9 @@ int main(int argc, char *argv[])
                                                       mask.ptr<uchar>() );
             while(!it.done()) {
                 display.at<cv::Vec3b>(it.y(), it.x()) = cv::Vec3b(255,255,255);
-                std::cout << "before " << (int) *const_it << std::endl;
+                std::cout << "before " << (int) *const_it << "\n";
                 *it = 255;
-                std::cout << "after " << (int) *const_it << std::endl;
+                std::cout << "after " << (int) *const_it << "\n";
                 ++it;
             }
 
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
                 ++const_it;
                 ++iterations;
             }
-            std::cout << "took " << (muse_smc::Time::now() - start).milliseconds() << "ms for " << iterations << " iterations" << std::endl;
+            std::cout << "took " << (muse_smc::Time::now() - start).milliseconds() << "ms for " << iterations << " iterations" << "\n";
 
             cv::imshow("display", display);
             cv::imshow("mask", mask);

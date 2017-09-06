@@ -42,8 +42,8 @@ public:
                     typename update_t::Ptr up(new update_t(data, ss, u));
                     smc_->addUpdate(up);
                 } else {
-                    std::cerr << "[UpdateRelay]: " << s->getName() << " supplied state space which was zero!" << std::endl;
-                    std::cerr << "[UpdateRelay]: Dropped update!" << std::endl;
+                    std::cerr << "[UpdateRelay]: " << s->getName() << " supplied state space which was zero!" << "\n";
+                    std::cerr << "[UpdateRelay]: Dropped update!" << "\n";
                 }
             };
             handles_.emplace_back(d->connect(callback));

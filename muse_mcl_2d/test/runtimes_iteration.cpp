@@ -33,8 +33,8 @@ void insertion(muse_smc::SampleSet<muse_mcl_2d::Sample2D> &set)
         ++inserted;
     }
 
-    std::cout << "inserted : " << inserted << std::endl;
-    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << std::endl;
+    std::cout << "inserted : " << inserted << "\n";
+    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
 }
 
 
@@ -47,7 +47,7 @@ void stateIteration(muse_smc::SampleSet<muse_mcl_2d::Sample2D> &set)
         state.tx() += 0.1;
         state.ty() += 0.1;
     }
-    std::cout << "stateIteration took time:                 " << (muse_smc::Time::now() - start).milliseconds() << "ms" << std::endl;
+    std::cout << "stateIteration took time:                 " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
 }
 
 void stateIterationForEach(muse_smc::SampleSet<muse_mcl_2d::Sample2D> &set)
@@ -59,7 +59,7 @@ void stateIterationForEach(muse_smc::SampleSet<muse_mcl_2d::Sample2D> &set)
         state.ty() += 0.1;
     }
 
-    std::cout << "stateIterationForEach took time:          " << (muse_smc::Time::now() - start).milliseconds() << "ms" << std::endl;
+    std::cout << "stateIterationForEach took time:          " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
 }
 
 void weightIteration(muse_smc::SampleSet<muse_mcl_2d::Sample2D> &set)
@@ -71,7 +71,7 @@ void weightIteration(muse_smc::SampleSet<muse_mcl_2d::Sample2D> &set)
         auto &weight = (*it);
         weight = 0.01;
     }
-    std::cout << "weightIteration took time:                " << (muse_smc::Time::now() - start).milliseconds() << "ms" << std::endl;
+    std::cout << "weightIteration took time:                " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
 }
 
 void weightIterationForEach(muse_smc::SampleSet<muse_mcl_2d::Sample2D> &set)
@@ -81,8 +81,8 @@ void weightIterationForEach(muse_smc::SampleSet<muse_mcl_2d::Sample2D> &set)
     for(auto &weight : interface) {
         weight = 0.05;
     }
-    std::cout << set.getMaximumWeight() << std::endl;
-    std::cout << "weightIterationForEach took time:         " << (muse_smc::Time::now() - start).milliseconds() << "ms" << std::endl;
+    std::cout << set.getMaximumWeight() << "\n";
+    std::cout << "weightIterationForEach took time:         " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
 }
 
 
@@ -97,9 +97,9 @@ int main(int argc, char *argv[])
                                                    density);
 
 
-    std::cout << sizeof(tf::Transform) << std::endl;
-    std::cout << sizeof(muse_mcl_2d::Sample2D) << std::endl;
-    std::cout << sizeof(muse_mcl_2d::Transform2D) << std::endl;
+    std::cout << sizeof(tf::Transform) << "\n";
+    std::cout << sizeof(muse_mcl_2d::Sample2D) << "\n";
+    std::cout << sizeof(muse_mcl_2d::Transform2D) << "\n";
 
     insertion(set);
     stateIteration(set);

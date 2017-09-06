@@ -38,13 +38,18 @@ public:
 
     virtual bool thresholdExceeded() const override
     {
-        return linear_distance_abs_ > 0.5 || angular_distance_abs_ > 5.0;
+        return linear_distance_abs_ > 0.5 || angular_distance_abs_ > 0.08;
     }
 
     virtual bool isZero() const override
     {
         return linear_distance_abs_ == 0.0 &&
                angular_distance_abs_ == 0.0;
+    }
+
+    virtual void info() const override
+    {
+        std::cerr << linear_distance_abs_ << " " << angular_distance_abs_ << "\n";
     }
 
 private:

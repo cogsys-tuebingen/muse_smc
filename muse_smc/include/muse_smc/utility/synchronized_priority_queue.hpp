@@ -42,6 +42,12 @@ public:
         return t;
     }
 
+    inline _Tp const & top() const
+    {
+        lock_t(mutex_);
+        return q_.top();
+    }
+
     inline void emplace(const _Tp &t)
     {
         lock_t l(mutex_);

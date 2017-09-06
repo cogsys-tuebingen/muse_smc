@@ -39,6 +39,10 @@ public:
         return global_accumulator_;
     }
 
+    inline void info() const
+    {
+        global_accumulator_->info();
+    }
 
     inline bool thresholdExceeded(const id_t id) const
     {

@@ -19,6 +19,7 @@ public:
     virtual void reset() = 0;
     virtual bool thresholdExceeded() const = 0;
     virtual bool isZero() const = 0;
+    virtual void info() const = 0;
 };
 }
 

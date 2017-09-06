@@ -34,7 +34,7 @@ public:
             if(base_class_name == plugin_t::Type()) {
                 plugins[name] = factory.create(class_name, name, arguments...);
                 if(!plugins[name]) {
-                    std::cerr << "[PluginFactory]: Could not create plugin, empty constructor received!" << std::endl;
+                    std::cerr << "[PluginFactory]: Could not create plugin, empty constructor received!" << "\n";
                     plugins.erase(name);
                 }
             }

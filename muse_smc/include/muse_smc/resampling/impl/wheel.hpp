@@ -44,7 +44,7 @@ public:
     {
 
         if(!uniform_pose_sampler->update(sample_set.getFrame())) {
-            std::cerr << "[WheelOfFortune]: Updating uniform sampler didn't work, switching to normal resampling!°" << std::endl;
+            std::cerr << "[WheelOfFortune]: Updating uniform sampler didn't work, switching to normal resampling!°" << "\n";
             apply(sample_set);
             return;
         }

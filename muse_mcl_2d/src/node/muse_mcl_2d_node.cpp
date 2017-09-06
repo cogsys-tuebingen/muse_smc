@@ -41,8 +41,8 @@ void MuseMCL2DNode::start()
     } else {
         /// limited speed
         ros::WallRate r(node_rate);
+        ROS_INFO_STREAM("Spinning with " << node_rate << " Hz!");
         while(ros::ok()) {
-            ROS_INFO_STREAM("Spinning with" << node_rate << "Hz!");
             ros::spinOnce();
             r.sleep();
         }
@@ -349,7 +349,7 @@ bool MuseMCL2DNode::getPredictionProvider(DataProvider2D::Ptr &prediction_provid
     if(data_providers_.find(provider_name) == data_providers_.end()) {
         std::cerr << "[MuseAMCLNode]: Could not find data provider '" << provider_name
                   << "' for prediction model '" << prediction_model_->getName()
-                  << "' !" << std::endl;
+                  << "' !" << "\n";
         return false;
     }
     prediction_provider = data_providers_.at(provider_name);

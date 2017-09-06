@@ -35,7 +35,7 @@ double BinaryGridMap::getRange(const muse_mcl_2d::Point2D &from,
         ++it;
     }
     if(it.invalid())
-        return -1;
+        return -1.0;
 
     fromIndex({it.x(), it.y()}, to);
     return  std::sqrt((to - from).length2());

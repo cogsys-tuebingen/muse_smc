@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 
     for(double d : distances) {
         if(d != 2)
-        std::cout << d << std::endl;
+        std::cout << d << "\n";
     }
 
     cv::Mat dis(200, 200, CV_64FC1, distances.data());

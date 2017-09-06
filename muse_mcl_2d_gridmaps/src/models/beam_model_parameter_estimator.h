@@ -54,12 +54,12 @@ public:
 
         void print() const
         {
-            std::cerr << "BeamModelParameters: z_hit - " << z_hit << std::endl;
-            std::cerr << "BeamModelParameters: z_max - " << z_max << std::endl;
-            std::cerr << "BeamModelParameters: z_short - " << z_short << std::endl;
-            std::cerr << "BeamModelParameters: z_rand - " << z_rand << std::endl;
-            std::cerr << "BeamModelParameters: sigma_hit - " << sigma_hit << std::endl;
-            std::cerr << "BeamModelParameters: lambda_short - " << lambda_short << std::endl;
+            std::cerr << "BeamModelParameters: z_hit - " << z_hit << "\n";
+            std::cerr << "BeamModelParameters: z_max - " << z_max << "\n";
+            std::cerr << "BeamModelParameters: z_short - " << z_short << "\n";
+            std::cerr << "BeamModelParameters: z_rand - " << z_rand << "\n";
+            std::cerr << "BeamModelParameters: sigma_hit - " << sigma_hit << "\n";
+            std::cerr << "BeamModelParameters: lambda_short - " << lambda_short << "\n";
         }
 
         void setSigmaHit(const double s)

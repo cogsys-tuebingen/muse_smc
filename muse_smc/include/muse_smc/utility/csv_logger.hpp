@@ -90,7 +90,7 @@ private:
         } else {
             out_ << "time";
         }
-        out_ << std::endl;
+        out_ << "\n";
 
         auto dumpQ = [this] () {
             while(!q_.empty()) {
@@ -99,7 +99,7 @@ private:
                 q_.pop();
                 q_lock.unlock();
 
-                out_ << f << std::endl;
+                out_ << f << "\n";
             }
         };
 
@@ -110,6 +110,7 @@ private:
         }
         dumpQ();
 
+        out_.flush();
         if(out_.is_open())
             out_.close();
 

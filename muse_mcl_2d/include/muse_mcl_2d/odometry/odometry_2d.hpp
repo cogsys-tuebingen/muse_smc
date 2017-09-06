@@ -109,8 +109,8 @@ private:
 
 inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d::Odometry2D &odom)
 {
-    out << "[Odometry]: linear  " << odom.getDeltaLinear()  << std::endl;
-    out << "            angular " << odom.getDeltaAngular() << std::endl;
+    out << "[Odometry]: linear  " << odom.getDeltaLinear()  << "\n";
+    out << "            angular " << odom.getDeltaAngular() << "\n";
     out << "            delta   " << odom.getDelta().x() << " " << odom.getDelta().y();
     return out;
 }

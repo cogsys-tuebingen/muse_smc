@@ -18,16 +18,16 @@ void constructors()
         muse_mcl_2d::Transform2D t;
         yaw = t.yaw();
     }
-    std::cout << "empty:" << std::endl;
-    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << std::endl;
+    std::cout << "empty:" << "\n";
+    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
 
     start = muse_smc::Time::now();
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
         muse_mcl_2d::Transform2D t(i, i);
         yaw = t.yaw();
     }
-    std::cout << "x y:" << std::endl;
-    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << std::endl;
+    std::cout << "x y:" << "\n";
+    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
 
     start = muse_smc::Time::now();
     muse_mcl_2d::Vector2D v(rng.get(), rng.get());
@@ -36,24 +36,24 @@ void constructors()
         yaw = t.yaw();
         v.x() += i;
     }
-    std::cout << "v:" << std::endl;
-    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << std::endl;
+    std::cout << "v:" << "\n";
+    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
 
     start = muse_smc::Time::now();
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
         muse_mcl_2d::Transform2D t(i,i,i);
         yaw = t.yaw();
     }
-    std::cout << "x y yaw:" << std::endl;
-    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << std::endl;
+    std::cout << "x y yaw:" << "\n";
+    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
 
     start = muse_smc::Time::now();
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
         muse_mcl_2d::Transform2D t(v,i);
         yaw = t.yaw();
     }
-    std::cout << "v yaw:" << std::endl;
-    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << std::endl;
+    std::cout << "v yaw:" << "\n";
+    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
 
     start = muse_smc::Time::now();
     muse_mcl_2d::Transform2D t(rng.get(), rng.get());
@@ -61,8 +61,8 @@ void constructors()
         muse_mcl_2d::Transform2D t_(t);
         yaw = t_.yaw();
     }
-    std::cout << "t:" << std::endl;
-    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << std::endl;
+    std::cout << "t:" << "\n";
+    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
 }
 
 void multiplyVector()
@@ -99,12 +99,12 @@ void multiplyVector()
         mean_ms_tf += (muse_smc::Time::now() - start).milliseconds();
     }
 
-    std::cout << "vector:" << std::endl;
-    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_t / ITERATIONS << "ms" << std::endl;
-    std::cout << "legacy vector:" << std::endl;
-    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tl/ ITERATIONS << "ms" << std::endl;
-    std::cout << "tf vector:"  << std::endl;
-    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tf/ ITERATIONS << "ms" << std::endl;
+    std::cout << "vector:" << "\n";
+    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_t / ITERATIONS << "ms" << "\n";
+    std::cout << "legacy vector:" << "\n";
+    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tl/ ITERATIONS << "ms" << "\n";
+    std::cout << "tf vector:"  << "\n";
+    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tf/ ITERATIONS << "ms" << "\n";
 }
 
 void multiplyTransform()
@@ -148,12 +148,12 @@ void multiplyTransform()
         tf = tf_tb;
     }
 
-    std::cout << "transform multiply:" << std::endl;
-    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_t / ITERATIONS << "ms" << std::endl;
-    std::cout << "legacy transform multiply:" << std::endl;
-    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tl/ ITERATIONS << "ms" << std::endl;
-    std::cout << "tf transform multiply:"  << std::endl;
-    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tf/ ITERATIONS << "ms" << std::endl;
+    std::cout << "transform multiply:" << "\n";
+    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_t / ITERATIONS << "ms" << "\n";
+    std::cout << "legacy transform multiply:" << "\n";
+    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tl/ ITERATIONS << "ms" << "\n";
+    std::cout << "tf transform multiply:"  << "\n";
+    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tf/ ITERATIONS << "ms" << "\n";
 }
 
 void multiplyAssignTransform()
@@ -197,12 +197,12 @@ void multiplyAssignTransform()
         tf = tf_tb;
     }
 
-    std::cout << "transform multiply assign:" << std::endl;
-    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_t / ITERATIONS << "ms" << std::endl;
-    std::cout << "legacy transform multiply assign:" << std::endl;
-    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tl/ ITERATIONS << "ms" << std::endl;
-    std::cout << "tf transform multiply assign:"  << std::endl;
-    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tf/ ITERATIONS << "ms" << std::endl;
+    std::cout << "transform multiply assign:" << "\n";
+    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_t / ITERATIONS << "ms" << "\n";
+    std::cout << "legacy transform multiply assign:" << "\n";
+    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tl/ ITERATIONS << "ms" << "\n";
+    std::cout << "tf transform multiply assign:"  << "\n";
+    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tf/ ITERATIONS << "ms" << "\n";
 }
 
 void assign()
@@ -246,12 +246,12 @@ void assign()
         tf = tf_tb;
     }
 
-    std::cout << "transform assign:" << std::endl;
-    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_t / ITERATIONS << "ms" << std::endl;
-    std::cout << "legacy transform assign:" << std::endl;
-    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tl/ ITERATIONS << "ms" << std::endl;
-    std::cout << "tf transform assign:"  << std::endl;
-    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tf/ ITERATIONS << "ms" << std::endl;
+    std::cout << "transform assign:" << "\n";
+    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_t / ITERATIONS << "ms" << "\n";
+    std::cout << "legacy transform assign:" << "\n";
+    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tl/ ITERATIONS << "ms" << "\n";
+    std::cout << "tf transform assign:"  << "\n";
+    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tf/ ITERATIONS << "ms" << "\n";
 }
 
 void inverse()
@@ -288,12 +288,12 @@ void inverse()
         mean_ms_tf += (muse_smc::Time::now() - start).milliseconds();
     }
 
-    std::cout << "transform inverse:" << std::endl;
-    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_t / ITERATIONS << "ms" << std::endl;
-    std::cout << "legacy transform inverse:" << std::endl;
-    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tl/ ITERATIONS << "ms" << std::endl;
-    std::cout << "tf transform inverse:"  << std::endl;
-    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tf/ ITERATIONS << "ms" << std::endl;
+    std::cout << "transform inverse:" << "\n";
+    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_t / ITERATIONS << "ms" << "\n";
+    std::cout << "legacy transform inverse:" << "\n";
+    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tl/ ITERATIONS << "ms" << "\n";
+    std::cout << "tf transform inverse:"  << "\n";
+    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tf/ ITERATIONS << "ms" << "\n";
 }
 
 

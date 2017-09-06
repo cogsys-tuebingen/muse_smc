@@ -59,7 +59,7 @@ public:
                                       sample_set_t &sample_set)
     {
         if(!uniform_pose_sampler->update(sample_set.getFrame())) {
-            std::cerr << "[Multinomial]: Updating uniform sampler didn't work, switching to normal resampling!°" << std::endl;
+            std::cerr << "[Multinomial]: Updating uniform sampler didn't work, switching to normal resampling!°" << "\n";
             apply(sample_set);
             return;
         }

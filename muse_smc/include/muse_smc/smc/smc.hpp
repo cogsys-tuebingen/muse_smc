@@ -302,10 +302,7 @@ protected:
                 if(worker_thread_exit_)
                     break;
 
-
-                now = Time::now();
-                requests(); /// process all request that came in
-                std::cerr << "reuquests took :                           " << (Time::now() - now).milliseconds() << "ms" << std::endl;
+                requests();
 
                 typename update_t::Ptr u = update_queue_.pop();
                 const Time &t = u->getStamp();
@@ -313,8 +310,8 @@ protected:
 
                 if(t >= sample_set_stamp) {
                     now = Time::now();
+
                     predict(t);
-                    std::cerr << "predictions took :                         " << (Time::now() - now).milliseconds() << "ms" << std::endl;
 
                     if(t > sample_set_stamp) {
                         update_queue_.emplace(u);
@@ -323,7 +320,7 @@ protected:
                         if(!prediction_integrals_->isZero(model_id)) {
                             now = Time::now();
                             u->apply(sample_set_->getWeightIterator());
-                            std::cerr << "update took :                              " << (Time::now() - now).milliseconds() << "ms" << std::endl;
+                            std::cerr << "update took :                              " << (Time::now() - now).milliseconds() << "ms" << "\n";
 
                             prediction_integrals_->reset(model_id);
                             ++updates_applied_after_resampling_;
@@ -339,23 +336,19 @@ protected:
                 }
 
                 if(prediction_integrals_->thresholdExceeded() &&
-                        updates_applied_after_resampling_ > updates_applied_after_resampling_) {
+                        updates_applied_after_resampling_ > minimum_update_cycles_) {
 
                     now = Time::now();
                     resampling_->apply(*sample_set_);
-                    std::cerr << "resampling took :                          " << (Time::now() - now).milliseconds() << "ms" << std::endl;
+                    std::cerr << "resampling took :                          " << (Time::now() - now).milliseconds() << "ms" << "\n";
                     updates_applied_after_resampling_ = 0ul;
                     prediction_integrals_->reset();
 
                     now = Time::now();
                     state_publisher_->publish(sample_set_);
                     sample_set_->resetWeights();
-                    std::cerr << "state publication took :                   " << (Time::now() - now).milliseconds() << "ms" << std::endl;
+                    std::cerr << "state publication took :                   " << (Time::now() - now).milliseconds() << "ms" << "\n";
 
-                } else {
-                    now = Time::now();
-                    state_publisher_->publishIntermidiate(sample_set_);
-                    std::cerr << "intermediate state publication took :      " << (Time::now() - now).milliseconds() << "ms" << std::endl;
                 }
                 //// DBG
                 now = Time::now();
@@ -363,7 +356,7 @@ protected:
                 std::cerr << "rate " << 1.0 / dur.seconds() << " "
                           << update_queue_.size() << " "
                           << prediction_queue_.size() << " "
-                          << sample_set_->getSampleSize() << std::endl;
+                          << sample_set_->getSampleSize() << "\n";
                 last = now;
                 //// DBG
             }

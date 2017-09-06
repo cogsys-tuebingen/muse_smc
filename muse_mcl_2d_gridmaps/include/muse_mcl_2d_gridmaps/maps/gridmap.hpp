@@ -27,6 +27,7 @@ public:
             const std::string frame) :
         Map2D(frame),
         resolution_(resolution),
+        resolution_inv_(1.0 / resolution),
         height_(height),
         width_(width),
         max_index_({(int)(width)-1,(int)(height)-1}),
@@ -83,8 +84,8 @@ public:
                   cos_phi_ * _y;
         }
 
-        i[0] = std::floor((x + tx_) / resolution_ + 0.5);
-        i[1] = std::floor((y + ty_) / resolution_ + 0.5);
+        i[0] = static_cast<int>((x + tx_) * resolution_inv_ + 0.5);
+        i[1] = static_cast<int>((y + ty_) * resolution_inv_ + 0.5);
 
         return (i[0] >= 0 && i[0] <= max_index_[0]) ||
                (i[1] >= 0 && i[1] <= max_index_[1]);
@@ -177,7 +178,8 @@ public:
         Index end_index;
         toIndex(start, start_index);
         toIndex(end, end_index);
-        return LineIterator(start_index, end_index,
+        return LineIterator(start_index,
+                            end_index,
                             {static_cast<int>(width_), static_cast<int>(height_)},
                             data_ptr_);
     }
@@ -205,6 +207,7 @@ public:
 
 protected:
     const double      resolution_;
+    const double      resolution_inv_;
     const std::size_t height_;
     const std::size_t width_;
     const Index       max_index_;

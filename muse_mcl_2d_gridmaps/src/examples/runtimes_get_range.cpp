@@ -37,7 +37,7 @@ void mapOnly()
         range = binary->getRange(start, end);
         angle += angle_incr;
     }
-    std::cout << "took : " << (muse_smc::Time::now() - now).milliseconds() / iterations << std::endl;
+    std::cout << "took : " << (muse_smc::Time::now() - now).milliseconds() / iterations << "\n";
 
     muse_smc::math::random::Uniform<1> uniform(-10.0, 10.0);
     now = muse_smc::Time::now();
@@ -45,13 +45,13 @@ void mapOnly()
     for(std::size_t i = 9 ; i < iterations ; ++i) {
         val = tfSqrt(uniform.get());
     }
-    std::cout << "took : " << (muse_smc::Time::now() - now).milliseconds() / iterations << std::endl;
+    std::cout << "took : " << (muse_smc::Time::now() - now).milliseconds() / iterations << "\n";
 
     now = muse_smc::Time::now();
     for(std::size_t i = 9 ; i < iterations ; ++i) {
         val = std::sqrt(uniform.get());
     }
-    std::cout << "took : " << (muse_smc::Time::now() - now).milliseconds() / iterations << std::endl;
+    std::cout << "took : " << (muse_smc::Time::now() - now).milliseconds() / iterations << "\n";
 
     muse_mcl_2d::Vector2D v1(0.0,0.0);
     muse_mcl_2d::Vector2D v2(1.0,2.0);
@@ -60,14 +60,14 @@ void mapOnly()
     for(std::size_t i = 0 ; i < iterations * iterations * iterations ; ++i) {
         l = (v1 - v2).length();
     }
-    std::cout << "(v1 - v2).length() took :             " << (muse_smc::Time::now() - now).milliseconds() << std::endl;
+    std::cout << "(v1 - v2).length() took :             " << (muse_smc::Time::now() - now).milliseconds() << "\n";
 
     now = muse_smc::Time::now();
     l = 0.0;
     for(std::size_t i = 0 ; i < iterations * iterations * iterations ; ++i) {
         l = std::sqrt((v1 - v2).length2());
     }
-    std::cout << "std::sqrt((v1 - v2).length2()) took : " << (muse_smc::Time::now() - now).milliseconds() << std::endl;
+    std::cout << "std::sqrt((v1 - v2).length2()) took : " << (muse_smc::Time::now() - now).milliseconds() << "\n";
 
 
     now = muse_smc::Time::now();
@@ -75,7 +75,7 @@ void mapOnly()
     for(std::size_t i = 0 ; i < iterations * iterations * iterations ; ++i) {
         l = v1.distance(v2);
     }
-    std::cout << "v1.distance(v2) took :                " << (muse_smc::Time::now() - now).milliseconds() << std::endl;
+    std::cout << "v1.distance(v2) took :                " << (muse_smc::Time::now() - now).milliseconds() << "\n";
 
 
     tf::Vector3 v1_tf(0.0,0.0,0.0);
@@ -85,7 +85,7 @@ void mapOnly()
     for(std::size_t i = 0 ; i < iterations * iterations * iterations ; ++i) {
         l = v1_tf.distance(v2_tf);
     }
-    std::cout << "v1_tf.distance(v2_tf) took :          " << (muse_smc::Time::now() - now).milliseconds() << std::endl;
+    std::cout << "v1_tf.distance(v2_tf) took :          " << (muse_smc::Time::now() - now).milliseconds() << "\n";
 }
 
 void withParticles()
@@ -136,8 +136,8 @@ void withParticles()
         ++inserted;
     }
 
-    std::cout << "inserted : " << inserted << std::endl;
-    std::cout << "took time: " << (muse_smc::Time::now() - start_time).milliseconds() << "ms" << std::endl;
+    std::cout << "inserted : " << inserted << "\n";
+    std::cout << "took time: " << (muse_smc::Time::now() - start_time).milliseconds() << "ms" << "\n";
 
     auto iteration = set.getWeightIterator();
     auto end = iteration.end();
@@ -154,7 +154,7 @@ void withParticles()
         range = binary->getRange(start, ray_end_point);
     }
 
-    std::cout << "took : " << (muse_smc::Time::now() - start_time).milliseconds() << std::endl;
+    std::cout << "took : " << (muse_smc::Time::now() - start_time).milliseconds() << "\n";
 
 
 

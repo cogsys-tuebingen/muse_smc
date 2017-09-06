@@ -123,6 +123,7 @@ void SampleSetPublisher2D::add(const sample_vector_t &sample_vector,
         queue_samples_.emplace(sample_vector_t::Ptr(new sample_vector_t(sample_vector)));
         queue_maximum_weight_.emplace(maximum_weight);
         notify_.notify_one();
+        std::cout << "sample publisher: " << queue_stamps_.size() << " " << queue_samples_.size() << " " << queue_maximum_weight_.size() << "\n";
     }
 }
 
@@ -253,6 +254,8 @@ void SampleSetPublisher2D::loop()
                 }
             }
         }
+
+        /// set the newest remove queue
 
         if(publish_markers_) {
             pub_markers_.publish(marker_array_msg);
