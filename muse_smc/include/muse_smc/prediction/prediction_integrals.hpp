@@ -2,7 +2,7 @@
 #define PREDICTION_INTEGRALS_HPP
 
 #include <muse_smc/prediction/prediction_integral.hpp>
-#include <map>
+#include <unordered_map>
 
 namespace muse_smc {
 template<typename sample_t>
@@ -13,7 +13,7 @@ public:
     using prediction_model_t = PredictionModel<sample_t>;
     using prediction_integral_t = PredictionIntegral<sample_t>;
     using id_t = std::size_t;
-    using map_t = std::map<id_t, typename prediction_integral_t::Ptr>;
+    using map_t = std::unordered_map<id_t, typename prediction_integral_t::Ptr>;
 
 
     PredictionIntegrals(const typename prediction_integral_t::Ptr &global_integral) :

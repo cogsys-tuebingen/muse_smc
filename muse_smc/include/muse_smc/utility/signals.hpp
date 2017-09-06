@@ -5,7 +5,7 @@
 #include <memory>
 #include <atomic>
 #include <functional>
-#include <map>
+#include <unordered_map>
 
 namespace muse_smc {
 template<typename Slot>
@@ -87,9 +87,9 @@ public:
     }
 
 private:
-    std::mutex                  mutex;
-    std::map<Connection*, Slot> connections;
-    std::atomic_bool            enabled;
+    std::mutex                              mutex;
+    std::unordered_map<Connection*, Slot>   connections;
+    std::atomic_bool                        enabled;
 
 };
 }

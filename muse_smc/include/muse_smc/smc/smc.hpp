@@ -25,7 +25,6 @@
 #include <atomic>
 #include <queue>
 #include <condition_variable>
-#include <map>
 
 /***
  * Distance thresholds for resampling and update throttling are
@@ -59,12 +58,10 @@ public:
     using filter_state_t        = SMCState<sample_t>;
     using update_queue_t        =
     muse_smc::synchronized::priority_queue<typename update_t::Ptr,
-    std::deque<typename update_t::Ptr>,
     typename update_t::Greater>;
 
     using prediction_queue_t  =
     muse_smc::synchronized::priority_queue<typename prediction_t::Ptr,
-    std::deque<typename prediction_t::Ptr>,
     typename prediction_t::Greater>;
 
     SMC() :
@@ -324,6 +321,7 @@ protected:
 
                             prediction_integrals_->reset(model_id);
                             ++updates_applied_after_resampling_;
+                            state_publisher_->publishIntermidiate(sample_set_);
 #ifdef MUSE_SMC_LOG_STATE
                             log();
 #endif
