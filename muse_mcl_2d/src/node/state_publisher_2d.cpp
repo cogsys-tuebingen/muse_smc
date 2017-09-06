@@ -97,7 +97,7 @@ void StatePublisher::publishIntermidiate(const sample_set_t::Ptr &sample_set)
 
 void StatePublisher::publishState(const sample_set_t::Ptr &sample_set)
 {
-    sample_publisher_->add(sample_set->getSamples(),
+    sample_publisher_->set(sample_set->getSamples(),
                            sample_set->getMaximumWeight(),
                            latest_w_T_b_,
                            latest_w_T_b_covariance_,

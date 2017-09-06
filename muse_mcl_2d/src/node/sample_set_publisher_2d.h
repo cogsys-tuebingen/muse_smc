@@ -36,11 +36,11 @@ public:
     bool start();
     bool end();
 
-    void add(const sample_vector_t &sample_vector,
+    void set(const sample_vector_t &sample_vector,
              const double           weight_maximum,
              const Pose2D          &mean,
              const Covariance2D    &covariance,
-             const time_t &stamp);
+             const time_t          &stamp);
 
 private:
     std::atomic_bool                    running_;
@@ -50,11 +50,11 @@ private:
     std::mutex                          notify_mutex_;
 
     std::mutex                          data_mutex_;
-    std::queue<sample_vector_t::Ptr>    queue_samples_;
-    std::queue<double>                  queue_maximum_weight_;
-    std::queue<Pose2D>                  queue_means_;
-    std::queue<Covariance2D>            queue_covariances_;
-    std::queue<time_t>                  queue_stamps_;
+    sample_vector_t::Ptr                sample_;
+    double                              maximum_weight_;
+    Pose2D                              mean_;
+    Covariance2D                        covariance_;
+    time_t                              stamp_;
 
     ros::Publisher                      pub_markers_;
     ros::Publisher                      pub_samples_;

@@ -105,25 +105,23 @@ bool SampleSetPublisher2D::end()
     return false;
 }
 
-void SampleSetPublisher2D::add(const sample_vector_t &sample_vector,
+void SampleSetPublisher2D::set(const sample_vector_t &sample_vector,
                                const double maximum_weight,
                                const Pose2D &mean,
                                const Covariance2D &covariance,
                                const time_t &stamp)
 {
     lock_t lock(data_mutex_);
+    stamp_ = stamp;
     if(publish_mean_) {
-        queue_stamps_.emplace(stamp);
-        queue_means_.emplace(mean);
-        queue_covariances_.emplace(covariance);
+        mean_       = mean;
+        covariance_ = covariance;
         notify_.notify_one();
     }
     if(publish_markers_ || publish_poses_ || publish_samples_) {
-        queue_stamps_.emplace(stamp);
-        queue_samples_.emplace(sample_vector_t::Ptr(new sample_vector_t(sample_vector)));
-        queue_maximum_weight_.emplace(maximum_weight);
+        sample_.reset(new sample_vector_t(sample_vector));
+        maximum_weight_ = maximum_weight;
         notify_.notify_one();
-        std::cout << "sample publisher: " << queue_stamps_.size() << " " << queue_samples_.size() << " " << queue_maximum_weight_.size() << "\n";
     }
 }
 
@@ -191,19 +189,14 @@ void SampleSetPublisher2D::loop()
 
         {   /// POP DATA
             lock_t lock(data_mutex_);
-            stamp = queue_stamps_.front();
-            queue_stamps_.pop();
+            stamp = stamp_;
             if(publish_mean_) {
-                mean = queue_means_.front();
-                covariance = queue_covariances_.front();
-                queue_means_.pop();
-                queue_covariances_.pop();
+                mean = mean_;
+                covariance = covariance_;
             }
             if(publish_poses_ || publish_markers_ || publish_samples_) {
-                samples = queue_samples_.front();
-                queue_samples_.pop();
-                maximum_weight = queue_maximum_weight_.front();
-                queue_maximum_weight_.pop();
+                samples = std::move(sample_);
+                maximum_weight = maximum_weight_;
             }
         }
 
@@ -233,8 +226,6 @@ void SampleSetPublisher2D::loop()
             pose_array_msg->header = header;
         }
 
-
-
         if(publish_markers_ || publish_samples_ || publish_poses_) {
             std::size_t id = 0;
             for(const Sample2D &sample : *samples) {
@@ -254,8 +245,6 @@ void SampleSetPublisher2D::loop()
                 }
             }
         }
-
-        /// set the newest remove queue
 
         if(publish_markers_) {
             pub_markers_.publish(marker_array_msg);
