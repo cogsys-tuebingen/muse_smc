@@ -15,8 +15,7 @@ LaserProvider2D::LaserProvider2D() :
 
 void LaserProvider2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
 {
-    if(!time_offset_.isZero() &&
-            time_of_last_measurement_.isZero()) {
+    if(!time_offset_.isZero() && !time_of_last_measurement_.isZero()) {
         if(msg->header.stamp <= (time_of_last_measurement_ + time_offset_))
             return;
     }
