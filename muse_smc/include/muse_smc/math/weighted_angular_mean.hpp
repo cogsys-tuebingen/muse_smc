@@ -114,7 +114,7 @@ private:
     complex complex_mean_;
     double  W_;
     double  W_1_;
-};
+}__attribute__ ((aligned (64)));
 }
 }
 }

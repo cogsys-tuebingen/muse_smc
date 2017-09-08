@@ -46,7 +46,7 @@ public:
     {
         dirty_ = true;
         std::size_t _n = n_1_ + other.n_1_;
-        complex   _mean = (complex_mean_ * n_1_ + other.complex_mean_ * other.n_1_) /
+        complex   _mean = (complex_mean_ * static_cast<double>(n_1_) + other.complex_mean_ * static_cast<double>(other.n_1_)) /
                            static_cast<double>(_n);
         complex_mean_ = _mean;
         n_   = _n + 1;
@@ -88,7 +88,7 @@ private:
     complex complex_mean_;
     std::size_t n_;
     std::size_t n_1_;
-};
+}__attribute__ ((aligned (64)));
 }
 }
 }
