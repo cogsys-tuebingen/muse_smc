@@ -6,6 +6,7 @@
 #include <muse_mcl_2d/samples/sample_density_2d.hpp>
 #include <muse_mcl_2d/samples/sample_2d.hpp>
 
+
 #include <tf/tf.h>
 
 void insertion(muse_smc::SampleSet<muse_mcl_2d::Sample2D> &set)
@@ -85,7 +86,7 @@ void weightIterationForEach(muse_smc::SampleSet<muse_mcl_2d::Sample2D> &set)
     std::cout << "weightIterationForEach took time:         " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
 }
 
-
+#include <muse_mcl_2d/odometry/odometry_2d.hpp>
 int main(int argc, char *argv[])
 {
     muse_mcl_2d::SampleIndexation2D  indexation({0.5, M_PI / 180.0 * 10.0});
@@ -100,6 +101,7 @@ int main(int argc, char *argv[])
     std::cout << sizeof(tf::Transform) << "\n";
     std::cout << sizeof(muse_mcl_2d::Sample2D) << "\n";
     std::cout << sizeof(muse_mcl_2d::Transform2D) << "\n";
+    std::cout << sizeof(muse_mcl_2d::Odometry2D) << "\n";
 
     insertion(set);
     stateIteration(set);

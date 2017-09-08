@@ -67,6 +67,17 @@ target_link_libraries(${PROJECT_NAME}_models
     ${PROJECT_NAME}_maps
 )
 
+add_executable(${PROJECT_NAME}_simple_mapper
+    src/nodes/simple_mapper.cpp
+    src/nodes/dynamic_map.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}_simple_mapper
+    ${catkin_LIBRARIES}
+    ${PROJECT_NAME}_maps
+)
+
+# remove this later -->
 add_executable(${PROJECT_NAME}_example_distance_transform
     src/examples/distance_transform.cpp
 )
@@ -93,6 +104,8 @@ target_link_libraries(${PROJECT_NAME}_runtimes_line_iterator
     ${catkin_LIBRARIES}
     ${PROJECT_NAME}_maps
 )
+
+# <-- remove this later
 
 install(FILES plugins.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
