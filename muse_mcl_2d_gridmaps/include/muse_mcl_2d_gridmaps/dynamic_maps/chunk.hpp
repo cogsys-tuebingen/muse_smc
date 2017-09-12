@@ -2,31 +2,64 @@
 #define CHUNK_HPP
 
 #include <vector>
+#include <array>
 
 namespace muse_mcl_2d_gridmaps {
 namespace dynamic_maps {
 template<typename T>
 class Chunk {
 public:
-    Chunk(const std::size_t size,
+    using index_t = std::array<int, 2>;
+
+    Chunk() = default;
+    virtual ~Chunk() = default;
+
+    Chunk(const int size,
           const T default_value) :
         size_(size),
-        data_(size_ * size_, default_value)
+        data_(size * size, default_value),
+        data_ptr_(data_.data())
     {
     }
 
-    inline T const & at(const int x, const int y) const
+    Chunk(const Chunk &other) :
+        size_(other.size_),
+        data_(other.data_),
+        data_ptr_(data_.data())
     {
-        data_ptr_[y * size + x];
     }
 
-    inline T & at (const int x, const int y)
+    Chunk(Chunk &&other) :
+        size_(other.size_),
+        data_(std::move(other.data_)),
+        data_ptr_(data_.data())
     {
-        data_ptr[y * size + x];
+    }
+
+    Chunk& operator = (const Chunk &other)
+    {
+        size_  = (other.size_);
+        data_  = (other.data_);
+        data_ptr_ = (data_.data());
+        return *this;
+    }
+
+    inline T const & at(const index_t &i) const
+    {
+        return data_ptr_[i[1] * size_ + i[0]];
+    }
+
+    inline T & at (const index_t &i)
+    {
+        return data_ptr_[i[1] * size_ + i[0]];
+    }
+
+    inline void merge(const Chunk &other)
+    {
     }
 
 private:
-    const std::size_t   size_;
+    int                 size_;
     std::vector<T>      data_;
     T                  *data_ptr_;
 

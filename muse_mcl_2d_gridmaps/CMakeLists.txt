@@ -96,6 +96,15 @@ target_link_libraries(${PROJECT_NAME}_runtimes_line_iterator
     ${PROJECT_NAME}_static_maps
 )
 
+add_executable(${PROJECT_NAME}_runtimes_dynamic_maps
+    src/examples/runtimes_dynamic_maps.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}_runtimes_dynamic_maps
+    ${catkin_LIBRARIES}
+    ${OpenCV_LIBRARIES}
+)
+
 # <-- remove this later
 
 install(FILES plugins.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})

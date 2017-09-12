@@ -13,6 +13,7 @@ BinaryGridMap::BinaryGridMap(const nav_msgs::OccupancyGrid &occupancy_grid,
                     occupancy_grid.info.resolution,
                     occupancy_grid.info.height,
                     occupancy_grid.info.width,
+                    0,
                     occupancy_grid.header.frame_id)
 {
     convert(occupancy_grid, threshold);
