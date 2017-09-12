@@ -1,5 +1,5 @@
-#include <muse_mcl_2d_gridmaps/maps/distance_gridmap.h>
-#include <muse_mcl_2d_gridmaps/algorithms/distance_transform.hpp>
+#include <muse_mcl_2d_gridmaps/static_maps/distance_gridmap.h>
+#include <muse_mcl_2d_gridmaps/static_maps/algorithms/distance_transform.hpp>
 
 #include <tf/tf.h>
 

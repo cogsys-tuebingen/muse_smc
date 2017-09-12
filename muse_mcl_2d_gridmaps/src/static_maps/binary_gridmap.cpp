@@ -1,4 +1,4 @@
-#include <muse_mcl_2d_gridmaps/maps/binary_gridmap.h>
+#include <muse_mcl_2d_gridmaps/static_maps/binary_gridmap.h>
 #include <tf/tf.h>
 
 using namespace muse_mcl_2d;

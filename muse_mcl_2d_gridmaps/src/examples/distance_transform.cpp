@@ -1,4 +1,4 @@
-#include <muse_mcl_2d_gridmaps/algorithms/distance_transform.hpp>
+#include <muse_mcl_2d_gridmaps/static_maps/algorithms/distance_transform.hpp>
 
 #include <opencv2/opencv.hpp>
 

@@ -16,7 +16,7 @@ find_package(Eigen3 REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}_maps ${PROJECT_NAME}_providers ${PROJECT_NAME}_models
+  LIBRARIES ${PROJECT_NAME}_static_maps ${PROJECT_NAME}_providers ${PROJECT_NAME}_models
 #  CATKIN_DEPENDS muse_mcl nav_msgs pluginlib roscpp rostest
 #  DEPENDS system_lib
 )
@@ -28,12 +28,12 @@ include_directories(
   ${OpenCV_INCLUDE_DIRS}
 )
 
-add_library(${PROJECT_NAME}_maps SHARED
-    src/maps/binary_gridmap.cpp
-    src/maps/distance_gridmap.cpp
-    src/maps/probability_gridmap.cpp
+add_library(${PROJECT_NAME}_static_maps SHARED
+    src/static_maps/binary_gridmap.cpp
+    src/static_maps/distance_gridmap.cpp
+    src/static_maps/probability_gridmap.cpp
 )
-target_link_libraries(${PROJECT_NAME}_maps
+target_link_libraries(${PROJECT_NAME}_static_maps
     ${catkin_LIBRARIES}
     ${OpenCV_LIBRARIES}
 )
@@ -49,7 +49,7 @@ add_library(${PROJECT_NAME}_providers SHARED
 
 target_link_libraries(${PROJECT_NAME}_providers
     ${catkin_LIBRARIES}
-    ${PROJECT_NAME}_maps
+    ${PROJECT_NAME}_static_maps
 )
 
 add_library(${PROJECT_NAME}_models SHARED
@@ -64,7 +64,7 @@ add_library(${PROJECT_NAME}_models SHARED
 
 target_link_libraries(${PROJECT_NAME}_models
     ${catkin_LIBRARIES}
-    ${PROJECT_NAME}_maps
+    ${PROJECT_NAME}_static_maps
 )
 
 # remove this later -->
@@ -83,7 +83,7 @@ add_executable(${PROJECT_NAME}_runtimes_get_range
 
 target_link_libraries(${PROJECT_NAME}_runtimes_get_range
     ${catkin_LIBRARIES}
-    ${PROJECT_NAME}_maps
+    ${PROJECT_NAME}_static_maps
 )
 
 add_executable(${PROJECT_NAME}_runtimes_line_iterator
@@ -92,7 +92,7 @@ add_executable(${PROJECT_NAME}_runtimes_line_iterator
 
 target_link_libraries(${PROJECT_NAME}_runtimes_line_iterator
     ${catkin_LIBRARIES}
-    ${PROJECT_NAME}_maps
+    ${PROJECT_NAME}_static_maps
 )
 
 # <-- remove this later

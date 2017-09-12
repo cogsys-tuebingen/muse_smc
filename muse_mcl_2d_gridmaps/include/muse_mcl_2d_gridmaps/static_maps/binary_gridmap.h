@@ -1,5 +1,5 @@
 
-#include <muse_mcl_2d_gridmaps/maps/gridmap.hpp>
+#include <muse_mcl_2d_gridmaps/static_maps/gridmap.hpp>
 #include <nav_msgs/OccupancyGrid.h>
 
 namespace muse_mcl_2d_gridmaps {

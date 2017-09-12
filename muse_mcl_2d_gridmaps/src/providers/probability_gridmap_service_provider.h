@@ -9,7 +9,7 @@
 #include <condition_variable>
 
 #include <muse_mcl_2d/map/map_provider_2d.hpp>
-#include <muse_mcl_2d_gridmaps/maps/probability_gridmap.h>
+#include <muse_mcl_2d_gridmaps/static_maps/probability_gridmap.h>
 
 namespace muse_mcl_2d_gridmaps {
 class ProbabilityGridmapServiceProvider : public muse_mcl_2d::MapProvider2D

@@ -6,7 +6,7 @@
 #include <cmath>
 
 #include <muse_mcl_2d/map/map_2d.hpp>
-#include <muse_mcl_2d_gridmaps/algorithms/bresenham.hpp>
+#include <muse_mcl_2d_gridmaps/static_maps/algorithms/bresenham.hpp>
 
 namespace muse_mcl_2d_gridmaps {
 namespace static_maps {
