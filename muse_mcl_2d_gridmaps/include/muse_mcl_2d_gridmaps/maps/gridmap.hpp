@@ -9,7 +9,7 @@
 #include <muse_mcl_2d_gridmaps/algorithms/bresenham.hpp>
 
 namespace muse_mcl_2d_gridmaps {
-namespace maps {
+namespace static_maps {
 template<typename T>
 class GridMap : public muse_mcl_2d::Map2D
 {

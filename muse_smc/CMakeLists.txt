@@ -21,13 +21,13 @@ catkin_package(
     INCLUDE_DIRS    include
     DEPENDS         TinyXML Eigen3
     CFG_EXTRAS      muse_smc_extras.cmake
-                    muse_smc_add_unit_test_gtest.cmake
                     muse_smc_enable_c++11.cmake
+                    muse_smc_add_unit_test_gtest.cmake
                     muse_smc_show_headers.cmake
 )
 
-add_definitions("-DMUSE_SMC_USE_DOTTY")
-add_definitions("-DMUSE_SMC_LOG_STATE")
+# add_definitions("-DMUSE_SMC_USE_DOTTY")
+# add_definitions("-DMUSE_SMC_LOG_STATE")
 
 include_directories(
   include

@@ -31,14 +31,14 @@ ProbabilityGridmapServiceProvider::state_space_t::ConstPtr ProbabilityGridmapSer
                 loading_ = true;
 
                 auto load = [this, req]() {
-                    maps::ProbabilityGridMap::Ptr map(new maps::ProbabilityGridMap(req.response.map));
+                    static_maps::ProbabilityGridMap::Ptr map(new static_maps::ProbabilityGridMap(req.response.map));
                     std::unique_lock<std::mutex>l(map_mutex_);
                     map_ = map;
                     loading_ = false;
                 };
                 auto load_blocking = [this, req]() {
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    map_.reset(new maps::ProbabilityGridMap(req.response.map));
+                    map_.reset(new static_maps::ProbabilityGridMap(req.response.map));
                     loading_ = false;
                     map_loaded_.notify_one();
                 };

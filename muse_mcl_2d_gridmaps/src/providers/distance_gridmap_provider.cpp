@@ -41,14 +41,14 @@ void DistanceGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr &ms
             loading_ = true;
 
             auto load = [this, msg]() {
-                maps::DistanceGridMap::Ptr map(new maps::DistanceGridMap(*msg, binarization_threshold_, kernel_size_));
+                static_maps::DistanceGridMap::Ptr map(new static_maps::DistanceGridMap(*msg, binarization_threshold_, kernel_size_));
                 std::unique_lock<std::mutex>l(map_mutex_);
                 map_ = map;
                 loading_ = false;
             };
             auto load_blocking = [this, msg]() {
                 std::unique_lock<std::mutex>l(map_mutex_);
-                maps::DistanceGridMap::Ptr map(new maps::DistanceGridMap(*msg, binarization_threshold_, kernel_size_));
+                static_maps::DistanceGridMap::Ptr map(new static_maps::DistanceGridMap(*msg, binarization_threshold_, kernel_size_));
                 map_ = map;
                 loading_ = false;
 

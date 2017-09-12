@@ -3,7 +3,7 @@
 
 using namespace muse_mcl_2d_gridmaps;
 using namespace muse_mcl_2d;
-using namespace maps;
+using namespace static_maps;
 
 ProbabilityGridMap::ProbabilityGridMap(const nav_msgs::OccupancyGrid &occupancy_grid) :
     GridMap<double>(occupancy_grid.info.origin.position.x,

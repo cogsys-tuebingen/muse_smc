@@ -34,14 +34,14 @@ DistanceGridmapServiceProvider::state_space_t::ConstPtr DistanceGridmapServicePr
                 loading_ = true;
 
                 auto load = [this, req]() {
-                    maps::DistanceGridMap::Ptr map(new maps::DistanceGridMap(req.response.map, binarization_threshold_, kernel_size_));
+                    static_maps::DistanceGridMap::Ptr map(new static_maps::DistanceGridMap(req.response.map, binarization_threshold_, kernel_size_));
                     std::unique_lock<std::mutex>l(map_mutex_);
                     map_ = map;
                     loading_ = false;
                 };
                 auto load_blocking = [this, req]() {
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    map_.reset(new maps::DistanceGridMap(req.response.map, binarization_threshold_, kernel_size_));
+                    map_.reset(new static_maps::DistanceGridMap(req.response.map, binarization_threshold_, kernel_size_));
                     loading_ = false;
                     map_loaded_.notify_one();
                 };

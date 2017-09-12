@@ -17,14 +17,14 @@ void BeamModelMLE::apply(const data_t::ConstPtr          &data,
                          const state_space_t::ConstPtr   &map,
                          sample_set_t::weight_iterator_t set)
 {
-    if(!map->isType<maps::BinaryGridMap>()) {
+    if(!map->isType<static_maps::BinaryGridMap>()) {
         return;
     }
 
     if(use_estimated_parameters_)
         parameter_estimator_mle_->getParameters(parameters_);
 
-    const maps::BinaryGridMap &gridmap = map->as<maps::BinaryGridMap>();
+    const static_maps::BinaryGridMap &gridmap = map->as<static_maps::BinaryGridMap>();
     const muse_mcl_2d_laser::LaserScan2D        &laser_data = data->as<muse_mcl_2d_laser::LaserScan2D>();
     const muse_mcl_2d_laser::LaserScan2D::Rays  &laser_rays = laser_data.getRays();
 

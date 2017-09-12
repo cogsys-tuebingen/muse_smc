@@ -38,14 +38,14 @@ void BinaryGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr &msg)
             loading_ = true;
 
             auto load = [this, msg]() {
-                maps::BinaryGridMap::Ptr map(new maps::BinaryGridMap(msg, binarization_threshold_));
+                static_maps::BinaryGridMap::Ptr map(new static_maps::BinaryGridMap(msg, binarization_threshold_));
                 std::unique_lock<std::mutex>l(map_mutex_);
                 map_ = map;
                 loading_ = false;
             };
             auto load_blocking = [this, msg]() {
                 std::unique_lock<std::mutex>l(map_mutex_);
-                map_.reset(new maps::BinaryGridMap(msg, binarization_threshold_));
+                map_.reset(new static_maps::BinaryGridMap(msg, binarization_threshold_));
                 loading_ = false;
                 map_loaded_.notify_one();
             };

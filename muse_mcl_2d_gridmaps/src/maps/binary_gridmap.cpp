@@ -3,7 +3,7 @@
 
 using namespace muse_mcl_2d;
 using namespace muse_mcl_2d_gridmaps;
-using namespace maps;
+using namespace static_maps;
 
 BinaryGridMap::BinaryGridMap(const nav_msgs::OccupancyGrid &occupancy_grid,
                              const double threshold) :

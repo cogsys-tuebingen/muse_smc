@@ -6,7 +6,7 @@
 
 using namespace muse_mcl_2d_gridmaps;
 using namespace muse_mcl_2d;
-using namespace maps;
+using namespace static_maps;
 
 DistanceGridMap::DistanceGridMap(const nav_msgs::OccupancyGrid &occupancy_grid,
                                  const double maximum_distance,

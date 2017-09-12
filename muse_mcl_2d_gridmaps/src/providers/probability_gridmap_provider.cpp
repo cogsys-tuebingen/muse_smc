@@ -37,14 +37,14 @@ void ProbabilityGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr 
             loading_ = true;
 
             auto load = [this, msg]() {
-                maps::ProbabilityGridMap::Ptr map(new maps::ProbabilityGridMap(msg));
+                static_maps::ProbabilityGridMap::Ptr map(new static_maps::ProbabilityGridMap(msg));
                 std::unique_lock<std::mutex>l(map_mutex_);
                 map_ = map;
                 loading_ = false;
             };
             auto load_blocking = [this, msg]() {
                 std::unique_lock<std::mutex>l(map_mutex_);
-                map_.reset(new maps::ProbabilityGridMap(msg));
+                map_.reset(new static_maps::ProbabilityGridMap(msg));
                 loading_ = false;
                 map_loaded_.notify_one();
             };

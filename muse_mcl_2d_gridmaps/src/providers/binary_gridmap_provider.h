@@ -28,7 +28,7 @@ protected:
 
     mutable std::mutex               map_mutex_;
     mutable std::condition_variable  map_loaded_;
-    maps::BinaryGridMap::Ptr map_;
+    static_maps::BinaryGridMap::Ptr map_;
     std::atomic_bool         loading_;
     std::thread              worker_;
 

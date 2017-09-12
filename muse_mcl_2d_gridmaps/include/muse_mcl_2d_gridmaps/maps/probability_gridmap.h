@@ -1,11 +1,11 @@
 #ifndef PROBABILITY_GRIDMAP_H
 #define PROBABILITY_GRIDMAP_H
 
-#include "gridmap.hpp"
+#include <muse_mcl_2d_gridmaps/maps/gridmap.hpp>
 #include <nav_msgs/OccupancyGrid.h>
 
 namespace muse_mcl_2d_gridmaps {
-namespace maps {
+namespace static_maps {
 class ProbabilityGridMap : public GridMap<double>
 {
 public:

@@ -34,14 +34,14 @@ BinaryGridmapServiceProvider::state_space_t::ConstPtr BinaryGridmapServiceProvid
                 loading_ = true;
 
                 auto load = [this, req]() {
-                    maps::BinaryGridMap::Ptr map(new maps::BinaryGridMap(req.response.map, binarization_threshold_));
+                    static_maps::BinaryGridMap::Ptr map(new static_maps::BinaryGridMap(req.response.map, binarization_threshold_));
                     std::unique_lock<std::mutex>l(map_mutex_);
                     map_ = map;
                     loading_ = false;
                 };
                 auto load_blocking = [this, req]() {
                    std::unique_lock<std::mutex> l(map_mutex_);
-                   map_.reset(new maps::BinaryGridMap(req.response.map, binarization_threshold_));
+                   map_.reset(new static_maps::BinaryGridMap(req.response.map, binarization_threshold_));
                    loading_ = false;
                    map_loaded_.notify_one();
                 };

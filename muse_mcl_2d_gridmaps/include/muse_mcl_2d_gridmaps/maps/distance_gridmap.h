@@ -1,11 +1,11 @@
 #ifndef DISTANCE_GRIDMAP_H
 #define DISTANCE_GRIDMAP_H
 
-#include "gridmap.hpp"
+#include <muse_mcl_2d_gridmaps/maps/gridmap.hpp>
 #include <nav_msgs/OccupancyGrid.h>
 
 namespace muse_mcl_2d_gridmaps {
-namespace maps {
+namespace static_maps {
 class DistanceGridMap : public GridMap<double>
 {
 public:
