@@ -1,0 +1,4 @@
+#ifndef BRESENHAM_HPP
+#define BRESENHAM_HPP
+
+#endif // BRESENHAM_HPP

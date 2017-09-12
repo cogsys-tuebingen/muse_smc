@@ -9,7 +9,7 @@ namespace muse_mcl_2d {
 class SampleIndexation2D {
 public:
     using resolution_t = std::array<double, 2>;
-    using index_t      = muse_smc::math::Index<3>;
+    using index_t      = std::array<int, 3>;
     using size_t       = std::array<std::size_t, 2>;
 
     SampleIndexation2D()

@@ -4,6 +4,7 @@ project(muse_mcl_2d_gridmaps)
 find_package(catkin REQUIRED COMPONENTS
   muse_mcl_2d
   muse_mcl_2d_laser
+  cslibs_indexed_storage
   nav_msgs
   pluginlib
   roscpp

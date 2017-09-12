@@ -24,7 +24,7 @@ struct SampleClustering2D {
     using angular_mean_map_t = std::unordered_map<int, SampleDensityData2D::angular_mean_t>;
 
     /// required definitions -->
-    using neighborhood_t  = cis::operations::clustering::GridNeighborhoodStatic<std::tuple_size<index_t::base_t>::value, 3>;
+    using neighborhood_t  = cis::operations::clustering::GridNeighborhoodStatic<std::tuple_size<index_t>::value, 3>;
     using visitor_index_t = neighborhood_t::offset_t;
 
     SampleClustering2D(indexation_t &indexation) :

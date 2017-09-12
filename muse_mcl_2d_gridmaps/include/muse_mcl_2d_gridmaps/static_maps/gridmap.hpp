@@ -14,9 +14,9 @@ template<typename T>
 class GridMap : public muse_mcl_2d::Map2D
 {
 public:
-    using Ptr           = std::shared_ptr<GridMap>;
-    using LineIterator  = algorithms::Bresenham<T const>;
-    using Index         = std::array<int, 2>;
+    using Ptr              = std::shared_ptr<GridMap<T>>;
+    using line_iterator_t  = algorithms::Bresenham<T const>;
+    using index_t          = std::array<int, 2>;
 
     GridMap(const double origin_x,
             const double origin_y,
@@ -31,23 +31,10 @@ public:
         height_(height),
         width_(width),
         max_index_({(int)(width)-1,(int)(height)-1}),
-        origin_x_(origin_x),
-        origin_y_(origin_y),
-        origin_phi_(origin_phi),
-        cos_phi_(cos(origin_phi)),
-        sin_phi_(sin(origin_phi)),
-        tx_(origin_x_),
-        ty_(origin_y_)
+        m_T_w_(origin_x, origin_y, origin_phi),
+        w_T_m_(m_T_w_.inverse())
     {
-        if(origin_phi_ != 0.0) {
-            tx_ =  -cos_phi_ * origin_x
-                   -sin_phi_ * origin_y;
-            ty_ =   sin_phi_ * origin_x
-                   -cos_phi_ * origin_y;
-        } else {
-            tx_ = -origin_x;
-            ty_ = -origin_y;
-        }
+
     }
 
     virtual inline muse_mcl_2d::Point2D getMin() const override
@@ -66,69 +53,33 @@ public:
 
     virtual inline muse_mcl_2d::Pose2D getOrigin() const
     {
-        return muse_mcl_2d::Pose2D(origin_x_, origin_y_, origin_phi_);
+        return m_T_w_;
     }
 
-    inline bool toIndex(const muse_mcl_2d::Point2D &p,
-                        Index &i) const
+    inline bool toIndex(const muse_mcl_2d::Point2D &p_w,
+                        index_t &i) const
     {
-        double _x = p.x();
-        double _y = p.y();
-        double x = _x;
-        double y = _y;
+        const muse_mcl_2d::Point2D p_m = m_T_w_ * p_w;
 
-        if(origin_phi_ != 0.0) {
-            x =   cos_phi_ * _x +
-                  sin_phi_ * _y;
-            y =  -sin_phi_ * _x +
-                  cos_phi_ * _y;
-        }
-
-        i[0] = static_cast<int>((x + tx_) * resolution_inv_ + 0.5);
-        i[1] = static_cast<int>((y + ty_) * resolution_inv_ + 0.5);
+        i[0] = static_cast<int>(p_m.x() * resolution_inv_ + 0.5);
+        i[1] = static_cast<int>(p_m.y() * resolution_inv_ + 0.5);
 
         return (i[0] >= 0 && i[0] <= max_index_[0]) ||
                (i[1] >= 0 && i[1] <= max_index_[1]);
     }
 
-    inline void fromIndex(const Index &i,
-                          muse_mcl_2d::Point2D &p) const
+    inline void fromIndex(const index_t &i,
+                          muse_mcl_2d::Point2D &p_w) const
     {
-        double &_x = p.x();
-        double &_y = p.y();
-        _x = i[0] * resolution_;
-        _y = i[1] * resolution_;
-        if(origin_phi_ != 0.0)  {
-            const double x =  cos_phi_ * _x -
-                              sin_phi_ * _y;
-            const double y =  sin_phi_ * _x +
-                              cos_phi_ * _y;
-
-            _x = x;
-            _y = y;
-        }
-        _x += origin_x_;
-        _y += origin_y_;
+        p_w = w_T_m_ * muse_mcl_2d::Point2D(i[0] * resolution_,
+                                            i[1] * resolution_);
     }
 
-    inline void fromIndex(const LineIterator &it,
-                          muse_mcl_2d::Point2D &p) const
+    inline void fromIndex(const line_iterator_t &it,
+                          muse_mcl_2d::Point2D &p_w) const
     {
-        double &_x = p.x();
-        double &_y = p.y();
-        _x = it.x() * resolution_;
-        _y = it.y() * resolution_;
-        if(origin_phi_ != 0.0)  {
-            const double x =  cos_phi_ * _x -
-                              sin_phi_ * _y;
-            const double y =  sin_phi_ * _x +
-                              cos_phi_ * _y;
-
-            _x = x;
-            _y = y;
-        }
-        _x += origin_x_;
-        _y += origin_y_;
+        p_w = w_T_m_ * muse_mcl_2d::Point2D(it.x() * resolution_,
+                                            it.y() * resolution_);
     }
 
 
@@ -147,7 +98,7 @@ public:
 
     inline T& at(const muse_mcl_2d::Point2D &point)
     {
-        Index i;
+        index_t i;
         toIndex(point, i);
         if(invalid(i)) {
             throw std::runtime_error("[GridMap] : Invalid Index!");
@@ -157,7 +108,7 @@ public:
 
     inline const T& at(const muse_mcl_2d::Point2D &point) const
     {
-        Index i;
+        index_t i;
         toIndex(point, i);
         if(invalid(i)) {
             throw std::runtime_error("[GridMap] : Invalid Index!");
@@ -165,20 +116,20 @@ public:
         return at(i);
     }
 
-    inline LineIterator getLineIterator(const Index &start,
-                                        const Index &_end) const
+    inline line_iterator_t getLineIterator(const index_t &start,
+                                        const index_t &_end) const
     {
-        return LineIterator(start, _end, width_, data_ptr_);
+        return line_iterator_t(start, _end, width_, data_ptr_);
     }
 
-    inline LineIterator getLineIterator(const muse_mcl_2d::Point2D &start,
+    inline line_iterator_t getLineIterator(const muse_mcl_2d::Point2D &start,
                                         const muse_mcl_2d::Point2D &end) const
     {
-        Index start_index;
-        Index end_index;
+        index_t start_index;
+        index_t end_index;
         toIndex(start, start_index);
         toIndex(end, end_index);
-        return LineIterator(start_index,
+        return line_iterator_t(start_index,
                             end_index,
                             {static_cast<int>(width_), static_cast<int>(height_)},
                             data_ptr_);
@@ -206,25 +157,17 @@ public:
 
 
 protected:
-    const double      resolution_;
-    const double      resolution_inv_;
-    const std::size_t height_;
-    const std::size_t width_;
-    const Index       max_index_;
+    const double                      resolution_;
+    const double                      resolution_inv_;
+    const std::size_t                 height_;
+    const std::size_t                 width_;
+    const index_t                     max_index_;
+    const muse_mcl_2d::Transform2D    m_T_w_;
+    const muse_mcl_2d::Transform2D    w_T_m_;
 
-    std::vector<T>  data_;
-    T*              data_ptr_;
+    std::vector<T>                    data_;
+    T*                                data_ptr_;
 
-    double      origin_x_;
-    double      origin_y_;
-    double      origin_phi_;
-
-    double      cos_phi_;
-    double      sin_phi_;
-    double      tx_;
-    double      ty_;
-    double      tx_inv_;
-    double      ty_inv_;
 
     /**
       * @todo: implement capping by inesection with bounding box implementation
@@ -237,7 +180,7 @@ protected:
      * @return
      */
 
-    inline bool invalid(const Index &_i) const
+    inline bool invalid(const index_t &_i) const
     {
         return _i[0] < 0 ||
                _i[1] < 0 ||

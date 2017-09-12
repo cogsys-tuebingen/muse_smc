@@ -30,7 +30,7 @@ DistanceGridMap::DistanceGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupa
 
 double DistanceGridMap::at(const muse_mcl_2d::Point2D &point) const
 {
-    Index i;
+    index_t i;
     toIndex(point, i);
     if(invalid(i))
         return std::numeric_limits<double>::max();

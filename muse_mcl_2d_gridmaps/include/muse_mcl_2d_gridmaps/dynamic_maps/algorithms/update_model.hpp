@@ -1,0 +1,4 @@
+#ifndef UPDATE_MODEL_HPP
+#define UPDATE_MODEL_HPP
+
+#endif // UPDATE_MODEL_HPP
