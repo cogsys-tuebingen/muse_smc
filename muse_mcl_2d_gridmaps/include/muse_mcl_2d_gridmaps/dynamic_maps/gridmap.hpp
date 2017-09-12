@@ -6,7 +6,6 @@
 #include <cmath>
 
 
-
 #include <muse_mcl_2d/map/map_2d.hpp>
 #include <muse_mcl_2d_gridmaps/dynamic_maps/algorithms/bresenham.hpp>
 #include <muse_mcl_2d_gridmaps/dynamic_maps/chunk.hpp>
@@ -32,17 +31,42 @@ public:
             const double origin_phi,
             const double resolution,
             const std::string &frame) :
-        Map2D(frame)
+        Map2D(frame),
+        resolution_(resolution),
+        resolution_inv_(1.0 / resolution_),
+        w_T_m_(origin_x, origin_y, origin_phi),
+        minimum_index_{std::numeric_limits<int>::max(),
+                       std::numeric_limits<int>::max()},
+        maximum_index_{std::numeric_limits<int>::min(),
+                       std::numeric_limits<int>::min()}
     {
     }
 
-protected:
-    const double      resolution_;
-    const double      resolution_inv_;
-    std::size_t       width_;
-    std::size_t       height_;
+    virtual inline muse_mcl_2d::Point2D getMin() const override
+    {
+        muse_mcl_2d::Point2D p;
+        fromIndex({0,0},p);
+        return p;
+    }
 
-    double            origin_x_;
+    virtual inline muse_mcl_2d::Point2D getMax() const override
+    {
+        muse_mcl_2d::Point2D p;
+        fromIndex({(int)width_-1,(int)height_-1},p);
+        return p;
+    }
+
+
+
+protected:
+    const double                resolution_;
+    const double                resolution_inv_;
+    muse_mcl_2d::Transform2D    w_T_m_;
+    muse_mcl_2d::Transform2D    m_T_w_;
+
+    index_t                     min_index_;
+    index_t                     max_index_;
+
 
 };
 }
