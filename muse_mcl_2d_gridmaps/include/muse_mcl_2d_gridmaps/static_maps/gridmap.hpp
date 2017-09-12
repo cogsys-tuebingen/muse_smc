@@ -31,10 +31,9 @@ public:
         height_(height),
         width_(width),
         max_index_({(int)(width)-1,(int)(height)-1}),
-        m_T_w_(origin_x, origin_y, origin_phi),
-        w_T_m_(m_T_w_.inverse())
+        w_T_m_(origin_x, origin_y, origin_phi),
+        m_T_w_(w_T_m_.inverse())
     {
-
     }
 
     virtual inline muse_mcl_2d::Point2D getMin() const override
@@ -53,7 +52,7 @@ public:
 
     virtual inline muse_mcl_2d::Pose2D getOrigin() const
     {
-        return m_T_w_;
+        return w_T_m_;
     }
 
     inline bool toIndex(const muse_mcl_2d::Point2D &p_w,
@@ -162,8 +161,8 @@ protected:
     const std::size_t                 height_;
     const std::size_t                 width_;
     const index_t                     max_index_;
-    const muse_mcl_2d::Transform2D    m_T_w_;
     const muse_mcl_2d::Transform2D    w_T_m_;
+    const muse_mcl_2d::Transform2D    m_T_w_;
 
     std::vector<T>                    data_;
     T*                                data_ptr_;

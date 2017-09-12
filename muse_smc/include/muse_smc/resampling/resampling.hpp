@@ -68,6 +68,11 @@ public:
 
     inline void apply(sample_set_t &sample_set)
     {
+        if(sample_set.getWeightSum() == 0.0) {
+            std::cerr << "[MuseSMC]: Cannot resample if all weights are zero! \n";
+            return;
+        }
+
         updateRecovery(sample_set);
         if(recovery_random_pose_probability_ == 0.0)
             doApply(sample_set);

@@ -31,7 +31,7 @@
             <param name="base_class"               value="muse_mcl_2d::DataProvider2D" />
             <param name="topic"                    value="/sick/front" />
             <param name="undistortion"             value="true" />
-            <param name="undistortion_fixed_frame" value="/odom" />
+            <param name="undistortion_fixed_frame" value="odom" />
             <param name="undistortion_tf_timeout"  value="0.1" />
             <param name="range_max"                value="10.0" />
             <param name="range_min"                value="0.1" />
@@ -45,7 +45,7 @@
           <param name="base_class"               value="muse_mcl_2d::DataProvider2D" />
           <param name="topic"                    value="/sick/rear" />
           <param name="undistortion"             value="true" />
-          <param name="undistortion_fixed_frame" value="/odom" />
+          <param name="undistortion_fixed_frame" value="odom" />
           <param name="undistortion_tf_timeout"  value="0.1" />
           <param name="range_max"                value="30.0" />
           <param name="range_min"                value="0.1" />

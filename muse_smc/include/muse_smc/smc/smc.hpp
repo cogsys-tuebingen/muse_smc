@@ -81,14 +81,14 @@ public:
         end();
     }
 
-    void setup(const typename sample_set_t::Ptr            &sample_set,
-               const typename uniform_sampling_t::Ptr      &sample_uniform,
-               const typename normal_sampling_t::Ptr       &sample_normal,
-               const typename resampling_t::Ptr            &resampling,
-               const typename filter_state_t::Ptr          &state_publisher,
-               const typename prediction_integrals_t::Ptr  &prediction_integrals,
-               const Rate                                  &preferred_filter_rate,
-               const std::size_t                            minimum_update_cycles)
+    void setup(typename sample_set_t::Ptr            sample_set,
+               typename uniform_sampling_t::Ptr      sample_uniform,
+               typename normal_sampling_t::Ptr       sample_normal,
+               typename resampling_t::Ptr            resampling,
+               typename filter_state_t::Ptr          state_publisher,
+               typename prediction_integrals_t::Ptr  prediction_integrals,
+               const Rate                           &preferred_filter_rate,
+               const std::size_t                     minimum_update_cycles)
     {
         sample_set_             = sample_set;
         sample_uniform_         = sample_uniform;

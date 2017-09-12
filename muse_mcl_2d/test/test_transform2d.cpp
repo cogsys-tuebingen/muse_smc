@@ -371,6 +371,44 @@ TEST(Test_muse_mcl_2d, testTransformInterpolation)
     EXPECT_NEAR(t_0_inverse.yaw(), tf::getYaw(tf_0_inverse.getRotation()), 1e-5);
 }
 
+TEST(Test_muse_mcl_2d, testTransformInverse)
+{
+    rng_t rng(-10.0, 10.0);
+    const double x_0 = rng.get();
+    const double y_0 = rng.get();
+
+    Transform2D   t_0(x_0, y_0, 0.0);
+    tf::Transform tf_0(tf::createQuaternionFromYaw(0.0),
+                       tf::Vector3(x_0, y_0, 0.0));
+
+    Transform2D t_0_inverse = t_0.inverse();
+    tf::Transform tf_0_inverse = tf_0.inverse();
+
+    EXPECT_NEAR(t_0_inverse.tx(), tf_0_inverse.getOrigin().x(), 1e-5);
+    EXPECT_NEAR(t_0_inverse.ty(), tf_0_inverse.getOrigin().y(), 1e-5);
+    EXPECT_NEAR(t_0_inverse.tx(), -x_0, 1e-5);
+    EXPECT_NEAR(t_0_inverse.ty(), -y_0, 1e-5);
+    EXPECT_NEAR(t_0_inverse.yaw(), 0.0, 1e-5);
+    EXPECT_NEAR(t_0_inverse.sin(), 0.0, 1e-5);
+    EXPECT_NEAR(t_0_inverse.cos(), 1.0, 1e-5);
+
+    const double x_1 = rng.get();
+    const double y_1 = rng.get();
+    const double yaw_1 = muse_smc::math::angle::normalize(rng.get());
+    Transform2D   t_1(x_1, y_1, yaw_1);
+    tf::Transform tf_1(tf::createQuaternionFromYaw(yaw_1),
+                       tf::Vector3(x_1, y_1, 0.0));
+
+    Transform2D t_1_inverse = t_1.inverse();
+    tf::Transform tf_1_inverse = tf_1.inverse();
+
+    EXPECT_NEAR(t_1_inverse.tx(), tf_1_inverse.getOrigin().x(), 1e-5);
+    EXPECT_NEAR(t_1_inverse.ty(), tf_1_inverse.getOrigin().y(), 1e-5);
+    EXPECT_NEAR(t_1_inverse.yaw(),tf::getYaw(tf_1_inverse.getRotation()), 1e-5);
+
+
+}
+
 int main(int argc, char *argv[])
 {
     testing::InitGoogleTest(&argc, argv);
