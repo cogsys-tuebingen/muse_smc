@@ -42,25 +42,27 @@ int main(int argc, char *argv[])
     render();
 //    std::cout << map.getOrigin() << std::endl;
 
-//    /// now to the more difficult cases
-//    map.at(muse_mcl_2d::Point2D(-1.0,  0.0))   = 127;
-//    render();
-//    std::cout << map.getOrigin() << std::endl;
-//    map.at(muse_mcl_2d::Point2D(-1.0,  1.0))   = 127;
-//    render();
-//    std::cout << map.getOrigin() << std::endl;
-//    map.at(muse_mcl_2d::Point2D(-1.0, -1.0))   = 127;
-//    render();
-//    std::cout << map.getOrigin() << std::endl;
+    /// now to the more difficult cases
+    map.at(muse_mcl_2d::Point2D(-1.0,  0.0))   = 127;
+    render();
+    std::cout << map.getOrigin() << std::endl;
+    map.at(muse_mcl_2d::Point2D(-1.0,  1.0))   = 127;
+    render();
+    std::cout << map.getOrigin() << std::endl;
+    map.at(muse_mcl_2d::Point2D(-1.0, -1.0))   = 127;
+    render();
+    std::cout << map.getOrigin() << std::endl;
 
-//    auto it = map.getLineIterator(std::array<int, 2>{0,0},
-//                                  std::array<int, 2>{59,59});
-//    do {
-//        *it = 70;
-//        render();
-//        ++it;
-//    } while(!it.done());
+    auto it = map.getLineIterator(std::array<int, 2>{0,0},
+                                  std::array<int, 2>{59,59});
+    do {
+        *it = 70;
+        render();
+        ++it;
+    } while(!it.done());
 
+    *it = 70;
+    render();
 
     return 0;
 }

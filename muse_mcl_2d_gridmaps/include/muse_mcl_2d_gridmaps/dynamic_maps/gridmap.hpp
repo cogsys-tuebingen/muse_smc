@@ -21,11 +21,11 @@ template<typename T>
 class GridMap : public muse_mcl_2d::Map2D
 {
 public:
-    using Ptr             = std::shared_ptr<GridMap<T>>;
-    using index_t         = std::array<int, 2>;
-    using chunk_t         = Chunk<T>;
-    using storage_t       = cis::Storage<chunk_t, index_t, cis::backend::kdtree::KDTree>;
-    using line_iterator_t = algorithms::Bresenham<T>;
+    using Ptr                   = std::shared_ptr<GridMap<T>>;
+    using index_t               = std::array<int, 2>;
+    using chunk_t               = Chunk<T>;
+    using storage_t             = cis::Storage<chunk_t, index_t, cis::backend::kdtree::KDTree>;
+    using line_iterator_t       = algorithms::Bresenham<T>;
     using const_line_iterator_t = algorithms::Bresenham<T const>;
 
     GridMap(const double origin_x,

@@ -65,11 +65,7 @@ public:
 
     inline Bresenham& operator++()
     {
-        if(localIndexInvalid()) {
-            updateChunk();
-            updateLocalIndex();
-        }
-        std::cout << chunk_index_[0] << " " << chunk_index_[1] << std::endl;
+        std::cout << active_chunk_ << " " << chunk_index_[0] << " " << chunk_index_[1] << std::endl;
         std::cout << local_index_[0] << " " << local_index_[1] << std::endl;
 
         if(done())
@@ -83,6 +79,11 @@ public:
             index_[1]       += step_y_;
             local_index_[1] += step_y_;
             error_ -= delta_x_;
+        }
+
+        if(localIndexInvalid()) {
+            updateChunk();
+            updateLocalIndex();
         }
 
         return *this;
@@ -121,8 +122,13 @@ private:
 
     inline void updateLocalIndex()
     {
-        local_index_[0] = index_[0] % chunk_size_;
-        local_index_[1] = index_[1] % chunk_size_;
+         if(steep_) {
+             local_index_[0] = index_[1] % chunk_size_;
+             local_index_[1] = index_[0] % chunk_size_;
+         } else {
+             local_index_[0] = index_[0] % chunk_size_;
+             local_index_[1] = index_[1] % chunk_size_;
+         }
     }
 
     inline bool localIndexInvalid()
@@ -153,10 +159,7 @@ private:
     int          delta_error_;
     int          step_x_;
     int          step_y_;
-
-
 };
-
 }
 }
 
