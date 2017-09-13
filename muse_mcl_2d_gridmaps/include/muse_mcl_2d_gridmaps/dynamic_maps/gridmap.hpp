@@ -112,8 +112,12 @@ public:
         const index_t chunk_index       = toChunkIndex(index);
         const index_t local_chunk_index = toLocalChunkIndex(index);
         chunk_t *chunk = storage_->get(chunk_index);
+
+        std::cout << "chunk " << chunk_index[0] << " " << chunk_index[1] << std::endl;
+        std::cout << chunk << std::endl;
+
         if(chunk == nullptr) {
-            std::cout << "created " << chunk_index[0] << " " << chunk_index[1] << std::endl;
+            std::cout << "created" << std::endl;
             chunk = &(storage_->insert(chunk_index, chunk_t(chunk_size_, default_value_)));
             updateChunkIndices(chunk_index);
         }
