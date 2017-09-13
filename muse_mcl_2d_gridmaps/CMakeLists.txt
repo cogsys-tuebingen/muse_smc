@@ -33,6 +33,7 @@ add_library(${PROJECT_NAME}_static_maps SHARED
     src/static_maps/binary_gridmap.cpp
     src/static_maps/distance_gridmap.cpp
     src/static_maps/probability_gridmap.cpp
+    src/static_maps/likelihood_field_gridmap.cpp
 )
 target_link_libraries(${PROJECT_NAME}_static_maps
     ${catkin_LIBRARIES}

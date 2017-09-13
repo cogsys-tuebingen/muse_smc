@@ -18,7 +18,7 @@ protected:
     double      z_hit_;
     double      z_rand_;
     double      sigma_hit_;
-    double      denominator_hit_;
+    double      exp_factor_hit_;
 
     virtual void doSetup(ros::NodeHandle &nh) override;
 

@@ -45,11 +45,11 @@ void LikelihoodFieldModel::apply(const data_t::ConstPtr          &data,
     const auto end = set.end();
     const std::size_t rays_size = rays.size();
     const std::size_t ray_step  = std::max(1ul, rays_size / max_beams_);
-    const double range_max = laser_data.getRangeMax();
-    const double p_rand = z_rand_ * 1.0 / range_max;
+    const double range_max      = laser_data.getRangeMax();
+    const double p_rand         = z_rand_ * 1.0 / range_max;
 
     auto p_hit = [this] (const double z) {
-        return z_hit_ * std::exp(-z * z * denominator_hit_);
+        return z_hit_ * std::exp(-z * z * exp_factor_hit_);
     };
 
 
@@ -74,9 +74,9 @@ void LikelihoodFieldModel::doSetup(ros::NodeHandle &nh)
 {
     auto param_name = [this](const std::string &name){return name_ + "/" + name;};
 
-    max_beams_ = nh.param(param_name("max_beams"), 30);
-    z_hit_ = nh.param(param_name("z_hit"), 0.8);
-    z_rand_ = nh.param(param_name("z_rand"), 0.05);
-    sigma_hit_ = nh.param(param_name("sigma_hit"), 0.15);
-    denominator_hit_ = 0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
+    max_beams_      = nh.param(param_name("max_beams"), 30);
+    z_hit_          = nh.param(param_name("z_hit"), 0.8);
+    z_rand_         = nh.param(param_name("z_rand"), 0.2);
+    sigma_hit_      = nh.param(param_name("sigma_hit"), 0.15);
+    exp_factor_hit_ = 0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
 }

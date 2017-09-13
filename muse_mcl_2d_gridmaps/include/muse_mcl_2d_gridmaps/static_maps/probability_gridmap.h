@@ -18,4 +18,5 @@ private:
 };
 }
 }
+
 #endif /* PROBABILITY_GRIDMAP_H */
