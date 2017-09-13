@@ -117,10 +117,12 @@ public:
         std::cout << chunk << std::endl;
 
         if(chunk == nullptr) {
-            std::cout << "created" << std::endl;
             chunk = &(storage_->insert(chunk_index, chunk_t(chunk_size_, default_value_)));
+            std::cout << "created " << chunk << std::endl;
             updateChunkIndices(chunk_index);
         }
+        std::cout << "----------------" << std::endl;
+
         return chunk->at(local_chunk_index);
     }
 
