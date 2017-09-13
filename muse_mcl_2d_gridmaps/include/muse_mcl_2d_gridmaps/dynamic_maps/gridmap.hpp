@@ -140,7 +140,7 @@ public:
             throw std::runtime_error("[GridMap]: Start index is invalid!");
         }
         if(invalid(end)) {
-            throw std::runtime_error("[GridMap]: Start index is invalid!");
+            throw std::runtime_error("[GridMap]: End index is invalid!");
         }
         return line_iterator_t(start, end,
                                chunk_size_,

@@ -96,7 +96,7 @@ public:
             throw std::runtime_error("[GridMap]: Start index is invalid!");
         }
         if(invalid(end)) {
-            throw std::runtime_error("[GridMap]: Start index is invalid!");
+            throw std::runtime_error("[GridMap]: End index is invalid!");
         }
         return const_line_iterator_t(start, end, width_, data_ptr_);
     }

@@ -56,10 +56,10 @@ public:
     inline int x() const
     {
         return steep_ ? index_[1] : index_[0];
-        }
+    }
 
-        inline int y() const
-        {
+    inline int y() const
+    {
         return steep_ ? index_[0] : index_[1];
     }
 
@@ -127,7 +127,7 @@ private:
     inline bool localIndexInvalid()
     {
         return local_index_[0] < 0 || local_index_[0] >= chunk_size_ ||
-               local_index_[1] < 0 || local_index_[1] >= chunk_size_;
+                local_index_[1] < 0 || local_index_[1] >= chunk_size_;
     }
 
 
