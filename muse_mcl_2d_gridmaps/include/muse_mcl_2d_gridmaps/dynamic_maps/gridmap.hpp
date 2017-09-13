@@ -108,11 +108,12 @@ public:
 
     inline T& at(const muse_mcl_2d::Point2D &point)
     {
-        const index_t index = toIndex(point);
-        const index_t chunk_index = toChunkIndex(index);
+        const index_t index             = toIndex(point);
+        const index_t chunk_index       = toChunkIndex(index);
         const index_t local_chunk_index = toLocalChunkIndex(index);
         chunk_t *chunk = storage_->get(chunk_index);
         if(chunk == nullptr) {
+            std::cout << "created " << chunk_index[0] << " " << chunk_index[1] << std::endl;
             chunk = &(storage_->insert(chunk_index, chunk_t(chunk_size_, default_value_)));
             updateChunkIndices(chunk_index);
         }
@@ -152,16 +153,31 @@ public:
     inline line_iterator_t getLineIterator(const muse_mcl_2d::Point2D &start,
                                            const muse_mcl_2d::Point2D &end) const
     {
-//        index_t start_index;
-//        index_t end_index;
-//        toIndex(start, start_index);
-//        toIndex(end, end_index);
-//        return line_iterator_t(start_index,
-//                               end_index,
-//                               chunk_size_,
-//                               storage_);
-    }
 
+        const index_t start_index = toIndex(start);
+        const index_t end_index   = toIndex(end);
+
+        const index_t start_chunk_index = toChunkIndex(index);
+        const index_t end_chunk_index   = toChunkIndex(index);
+
+        if(storage_->get(start_chunk_index) == nullptr) {
+            storage_->insert(start_chunk_index, chunk_t(chunk_size_, default_value_));
+            updateChunkIndices(start_chunk_index);
+        }
+        if(storage_->get(end_chunk_index) == nullptr) {
+            storage_->insert(end_chunk_index, chunk_t(chunk_size_, default_value_));
+            updateChunkIndices(end_chunk_index);
+        }
+
+        return line_iterator_t({start_index[0] - min_chunk_index_[0] * chunk_size_,
+                                start_index[1] - min_chunk_index_[1] * chunk_size_},
+                               {end_index[0] - min_chunk_index_[0] * chunk_size_,
+                                end_index[1] - min_chunk_index_[1] * chunk_size_},
+                                chunk_size_,
+                                min_chunk_index_,
+                                default_value_,
+                                storage_);
+    }
 
     inline double getResolution() const
     {

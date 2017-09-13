@@ -29,10 +29,10 @@ public:
         done_(false),
         storage_(storage),
         chunk_size_(chunk_size),
-        min_chunk_index_(min_chunk_index),
-        default_value_(default_value),
         start_(start),
         end_(end),
+        min_chunk_index_(min_chunk_index),
+        default_value_(default_value),
         steep_(std::abs(end[1] - start[1]) > std::abs(end[0] - start[0])),
         error_(0)
     {
@@ -69,16 +69,18 @@ public:
             updateChunk();
             updateLocalIndex();
         }
+        std::cout << chunk_index_[0] << " " << chunk_index_[1] << std::endl;
+        std::cout << local_index_[0] << " " << local_index_[1] << std::endl;
 
         if(done())
             return *this;
 
-        index_[0] += step_x_;
+        index_[0]       += step_x_;
         local_index_[0] += step_x_;
 
         error_ += delta_error_;
         if(2 * error_ >= delta_x_) {
-            index_[1] += step_y_;
+            index_[1]       += step_y_;
             local_index_[1] += step_y_;
             error_ -= delta_x_;
         }
@@ -110,7 +112,6 @@ private:
         } else {
             chunk_index_[0] = min_chunk_index_[0] + static_cast<int>(index_[0]) / chunk_size_;
             chunk_index_[1] = min_chunk_index_[1] + static_cast<int>(index_[1]) / chunk_size_;
-
         }
         active_chunk_ = storage_->get(chunk_index_);
         if(active_chunk_ == nullptr) {
@@ -127,7 +128,7 @@ private:
     inline bool localIndexInvalid()
     {
         return local_index_[0] < 0 || local_index_[0] >= chunk_size_ ||
-                local_index_[1] < 0 || local_index_[1] >= chunk_size_;
+               local_index_[1] < 0 || local_index_[1] >= chunk_size_;
     }
 
 
