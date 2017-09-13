@@ -1,7 +1,7 @@
 #include "likelihood_field_gridmap_provider.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::LikelihoodFieldGridMapProvider, muse_mcl_2d::MapProvider2D)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::LikelihoodFieldGridmapProvider, muse_mcl_2d::MapProvider2D)
 
 using namespace muse_mcl_2d_gridmaps;
 using namespace muse_mcl_2d;

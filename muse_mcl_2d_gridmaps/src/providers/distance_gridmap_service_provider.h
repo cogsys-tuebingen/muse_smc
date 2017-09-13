@@ -22,17 +22,17 @@ public:
     void setup(ros::NodeHandle &nh) override;
 
 protected:
-    mutable ros::ServiceClient source_;
-    std::string                service_name_;
-    double                     binarization_threshold_;
-    std::size_t                kernel_size_;
-    bool                       blocking_;
+    mutable ros::ServiceClient                  source_;
+    std::string                                 service_name_;
+    double                                      binarization_threshold_;
+    double                                      maximum_distance_;
+    bool                                        blocking_;
 
-    mutable std::mutex                 map_mutex_;
-    mutable std::condition_variable     map_loaded_;
-    mutable static_maps::DistanceGridMap::Ptr map_;
-    mutable std::atomic_bool           loading_;
-    mutable std::thread                worker_;
+    mutable std::mutex                          map_mutex_;
+    mutable std::condition_variable             map_loaded_;
+    mutable static_maps::DistanceGridMap::Ptr   map_;
+    mutable std::atomic_bool                    loading_;
+    mutable std::thread                         worker_;
 
 
 };

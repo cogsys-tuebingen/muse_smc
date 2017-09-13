@@ -14,12 +14,11 @@ DistanceGridmapServiceProvider::DistanceGridmapServiceProvider() :
 void DistanceGridmapServiceProvider::setup(ros::NodeHandle &nh)
 {
     auto param_name = [this](const std::string &name){return name_ + "/" + name;};
-    service_name_ = nh.param<std::string>(param_name("service"), "/static_map");
+    service_name_           = nh.param<std::string>(param_name("service"), "/static_map");
     binarization_threshold_ = nh.param<double>(param_name("threshold"), 0.5);
-    kernel_size_ = std::max(nh.param<int>(param_name("kernel_size"), 5), 5);
-    kernel_size_ += 1 - (kernel_size_ % 2);
-    blocking_ = nh.param<bool>(param_name("blocking"), false);
-    source_   = nh.serviceClient<nav_msgs::GetMap>(service_name_);
+    maximum_distance_       = nh.param<double>(param_name("maximum_distance"), 2.0);
+    blocking_               = nh.param<bool>(param_name("blocking"), false);
+    source_                 = nh.serviceClient<nav_msgs::GetMap>(service_name_);
 }
 
 
@@ -34,14 +33,14 @@ DistanceGridmapServiceProvider::state_space_t::ConstPtr DistanceGridmapServicePr
                 loading_ = true;
 
                 auto load = [this, req]() {
-                    static_maps::DistanceGridMap::Ptr map(new static_maps::DistanceGridMap(req.response.map, binarization_threshold_, kernel_size_));
+                    static_maps::DistanceGridMap::Ptr map(new static_maps::DistanceGridMap(req.response.map, binarization_threshold_, maximum_distance_));
                     std::unique_lock<std::mutex>l(map_mutex_);
                     map_ = map;
                     loading_ = false;
                 };
                 auto load_blocking = [this, req]() {
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    map_.reset(new static_maps::DistanceGridMap(req.response.map, binarization_threshold_, kernel_size_));
+                    map_.reset(new static_maps::DistanceGridMap(req.response.map, binarization_threshold_, maximum_distance_));
                     loading_ = false;
                     map_loaded_.notify_one();
                 };

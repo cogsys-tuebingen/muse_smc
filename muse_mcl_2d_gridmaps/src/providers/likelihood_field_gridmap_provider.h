@@ -13,10 +13,10 @@
 
 
 namespace muse_mcl_2d_gridmaps {
-class LikelihoodFieldGridMapProvider : public muse_mcl_2d::MapProvider2D
+class LikelihoodFieldGridmapProvider : public muse_mcl_2d::MapProvider2D
 {
 public:
-    LikelihoodFieldGridMapProvider();
+    LikelihoodFieldGridmapProvider();
 
     state_space_t::ConstPtr getStateSpace() const override;
     void setup(ros::NodeHandle &nh) override;
