@@ -54,6 +54,16 @@ public:
         return data_ptr_[i[1] * size_ + i[0]];
     }
 
+    inline T & at (const int idx, const int idy)
+    {
+        return data_ptr_[idy * size_ + idx];
+    }
+
+    inline T const & at (const int idx, const int idy) const
+    {
+        return data_ptr_[idy * size_ + idx];
+    }
+
     inline void merge(const Chunk &other)
     {
     }

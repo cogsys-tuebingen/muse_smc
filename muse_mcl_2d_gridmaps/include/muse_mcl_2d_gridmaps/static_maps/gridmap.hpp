@@ -14,9 +14,9 @@ template<typename T>
 class GridMap : public muse_mcl_2d::Map2D
 {
 public:
-    using Ptr              = std::shared_ptr<GridMap<T>>;
-    using line_iterator_t  = algorithms::Bresenham<T const>;
-    using index_t          = std::array<int, 2>;
+    using Ptr                    = std::shared_ptr<GridMap<T>>;
+    using const_line_iterator_t  = algorithms::Bresenham<T const>;
+    using index_t                = std::array<int, 2>;
 
     GridMap(const double origin_x,
             const double origin_y,
@@ -33,7 +33,9 @@ public:
         width_(width),
         max_index_({(int)(width)-1,(int)(height)-1}),
         w_T_m_(origin_x, origin_y, origin_phi),
-        m_T_w_(w_T_m_.inverse())
+        m_T_w_(w_T_m_.inverse()),
+        data_(height * width, default_value),
+        data_ptr_(data_.data())
     {
     }
 
@@ -86,23 +88,31 @@ public:
         return at(i);
     }
 
-    inline line_iterator_t getLineIterator(const index_t &start,
-                                           const index_t &end) const
+    inline const_line_iterator_t getConstLineIterator(const index_t &start,
+                                                      const index_t &end) const
     {
-        return line_iterator_t(start, end, width_, data_ptr_);
+        /// do index capping
+        if(invalid(start)) {
+            throw std::runtime_error("[GridMap]: Start index is invalid!");
+        }
+        if(invalid(end)) {
+            throw std::runtime_error("[GridMap]: Start index is invalid!");
+        }
+        return const_line_iterator_t(start, end, width_, data_ptr_);
     }
 
-    inline line_iterator_t getLineIterator(const muse_mcl_2d::Point2D &start,
-                                           const muse_mcl_2d::Point2D &end) const
+    inline const_line_iterator_t getConstLineIterator(const muse_mcl_2d::Point2D &start,
+                                                     const muse_mcl_2d::Point2D &end) const
     {
+        /// do index capping
         index_t start_index;
         index_t end_index;
         toIndex(start, start_index);
         toIndex(end, end_index);
-        return line_iterator_t(start_index,
-                            end_index,
-                            {static_cast<int>(width_), static_cast<int>(height_)},
-                            data_ptr_);
+        return const_line_iterator_t(start_index,
+                                     end_index,
+                                     {static_cast<int>(width_), static_cast<int>(height_)},
+                                     data_ptr_);
     }
 
     inline double getResolution() const
@@ -165,7 +175,7 @@ protected:
                                             i[1] * resolution_);
     }
 
-    inline void fromIndex(const line_iterator_t &it,
+    inline void fromIndex(const const_line_iterator_t &it,
                           muse_mcl_2d::Point2D &p_w) const
     {
         p_w = w_T_m_ * muse_mcl_2d::Point2D(it.x() * resolution_,

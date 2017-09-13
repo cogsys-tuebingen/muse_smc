@@ -29,7 +29,7 @@ BinaryGridMap::BinaryGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupancy_
 double BinaryGridMap::getRange(const muse_mcl_2d::Point2D &from,
                                muse_mcl_2d::Point2D &to) const
 {
-    line_iterator_t it = getLineIterator(from, to);
+    const_line_iterator_t it = getConstLineIterator(from, to);
     while(!it.done()) {
         if(*it)
             break;
