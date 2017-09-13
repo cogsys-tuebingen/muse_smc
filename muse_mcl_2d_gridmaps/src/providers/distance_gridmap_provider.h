@@ -22,17 +22,17 @@ public:
     void setup(ros::NodeHandle &nh) override;
 
 protected:
-    ros::Subscriber source_;
-    std::string     topic_;
-    double          binarization_threshold_;
-    std::size_t     kernel_size_;
-    bool            blocking_;
+    ros::Subscriber                     source_;
+    std::string                         topic_;
+    double                              binarization_threshold_;
+    double                              maximum_distance_;
+    bool                                blocking_;
 
-    mutable std::mutex              map_mutex_;
-    mutable std::condition_variable map_loaded_;
-    static_maps::DistanceGridMap::Ptr      map_;
-    std::atomic_bool                loading_;
-    std::thread                     worker_;
+    mutable std::mutex                  map_mutex_;
+    mutable std::condition_variable     map_loaded_;
+    static_maps::DistanceGridMap::Ptr   map_;
+    std::atomic_bool                    loading_;
+    std::thread                         worker_;
 
     void callback(const nav_msgs::OccupancyGridConstPtr &msg);
 

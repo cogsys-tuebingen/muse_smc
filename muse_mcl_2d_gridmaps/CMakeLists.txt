@@ -44,9 +44,11 @@ add_library(${PROJECT_NAME}_providers SHARED
     src/providers/binary_gridmap_provider.cpp
     src/providers/distance_gridmap_provider.cpp
     src/providers/probability_gridmap_provider.cpp
+    src/providers/likelihood_field_gridmap_provider.cpp
     src/providers/binary_gridmap_service_provider.cpp
     src/providers/distance_gridmap_service_provider.cpp
     src/providers/probability_gridmap_service_provider.cpp
+    src/providers/likelihood_field_gridmap_service_provider.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}_providers

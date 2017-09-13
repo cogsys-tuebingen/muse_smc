@@ -17,6 +17,12 @@
    <class type="muse_mcl_2d_gridmaps::ProbabilityGridmapServiceProvider" base_class_type="muse_mcl_2d::MapProvider2D">
       <description>Provides floating point probability map versions by service.</description>
    </class>
+   <class type="muse_mcl_2d_gridmaps::LikelihoodFieldGridmapProvider" base_class_type="muse_mcl_2d::MapProvider2D">
+      <description>Provides floating point probability map versions by topic.</description>
+   </class>
+   <class type="muse_mcl_2d_gridmaps::LikelihoodFieldGridmapServiceProvider" base_class_type="muse_mcl_2d::MapProvider2D">
+      <description>Provides floating point probability map versions by service.</description>
+   </class>
 </library>
 <library path="libmuse_mcl_2d_gridmaps_models">
    <class type="muse_mcl_2d_gridmaps::BeamModel" base_class_type="muse_mcl_2d::UpdateModel2D">

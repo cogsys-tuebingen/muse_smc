@@ -1,17 +1,17 @@
-#include "distance_gridmap_provider.h"
+#include "likelihood_field_gridmap_provider.h"
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::DistanceGridmapProvider, muse_mcl_2d::MapProvider2D)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::LikelihoodFieldGridMapProvider, muse_mcl_2d::MapProvider2D)
 
 using namespace muse_mcl_2d_gridmaps;
 using namespace muse_mcl_2d;
 
-DistanceGridmapProvider::DistanceGridmapProvider() :
+LikelihoodFieldGridmapProvider::LikelihoodFieldGridmapProvider() :
     loading_(false)
 {
 }
 
-DistanceGridmapProvider::state_space_t::ConstPtr DistanceGridmapProvider::getStateSpace() const
+LikelihoodFieldGridmapProvider::state_space_t::ConstPtr LikelihoodFieldGridmapProvider::getStateSpace() const
 {
     std::unique_lock<std::mutex> l(map_mutex_);
     if(!map_ && blocking_) {
@@ -21,18 +21,20 @@ DistanceGridmapProvider::state_space_t::ConstPtr DistanceGridmapProvider::getSta
     return map_;
 }
 
-void DistanceGridmapProvider::setup(ros::NodeHandle &nh_private)
+void LikelihoodFieldGridmapProvider::setup(ros::NodeHandle &nh_private)
 {
     auto param_name = [this](const std::string &name){return name_ + "/" + name;};
     topic_                  = nh_private.param<std::string>(param_name("topic"), "/map");
     binarization_threshold_ = nh_private.param<double>(param_name("threshold"), 0.5);
     maximum_distance_       = nh_private.param<double>(param_name("maximum_distance"), 2.0);
+    z_hit_                  = nh_private.param<double>(param_name("z_hit"), 0.8);
+    sigma_hit_              = nh_private.param<double>(param_name("sigma_hit"), 0.2);
     blocking_               = nh_private.param<bool>(param_name("blocking"), false);
 
-    source_= nh_private.subscribe(topic_, 1, &DistanceGridmapProvider::callback, this);
+    source_= nh_private.subscribe(topic_, 1, &LikelihoodFieldGridmapProvider::callback, this);
 }
 
-void DistanceGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr &msg)
+void LikelihoodFieldGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr &msg)
 {
     /// conversion can take time
     /// we allow concurrent loading, this way, the front end thread is not blocking.
@@ -41,14 +43,14 @@ void DistanceGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr &ms
             loading_ = true;
 
             auto load = [this, msg]() {
-                static_maps::DistanceGridMap::Ptr map(new static_maps::DistanceGridMap(*msg, maximum_distance_, binarization_threshold_));
+                static_maps::LikelihoodFieldGridMap::Ptr map(new static_maps::LikelihoodFieldGridMap(*msg, sigma_hit_, z_hit_, maximum_distance_, binarization_threshold_));
                 std::unique_lock<std::mutex>l(map_mutex_);
                 map_ = map;
                 loading_ = false;
             };
             auto load_blocking = [this, msg]() {
                 std::unique_lock<std::mutex>l(map_mutex_);
-                static_maps::DistanceGridMap::Ptr map(new static_maps::DistanceGridMap(*msg, maximum_distance_, binarization_threshold_));
+                static_maps::LikelihoodFieldGridMap::Ptr map(new static_maps::LikelihoodFieldGridMap(*msg, sigma_hit_, z_hit_, maximum_distance_, binarization_threshold_));
                 map_ = map;
                 loading_ = false;
 
