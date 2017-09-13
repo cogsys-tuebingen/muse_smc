@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
                                                            1.0,
                                                            0,
                                                            std::string("taste"));
-    auto render = [&map]()
+    auto render = [&map](const bool wait = true)
     {
         const std::size_t width  = map.getWidth();
         const std::size_t height = map.getHeight() ;
@@ -27,7 +27,10 @@ int main(int argc, char *argv[])
 
         cv::resize(test, test, cv::Size(), 10., 10., CV_INTER_NN);
         cv::imshow("test", test);
-        cv::waitKey(0);
+        if(wait)
+            cv::waitKey(0);
+        else
+            cv::waitKey(19);
     };
 
 
@@ -40,7 +43,7 @@ int main(int argc, char *argv[])
     render();
     map.at(muse_mcl_2d::Point2D(1.0, 1.0))   = 255;
     render();
-//    std::cout << map.getOrigin() << std::endl;
+    std::cout << map.getOrigin() << std::endl;
 
     /// now to the more difficult cases
     map.at(muse_mcl_2d::Point2D(-1.0,  0.0))   = 127;
@@ -57,12 +60,29 @@ int main(int argc, char *argv[])
                                   std::array<int, 2>{59,59});
     do {
         *it = 70;
-        render();
+        render(false);
         ++it;
     } while(!it.done());
 
     *it = 70;
     render();
 
+    auto step = M_PI / 10;
+    const int radius = 10;
+    for(std::size_t i = 0 ; i < 20 ; ++i) {
+        double c = std::cos(step * i);
+        double s = std::sin(step * i);
+        it = map.getLineIterator(std::array<int, 2>{30,30},
+                                 std::array<int, 2>{30 + static_cast<int>(c * radius + 0.5),
+                                                    30 + static_cast<int>(s * radius + 0.5)});
+        do {
+            *it = 200;
+            render(false);
+            ++it;
+        } while(!it.done());
+
+        *it = 70;
+        render();
+    }
     return 0;
 }

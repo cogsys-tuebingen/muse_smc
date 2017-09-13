@@ -56,8 +56,6 @@ public:
 
     inline T & at (const int idx, const int idy)
     {
-        std::cout << "chunk " << idx << " " << idy << std::endl;
-
         return data_ptr_[idy * size_ + idx];
     }
 

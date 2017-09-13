@@ -56,18 +56,15 @@ public:
     inline int x() const
     {
         return steep_ ? index_[1] : index_[0];
-    }
+        }
 
-    inline int y() const
-    {
+        inline int y() const
+        {
         return steep_ ? index_[0] : index_[1];
     }
 
     inline Bresenham& operator++()
     {
-        std::cout << active_chunk_ << " " << chunk_index_[0] << " " << chunk_index_[1] << std::endl;
-        std::cout << local_index_[0] << " " << local_index_[1] << std::endl;
-
         if(done())
             return *this;
 
@@ -122,13 +119,8 @@ private:
 
     inline void updateLocalIndex()
     {
-         if(steep_) {
-             local_index_[0] = index_[1] % chunk_size_;
-             local_index_[1] = index_[0] % chunk_size_;
-         } else {
-             local_index_[0] = index_[0] % chunk_size_;
-             local_index_[1] = index_[1] % chunk_size_;
-         }
+        local_index_[0] = index_[0] % chunk_size_;
+        local_index_[1] = index_[1] % chunk_size_;
     }
 
     inline bool localIndexInvalid()
