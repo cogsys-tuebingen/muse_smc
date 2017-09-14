@@ -31,6 +31,16 @@ public:
     {
     }
 
+    WeightedAngularMean(WeightedAngularMean &&other) :
+        dirty_(other.dirty_),
+        mean_(other.mean_),
+        complex_mean_(std::move(other.complex_mean_)),
+        W_(other.W_),
+        W_1_(other.W_1_)
+    {
+    }
+
+
     WeightedAngularMean& operator=(const WeightedAngularMean &other)
     {
         if(this != &other) {

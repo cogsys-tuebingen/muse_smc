@@ -21,8 +21,43 @@ public:
     {
     }
 
-    AngularMean(const AngularMean &other)             = default;
-    AngularMean& operator=(const AngularMean &other)  = default;
+    AngularMean(const AngularMean &other) :
+        dirty_(true),
+        mean_(other.mean_),
+        complex_mean_(other.complex_mean_),
+        n_(other.n_),
+        n_1_(other.n_1_)
+    {
+    }
+
+    AngularMean(AngularMean &&other) :
+        dirty_(true),
+        mean_(other.mean_),
+        complex_mean_(std::move(other.complex_mean_)),
+        n_(other.n_),
+        n_1_(other.n_1_)
+    {
+    }
+
+    AngularMean& operator=(const AngularMean &other)
+    {
+        dirty_          = true;
+        mean_           = other.mean_;
+        complex_mean_   = other.complex_mean_;
+        n_              = other.n_;
+        n_1_            = other.n_1_;
+        return *this;
+    }
+
+    AngularMean& operator=(AngularMean &&other)
+    {
+        dirty_          = true;
+        mean_           = other.mean_;
+        complex_mean_   = std::move(other.complex_mean_);
+        n_              = other.n_;
+        n_1_            = other.n_1_;
+        return *this;
+    }
 
     void reset()
     {
