@@ -45,7 +45,7 @@
           <param name="base_class"               value="muse_mcl_2d::DataProvider2D" />
           <param name="topic"                    value="/sick/rear" />
           <param name="undistortion"             value="true" />
-          <param name="undistortion_fixed_frame" value="odom" />
+          <param name="undistortion_fixed_frame" value="/odom" />
           <param name="undistortion_tf_timeout"  value="0.1" />
           <param name="range_max"                value="30.0" />
           <param name="range_min"                value="0.1" />
@@ -95,17 +95,16 @@
             <param name="class" value="muse_mcl_2d_odometry::DifferentialDrive" />
             <param name="base_class" value="muse_mcl_2d::PredictionModel2D"/>
             <param name="data_provider" value="odometry" />
-            <param name="alpha1" value="0.1"/>
+            <param name="alpha1" value="0.05"/>
             <param name="alpha2" value="0.08"/>
-            <param name="alpha3" value="0.25"/>
-            <param name="alpha4" value="0.1"/>
+            <param name="alpha3" value="0.2"/>
+            <param name="alpha4" value="0.05"/>
             <param name="alpha5" value="0.0"/>
         </group>
         <group ns="odometry">
-            <param name="class"      value="muse_mcl_2d_odometry::OdometryProviderTF2D" />
+            <param name="class"      value="muse_mcl_2d_odometry::OdometryProvider2D" />
             <param name="base_class" value="muse_mcl_2d::DataProvider2D" />
             <param name="topic"      value="/odom" />
-            <param name="rate"       value="100.0" />
         </group>
         <!-- RE- AND SAMPLING -->
         <group ns="resampling">

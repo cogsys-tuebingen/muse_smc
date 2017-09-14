@@ -183,7 +183,7 @@ bool MuseMCL2DNode::setup()
             ROS_ERROR_STREAM("Setup is incomplete and is aborted!");
             return false;
         }
-        ROS_INFO_STREAM("Loaded resampling alpgorithm.");
+        ROS_INFO_STREAM("Loaded resampling algorithm.");
         ROS_INFO_STREAM("[" << resampling_->getName() << "]");
     }
 
@@ -197,7 +197,7 @@ bool MuseMCL2DNode::setup()
         const double resolution_linear              = nh_private_.param<double>(param_name("resolution_linear"), 0.1);
         const double resolution_angular             = muse_smc::math::angle::toRad(nh_private_.param<double>(param_name("resolution_angular"), 5.0));
         const double preferred_rate                 = nh_private_.param<double>(param_name("preferred_rate"), 60.0);
-        const std::size_t resampling_cycle     = nh_private_.param<int>(param_name("resampling_cycle"), 20);
+        const std::size_t resampling_cycle          = nh_private_.param<int>(param_name("resampling_cycle"), 20);
         const double resampling_threshold_linear    = nh_private_.param<double>(param_name("resampling_threshold_linear"), 0.1);
         const double resampling_threshold_angular   = muse_smc::math::angle::toRad(nh_private_.param<double>(param_name("resampling_threshold_angular"), 5.0));
 
