@@ -8,7 +8,6 @@ find_package(catkin REQUIRED COMPONENTS
   pluginlib
   roscpp
   rostest
-  cslibs_indexed_storage # <!-- REMOVE THIS -->
 )
 
 catkin_package(
