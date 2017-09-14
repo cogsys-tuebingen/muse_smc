@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(muse_mcl_2d)
 
+#add_definitions("-DMUSE_SMC_USE_DOTTY")
+#add_definitions("-DMUSE_SMC_LOG_STATE")
+add_definitions("-DMUSE_SMC_DEBUG")
+
 find_package(catkin REQUIRED COMPONENTS
   cslibs_indexed_storage
   nav_msgs
@@ -40,7 +44,7 @@ generate_messages(
 catkin_package(
     INCLUDE_DIRS    include
     LIBRARIES       ${PROJECT_NAME}_resampling ${PROJECT_NAME}_sampling
-    CATKIN_DEPENDS  muse_smc cslibs_indexed_storage # remove
+    CATKIN_DEPENDS  muse_smc
     DEPENDS         Eigen3
 )
 
@@ -62,7 +66,6 @@ target_link_libraries(${PROJECT_NAME}_resampling
     ${catkin_LIBRARIES}
 )
 
-
 add_library(${PROJECT_NAME}_sampling
     src/sampling/normal_2d.cpp
     src/sampling/uniform_primary_map_2d.cpp
@@ -72,10 +75,6 @@ add_library(${PROJECT_NAME}_sampling
 target_link_libraries(${PROJECT_NAME}_sampling
     ${catkin_LIBRARIES}
 )
-
-#add_definitions("-DMUSE_SMC_USE_DOTTY")
-#add_definitions("-DMUSE_SMC_LOG_STATE")
-add_definitions("-DMUSE_SMC_DEBUG")
 
 add_executable(${PROJECT_NAME}_node
     src/node/muse_mcl_2d_node.cpp
@@ -89,26 +88,27 @@ target_link_libraries(${PROJECT_NAME}_node
     ${catkin_LIBRARIES}
 )
 
-add_executable(${PROJECT_NAME}_runtimes_iteration
-    test/runtimes_iteration.cpp
-)
-
-target_link_libraries(${PROJECT_NAME}_runtimes_iteration
-    ${catkin_LIBRARIES}
-)
-
-add_executable(${PROJECT_NAME}_runtimes_math_op
-    test/runtimes_math_op.cpp
-)
-
-target_link_libraries(${PROJECT_NAME}_runtimes_math_op
-    ${catkin_LIBRARIES}
-)
-
 add_unit_test_gtest(${PROJECT_NAME}_test_transform2d
     test/test_transform2d.cpp
     "${catkin_LIBRARIES}"
 )
+
+if(${MUSE_MCL_2D_PERF_TESTS})
+    message("[MuseMCL2D]: Building with performance tests!")
+    add_executable(${PROJECT_NAME}_perf_runtimes_particle_iteration
+        test/perf_runtimes_particle_iteration.cpp
+    )
+
+    target_link_libraries(${PROJECT_NAME}_perf_runtimes_particle_iteration
+        ${catkin_LIBRARIES}
+    )
+    add_executable(${PROJECT_NAME}_perf_runtimes_math_operations
+        test/perf_runtimes_math_operations.cpp
+    )
+    target_link_libraries(${PROJECT_NAME}_perf_runtimes_math_operations
+        ${catkin_LIBRARIES}
+    )
+endif()
 
 install(FILES plugins.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 

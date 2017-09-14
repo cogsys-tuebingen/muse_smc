@@ -70,8 +70,18 @@ target_link_libraries(${PROJECT_NAME}_models
     ${catkin_LIBRARIES}
     ${PROJECT_NAME}_static_maps
 )
+#${MUSE_MCL_2D_PERF_TESTS}
+if(true)
+    add_executable(${PROJECT_NAME}_perf_runtimes_get_range
+        src/test/perf_runtimes_get_range.cpp
+    )
 
-# remove this later -->
+    target_link_libraries(${PROJECT_NAME}_perf_runtimes_get_range
+        ${catkin_LIBRARIES}
+        ${PROJECT_NAME}_static_maps
+    )
+endif()
+
 add_executable(${PROJECT_NAME}_example_distance_transform
     src/examples/distance_transform.cpp
 )
@@ -81,14 +91,7 @@ target_link_libraries(${PROJECT_NAME}_example_distance_transform
     ${OpenCV_LIBRARIES}
 )
 
-add_executable(${PROJECT_NAME}_runtimes_get_range
-    src/examples/runtimes_get_range.cpp
-)
 
-target_link_libraries(${PROJECT_NAME}_runtimes_get_range
-    ${catkin_LIBRARIES}
-    ${PROJECT_NAME}_static_maps
-)
 
 add_executable(${PROJECT_NAME}_runtimes_line_iterator
     src/examples/runtimes_line_iterator.cpp
@@ -108,7 +111,6 @@ target_link_libraries(${PROJECT_NAME}_runtimes_dynamic_maps
     ${OpenCV_LIBRARIES}
 )
 
-# <-- remove this later
 
 install(FILES plugins.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 

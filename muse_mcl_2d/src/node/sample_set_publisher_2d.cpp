@@ -1,6 +1,9 @@
 #include "sample_set_publisher_2d.h"
 
 #include <tf/tf.h>
+#include <geometry_msgs/PoseArray.h>
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
+#include <visualization_msgs/MarkerArray.h>
 
 using namespace muse_mcl_2d;
 
@@ -45,7 +48,8 @@ namespace color {
 
 SampleSetPublisher2D::SampleSetPublisher2D() :
     running_(false),
-    stop_(false)
+    stop_(false),
+    marker_count_(0)
 {
 }
 
@@ -187,7 +191,7 @@ void SampleSetPublisher2D::loop()
     while(!stop_) {
         notify_.wait(notify_lock);
 
-        {   /// POP DATA
+        {
             lock_t lock(data_mutex_);
             stamp = stamp_;
             if(publish_mean_) {
@@ -216,10 +220,23 @@ void SampleSetPublisher2D::loop()
         if(publish_markers_) {
             marker_array_msg.reset(new visualization_msgs::MarkerArray);
 
-            visualization_msgs::Marker m = create_empty_marker();
-            m.action = visualization_msgs::Marker::DELETEALL;
-            marker_array_msg->markers.emplace_back(m);
-
+#if ROS_VERSION_MAJOR >= 1 && ROS_VERSION_MINOR >= 11
+            {
+                visualization_msgs::Marker m = create_empty_marker();
+                m.id = -1;
+                m.action = visualization_msgs::Marker::DELETEALL;
+                marker_array_msg->markers.emplace_back(m);
+            }
+#else
+            {
+                visualization_msgs::Marker m = create_empty_marker();
+                m.action = visualization_msgs::Marker::DELETE;
+                for(std::size_t i = 0 ; i < marker_count_ ; ++i) {
+                    m.id = i;
+                    marker_array_msg->markers.emplace_back(m);
+                }
+            }
+#endif
         }
         if(publish_poses_) {
             pose_array_msg.reset(new geometry_msgs::PoseArray);
@@ -247,6 +264,7 @@ void SampleSetPublisher2D::loop()
         }
 
         if(publish_markers_) {
+            marker_count_ = samples->size();
             pub_markers_.publish(marker_array_msg);
         }
         if(publish_poses_) {

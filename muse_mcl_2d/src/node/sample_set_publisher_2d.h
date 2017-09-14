@@ -9,10 +9,6 @@
 #include <ros/node_handle.h>
 #include <ros/publisher.h>
 
-#include <geometry_msgs/PoseArray.h>
-#include <geometry_msgs/PoseWithCovarianceStamped.h>
-#include <visualization_msgs/MarkerArray.h>
-
 #include <muse_smc/samples/sample_set.hpp>
 
 #include <muse_mcl_2d/samples/sample_2d.hpp>
@@ -59,6 +55,7 @@ private:
     ros::Publisher                      pub_samples_;
     ros::Publisher                      pub_poses_;
     ros::Publisher                      pub_mean_;
+    std::size_t                         marker_count_;
 
     std::string                         world_frame_;
 
