@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package>
+  <name>muse_mcl_2d_launch</name>
+  <version>0.0.1</version>
+  <description>The muse_mcl_launch package contains files for the muse amcl project.</description>
+
+  <maintainer email="richard.hanten@uni-tuebingen.de">Richard Hanten</maintainer>
+  <author email="richard.hanten@uni-tuebingen.de">Richard Hanten</author>
+
+  <license>BSD</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>muse_mcl_2d</run_depend>
+  <run_depend>muse_mcl_2d_laser</run_depend>
+  <run_depend>muse_mcl_2d_gridmaps</run_depend>
+  <run_depend>muse_mcl_2d_odometry</run_depend>
+
+  <export>
+  </export>
+</package>

@@ -2,7 +2,7 @@ before_script:
   # Install ssh-agent if not already installed, it is required by Docker.
   # (change apt-get to yum if you use a CentOS-based image)
   - 'apt-get -qq update -y'
-  - 'apt-get -qq install build-essential openssh-client libeigen3-dev libyaml-cpp-dev libtbb-dev libopencv-dev sudo -y'
+  - 'apt-get -qq install build-essential openssh-client libeigen3-dev libyaml-cpp-dev libtbb-dev libopencv-dev libgdal-dev sudo -y'
 
   # Run ssh-agent (inside the build environment)
   - eval $(ssh-agent -s)
@@ -24,10 +24,19 @@ before_script:
   - ln -s $CI_PROJECT_DIR src/$CI_PROJECT_NAME
   # clone dependencies here:
   - cd src
-  - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_kdtree.git cslibs_kdtree
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_indexed_storage.git cslibs_indexed_storage
+  - cd cslibs_indexed_storage
+  - git checkout devel
   - cd ..
-
+  - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_boost_geometry.git cslibs_boost_geometry
+  - cd cslibs_boost_geometry
+  - git checkout devel
+  - cd ..
+  - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_vectormaps.git cslibs_vectormaps
+  - cd cslibs_vectormaps
+  - git checkout devel
+  - cd ..
+  - cd /build/ws/
 
 stages:
   - build
@@ -40,7 +49,6 @@ indigo:
     - rosdep install -y -r -i --from-paths src
     - catkin_make
     - catkin_make tests
-    - catkin_make run_tests_muse_mcl
     
 jade:
   stage: build
@@ -50,7 +58,6 @@ jade:
     - rosdep install -y -r -i --from-paths src
     - catkin_make
     - catkin_make tests
-    - catkin_make run_tests_muse_mcl
 
 kinetic:
   stage: build
@@ -60,4 +67,3 @@ kinetic:
     - rosdep install -y -r -i --from-paths src
     - catkin_make
     - catkin_make tests
-    - catkin_make run_tests_muse_mcl
