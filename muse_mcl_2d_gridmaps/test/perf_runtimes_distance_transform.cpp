@@ -1,10 +1,10 @@
 #include <muse_mcl_2d_gridmaps/static_maps/algorithms/distance_transform.hpp>
+#include <muse_smc/time/time.hpp>
 
 #include <opencv2/opencv.hpp>
 
 int main(int argc, char *argv[])
 {
-    muse_mcl_2d_gridmaps::algorithms::DistanceTransform<uint8_t> d(0.05, 2.0, 127);
 
     std::vector<uint8_t> data(200 * 200, 0);
 
@@ -13,13 +13,12 @@ int main(int argc, char *argv[])
     cv::imshow("map", map);
     cv::waitKey(0);
 
+    muse_smc::Time start = muse_smc::Time::now();
     std::vector<double> distances;
+    muse_mcl_2d_gridmaps::algorithms::DistanceTransform<uint8_t> d(0.05, 2.0, 127);
     d.apply(data, 200, distances);
 
-    for(double d : distances) {
-        if(d != 2)
-        std::cout << d << "\n";
-    }
+    std::cout << "took: " << (muse_smc::Time::now() - start).milliseconds() << "ms." << std::endl;
 
     cv::Mat dis(200, 200, CV_64FC1, distances.data());
     cv::normalize(dis, dis, 0.0, 1.0, cv::NORM_MINMAX);

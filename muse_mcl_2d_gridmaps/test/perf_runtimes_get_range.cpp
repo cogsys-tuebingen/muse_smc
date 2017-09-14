@@ -155,21 +155,13 @@ void withParticles()
     }
 
     std::cout << "took : " << (muse_smc::Time::now() - start_time).milliseconds() << "\n";
-
-
-
 }
-
-
 
 int main(int argc, char *argv[])
 {
-
     ros::Time::init();
     mapOnly();
     withParticles();
-
-
 
     return 0;
 }
