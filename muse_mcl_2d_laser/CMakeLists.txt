@@ -29,15 +29,6 @@ target_link_libraries(${PROJECT_NAME}
     ${catkin_LIBRARIES}
 )
 
-
-add_executable(${PROJECT_NAME}_iteration_runtimes
-    src/test/test_runtimes.cpp
-)
-target_link_libraries(${PROJECT_NAME}_iteration_runtimes
-    ${catkin_LIBRARIES}
-)
-
-
 install(FILES plugins.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 install(TARGETS ${PROJECT_NAME}
