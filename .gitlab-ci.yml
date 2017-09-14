@@ -49,7 +49,6 @@ indigo:
     - rosdep install -y -r -i --from-paths src
     - catkin_make
     - catkin_make tests
-    - catkin_make run_tests_muse_mcl
     
 jade:
   stage: build
@@ -59,7 +58,6 @@ jade:
     - rosdep install -y -r -i --from-paths src
     - catkin_make
     - catkin_make tests
-    - catkin_make run_tests_muse_mcl
 
 kinetic:
   stage: build
@@ -69,4 +67,3 @@ kinetic:
     - rosdep install -y -r -i --from-paths src
     - catkin_make
     - catkin_make tests
-    - catkin_make run_tests_muse_mcl
