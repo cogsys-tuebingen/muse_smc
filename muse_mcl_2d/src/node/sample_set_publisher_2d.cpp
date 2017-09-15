@@ -220,6 +220,10 @@ void SampleSetPublisher2D::loop()
         if(publish_markers_) {
             marker_array_msg.reset(new visualization_msgs::MarkerArray);
 
+#define STR_HELPER(x) #x
+#define STR(x) STR_HELPER(x)
+#pragma message "lalala" STR(ROS_VERSION_MAJOR) "alalal" STR(ROS_VERSION_MINOR)
+
 #if ROS_VERSION_MAJOR >= 1 && ROS_VERSION_MINOR >= 11
             {
                 visualization_msgs::Marker m = create_empty_marker();
