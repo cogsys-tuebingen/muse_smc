@@ -37,7 +37,7 @@
 
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename state_space_description_t>
 class SMC
 {
 public:
@@ -49,6 +49,7 @@ public:
     using atomic_bool_t         = std::atomic_bool;
 
     /// filter specific type defs
+    using sample_t              = typename state_space_description_t::sample_t;
     using sample_set_t          = SampleSet<sample_t>;
     using update_t              = Update<sample_t>;
     using prediction_t          = Prediction<sample_t>;
@@ -59,15 +60,12 @@ public:
     using uniform_sampling_t    = UniformSampling<sample_t>;
     using resampling_t          = Resampling<sample_t>;
     using filter_state_t        = SMCState<sample_t>;
-    using update_queue_t        =
-    muse_smc::synchronized::priority_queue<typename update_t::Ptr,
-    typename update_t::Greater>;
+    using update_queue_t        = synchronized::priority_queue<typename update_t::Ptr,
+                                                               typename update_t::Greater>;
+    using prediction_queue_t    = synchronized::priority_queue<typename prediction_t::Ptr,
+                                                               typename prediction_t::Greater>;
 
-    using prediction_queue_t  =
-    muse_smc::synchronized::priority_queue<typename prediction_t::Ptr,
-    typename prediction_t::Greater>;
-
-    SMC() :
+    inline SMC() :
         updates_applied_after_resampling_(0ul),
         request_init_state_(false),
         request_init_uniform_(false),
@@ -76,19 +74,19 @@ public:
     {
     }
 
-    virtual ~SMC()
+    inline virtual ~SMC()
     {
         end();
     }
 
-    void setup(typename sample_set_t::Ptr            sample_set,
-               typename uniform_sampling_t::Ptr      sample_uniform,
-               typename normal_sampling_t::Ptr       sample_normal,
-               typename resampling_t::Ptr            resampling,
-               typename filter_state_t::Ptr          state_publisher,
-               typename prediction_integrals_t::Ptr  prediction_integrals,
-               const Rate                           &preferred_filter_rate,
-               const std::size_t                     minimum_update_cycles)
+    inline void setup(typename sample_set_t::Ptr            sample_set,
+                      typename uniform_sampling_t::Ptr      sample_uniform,
+                      typename normal_sampling_t::Ptr       sample_normal,
+                      typename resampling_t::Ptr            resampling,
+                      typename filter_state_t::Ptr          state_publisher,
+                      typename prediction_integrals_t::Ptr  prediction_integrals,
+                      const Rate                           &preferred_filter_rate,
+                      const std::size_t                     minimum_update_cycles)
     {
         sample_set_             = sample_set;
         sample_uniform_         = sample_uniform;
@@ -108,7 +106,7 @@ public:
 #endif
     }
 
-    bool start()
+    inline bool start()
     {
         if(!worker_thread_active_) {
             lock_t l(worker_thread_mutex_);
@@ -120,7 +118,7 @@ public:
         return false;
     }
 
-    bool end()
+    inline bool end()
     {
         if(!worker_thread_active_)
             return false;
@@ -133,7 +131,7 @@ public:
         return true;
     }
 
-    void addPrediction(const typename prediction_t::Ptr &prediction)
+    inline void addPrediction(const typename prediction_t::Ptr &prediction)
     {
         prediction_queue_.emplace(prediction);
         notify_prediction_.notify_one();
@@ -142,7 +140,7 @@ public:
 #endif
     }
 
-    void addUpdate(const typename update_t::Ptr &update)
+    inline void addUpdate(const typename update_t::Ptr &update)
     {
         update_queue_.emplace(update);
         notify_event_.notify_one();
@@ -151,8 +149,8 @@ public:
 #endif
     }
 
-    void requestStateInitialization(const typename sample_t::state_t &state,
-                                    const typename sample_t::covariance_t &covariance)
+    inline void requestStateInitialization(const typename sample_t::state_t &state,
+                                           const typename sample_t::covariance_t &covariance)
     {
         lock_t l(init_state_mutex_);
         init_state_             = state;
@@ -213,17 +211,17 @@ protected:
     }
 #endif
 
-    bool hasUpdates()
+    inline bool hasUpdates()
     {
         return !update_queue_.empty();
     }
 
-    bool hasPredictions()
+    inline bool hasPredictions()
     {
         return !prediction_queue_.empty();
     }
 
-    void requests()
+    inline void requests()
     {
         if(request_init_state_) {
             sample_normal_->apply(init_state_,
@@ -239,7 +237,7 @@ protected:
         }
     }
 
-    void predict(const Time &until)
+    inline void predict(const Time &until)
     {
         auto wait_for_prediction = [this] () {
             lock_t l(notify_prediction_mutex_);
@@ -279,7 +277,7 @@ protected:
         }
     }
 
-    void loop()
+    inline void loop()
     {
         worker_thread_active_ = true;
         lock_t notify_event_mutex_lock(notify_event_mutex_);

@@ -24,7 +24,7 @@ public:
     using arguments_t = std::pair<typename data_provider_t::Ptr, typename state_space_provider_t::Ptr>;
     using map_t = std::map<typename update_model_t::Ptr, arguments_t>;
 
-    UpdateRelay(const typename smc_t::Ptr &smc) :
+    inline UpdateRelay(const typename smc_t::Ptr &smc) :
         smc_(smc)
     {
     }

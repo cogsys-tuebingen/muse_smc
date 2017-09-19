@@ -5,7 +5,7 @@
 #include <muse_mcl_2d/prediction/prediction_integral_2d.hpp>
 
 namespace muse_mcl_2d {
-struct StateSpace2D
+struct StateSpaceDescription2D
 {
     using sample_allocator_t     = std::allocator<Sample2D>;
     using sample_t               = Sample2D;
