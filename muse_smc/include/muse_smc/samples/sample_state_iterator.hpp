@@ -4,11 +4,12 @@
 #include <muse_smc/utility/buffered_vector.hpp>
 
 namespace muse_smc {
-template<typename sample_t>
-class StateIterator : public std::iterator<std::random_access_iterator_tag, typename sample_t::state_t>
+template<typename state_space_description_t>
+class StateIterator : public std::iterator<std::random_access_iterator_tag, typename state_space_description_t::state_t>
 {
 public:
-    using parent    = std::iterator<std::random_access_iterator_tag, typename sample_t::state_t>;
+    using parent    = std::iterator<std::random_access_iterator_tag, typename state_space_description_t::state_t>;
+    using sample_t  = typename state_space_description_t::sample_t;
     using iterator  = typename parent::iterator;
     using reference = typename parent::reference;
 
@@ -23,12 +24,12 @@ public:
         return *this;
     }
 
-    inline bool operator ==(const StateIterator<sample_t> &_other) const
+    inline bool operator ==(const StateIterator<state_space_description_t> &_other) const
     {
         return data_ == _other.data_;
     }
 
-    inline bool operator !=(const StateIterator<sample_t> &_other) const
+    inline bool operator !=(const StateIterator<state_space_description_t> &_other) const
     {
         return !(*this == _other);
     }
@@ -47,12 +48,13 @@ private:
     sample_t        *data_;
 };
 
-template<typename sample_t>
+template<typename state_space_description_t>
 class StateIteration
 {
 public:
-    using sample_vector_t = std::buffered_vector<sample_t, typename sample_t::allocator_t>;
-    using iterator_t = StateIterator<sample_t>;
+    using sample_t          = typename state_space_description_t::sample_t;
+    using sample_vector_t   = std::buffered_vector<sample_t, typename sample_t::allocator_t>;
+    using iterator_t        = StateIterator<state_space_description_t>;
 
     inline StateIteration(sample_vector_t &data) :
         data_(data)

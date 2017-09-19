@@ -16,7 +16,7 @@ public:
     using   sample_t     = typename state_space_description_t::sample_t;
     using   state_t      = typename state_space_description_t::state_t;
     using   covariance_t = typename state_space_description_t::covariance_t;
-    using   sample_set_t = SampleSet<sample_t>;
+    using   sample_set_t = SampleSet<state_space_description_t>;
 
 
     inline NormalSampling()

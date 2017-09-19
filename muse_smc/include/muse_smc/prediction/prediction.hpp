@@ -6,12 +6,12 @@
 #include <muse_smc/prediction/prediction_model.hpp>
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename state_space_description_t>
 class Prediction {
 public:
     using Ptr = std::shared_ptr<Prediction>;
-    using predition_model_t = PredictionModel<sample_t>;
-    using sample_set_t = SampleSet<sample_t>;
+    using predition_model_t = PredictionModel<state_space_description_t>;
+    using sample_set_t = SampleSet<state_space_description_t>;
 
     struct Less {
         bool operator()( const Prediction& lhs,

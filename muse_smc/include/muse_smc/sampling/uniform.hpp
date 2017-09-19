@@ -12,7 +12,7 @@ class UniformSampling {
 public:
     using Ptr           = std::shared_ptr<UniformSampling>;
     using sample_t      = typename state_space_description_t::sample_t;
-    using sample_set_t  = SampleSet<sample_t>;
+    using sample_set_t  = SampleSet<state_space_description_t>;
 
     inline UniformSampling()
     {

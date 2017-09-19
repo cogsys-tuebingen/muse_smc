@@ -6,11 +6,12 @@
 
 #include <muse_mcl_2d/samples/sample_2d.hpp>
 #include <muse_mcl_2d/tf/tf_publisher.hpp>
+#include <muse_mcl_2d/state_space/state_space_description_2d.hpp>
 
 #include "sample_set_publisher_2d.h"
 
 namespace muse_mcl_2d {
-class StatePublisher : public muse_smc::SMCState<Sample2D>
+class StatePublisher : public muse_smc::SMCState<StateSpaceDescription2D>
 {
 public:
     using Ptr = std::shared_ptr<StatePublisher>;

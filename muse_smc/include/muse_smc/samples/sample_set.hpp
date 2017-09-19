@@ -14,15 +14,16 @@
 #include <muse_smc/samples/sample_state_iterator.hpp>
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename state_space_description_t>
 class SampleSet
 {
 public:
-    using sample_set_t       = SampleSet<sample_t>;
+    using sample_t           = typename state_space_description_t::sample_t;
+    using sample_set_t       = SampleSet<state_space_description_t>;
     using sample_vector_t    = std::buffered_vector<sample_t, typename sample_t::allocator_t>;
     using sample_density_t   = SampleDensity<sample_t>;
     using sample_insertion_t = SampleInsertion<sample_t>;
-    using state_iterator_t   = StateIteration<sample_t>;
+    using state_iterator_t   = StateIteration<state_space_description_t>;
     using weight_iterator_t  = WeightIteration<sample_t>;
 
     using Ptr = std::shared_ptr<sample_set_t>;

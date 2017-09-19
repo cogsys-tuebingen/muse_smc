@@ -50,12 +50,14 @@ public:
 
     /// filter specific type defs
     using sample_t              = typename state_space_description_t::sample_t;
-    using sample_set_t          = SampleSet<sample_t>;
-    using update_t              = Update<sample_t>;
-    using prediction_t          = Prediction<sample_t>;
+    using sample_set_t          = SampleSet<state_space_description_t>;
+    using state_t               = typename state_space_description_t::state_t;
+    using covariance_t          = typename state_space_description_t::covariance_t;
+    using update_t              = Update<state_space_description_t>;
+    using prediction_t          = Prediction<state_space_description_t>;
     using prediction_result_t   = typename prediction_t::predition_model_t::Result;
-    using prediction_integral_t = PredictionIntegral<sample_t>;
-    using prediction_integrals_t= PredictionIntegrals<sample_t>;
+    using prediction_integral_t = PredictionIntegral<state_space_description_t>;
+    using prediction_integrals_t= PredictionIntegrals<state_space_description_t>;
     using normal_sampling_t     = NormalSampling<state_space_description_t>;
     using uniform_sampling_t    = UniformSampling<state_space_description_t>;
     using resampling_t          = Resampling<state_space_description_t>;
@@ -149,8 +151,8 @@ public:
 #endif
     }
 
-    inline void requestStateInitialization(const typename sample_t::state_t &state,
-                                           const typename sample_t::covariance_t &covariance)
+    inline void requestStateInitialization(const state_t &state,
+                                           const covariance_t &covariance)
     {
         lock_t l(init_state_mutex_);
         init_state_             = state;
@@ -165,38 +167,38 @@ public:
 
 protected:
     /// functions to apply to the sample set
-    typename sample_set_t::Ptr            sample_set_;
-    typename uniform_sampling_t::Ptr      sample_uniform_;
-    typename normal_sampling_t::Ptr       sample_normal_;
-    typename resampling_t::Ptr            resampling_;
-    typename prediction_integrals_t::Ptr  prediction_integrals_;
+    typename sample_set_t::Ptr              sample_set_;
+    typename uniform_sampling_t::Ptr        sample_uniform_;
+    typename normal_sampling_t::Ptr         sample_normal_;
+    typename resampling_t::Ptr              resampling_;
+    typename prediction_integrals_t::Ptr    prediction_integrals_;
 
-    Rate                                  preferred_filter_rate_;
-    std::size_t                           updates_applied_after_resampling_;
-    std::size_t                           minimum_update_cycles_;
+    Rate                                    preferred_filter_rate_;
+    std::size_t                             updates_applied_after_resampling_;
+    std::size_t                             minimum_update_cycles_;
 
-    typename filter_state_t::Ptr          state_publisher_;
+    typename filter_state_t::Ptr            state_publisher_;
 
     /// requests
-    std::mutex                            init_state_mutex_;
-    typename sample_t::state_t            init_state_;
-    typename sample_t::covariance_t       init_state_covariance_;
-    atomic_bool_t                         request_init_state_;
-    atomic_bool_t                         request_init_uniform_;
+    std::mutex                              init_state_mutex_;
+    state_t                                 init_state_;
+    covariance_t                            init_state_covariance_;
+    atomic_bool_t                           request_init_state_;
+    atomic_bool_t                           request_init_uniform_;
 
     /// processing queues
-    update_queue_t                        update_queue_;
-    prediction_queue_t                    prediction_queue_;
+    update_queue_t                          update_queue_;
+    prediction_queue_t                      prediction_queue_;
 
     /// background thread
-    mutex_t                               worker_thread_mutex_;
-    thread_t                              worker_thread_;
-    atomic_bool_t                         worker_thread_active_;
-    atomic_bool_t                         worker_thread_exit_;
-    condition_variable_t                  notify_event_;
-    mutable mutex_t                       notify_event_mutex_;
-    condition_variable_t                  notify_prediction_;
-    mutable mutex_t                       notify_prediction_mutex_;
+    mutex_t                                 worker_thread_mutex_;
+    thread_t                                worker_thread_;
+    atomic_bool_t                           worker_thread_active_;
+    atomic_bool_t                           worker_thread_exit_;
+    condition_variable_t                    notify_event_;
+    mutable mutex_t                         notify_event_mutex_;
+    condition_variable_t                    notify_prediction_;
+    mutable mutex_t                         notify_prediction_mutex_;
 
 #ifdef MUSE_SMC_USE_DOTTY
     Dotty::Ptr                          dotty_;

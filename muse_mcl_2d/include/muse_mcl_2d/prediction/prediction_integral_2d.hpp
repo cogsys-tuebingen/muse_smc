@@ -4,11 +4,12 @@
 #include <muse_mcl_2d/samples/sample_2d.hpp>
 #include <muse_mcl_2d/prediction/prediction_model_2d.hpp>
 
+
 #include <muse_smc/prediction/prediction_integral.hpp>
 
 
 namespace muse_mcl_2d {
-class PredictionIntegral2D : public muse_smc::PredictionIntegral<Sample2D>
+class PredictionIntegral2D : public muse_smc::PredictionIntegral<StateSpaceDescription2D>
 {
 public:
     inline PredictionIntegral2D() :

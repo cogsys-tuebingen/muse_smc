@@ -5,9 +5,10 @@
 
 #include <muse_mcl_2d/samples/sample_2d.hpp>
 #include <muse_mcl_2d/tf/tf_provider.hpp>
+#include <muse_mcl_2d/state_space/state_space_description_2d.hpp>
 
 namespace muse_mcl_2d {
-class UpdateModel2D : public muse_smc::UpdateModel<Sample2D>
+class UpdateModel2D : public muse_smc::UpdateModel<StateSpaceDescription2D>
 {
 public:
     using Ptr = std::shared_ptr<UpdateModel2D>;

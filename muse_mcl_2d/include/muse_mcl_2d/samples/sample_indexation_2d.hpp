@@ -4,13 +4,15 @@
 #include <muse_smc/math/index.hpp>
 
 #include <muse_mcl_2d/samples/sample_2d.hpp>
+#include <muse_mcl_2d/state_space/state_space_description_2d.hpp>
 
 namespace muse_mcl_2d {
 class SampleIndexation2D {
 public:
-    using resolution_t = std::array<double, 2>;
-    using index_t      = std::array<int, 3>;
-    using size_t       = std::array<std::size_t, 2>;
+    using resolution_t  = std::array<double, 2>;
+    using index_t       = std::array<int, 3>;
+    using size_t        = std::array<std::size_t, 2>;
+    using state_t       = StateSpaceDescription2D::state_t;
 
     inline SampleIndexation2D()
     {
@@ -46,7 +48,7 @@ public:
                          });
     }
 
-    inline index_t create(const Sample2D::state_t &state) const
+    inline index_t create(const state_t &state) const
     {
         return index_t({
                              static_cast<int>(std::floor(state.tx()            * resolution_inv_[0])),

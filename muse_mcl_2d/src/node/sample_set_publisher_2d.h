@@ -13,13 +13,14 @@
 
 #include <muse_mcl_2d/samples/sample_2d.hpp>
 #include <muse_mcl_2d/SampleSetMsg.h>
+#include <muse_mcl_2d/state_space/state_space_description_2d.hpp>
 
 namespace muse_mcl_2d {
 class SampleSetPublisher2D
 {
 public:
     using Ptr = std::shared_ptr<SampleSetPublisher2D>;
-    using sample_set_t    = muse_smc::SampleSet<Sample2D>;
+    using sample_set_t    = muse_smc::SampleSet<StateSpaceDescription2D>;
     using sample_vector_t = sample_set_t::sample_vector_t;
     using time_t          = muse_smc::Time;
     using lock_t          = std::unique_lock<std::mutex>;

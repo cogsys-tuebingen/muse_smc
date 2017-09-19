@@ -12,7 +12,7 @@ class Residual
 {
 public:
     using sample_t            = typename state_space_description_t::sample_t;
-    using sample_set_t        = SampleSet<sample_t>;
+    using sample_set_t        = SampleSet<state_space_description_t>;
     using uniform_sampling_t  = UniformSampling<state_space_description_t>;
 
     inline static void apply(sample_set_t &sample_set)

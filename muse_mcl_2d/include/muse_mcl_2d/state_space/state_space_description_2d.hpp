@@ -2,7 +2,6 @@
 #define STATE_SPACE_2D_HPP
 
 #include <muse_mcl_2d/samples/sample_2d.hpp>
-#include <muse_mcl_2d/prediction/prediction_integral_2d.hpp>
 
 namespace muse_mcl_2d {
 struct StateSpaceDescription2D
@@ -13,7 +12,6 @@ struct StateSpaceDescription2D
     using state_space_boundary_t = math::Point2D;
     using transform_t            = math::Transform2D;
     using covariance_t           = math::Covariance2D;
-    using prediction_integral_t  = PredictionIntegral2D;
 };
 }
 

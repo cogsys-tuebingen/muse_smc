@@ -7,14 +7,15 @@
 #include <muse_smc/time/time.hpp>
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename state_space_description_t>
 class StateSpace {
 public:
     using Ptr                     = std::shared_ptr<StateSpace>;
     using ConstPtr                = std::shared_ptr<StateSpace const>;
-    using state_t                 = typename sample_t::state_t;
-    using state_space_transform_t = typename sample_t::transform_t;
-    using state_space_boundary_t  = typename sample_t::state_space_boundary_t;
+    using sample_t                = typename state_space_description_t::sample_t;
+    using state_t                 = typename state_space_description_t::state_t;
+    using state_space_transform_t = typename state_space_description_t::transform_t;
+    using state_space_boundary_t  = typename state_space_description_t::state_space_boundary_t;
 
 
     StateSpace(const std::string &frame) :

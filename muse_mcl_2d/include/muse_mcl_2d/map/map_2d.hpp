@@ -4,17 +4,19 @@
 #include <ros/ros.h>
 
 #include <muse_smc/state_space/state_space.hpp>
+
 #include <muse_mcl_2d/samples/sample_2d.hpp>
 #include <muse_mcl_2d/math/point_2d.hpp>
+#include <muse_mcl_2d/state_space/state_space_description_2d.hpp>
 
 namespace muse_mcl_2d {
-class Map2D : public muse_smc::StateSpace<Sample2D>
+class Map2D : public muse_smc::StateSpace<StateSpaceDescription2D>
 {
 public:
     using limits_t = std::numeric_limits<double>;
 
     inline Map2D(const std::string &frame) :
-        muse_smc::StateSpace<Sample2D>(frame)
+        muse_smc::StateSpace<StateSpaceDescription2D>(frame)
     {
     }
 

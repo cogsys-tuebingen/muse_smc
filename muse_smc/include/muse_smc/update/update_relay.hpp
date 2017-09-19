@@ -9,20 +9,23 @@
 #include <muse_smc/smc/smc.hpp>
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename state_space_description_t>
 class UpdateRelay
 {
 public:
-    using Ptr = std::shared_ptr<UpdateRelay<sample_t>>;
-    using smc_t = SMC<sample_t>;
-    using update_t = Update<sample_t>;
-    using update_model_t = UpdateModel<sample_t>;
-    using data_provider_t = DataProvider<sample_t>;
-    using data_t = Data;
-    using state_space_provider_t = StateSpaceProvider<sample_t>;
-    using state_space_t = StateSpace<sample_t>;
-    using arguments_t = std::pair<typename data_provider_t::Ptr, typename state_space_provider_t::Ptr>;
-    using map_t = std::map<typename update_model_t::Ptr, arguments_t>;
+    using Ptr                       = std::shared_ptr<UpdateRelay>;
+    using sample_t                  = typename state_space_description_t::sample_t;
+    using smc_t                     = SMC<state_space_description_t>;
+    using update_t                  = Update<state_space_description_t>;
+    using update_model_t            = UpdateModel<state_space_description_t>;
+    using data_provider_t           = DataProvider<sample_t>;
+    using data_t                    = Data;
+    using state_space_provider_t    = StateSpaceProvider<state_space_description_t>;
+    using state_space_t             = StateSpace<state_space_description_t>;
+    using arguments_t               = std::pair<typename data_provider_t::Ptr,
+                                                typename state_space_provider_t::Ptr>;
+    using map_t                     = std::map<typename update_model_t::Ptr,
+                                               arguments_t>;
 
     inline UpdateRelay(const typename smc_t::Ptr &smc) :
         smc_(smc)

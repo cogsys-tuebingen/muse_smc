@@ -15,6 +15,7 @@
 #include <muse_mcl_2d/sampling/normal_2d.hpp>
 #include <muse_mcl_2d/resampling/resampling_2d.hpp>
 #include <muse_mcl_2d/samples/sample_density_2d.hpp>
+#include <muse_mcl_2d/state_space/state_space_description_2d.hpp>
 
 #include "state_publisher_2d.h"
 
@@ -54,11 +55,11 @@ private:
     using data_provider_map_t    = std::map<std::string, DataProvider2D::Ptr>;
     using update_model_map_t     = std::map<std::string, UpdateModel2D::Ptr>;
 
-    using UpdateRelay2D          = muse_smc::UpdateRelay<Sample2D>;
-    using PredictionRelay2D      = muse_smc::PredictionRelay<Sample2D>;
-    using smc_t                  = muse_smc::SMC<Sample2D>;
-    using sample_set_t           = muse_smc::SampleSet<Sample2D>;
-    using prediction_integrals_t = muse_smc::PredictionIntegrals<Sample2D>;
+    using UpdateRelay2D          = muse_smc::UpdateRelay<StateSpaceDescription2D>;
+    using PredictionRelay2D      = muse_smc::PredictionRelay<StateSpaceDescription2D>;
+    using smc_t                  = muse_smc::SMC<StateSpaceDescription2D>;
+    using sample_set_t           = muse_smc::SampleSet<StateSpaceDescription2D>;
+    using prediction_integrals_t = muse_smc::PredictionIntegrals<StateSpaceDescription2D>;
 
     using update_model_mapping_t = UpdateRelay2D::map_t;
 
