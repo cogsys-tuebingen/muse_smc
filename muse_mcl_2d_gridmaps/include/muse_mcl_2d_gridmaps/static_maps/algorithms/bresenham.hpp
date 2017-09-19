@@ -4,6 +4,7 @@
 #include <array>
 
 namespace muse_mcl_2d_gridmaps {
+namespace static_maps {
 namespace algorithms {
 template<typename T>
 class Bresenham
@@ -115,6 +116,7 @@ private:
     int          step_x_;
     int          step_y_;
 };
+}
 }
 }
 

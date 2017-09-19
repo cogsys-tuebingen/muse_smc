@@ -57,7 +57,7 @@ public:
 
     inline bool intersects(const Line2D &line) const
     {
-        //// LIANG BARKSY
+        //// LIANG BARSKY
         const auto p0 = line[0];
         const auto p1 = line[1];
         const auto d = p1 - p0;

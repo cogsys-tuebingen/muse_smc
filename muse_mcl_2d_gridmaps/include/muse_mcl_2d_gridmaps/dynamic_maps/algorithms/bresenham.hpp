@@ -11,6 +11,7 @@
 namespace cis = cslibs_indexed_storage;
 
 namespace muse_mcl_2d_gridmaps {
+namespace dynamic_maps {
 namespace algorithms {
 template<typename T>
 class Bresenham
@@ -152,6 +153,7 @@ private:
     int          step_x_;
     int          step_y_;
 };
+}
 }
 }
 

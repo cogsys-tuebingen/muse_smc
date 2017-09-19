@@ -6,6 +6,7 @@
 #include <cmath>
 
 namespace muse_mcl_2d_gridmaps {
+namespace static_maps {
 namespace algorithms {
 namespace distance_transform {
 struct DistanceCache {
@@ -213,6 +214,7 @@ private:
     }
 
 };
+}
 }
 }
 
