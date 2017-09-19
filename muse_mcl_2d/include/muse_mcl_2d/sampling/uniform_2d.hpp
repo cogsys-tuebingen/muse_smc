@@ -3,6 +3,7 @@
 
 #include <muse_smc/sampling/uniform.hpp>
 
+#include <muse_mcl_2d/state_space/state_space_description_2d.hpp>
 #include <muse_mcl_2d/samples/sample_2d.hpp>
 #include <muse_mcl_2d/map/map_provider_2d.hpp>
 #include <muse_mcl_2d/map/map_2d.hpp>
@@ -10,7 +11,7 @@
 
 
 namespace muse_mcl_2d {
-class UniformSampling2D : public muse_smc::UniformSampling<Sample2D>
+class UniformSampling2D : public muse_smc::UniformSampling<StateSpaceDescription2D>
 {
 public:
     using Ptr = std::shared_ptr<UniformSampling2D>;

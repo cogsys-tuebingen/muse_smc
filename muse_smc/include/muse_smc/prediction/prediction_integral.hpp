@@ -8,8 +8,8 @@ template<typename sample_t>
 class PredictionIntegral
 {
 public:
-    using Ptr = std::shared_ptr<PredictionIntegral<sample_t>>;
-    using ConstPtr = std::shared_ptr<PredictionIntegral<sample_t> const>;
+    using Ptr                = std::shared_ptr<PredictionIntegral>;
+    using ConstPtr           = std::shared_ptr<PredictionIntegral const>;
     using prediction_model_t = PredictionModel<sample_t>;
 
     PredictionIntegral() = default;

@@ -56,10 +56,10 @@ public:
     using prediction_result_t   = typename prediction_t::predition_model_t::Result;
     using prediction_integral_t = PredictionIntegral<sample_t>;
     using prediction_integrals_t= PredictionIntegrals<sample_t>;
-    using normal_sampling_t     = NormalSampling<sample_t>;
-    using uniform_sampling_t    = UniformSampling<sample_t>;
-    using resampling_t          = Resampling<sample_t>;
-    using filter_state_t        = SMCState<sample_t>;
+    using normal_sampling_t     = NormalSampling<state_space_description_t>;
+    using uniform_sampling_t    = UniformSampling<state_space_description_t>;
+    using resampling_t          = Resampling<state_space_description_t>;
+    using filter_state_t        = SMCState<state_space_description_t>;
     using update_queue_t        = synchronized::priority_queue<typename update_t::Ptr,
                                                                typename update_t::Greater>;
     using prediction_queue_t    = synchronized::priority_queue<typename prediction_t::Ptr,

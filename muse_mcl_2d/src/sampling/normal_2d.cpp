@@ -13,7 +13,6 @@ using Metric              = muse_smc::state_space_samplers::Metric;
 using Radian              = muse_smc::state_space_samplers::Radian;
 using RandomPoseGenerator = muse_smc::state_space_samplers::Normal<Metric, Metric, Radian>;
 
-
 class Normal2D : public NormalSampling2D
 {
 public:
@@ -90,7 +89,6 @@ public:
     }
 
 protected:
-
     int                             random_seed_;
     std::vector<Map2D::ConstPtr>    maps_;
     std::vector<math::Transform2D>  maps_T_w_;
