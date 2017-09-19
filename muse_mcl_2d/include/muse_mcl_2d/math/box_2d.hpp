@@ -14,7 +14,7 @@ public:
     using point_set_t    = std::set<Point2D>;
     using coefficients_t = std::array<double, 2>;
 
-    Box2D() :
+    inline Box2D() :
         min_{std::numeric_limits<double>::lowest(),
              std::numeric_limits<double>::lowest()},
         max_{std::numeric_limits<double>::max(),
@@ -22,14 +22,14 @@ public:
     {
     }
 
-    Box2D(const double min_x, const double min_y,
+    inline Box2D(const double min_x, const double min_y,
           const double max_x, const double max_y) :
         min_{min_x, min_y},
         max_{max_x, max_y}
     {
     }
 
-    Box2D(const Point2D &min,
+    inline Box2D(const Point2D &min,
           const Point2D &max) :
         min_(min),
         max_(max)

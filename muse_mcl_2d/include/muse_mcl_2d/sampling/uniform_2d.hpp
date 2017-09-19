@@ -20,12 +20,17 @@ public:
         return "muse_mcl_2d::UniformSampling2D";
     }
 
-    UniformSampling2D() = default;
-    virtual ~UniformSampling2D() = default;
+    inline UniformSampling2D()
+    {
+    }
 
-    void setup(const std::map<std::string, MapProvider2D::Ptr> &map_providers,
-               const TFProvider::Ptr &tf,
-               ros::NodeHandle &nh)
+    virtual ~UniformSampling2D()
+    {
+    }
+
+    inline void setup(const std::map<std::string, MapProvider2D::Ptr> &map_providers,
+                      const TFProvider::Ptr &tf,
+                      ros::NodeHandle &nh)
     {
         auto param_name = [this](const std::string &name){return name_ + "/" + name;};
         sample_size_ = nh.param(param_name("sample_size"), 500);

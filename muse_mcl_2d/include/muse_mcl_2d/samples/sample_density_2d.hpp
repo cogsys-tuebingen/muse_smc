@@ -35,8 +35,8 @@ public:
     using cis_kd_tree_clustering_t  = cis::operations::clustering::Clustering<cis_kd_tree_buffered_t>;
 
 
-    SampleDensity2D(const indexation_t &indexation,
-                    const std::size_t maximum_sample_size) :
+    inline SampleDensity2D(const indexation_t &indexation,
+                           const std::size_t maximum_sample_size) :
         indexation_(indexation),
         kdtree_(new cis_kd_tree_buffered_t),
         clustering_impl_(indexation_)

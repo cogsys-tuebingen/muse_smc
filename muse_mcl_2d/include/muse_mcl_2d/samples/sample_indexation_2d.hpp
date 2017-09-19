@@ -12,12 +12,12 @@ public:
     using index_t      = std::array<int, 3>;
     using size_t       = std::array<std::size_t, 2>;
 
-    SampleIndexation2D()
+    inline SampleIndexation2D()
     {
         resolution_.fill(0.0);
     }
 
-    SampleIndexation2D(const resolution_t &resolution) :
+    inline SampleIndexation2D(const resolution_t &resolution) :
         resolution_(resolution),
         resolution_inv_{1.0 / resolution[0],
                         1.0 / resolution[1]}

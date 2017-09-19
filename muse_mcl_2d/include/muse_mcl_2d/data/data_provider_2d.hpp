@@ -20,8 +20,8 @@ public:
         return "muse_mcl_2d::DataProvider2D";
     }
 
-    void setup(const TFProvider::Ptr &tf,
-               ros::NodeHandle       &nh)
+    inline void setup(const TFProvider::Ptr &tf,
+                      ros::NodeHandle       &nh)
     {
         auto param_name = [this](const std::string &name){return name_ + "/" + name;};
         tf_ = tf;

@@ -19,8 +19,11 @@ struct SampleDensityData2D {
     distribution_t      distribution;
     angular_mean_t      angular_mean;
 
-    SampleDensityData2D() = default;
-    SampleDensityData2D(const SampleDensityData2D &other) :
+    inline SampleDensityData2D()
+    {
+    }
+
+    inline SampleDensityData2D(const SampleDensityData2D &other) :
         cluster(other.cluster),
         samples((other.samples)),
         distribution((other.distribution)),
@@ -29,7 +32,7 @@ struct SampleDensityData2D {
     }
 
 
-    SampleDensityData2D(SampleDensityData2D &&other) :
+    inline SampleDensityData2D(SampleDensityData2D &&other) :
         cluster(other.cluster),
         samples(std::move(other.samples)),
         distribution(std::move(other.distribution)),
@@ -37,7 +40,7 @@ struct SampleDensityData2D {
     {
     }
 
-    SampleDensityData2D& operator = (const SampleDensityData2D &other)
+    inline SampleDensityData2D& operator = (const SampleDensityData2D &other)
     {
         cluster         = (other.cluster);
         samples         = ((other.samples));
@@ -46,12 +49,12 @@ struct SampleDensityData2D {
         return *this;
     }
 
-    virtual ~SampleDensityData2D()
+    inline virtual ~SampleDensityData2D()
     {
     }
 
 
-    SampleDensityData2D(const Sample2D &sample)
+    inline SampleDensityData2D(const Sample2D &sample)
     {
         samples.emplace_back(&sample);
         distribution.add(sample.state.translation().toEigen(), sample.weight);

@@ -19,8 +19,8 @@ public:
         return "muse_mcl_2d::Resampling2D";
     }
 
-    void setup(const typename sample_uniform_t::Ptr &uniform_pose_sampler,
-               ros::NodeHandle &nh)
+    inline void setup(const typename sample_uniform_t::Ptr &uniform_pose_sampler,
+                      ros::NodeHandle &nh)
     {
         auto param_name = [this](const std::string &name){return name_ + "/" + name;};
         muse_smc::Resampling<muse_mcl_2d::Sample2D>::setup(uniform_pose_sampler,

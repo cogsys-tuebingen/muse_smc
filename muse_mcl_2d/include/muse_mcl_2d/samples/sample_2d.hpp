@@ -22,26 +22,26 @@ public:
     double       weight;
     math::Pose2D state;
 
-    Sample2D() :
+    inline Sample2D() :
         weight(0.0),
         state(math::Pose2D(0.0,0.0))
     {
     }
 
-    Sample2D(const Sample2D &other) :
+    inline Sample2D(const Sample2D &other) :
         weight(other.weight),
         state(other.state)
     {
     }
 
-    Sample2D(Sample2D &&other) :
+    inline Sample2D(Sample2D &&other) :
         weight(other.weight),
         state(other.state)
     {
     }
 
 
-    Sample2D& operator = (const Sample2D &other)
+    inline Sample2D& operator = (const Sample2D &other)
     {
         if(&other != this) {
             weight = other.weight;
@@ -50,7 +50,7 @@ public:
         return *this;
     }
 
-    Sample2D& operator = (Sample2D &&other)
+    inline Sample2D& operator = (Sample2D &&other)
     {
         if(&other != this) {
             weight = other.weight;

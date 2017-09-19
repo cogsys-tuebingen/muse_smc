@@ -27,7 +27,7 @@ struct SampleClustering2D {
     using neighborhood_t  = cis::operations::clustering::GridNeighborhoodStatic<std::tuple_size<index_t>::value, 3>;
     using visitor_index_t = neighborhood_t::offset_t;
 
-    SampleClustering2D(indexation_t &indexation) :
+    inline SampleClustering2D(indexation_t &indexation) :
         indexation(indexation)
     {
         auto resolution = indexation.getResolution();
@@ -58,7 +58,7 @@ struct SampleClustering2D {
         return true;
     }
 
-    bool extend(const index_t&, const index_t&, SampleDensityData2D& data)
+    inline bool extend(const index_t&, const index_t&, SampleDensityData2D& data)
     {
         if (data.cluster != -1)
             return false;
@@ -77,14 +77,14 @@ struct SampleClustering2D {
 
 
     template<typename visitor_t>
-    void visit_neighbours(const index_t&, const visitor_t& visitor)
+    inline void visit_neighbours(const index_t&, const visitor_t& visitor)
     {
         static constexpr auto neighborhood = neighborhood_t{};
         neighborhood.visit(visitor);
     }
 
     template<typename offset_t>
-    index_t add(const index_t& a, const offset_t& b) const
+    inline index_t add(const index_t& a, const offset_t& b) const
     {
         return index_t({a[0] + b[0], a[1] + b[1], (a[2] + b[2]) % angular_bins});
     }

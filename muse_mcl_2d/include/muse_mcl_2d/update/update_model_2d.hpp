@@ -17,8 +17,13 @@ public:
         return "muse_mcl_2d::UpdateModel2D";
     }
 
-    UpdateModel2D() = default;
-    virtual ~UpdateModel2D() = default;
+    inline UpdateModel2D()
+    {
+    }
+
+    inline virtual ~UpdateModel2D()
+    {
+    }
 
     inline void setup(const TFProvider::Ptr &tf,
                       ros::NodeHandle &nh)

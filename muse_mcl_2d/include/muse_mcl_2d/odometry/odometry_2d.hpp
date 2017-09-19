@@ -14,7 +14,7 @@ public:
     using time_frame_t = muse_smc::TimeFrame;
     using time_t = muse_smc::Time;
 
-    Odometry2D(const std::string &frame) :
+    inline Odometry2D(const std::string &frame) :
         Data(frame),
         start_pose_(math::Transform2D::identity()),
         end_pose_(math::Transform2D::identity()),
@@ -24,7 +24,7 @@ public:
     {
     }
 
-    Odometry2D(const std::string &frame,
+    inline Odometry2D(const std::string &frame,
                const time_frame_t &time_frame) :
         Data(frame, time_frame),
         start_pose_(math::Transform2D::identity()),
@@ -35,7 +35,7 @@ public:
     {
     }
 
-    Odometry2D(const std::string &frame,
+    inline Odometry2D(const std::string &frame,
               const time_frame_t &time_frame,
               const math::Pose2D &start,
               const math::Pose2D &end) :
@@ -84,7 +84,7 @@ public:
         return delta_angular_;
     }
 
-    bool split(const time_t &split_time, Odometry2D::ConstPtr &a, Odometry2D::ConstPtr &b) const
+    inline bool split(const time_t &split_time, Odometry2D::ConstPtr &a, Odometry2D::ConstPtr &b) const
     {
         if(!time_frame_.within(split_time))
             return false;

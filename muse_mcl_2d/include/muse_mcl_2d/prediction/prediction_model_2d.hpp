@@ -15,10 +15,10 @@ public:
 
     struct Result2D : public Result
     {
-        Result2D(const double linear_distance_abs,
-                 const double angular_distance_abs,
-                 const Odometry2D::ConstPtr &applied,
-                 const Odometry2D::ConstPtr &left_to_apply) :
+        inline Result2D(const double linear_distance_abs,
+                        const double angular_distance_abs,
+                        const Odometry2D::ConstPtr &applied,
+                        const Odometry2D::ConstPtr &left_to_apply) :
             Result(applied, left_to_apply),
             linear_distance_abs(linear_distance_abs),
             angular_distance_abs(angular_distance_abs)
@@ -29,8 +29,13 @@ public:
         const double angular_distance_abs;
     };
 
-    PredictionModel2D() = default;
-    virtual ~PredictionModel2D() = default;
+    PredictionModel2D()
+    {
+    }
+
+    virtual ~PredictionModel2D()
+    {
+    }
 
     inline const static std::string Type()
     {

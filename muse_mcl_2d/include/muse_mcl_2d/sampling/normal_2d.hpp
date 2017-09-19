@@ -21,12 +21,17 @@ public:
         return "muse_mcl_2d::NormalSampling2D";
     }
 
-    NormalSampling2D() = default;
-    virtual ~NormalSampling2D() = default;
+    inline NormalSampling2D()
+    {
+    }
 
-    void setup(const std::map<std::string, MapProvider2D::Ptr> &map_providers,
-               const TFProvider::Ptr &tf,
-               ros::NodeHandle &nh)
+    virtual ~NormalSampling2D()
+    {
+    }
+
+    inline void setup(const std::map<std::string, MapProvider2D::Ptr> &map_providers,
+                      const TFProvider::Ptr &tf,
+                      ros::NodeHandle &nh)
     {
         auto param_name = [this](const std::string &name){return name_ + "/" + name;};
         sample_size_ = nh.param(param_name("sample_size"), 500);

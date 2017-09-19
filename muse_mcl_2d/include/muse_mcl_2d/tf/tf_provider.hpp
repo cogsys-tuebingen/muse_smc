@@ -13,7 +13,11 @@ class TFProvider {
 public:
     typedef std::shared_ptr<TFProvider> Ptr;
 
-    TFProvider()
+    inline TFProvider()
+    {
+    }
+
+    inline virtual ~TFProvider()
     {
     }
 

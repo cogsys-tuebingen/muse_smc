@@ -14,12 +14,12 @@ public:
     const static std::size_t size_ = step_ * step_;
     using data_t = std::array<double, size_>;
 
-    Covariance2D()
+    inline Covariance2D()
     {
         data_.fill(0.0);
     }
 
-    Covariance2D(const data_t &data) :
+    inline Covariance2D(const data_t &data) :
         data_(data)
     {
     }

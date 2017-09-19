@@ -38,11 +38,11 @@ public:
      * @param base_frame    - the base frame
      * @param world_frame   - the world fram
      */
-    TFPublisher(const double rate,
-                const std::string &odom_frame,
-                const std::string &base_frame,
-                const std::string &world_frame,
-                const double timeout = 0.1) :
+    inline TFPublisher(const double rate,
+                       const std::string &odom_frame,
+                       const std::string &base_frame,
+                       const std::string &world_frame,
+                       const double timeout = 0.1) :
         odom_frame_(odom_frame),
         base_frame_(base_frame),
         world_frame_(world_frame),
@@ -55,7 +55,7 @@ public:
     {
     }
 
-    virtual ~TFPublisher()
+    inline virtual ~TFPublisher()
     {
         end();
     }
@@ -121,7 +121,7 @@ private:
     ros::Rate                tf_rate_;
     ros::Time                tf_time_of_transform_;
 
-    void loop()
+    inline void loop()
     {
         running_ = true;
         while(!stop_) {
