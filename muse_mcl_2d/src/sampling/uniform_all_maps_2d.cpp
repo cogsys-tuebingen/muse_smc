@@ -19,10 +19,10 @@ public:
     {
         const ros::Time   now   = ros::Time::now();
 
-        Point2D min(std::numeric_limits<double>::max(),
-                    std::numeric_limits<double>::max());
-        Point2D max(std::numeric_limits<double>::lowest(),
-                    std::numeric_limits<double>::lowest());
+        math::Point2D min(std::numeric_limits<double>::max(),
+                          std::numeric_limits<double>::max());
+        math::Point2D max(std::numeric_limits<double>::lowest(),
+                          std::numeric_limits<double>::lowest());
 
         const std::size_t map_provider_count = map_providers_.size();
         maps_T_w_.resize(map_provider_count);
@@ -35,11 +35,11 @@ public:
             }
             tf::Transform tf_map_T_w;
             if(tf_->lookupTransform(map->getFrame(), frame, now, tf_map_T_w, tf_timeout_)) {
-                Transform2D map_T_w = from(tf_map_T_w);
+                math::Transform2D map_T_w = math::from(tf_map_T_w);
                 maps_[i] = map;
                 maps_T_w_[i] =map_T_w;
 
-                Transform2D w_T_map = map_T_w.inverse();
+                math::Transform2D w_T_map = map_T_w.inverse();
                 min = min.min(w_T_map * map->getMin());
                 max = max.max(w_T_map * map->getMax());
             } else {
@@ -112,7 +112,7 @@ public:
 protected:
     int random_seed_;
     std::vector<Map2D::ConstPtr>    maps_;
-    std::vector<Transform2D>        maps_T_w_;
+    std::vector<math::Transform2D>  maps_T_w_;
     std::vector<MapProvider2D::Ptr> map_providers_;
     RandomPoseGenerator::Ptr        rng_;
 

@@ -30,8 +30,8 @@ void BeamModelMLE::apply(const data_t::ConstPtr          &data,
 
 
     /// laser to base transform
-    muse_mcl_2d::Transform2D b_T_l;
-    muse_mcl_2d::Transform2D m_T_w;
+    muse_mcl_2d::math::Transform2D b_T_l;
+    muse_mcl_2d::math::Transform2D m_T_w;
     if(!tf_->lookupTransform(robot_base_frame_,
                              laser_data.getFrame(),
                              ros::Time(laser_data.getTimeFrame().end.seconds()),
@@ -89,7 +89,7 @@ void BeamModelMLE::apply(const data_t::ConstPtr          &data,
     std::vector<double> particle_weights;
 
     for(auto it = set.begin() ; it != end ; ++it) {
-        const muse_mcl_2d::Pose2D m_T_l = m_T_w * it.getData().state * b_T_l; /// laser scanner pose in map coordinates
+        const muse_mcl_2d::math::Pose2D m_T_l = m_T_w * it.getData().state * b_T_l; /// laser scanner pose in map coordinates
         const double prior = *it;
         double p = 0.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
@@ -98,7 +98,7 @@ void BeamModelMLE::apply(const data_t::ConstPtr          &data,
                 p += parameters_.z_max;
             } else {
                 const double        ray_range = ray.range;
-                muse_mcl_2d::Point2D   ray_end_point = m_T_l * ray.point;
+                muse_mcl_2d::math::Point2D   ray_end_point = m_T_l * ray.point;
                 const double        map_range = gridmap.getRange(m_T_l.translation(), ray_end_point);
                 const double pz = probability(ray_range, map_range);
                 p += std::log(pz);  /// @todo : fix the inprobable thing ;)

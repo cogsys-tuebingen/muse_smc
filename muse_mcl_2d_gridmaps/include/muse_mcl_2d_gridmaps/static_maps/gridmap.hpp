@@ -39,21 +39,21 @@ public:
     {
     }
 
-    virtual inline muse_mcl_2d::Point2D getMin() const override
+    virtual inline muse_mcl_2d::math::Point2D getMin() const override
     {
-        muse_mcl_2d::Point2D p;
+        muse_mcl_2d::math::Point2D p;
         fromIndex({0,0},p);
         return p;
     }
 
-    virtual inline muse_mcl_2d::Point2D getMax() const override
+    virtual inline muse_mcl_2d::math::Point2D getMax() const override
     {
-        muse_mcl_2d::Point2D p;
+        muse_mcl_2d::math::Point2D p;
         fromIndex({(int)width_-1,(int)height_-1},p);
         return p;
     }
 
-    virtual inline muse_mcl_2d::Pose2D getOrigin() const
+    virtual inline muse_mcl_2d::math::Pose2D getOrigin() const
     {
         return w_T_m_;
     }
@@ -70,7 +70,7 @@ public:
         return data_ptr_[width_ * idy + idx];
     }
 
-    inline T& at(const muse_mcl_2d::Point2D &point)
+    inline T& at(const muse_mcl_2d::math::Point2D &point)
     {
         index_t i;
         if(!toIndex(point, i)) {
@@ -79,7 +79,7 @@ public:
         return at(i[0], i[1]);
     }
 
-    inline const T& at(const muse_mcl_2d::Point2D &point) const
+    inline const T& at(const muse_mcl_2d::math::Point2D &point) const
     {
         index_t i;
         if(!toIndex(point, i)) {
@@ -101,8 +101,8 @@ public:
         return const_line_iterator_t(start, end, width_, data_ptr_);
     }
 
-    inline const_line_iterator_t getConstLineIterator(const muse_mcl_2d::Point2D &start,
-                                                      const muse_mcl_2d::Point2D &end) const
+    inline const_line_iterator_t getConstLineIterator(const muse_mcl_2d::math::Point2D &start,
+                                                      const muse_mcl_2d::math::Point2D &end) const
     {
         index_t start_index;
         index_t end_index;
@@ -149,16 +149,16 @@ public:
 
 
 protected:
-    const double                      resolution_;
-    const double                      resolution_inv_;
-    const std::size_t                 height_;
-    const std::size_t                 width_;
-    const index_t                     max_index_;
-    const muse_mcl_2d::Transform2D    w_T_m_;
-    const muse_mcl_2d::Transform2D    m_T_w_;
+    const double                            resolution_;
+    const double                            resolution_inv_;
+    const std::size_t                       height_;
+    const std::size_t                       width_;
+    const index_t                           max_index_;
+    const muse_mcl_2d::math::Transform2D    w_T_m_;
+    const muse_mcl_2d::math::Transform2D    m_T_w_;
 
-    std::vector<T>                    data_;
-    T*                                data_ptr_;
+    std::vector<T>                          data_;
+    T*                                      data_ptr_;
 
     inline bool invalid(const index_t &_i) const
     {
@@ -168,10 +168,10 @@ protected:
                _i[1] > max_index_[1];
     }
 
-    inline bool toIndex(const muse_mcl_2d::Point2D &p_w,
+    inline bool toIndex(const muse_mcl_2d::math::Point2D &p_w,
                         index_t &i) const
     {
-        const muse_mcl_2d::Point2D p_m = m_T_w_ * p_w;
+        const muse_mcl_2d::math::Point2D p_m = m_T_w_ * p_w;
 
         i[0] = static_cast<int>(p_m.x() * resolution_inv_ + 0.5);
         i[1] = static_cast<int>(p_m.y() * resolution_inv_ + 0.5);
@@ -181,17 +181,17 @@ protected:
     }
 
     inline void fromIndex(const index_t &i,
-                          muse_mcl_2d::Point2D &p_w) const
+                          muse_mcl_2d::math::Point2D &p_w) const
     {
-        p_w = w_T_m_ * muse_mcl_2d::Point2D(i[0] * resolution_,
-                                            i[1] * resolution_);
+        p_w = w_T_m_ * muse_mcl_2d::math::Point2D(i[0] * resolution_,
+                                                  i[1] * resolution_);
     }
 
     inline void fromIndex(const const_line_iterator_t &it,
-                          muse_mcl_2d::Point2D &p_w) const
+                          muse_mcl_2d::math::Point2D &p_w) const
     {
-        p_w = w_T_m_ * muse_mcl_2d::Point2D(it.x() * resolution_,
-                                            it.y() * resolution_);
+        p_w = w_T_m_ * muse_mcl_2d::math::Point2D(it.x() * resolution_,
+                                                  it.y() * resolution_);
     }
 
     };

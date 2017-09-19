@@ -7,6 +7,7 @@
 
 
 namespace muse_mcl_2d {
+namespace math {
 class Covariance2D {
 public:
     const static std::size_t step_ = 3;
@@ -73,6 +74,7 @@ public:
 private:
     data_t data_;
 }__attribute__ ((aligned (128)));
+}
 }
 
 #endif // COVARIANCE_2D_HPP

@@ -12,9 +12,9 @@ void OdometryProvider2D::callback(const nav_msgs::OdometryConstPtr &msg)
 {
     auto to_pose = [](const nav_msgs::OdometryConstPtr &msg)
     {
-        return Pose2D(msg->pose.pose.position.x,
-                      msg->pose.pose.position.y,
-                      tf::getYaw(msg->pose.pose.orientation));
+        return math::Pose2D(msg->pose.pose.position.x,
+                            msg->pose.pose.position.y,
+                            tf::getYaw(msg->pose.pose.orientation));
     };
 
     if(last_msg_) {

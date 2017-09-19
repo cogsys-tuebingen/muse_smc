@@ -27,8 +27,8 @@ void BeamModelAMCL::apply(const data_t::ConstPtr          &data,
     const muse_mcl_2d_laser::LaserScan2D::Rays  &laser_rays = laser_data.getRays();
 
     /// laser to base transform
-    muse_mcl_2d::Transform2D b_T_l;
-    muse_mcl_2d::Transform2D m_T_w;
+    muse_mcl_2d::math::Transform2D b_T_l;
+    muse_mcl_2d::math::Transform2D m_T_w;
     if(!tf_->lookupTransform(robot_base_frame_,
                              laser_data.getFrame(),
                              ros::Time(laser_data.getTimeFrame().end.seconds()),
@@ -78,16 +78,16 @@ void BeamModelAMCL::apply(const data_t::ConstPtr          &data,
     };
 
     for(auto it = set.begin() ; it != end ; ++it) {
-        const muse_mcl_2d::Pose2D m_T_l = m_T_w * it.getData().state * b_T_l; /// laser scanner pose in map coordinates
+        const muse_mcl_2d::math::Pose2D m_T_l = m_T_w * it.getData().state * b_T_l; /// laser scanner pose in map coordinates
         double p = 1.0;
-        const muse_mcl_2d::Point2D  ray_start_point = m_T_l.translation();
+        const muse_mcl_2d::math::Point2D  ray_start_point = m_T_l.translation();
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
             if(!ray.valid()) {
                 p += z_max_;
             } else {
                 const double           ray_range = ray.range;
-                muse_mcl_2d::Point2D   ray_end_point =  m_T_l * ray.point;
+                muse_mcl_2d::math::Point2D   ray_end_point =  m_T_l * ray.point;
                 const double map_range = gridmap.getRange(ray_start_point, ray_end_point);
                 const double pz = probability(ray_range, map_range);
                 p += pz * pz * pz;  /// @todo : fix the inprobable thing ;)

@@ -111,8 +111,8 @@ bool SampleSetPublisher2D::end()
 
 void SampleSetPublisher2D::set(const sample_vector_t &sample_vector,
                                const double maximum_weight,
-                               const Pose2D &mean,
-                               const Covariance2D &covariance,
+                               const math::Pose2D &mean,
+                               const math::Covariance2D &covariance,
                                const time_t &stamp)
 {
     lock_t lock(data_mutex_);
@@ -145,8 +145,7 @@ void SampleSetPublisher2D::loop()
         return marker;
     };
 
-    auto create_pose = []
-            (const Pose2D &pose)
+    auto create_pose = [](const math::Pose2D &pose)
     {
         geometry_msgs::Pose p;
         p.position.x = pose.tx();
@@ -184,8 +183,8 @@ void SampleSetPublisher2D::loop()
 
     time_t               stamp;
     sample_vector_t::Ptr samples;
-    Pose2D               mean;
-    Covariance2D         covariance;
+    math::Pose2D         mean;
+    math::Covariance2D   covariance;
     double               maximum_weight = 0.0;
 
     while(!stop_) {

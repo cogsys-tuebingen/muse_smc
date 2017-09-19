@@ -20,7 +20,7 @@ public:
     inline bool lookupTransform(const std::string    &target_frame,
                                 const std::string    &source_frame,
                                 const ros::Time      &time,
-                                StampedTransform2D   &transform)
+                                math::StampedTransform2D   &transform)
     {
         tf::Transform tf_transform;
         if(lookupTransform(target_frame, source_frame,time, tf_transform)) {
@@ -31,11 +31,11 @@ public:
         return false;
     }
 
-    inline bool lookupTransform(const std::string    &target_frame,
-                                const std::string    &source_frame,
-                                const ros::Time      &time,
-                                StampedTransform2D   &transform,
-                                const ros::Duration  &timeout)
+    inline bool lookupTransform(const std::string           &target_frame,
+                                const std::string           &source_frame,
+                                const ros::Time             &time,
+                                math::StampedTransform2D    &transform,
+                                const ros::Duration         &timeout)
     {
         tf::Transform tf_transform;
         if(lookupTransform(target_frame,
@@ -54,7 +54,7 @@ public:
     inline bool lookupTransform(const std::string    &target_frame,
                                 const std::string    &source_frame,
                                 const ros::Time      &time,
-                                Transform2D          &transform)
+                                math::Transform2D    &transform)
     {
         tf::Transform tf_transform;
         if(lookupTransform(target_frame, source_frame, time, tf_transform)) {
@@ -67,7 +67,7 @@ public:
     inline bool lookupTransform(const std::string    &target_frame,
                                 const std::string    &source_frame,
                                 const ros::Time      &time,
-                                Transform2D          &transform,
+                                math::Transform2D    &transform,
                                 const ros::Duration  &timeout)
     {
         tf::Transform tf_transform;
@@ -172,7 +172,7 @@ protected:
     std::mutex mutex_;
     tf::TransformListener tf_;
 
-    inline void convert(const tf::Transform &src, Transform2D &dst)
+    inline void convert(const tf::Transform &src, math::Transform2D &dst)
     {
         const tf::Vector3 &origin = src.getOrigin();
         const tf::Quaternion &rotation = src.getRotation();

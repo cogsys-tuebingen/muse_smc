@@ -5,6 +5,7 @@
 #include <eigen3/Eigen/Core>
 
 namespace muse_mcl_2d {
+namespace math {
 class Vector2D {
 public:
     inline Vector2D() :
@@ -176,8 +177,9 @@ private:
     double y_;
 } __attribute__ ((aligned (16)));
 }
+}
 
-inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d::Vector2D &v)
+inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d::math::Vector2D &v)
 {
     out << "[" << v.x() << "," << v.y() << "]";
     return out;

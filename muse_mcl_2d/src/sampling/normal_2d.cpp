@@ -21,26 +21,26 @@ public:
     {
         const ros::Time   now   = ros::Time::now();
 
-        Point2D min(std::numeric_limits<double>::max(),
-                    std::numeric_limits<double>::max());
-        Point2D max(std::numeric_limits<double>::lowest(),
-                    std::numeric_limits<double>::lowest());
+        math::Point2D min(std::numeric_limits<double>::max(),
+                          std::numeric_limits<double>::max());
+        math::Point2D max(std::numeric_limits<double>::lowest(),
+                          std::numeric_limits<double>::lowest());
 
         for(auto &m : map_providers_) {
             tf::Transform tf_map_T_w;
-            Transform2D map_t_w;
+            math::Transform2D map_t_w;
             Map2D::ConstPtr map = m->getStateSpace();
             if(!map) {
                 throw std::runtime_error("[Normal2D] : map was null!");
             }
 
             if(tf_->lookupTransform(map->getFrame(), frame, now, tf_map_T_w, tf_timeout_)) {
-                map_t_w = from(tf_map_T_w);
+                map_t_w = math::from(tf_map_T_w);
 
                 maps_.emplace_back(map);
                 maps_T_w_.emplace_back(map_t_w);
 
-                Transform2D w_T_map = map_t_w.inverse();
+                math::Transform2D w_T_map = map_t_w.inverse();
                 min = min.min(w_T_map * map->getMin());
                 max = max.max(w_T_map * map->getMax());
 
@@ -48,8 +48,8 @@ public:
         }
     }
 
-    virtual void apply(const Pose2D       &pose,
-                       const Covariance2D &covariance,
+    virtual void apply(const math::Pose2D       &pose,
+                       const math::Covariance2D &covariance,
                        sample_set_t &sample_set) override
     {
         update(sample_set.getFrame());
@@ -91,9 +91,9 @@ public:
 
 protected:
 
-    int random_seed_;
+    int                             random_seed_;
     std::vector<Map2D::ConstPtr>    maps_;
-    std::vector<Transform2D>        maps_T_w_;
+    std::vector<math::Transform2D>  maps_T_w_;
     std::vector<MapProvider2D::Ptr> map_providers_;
 
     virtual void doSetup(const std::map<std::string, MapProvider2D::Ptr> &map_providers,

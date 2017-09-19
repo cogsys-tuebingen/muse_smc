@@ -16,7 +16,7 @@ public:
                     const double maximum_distance = 2.0,
                     const double threshold = 1.0);
 
-    double at(const muse_mcl_2d::Point2D &point) const;
+    double at(const muse_mcl_2d::math::Point2D &point) const;
 
 private:
     void convert(const nav_msgs::OccupancyGrid &occupancy_grid,

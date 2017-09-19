@@ -29,7 +29,7 @@ DistanceGridMap::DistanceGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupa
 {
 }
 
-double DistanceGridMap::at(const muse_mcl_2d::Point2D &point) const
+double DistanceGridMap::at(const muse_mcl_2d::math::Point2D &point) const
 {
     index_t i;
     toIndex(point, i);

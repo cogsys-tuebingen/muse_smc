@@ -32,7 +32,7 @@ public:
             return false;
         }
 
-        w_T_primary_ = from(tf_w_T_primary);
+        w_T_primary_ = math::from(tf_w_T_primary);
 
         const std::size_t map_provider_count = map_providers_.size();
         for(std::size_t i = 0 ; i < map_provider_count ; ++i) {
@@ -44,7 +44,7 @@ public:
 
             tf::Transform tf_secondary_map_T_w;
             if(tf_->lookupTransform(map->getFrame(), frame, now, tf_secondary_map_T_w, tf_timeout_)) {
-                secondary_maps_T_w_[i] = from(tf_secondary_map_T_w);
+                secondary_maps_T_w_[i] = math::from(tf_secondary_map_T_w);
                 secondary_maps_[i] = map;
             } else {
                 return false;
@@ -54,8 +54,8 @@ public:
         /// to be axis-aligned, relative to the map origin
         /// but internal frames are already within calculation
 
-        Point2D min = primary_map_->getMin();
-        Point2D max = primary_map_->getMax();
+        math::Point2D min = primary_map_->getMin();
+        math::Point2D max = primary_map_->getMax();
         rng_.reset(new RandomPoseGenerator({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}));
         if(random_seed_ >= 0) {
             rng_.reset(new RandomPoseGenerator({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}, random_seed_));
@@ -115,7 +115,7 @@ public:
             sample.state.setFrom(rng_->get());
             valid = primary_map_->validate(sample.state);
             if(valid) {
-                Transform2D pose  = w_T_primary_ * sample.state;
+                math::Transform2D pose  = w_T_primary_ * sample.state;
                 for(std::size_t i = 0 ; i < secondary_maps_count ; ++i) {
                     valid &= secondary_maps_[i]->validate(secondary_maps_T_w_[i] * pose);
                 }
@@ -128,11 +128,11 @@ protected:
     int                             random_seed_;
 
     RandomPoseGenerator::Ptr        rng_;
-    Transform2D                     w_T_primary_;
+    math::Transform2D               w_T_primary_;
     Map2D::ConstPtr                 primary_map_;
     MapProvider2D::Ptr              primary_map_provider_;
     std::vector<Map2D::ConstPtr>    secondary_maps_;
-    std::vector<Transform2D>        secondary_maps_T_w_;
+    std::vector<math::Transform2D>  secondary_maps_T_w_;
 
 
     virtual void doSetup(const std::map<std::string, MapProvider2D::Ptr> &map_providers,

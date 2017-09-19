@@ -10,7 +10,7 @@ namespace muse_mcl_2d_laser {
 class LaserScan2D : public muse_smc::Data
 {
 public:
-    using point_t = muse_mcl_2d::Point2D;
+    using point_t = muse_mcl_2d::math::Point2D;
     using time_frame_t = muse_smc::TimeFrame;
 
     struct Ray {

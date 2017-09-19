@@ -16,17 +16,17 @@ public:
     virtual ~OdometryProviderTF2D();
 
 protected:
-    muse_mcl_2d::TFProvider         tf_;
-    std::string                     odom_frame_;
-    std::string                     base_frame_;
+    muse_mcl_2d::TFProvider               tf_;
+    std::string                           odom_frame_;
+    std::string                           base_frame_;
 
-    muse_mcl_2d::StampedTransform2D o_T_b1_;
-    bool                            initialized_;
-    ros::Rate                       rate_;
-    ros::Duration                   timeout_;
-    std::atomic_bool                running_;
-    std::atomic_bool                stop_;
-    std::thread                     worker_thread_;
+    muse_mcl_2d::math::StampedTransform2D o_T_b1_;
+    bool                                  initialized_;
+    ros::Rate                             rate_;
+    ros::Duration                         timeout_;
+    std::atomic_bool                      running_;
+    std::atomic_bool                      stop_;
+    std::thread                           worker_thread_;
 
     virtual void doSetup(ros::NodeHandle &nh) override;
     void loop();

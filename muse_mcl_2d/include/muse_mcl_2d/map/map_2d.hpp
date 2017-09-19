@@ -20,19 +20,19 @@ public:
 
     virtual state_space_boundary_t getMin() const
     {
-        return Point2D(limits_t::lowest(),
-                       limits_t::lowest());
+        return math::Point2D(limits_t::lowest(),
+                             limits_t::lowest());
     }
 
     virtual state_space_boundary_t getMax() const
     {
-        return Point2D(limits_t::max(),
-                       limits_t::max());
+        return math::Point2D(limits_t::max(),
+                             limits_t::max());
     }
 
     virtual state_space_transform_t getOrigin() const
     {
-        return Transform2D::identity();
+        return math::Transform2D::identity();
     }
 
     virtual bool isAvailable() const

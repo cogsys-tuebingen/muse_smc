@@ -7,6 +7,7 @@
 #include <muse_smc/math/angle.hpp>
 
 namespace muse_mcl_2d {
+namespace math {
 class Transform2D {
 public:
     inline Transform2D() :
@@ -273,10 +274,12 @@ private:
     double   sin_;
     double   cos_;
 } __attribute__ ((aligned (64)));
+
 using StampedTransform2D = muse_smc::Stamped<Transform2D>;
 }
+}
 
-inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d::Transform2D &t)
+inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d::math::Transform2D &t)
 {
     out << "[" << t.tx() << "," << t.ty() << "," << t.yaw() << "]";
     return out;

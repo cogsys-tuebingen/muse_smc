@@ -31,11 +31,11 @@ public:
     bool start();
     bool end();
 
-    void set(const sample_vector_t &sample_vector,
-             const double           weight_maximum,
-             const Pose2D          &mean,
-             const Covariance2D    &covariance,
-             const time_t          &stamp);
+    void set(const sample_vector_t       &sample_vector,
+             const double                 weight_maximum,
+             const math::Pose2D          &mean,
+             const math::Covariance2D    &covariance,
+             const time_t                &stamp);
 
 private:
     std::atomic_bool                    running_;
@@ -47,8 +47,8 @@ private:
     std::mutex                          data_mutex_;
     sample_vector_t::Ptr                sample_;
     double                              maximum_weight_;
-    Pose2D                              mean_;
-    Covariance2D                        covariance_;
+    math::Pose2D                        mean_;
+    math::Covariance2D                  covariance_;
     time_t                              stamp_;
 
     ros::Publisher                      pub_markers_;

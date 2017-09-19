@@ -7,6 +7,7 @@
 #include <set>
 
 namespace muse_mcl_2d {
+namespace math {
 class Box2D
 {
 public:
@@ -154,6 +155,7 @@ private:
     Point2D max_;
 
 }__attribute__ ((aligned (32)));
+}
 }
 
 inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d::Box2D &b)

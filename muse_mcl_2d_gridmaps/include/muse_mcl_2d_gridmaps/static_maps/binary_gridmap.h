@@ -14,10 +14,10 @@ public:
     BinaryGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupancy_grid,
                   const double threshold = 1.0);
 
-    double getRange(const muse_mcl_2d::Point2D &from,
-                    muse_mcl_2d::Point2D &to) const;
+    double getRange(const muse_mcl_2d::math::Point2D &from,
+                    muse_mcl_2d::math::Point2D &to) const;
 
-    virtual bool validate(const muse_mcl_2d::Pose2D &p) const;
+    virtual bool validate(const muse_mcl_2d::math::Pose2D &p) const;
 
 
 private:

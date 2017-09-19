@@ -16,9 +16,9 @@ public:
 
     Odometry2D(const std::string &frame) :
         Data(frame),
-        start_pose_(Transform2D::identity()),
-        end_pose_(Transform2D::identity()),
-        delta_rel_(Transform2D::identity()),
+        start_pose_(math::Transform2D::identity()),
+        end_pose_(math::Transform2D::identity()),
+        delta_rel_(math::Transform2D::identity()),
         delta_linear_(0.0),
         delta_angular_(0.0)
     {
@@ -27,9 +27,9 @@ public:
     Odometry2D(const std::string &frame,
                const time_frame_t &time_frame) :
         Data(frame, time_frame),
-        start_pose_(Transform2D::identity()),
-        end_pose_(Transform2D::identity()),
-        delta_rel_(Transform2D::identity()),
+        start_pose_(math::Transform2D::identity()),
+        end_pose_(math::Transform2D::identity()),
+        delta_rel_(math::Transform2D::identity()),
         delta_linear_(0.0),
         delta_angular_(0.0)
     {
@@ -37,12 +37,12 @@ public:
 
     Odometry2D(const std::string &frame,
               const time_frame_t &time_frame,
-              const Pose2D &start,
-              const Pose2D &end) :
+              const math::Pose2D &start,
+              const math::Pose2D &end) :
        Data(frame, time_frame),
        start_pose_(start),
        end_pose_(start),
-       delta_rel_(Transform2D::identity())
+       delta_rel_(math::Transform2D::identity())
     {
         delta_rel_      = start.inverse() * end;
         start_pose_     = start;
@@ -59,17 +59,17 @@ public:
                           delta_lin_abs_.x());
     }
 
-    inline const Pose2D& getStartPose() const
+    inline const math::Pose2D& getStartPose() const
     {
         return start_pose_;
     }
 
-    inline const Pose2D &getEndPose() const
+    inline const math::Pose2D &getEndPose() const
     {
         return end_pose_;
     }
 
-    inline const Vector2D &getDelta() const
+    inline const math::Vector2D &getDelta() const
     {
         return delta_lin_abs_;
     }
@@ -92,21 +92,21 @@ public:
         const double ratio = (split_time - time_frame_.start).seconds() /
                               time_frame_.duration().seconds();
 
-        Pose2D split_pose = start_pose_.interpolate(end_pose_, ratio);
+        math::Pose2D split_pose = start_pose_.interpolate(end_pose_, ratio);
         a.reset(new Odometry2D(frame_, time_frame_t(time_frame_.start, split_time), start_pose_, split_pose));
         b.reset(new Odometry2D(frame_, time_frame_t(split_time, time_frame_.end), split_pose, end_pose_));
         return true;
     }
 
 private:
-    Pose2D   start_pose_;
-    Pose2D   end_pose_;
+    math::Pose2D    start_pose_;
+    math::Pose2D    end_pose_;
 
-    Pose2D   delta_rel_;
+    math::Pose2D    delta_rel_;
 
-    Vector2D delta_lin_abs_;
-    double   delta_linear_;
-    double   delta_angular_;
+    math::Vector2D  delta_lin_abs_;
+    double          delta_linear_;
+    double          delta_angular_;
 };
 }
 

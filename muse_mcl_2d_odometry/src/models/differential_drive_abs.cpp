@@ -69,7 +69,7 @@ DifferentialDriveAbs::Result::Ptr DifferentialDriveAbs::apply(const muse_smc::Da
         rng_delta_rot_hat2_->set(0.0, sigma_rot_hat2);
     }
 
-    for(muse_mcl_2d::Pose2D &sample : states) {
+    for(muse_mcl_2d::math::Pose2D &sample : states) {
         const double delta_rot_hat1  = muse_smc::math::angle::difference(delta_rot1, rng_delta_rot_hat1_->get());
         const double delta_trans_hat = delta_trans - rng_delta_trans_hat_->get();
         const double delta_rot_hat2  = muse_smc::math::angle::difference(delta_rot2, rng_delta_rot_hat2_->get());

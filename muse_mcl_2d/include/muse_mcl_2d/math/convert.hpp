@@ -7,6 +7,7 @@
 #include <muse_mcl_2d/math/transform_2d.hpp>
 
 namespace muse_mcl_2d {
+namespace math {
 inline Vector2D from(const tf::Vector3 &v)
 {
     return Vector2D(v.x(), v.y());
@@ -27,6 +28,7 @@ inline tf::Transform from(const Transform2D &t)
 {
     return tf::Transform(tf::createQuaternionFromYaw(t.yaw()),
                          from(t.translation()));
+}
 }
 }
 

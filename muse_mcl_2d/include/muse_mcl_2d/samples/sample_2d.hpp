@@ -12,19 +12,19 @@
 namespace muse_mcl_2d {
 struct Sample2D {
 public:
-    using Ptr              = std::shared_ptr<Sample2D>;
-    using allocator_t      = std::allocator<Sample2D>;
-    using state_t          = Pose2D;
-    using state_space_boundary_t = Point2D;
-    using transform_t      = Transform2D;
-    using covariance_t     = Covariance2D;
+    using Ptr                       = std::shared_ptr<Sample2D>;
+    using allocator_t               = std::allocator<Sample2D>;
+    using state_t                   = math::Pose2D;
+    using state_space_boundary_t    = math::Point2D;
+    using transform_t               = math::Transform2D;
+    using covariance_t              = math::Covariance2D;
 
-    double weight;
-    Pose2D state;
+    double       weight;
+    math::Pose2D state;
 
     Sample2D() :
         weight(0.0),
-        state(Pose2D(0.0,0.0))
+        state(math::Pose2D(0.0,0.0))
     {
     }
 
