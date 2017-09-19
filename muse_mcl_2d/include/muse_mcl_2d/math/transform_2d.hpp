@@ -39,6 +39,11 @@ public:
     {
     }
 
+    inline Transform2D(const double yaw) :
+        Transform2D(0.0, 0.0, yaw)
+    {
+    }
+
     inline Transform2D(const double x,
                        const double y,
                        const double yaw) :
@@ -268,15 +273,13 @@ private:
     double   sin_;
     double   cos_;
 } __attribute__ ((aligned (64)));
+using StampedTransform2D = muse_smc::Stamped<Transform2D>;
+}
 
 inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d::Transform2D &t)
 {
     out << "[" << t.tx() << "," << t.ty() << "," << t.yaw() << "]";
     return out;
 }
-
-using StampedTransform2D = muse_smc::Stamped<Transform2D>;
-}
-
 
 #endif // TRANSFORM_2D_HPP

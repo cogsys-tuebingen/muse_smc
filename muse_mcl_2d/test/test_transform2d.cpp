@@ -107,7 +107,7 @@ TEST(Test_muse_mcl_2d, testTransformInitRotation)
     EXPECT_EQ(t_1.cos(), cos);
 }
 
-TEST(Test_muse_mcl_2d, testTransformInitFull)
+TEST(Test_muse_mcl_2d, testTransformConstructors)
 {
     rng_t rng(-10.0, 10.0);
     const double x = rng.get();

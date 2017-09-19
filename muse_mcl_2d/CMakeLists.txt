@@ -93,6 +93,11 @@ add_unit_test_gtest(${PROJECT_NAME}_test_transform2d
     "${catkin_LIBRARIES}"
 )
 
+add_unit_test_gtest(${PROJECT_NAME}_test_bounding_box2d
+    test/test_bounding_box2d.cpp
+    "${catkin_LIBRARIES}"
+)
+
 if(${MUSE_MCL_2D_PERF_TESTS})
     message("[MuseMCL2D]: Building with performance tests!")
     add_executable(${PROJECT_NAME}_perf_runtimes_particle_iteration

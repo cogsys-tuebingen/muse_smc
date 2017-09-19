@@ -138,6 +138,12 @@ public:
         return *this;
     }
 
+    inline Vector2D normalized() const
+    {
+        const double len = length();
+        return Vector2D(x_ / len, y_ / len);
+    }
+
     inline Vector2D operator -() const
     {
         return Vector2D(-x_, -y_);
@@ -170,4 +176,11 @@ private:
     double y_;
 } __attribute__ ((aligned (16)));
 }
+
+inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d::Vector2D &v)
+{
+    out << "[" << v.x() << "," << v.y() << "]";
+    return out;
+}
+
 #endif // VECTOR_2D_HPP
