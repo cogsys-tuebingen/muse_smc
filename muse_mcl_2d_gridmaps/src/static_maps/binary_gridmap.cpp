@@ -7,14 +7,14 @@ using namespace static_maps;
 
 BinaryGridMap::BinaryGridMap(const nav_msgs::OccupancyGrid &occupancy_grid,
                              const double threshold) :
-    GridMap<int8_t>(occupancy_grid.info.origin.position.x,
-                    occupancy_grid.info.origin.position.y,
-                    tf::getYaw(occupancy_grid.info.origin.orientation),
-                    occupancy_grid.info.resolution,
-                    occupancy_grid.info.height,
-                    occupancy_grid.info.width,
-                    0,
-                    occupancy_grid.header.frame_id)
+    GridMap<int>(occupancy_grid.info.origin.position.x,
+                 occupancy_grid.info.origin.position.y,
+                 tf::getYaw(occupancy_grid.info.origin.orientation),
+                 occupancy_grid.info.resolution,
+                 occupancy_grid.info.height,
+                 occupancy_grid.info.width,
+                 0,
+                 occupancy_grid.header.frame_id)
 {
     convert(occupancy_grid, threshold);
 }
