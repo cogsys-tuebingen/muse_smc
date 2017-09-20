@@ -7,7 +7,7 @@ using namespace static_maps;
 
 BinaryGridMap::BinaryGridMap(const nav_msgs::OccupancyGrid &occupancy_grid,
                              const double threshold) :
-    GridMap<int>(occupancy_grid.info.origin.position.x,
+    GridMap<int8_t>(occupancy_grid.info.origin.position.x,
                  occupancy_grid.info.origin.position.y,
                  tf::getYaw(occupancy_grid.info.origin.orientation),
                  occupancy_grid.info.resolution,
@@ -30,10 +30,9 @@ double BinaryGridMap::getRange(const muse_mcl_2d::math::Point2D &from,
                                muse_mcl_2d::math::Point2D &to) const
 {
     const_line_iterator_t it = getConstLineIterator(from, to);
-    while(!it.done()) {
+    while(it.iterate()) {
         if(*it)
             break;
-        ++it;
     }
     if(it.invalid())
         return -1.0;

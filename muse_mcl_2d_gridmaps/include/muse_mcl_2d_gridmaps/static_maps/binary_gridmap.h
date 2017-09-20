@@ -4,7 +4,7 @@
 
 namespace muse_mcl_2d_gridmaps {
 namespace static_maps {
-class BinaryGridMap : public GridMap<int>
+class BinaryGridMap : public GridMap<int8_t>
 {
 public:
     using Ptr = std::shared_ptr<BinaryGridMap>;

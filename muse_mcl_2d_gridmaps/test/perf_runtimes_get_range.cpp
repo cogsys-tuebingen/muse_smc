@@ -23,7 +23,7 @@ void mapOnly()
             binary(new muse_mcl_2d_gridmaps::static_maps::BinaryGridMap(grid));
 
 
-    muse_mcl_2d::Point2D start(62.5, 62.5);
+    muse_mcl_2d::math::Point2D start(62.5, 62.5);
 
     const double angle_incr = M_PI / 100.0;
     const double radius = 10.0;
@@ -32,8 +32,8 @@ void mapOnly()
     muse_smc::Time now = muse_smc::Time::now();
     const std::size_t iterations = 100000;
     for(std::size_t i = 0 ; i < iterations ; ++i) {
-        muse_mcl_2d::Point2D end = start + muse_mcl_2d::Vector2D(std::cos(angle) * radius,
-                                                                 std::sin(angle) * radius);
+        muse_mcl_2d::math::Point2D end = start + muse_mcl_2d::math::Vector2D(std::cos(angle) * radius,
+                                                                             std::sin(angle) * radius);
         range = binary->getRange(start, end);
         angle += angle_incr;
     }
@@ -53,8 +53,8 @@ void mapOnly()
     }
     std::cout << "took : " << (muse_smc::Time::now() - now).milliseconds() / iterations << "\n";
 
-    muse_mcl_2d::Vector2D v1(0.0,0.0);
-    muse_mcl_2d::Vector2D v2(1.0,2.0);
+    muse_mcl_2d::math::Vector2D v1(0.0,0.0);
+    muse_mcl_2d::math::Vector2D v2(1.0,2.0);
     now = muse_smc::Time::now();
     double l = 0.0;
     for(std::size_t i = 0 ; i < iterations * iterations * iterations ; ++i) {
@@ -102,15 +102,15 @@ void withParticles()
             binary(new muse_mcl_2d_gridmaps::static_maps::BinaryGridMap(grid));
 
 
-    muse_mcl_2d::Point2D start(62.5, 62.5);
+    muse_mcl_2d::math::Point2D start(62.5, 62.5);
 
     muse_mcl_2d::SampleIndexation2D  indexation({0.5, M_PI / 180.0 * 10.0});
     muse_mcl_2d::SampleDensity2D::Ptr density (new muse_mcl_2d::SampleDensity2D(indexation, 500000));
-    muse_smc::SampleSet<muse_mcl_2d::Sample2D> set("frame",
-                                                   muse_smc::Time::now(),
-                                                   100,
-                                                   500000,
-                                                   density);
+    muse_smc::SampleSet<muse_mcl_2d::StateSpaceDescription2D> set("frame",
+                                                                   muse_smc::Time::now(),
+                                                                   100,
+                                                                   500000,
+                                                                   density);
 
 
     muse_smc::math::random::Uniform<1> rng_l(-100.0, 100.0);
@@ -141,16 +141,16 @@ void withParticles()
 
     auto iteration = set.getWeightIterator();
     auto end = iteration.end();
-    muse_mcl_2d::Transform2D m_T_l;
-    muse_mcl_2d::Point2D p;
+    muse_mcl_2d::math::Transform2D m_T_l;
+    muse_mcl_2d::math::Point2D p;
     const double radius = 10.0;
     double angle = 0.0;
     double range = 0.0;
-    muse_mcl_2d::Point2D ray_end = start + muse_mcl_2d::Vector2D(std::cos(angle) * radius,
+    muse_mcl_2d::math::Point2D ray_end = start + muse_mcl_2d::math::Vector2D(std::cos(angle) * radius,
                                                              std::sin(angle) * radius);
     start_time = muse_smc::Time::now();
     for(auto it = iteration.begin() ; it != end ; ++it) {
-        muse_mcl_2d::Point2D   ray_end_point = m_T_l * ray_end;
+        muse_mcl_2d::math::Point2D   ray_end_point = m_T_l * ray_end;
         range = binary->getRange(start, ray_end_point);
     }
 

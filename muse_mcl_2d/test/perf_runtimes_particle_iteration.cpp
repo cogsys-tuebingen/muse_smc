@@ -5,11 +5,11 @@
 
 #include <muse_mcl_2d/samples/sample_density_2d.hpp>
 #include <muse_mcl_2d/samples/sample_2d.hpp>
-
+#include <muse_mcl_2d/state_space/state_space_description_2d.hpp>
 
 #include <tf/tf.h>
 
-void insertion(muse_smc::SampleSet<muse_mcl_2d::Sample2D> &set)
+void insertion(muse_smc::SampleSet<muse_mcl_2d::StateSpaceDescription2D> &set)
 {
     muse_smc::math::random::Uniform<1> rng_l(-100.0, 100.0);
     muse_smc::math::random::Uniform<1> rng_a(-M_PI, M_PI);
@@ -39,7 +39,7 @@ void insertion(muse_smc::SampleSet<muse_mcl_2d::Sample2D> &set)
 }
 
 
-void stateIteration(muse_smc::SampleSet<muse_mcl_2d::Sample2D> &set)
+void stateIteration(muse_smc::SampleSet<muse_mcl_2d::StateSpaceDescription2D> &set)
 {
     auto interface = set.getStateIterator();
     muse_smc::Time start = muse_smc::Time::now();
@@ -51,7 +51,7 @@ void stateIteration(muse_smc::SampleSet<muse_mcl_2d::Sample2D> &set)
     std::cout << "stateIteration took time:                 " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
 }
 
-void stateIterationForEach(muse_smc::SampleSet<muse_mcl_2d::Sample2D> &set)
+void stateIterationForEach(muse_smc::SampleSet<muse_mcl_2d::StateSpaceDescription2D> &set)
 {
     auto interface = set.getStateIterator();
     muse_smc::Time start = muse_smc::Time::now();
@@ -63,7 +63,7 @@ void stateIterationForEach(muse_smc::SampleSet<muse_mcl_2d::Sample2D> &set)
     std::cout << "stateIterationForEach took time:          " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
 }
 
-void weightIteration(muse_smc::SampleSet<muse_mcl_2d::Sample2D> &set)
+void weightIteration(muse_smc::SampleSet<muse_mcl_2d::StateSpaceDescription2D> &set)
 {
     auto interface = set.getWeightIterator();
     muse_smc::Time start = muse_smc::Time::now();
@@ -75,7 +75,7 @@ void weightIteration(muse_smc::SampleSet<muse_mcl_2d::Sample2D> &set)
     std::cout << "weightIteration took time:                " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
 }
 
-void weightIterationForEach(muse_smc::SampleSet<muse_mcl_2d::Sample2D> &set)
+void weightIterationForEach(muse_smc::SampleSet<muse_mcl_2d::StateSpaceDescription2D> &set)
 {
     auto interface = set.getWeightIterator();
     muse_smc::Time start = muse_smc::Time::now();
@@ -91,18 +91,18 @@ int main(int argc, char *argv[])
 {
     muse_mcl_2d::SampleIndexation2D  indexation({0.5, M_PI / 180.0 * 10.0});
     muse_mcl_2d::SampleDensity2D::Ptr density (new muse_mcl_2d::SampleDensity2D(indexation, 500000));
-    muse_smc::SampleSet<muse_mcl_2d::Sample2D> set("frame",
+    muse_smc::SampleSet<muse_mcl_2d::StateSpaceDescription2D> set("frame",
                                                    muse_smc::Time::now(),
                                                    100,
                                                    500000,
                                                    density);
 
 
-    std::cout << "Sizes of structs in use."         << "\n";
-    std::cout << sizeof(tf::Transform)              << "\n";
-    std::cout << sizeof(muse_mcl_2d::Sample2D)      << "\n";
-    std::cout << sizeof(muse_mcl_2d::Transform2D)   << "\n";
-    std::cout << sizeof(muse_mcl_2d::Odometry2D)    << "\n";
+    std::cout << "Sizes of structs in use."             << "\n";
+    std::cout << sizeof(tf::Transform)                  << "\n";
+    std::cout << sizeof(muse_mcl_2d::Sample2D)          << "\n";
+    std::cout << sizeof(muse_mcl_2d::math::Transform2D) << "\n";
+    std::cout << sizeof(muse_mcl_2d::Odometry2D)        << "\n";
 
     insertion(set);
     stateIteration(set);

@@ -82,31 +82,25 @@ public:
 
     inline Vector2D operator * (const Vector2D &v) const
     {
-        if(yaw_ != 0.0)
-            return Vector2D(cos_ * v.x() - sin_ * v.y() + translation_.x(),
-                            sin_ * v.x() + cos_ * v.y() + translation_.y());
-        return v + translation_;
+        return yaw_ == 0.0 ? v + translation_
+                           : Vector2D(cos_ * v.x() - sin_ * v.y() + translation_.x(),
+                                      sin_ * v.x() + cos_ * v.y() + translation_.y());
     }
 
     inline Transform2D operator * (const Transform2D &other) const
     {
-        if(yaw_ == 0.0) {
-            return Transform2D(other.translation_ + translation_,
-                               other.yaw_,
-                               other.sin_,
-                               other.cos_);
-        } else if(other.yaw_ == 0.0) {
-            return Transform2D((*this) * other.translation_,
-                               yaw_,
-                               sin_,
-                               cos_);
-        } else {
-            Transform2D t((*this) * other.translation_,
-                          muse_smc::math::angle::normalize(yaw_ + other.yaw_),
-                          sin_ * other.cos_ + cos_ * other.sin_,
-                          cos_ * other.cos_ - sin_ * other.sin_);
-            return t;
-        }
+        return yaw_ == 0.0 ? Transform2D(other.translation_ + translation_,
+                                         other.yaw_,
+                                         other.sin_,
+                                         other.cos_)
+                           : other.yaw_ == 0.0 ?              Transform2D((*this) * other.translation_,
+                                                                          yaw_,
+                                                                          sin_,
+                                                                          cos_)
+                                                            : Transform2D ((*this) * other.translation_,
+                                                                           muse_smc::math::angle::normalize(yaw_ + other.yaw_),
+                                                                           sin_ * other.cos_ + cos_ * other.sin_,
+                                                                           cos_ * other.cos_ - sin_ * other.sin_);
     }
 
 
@@ -132,33 +126,29 @@ public:
 
     inline Transform2D& operator = (const Transform2D &other)
     {
-        if(&other != this) {
-            yaw_ = other.yaw_;
-            sin_ = other.sin_;
-            cos_ = other.cos_;
-            translation_ = other.translation_;
-        }
+        yaw_ = other.yaw_;
+        sin_ = other.sin_;
+        cos_ = other.cos_;
+        translation_ = other.translation_;
         return *this;
     }
 
     inline Transform2D& operator = (Transform2D &&other)
     {
-        if(&other != this) {
-            yaw_ = other.yaw_;
-            sin_ = other.sin_;
-            cos_ = other.cos_;
-            translation_ = other.translation_;
-        }
+        yaw_ = other.yaw_;
+        sin_ = other.sin_;
+        cos_ = other.cos_;
+        translation_ = other.translation_;
         return *this;
     }
 
     inline Transform2D inverse() const
     {
         return Transform2D(Vector2D(-cos_ * translation_.x() - sin_ * translation_.y(),
-                                     sin_ * translation_.x() - cos_ * translation_.y()),
+                                    sin_ * translation_.x() - cos_ * translation_.y()),
                            -yaw_,
                            -sin_,
-                            cos_);
+                           cos_);
     }
 
     inline Transform2D operator -() const

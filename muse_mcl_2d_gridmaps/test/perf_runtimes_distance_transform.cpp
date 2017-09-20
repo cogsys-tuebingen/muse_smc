@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 
     muse_smc::Time start = muse_smc::Time::now();
     std::vector<double> distances;
-    muse_mcl_2d_gridmaps::algorithms::DistanceTransform<uint8_t> d(0.05, 2.0, 127);
+    muse_mcl_2d_gridmaps::static_maps::algorithms::DistanceTransform<uint8_t> d(0.05, 2.0, 127);
     d.apply(data, 200, distances);
 
     std::cout << "took: " << (muse_smc::Time::now() - start).milliseconds() << "ms." << std::endl;

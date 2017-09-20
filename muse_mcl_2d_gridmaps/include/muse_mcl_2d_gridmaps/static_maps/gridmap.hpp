@@ -7,6 +7,8 @@
 
 #include <muse_mcl_2d/map/map_2d.hpp>
 #include <muse_mcl_2d_gridmaps/static_maps/algorithms/bresenham.hpp>
+#include <muse_mcl_2d_gridmaps/static_maps/algorithms/bresenham_unsafe.hpp>
+
 
 namespace muse_mcl_2d_gridmaps {
 namespace static_maps {
@@ -108,18 +110,18 @@ public:
         index_t end_index;
         const bool start_in_bounds = toIndex(start, start_index);
         const bool end_in_bounds = toIndex(end, end_index);
-        if(start_in_bounds && !end_in_bounds) {
-            /// do index capping
-            if(start_index[0] == end_index[0]) {
-                /// cap y
-                end_index[1] = std::min(max_index_[1], std::max(0, end_index[1]));
-            } else if(start_index[1] == end_index[1]) {
-                /// cap x
-                end_index[1] = std::min(max_index_[0], std::max(0, end_index[0]));
-            } else {
+//        if(start_in_bounds && !end_in_bounds) {
+//            /// do index capping
+//            if(start_index[0] == end_index[0]) {
+//                /// cap y
+//                end_index[1] = std::min(max_index_[1], std::max(0, end_index[1]));
+//            } else if(start_index[1] == end_index[1]) {
+//                /// cap x
+//                end_index[1] = std::min(max_index_[0], std::max(0, end_index[0]));
+//            } else {
 
-            }
-        }
+//            }
+//        }
 
         return const_line_iterator_t(start_index,
                                      end_index,

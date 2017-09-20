@@ -71,6 +71,8 @@ target_link_libraries(${PROJECT_NAME}_models
     ${PROJECT_NAME}_static_maps
 )
 
+set(MUSE_MCL_2D_GRIDMAPS_PERF_TESTS True)
+
 if(${MUSE_MCL_2D_GRIDMAPS_PERF_TESTS})
     add_executable(${PROJECT_NAME}_perf_runtimes_get_range
         test/perf_runtimes_get_range.cpp

@@ -60,7 +60,7 @@ public:
 
     inline double length () const
     {
-        return std::hypot(x_, y_);
+        return sqrt(length2());
     }
 
     inline double length2() const
@@ -169,10 +169,15 @@ public:
 
     inline double distance(const Vector2D &other) const
     {
-        return std::hypot(x_ - other.x_, y_ - other.y_);
+        return  hypot(x_ - other.x_, y_ - other.y_);
     }
 
 private:
+    static inline double hypot (const double x, const double y)
+    {
+        return sqrt(x*x + y*y);
+    }
+
     double x_;
     double y_;
 } __attribute__ ((aligned (16)));
