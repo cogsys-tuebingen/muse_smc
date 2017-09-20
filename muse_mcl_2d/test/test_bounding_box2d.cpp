@@ -47,11 +47,11 @@ TEST(Test_muse_mcl_2d, testBoxIntersects)
     auto generate_outer = [&rng_out, &rng_out_sign]()
     {
         const double sign = rng_out_sign.get() > 0.5 ? 1. : -1.;
-        return Point2D(rng_out.get(), rng_out.get()) * sign;
+        return math::Point2D(rng_out.get(), rng_out.get()) * sign;
     };
     auto generate_inner = [&rng_in] ()
     {
-        return Point2D(rng_in.get(), rng_in.get());
+        return math::Point2D(rng_in.get(), rng_in.get());
     };
 
 
@@ -62,13 +62,13 @@ TEST(Test_muse_mcl_2d, testBoxIntersects)
 
     rng_out.set(10.0, 20.0);
     for(std::size_t i = 0 ; i < 1000 ; ++i) {
-        const auto start = Point2D(rng_out.get(), rng_out.get());
-        const auto end   = Point2D(rng_out.get(), rng_out.get());
+        const auto start = math::Point2D(rng_out.get(), rng_out.get());
+        const auto end   = math::Point2D(rng_out.get(), rng_out.get());
         const double angle_incr = M_PI / 18.0;
         double angle = 0.0;
 
         for(std::size_t i = 0 ; i < 36 ; ++i, angle+=angle_incr) {
-            Transform2D rot(angle);
+            math::Transform2D rot(angle);
             EXPECT_FALSE(bb.intersects({rot * start, rot * end}));
         }
     }

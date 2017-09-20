@@ -158,7 +158,7 @@ private:
 }
 }
 
-inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d::Box2D &b)
+inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d::math::Box2D &b)
 {
     out << "[" << b.getMin() << "," << b.getMax() << "]";
     return out;

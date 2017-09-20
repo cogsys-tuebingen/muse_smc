@@ -9,6 +9,7 @@
 #include <tf/tf.h>
 
 using namespace muse_mcl_2d;
+using namespace math;
 using rng_t = muse_smc::math::random::Uniform<1>;
 
 
