@@ -2,23 +2,29 @@ cmake_minimum_required(VERSION 2.8.3)
 project(muse_mcl_2d_vectormaps)
 
 find_package(catkin REQUIRED COMPONENTS
-  cslibs_boost_geometry
+  muse_mcl_2d
+  muse_mcl_2d_laser
   cslibs_vectormaps
-  muse_smc
   pluginlib
   roscpp
   rostest
 )
 
 catkin_package(
+    INCLUDE_DIRS include
+    LIBRARIES ${PROJECT_NAME}
+    CATKIN_DEPENDS muse_mcl_2d cslibs_vectormaps
 )
 
 include_directories(
-  ${catkin_INCLUDE_DIRS}
+    include
+    ${catkin_INCLUDE_DIRS}
 )
 
 add_library(${PROJECT_NAME}
-    src/providers/provider_vectormap.cpp
+    src/providers/vectormap_provider.cpp
+    src/models/beam_model_vector.cpp
+    src/models/likelihood_field_model_vector.cpp
 )
 target_link_libraries(${PROJECT_NAME}
     ${catkin_LIBRARIES}
@@ -30,3 +36,6 @@ install(TARGETS ${PROJECT_NAME}
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+
+install(DIRECTORY include/${PROJECT_NAME}/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
