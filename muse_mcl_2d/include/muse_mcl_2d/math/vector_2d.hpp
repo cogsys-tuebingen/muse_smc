@@ -3,277 +3,169 @@
 
 #include <cmath>
 #include <eigen3/Eigen/Core>
-#include <smmintrin.h>
 
 namespace muse_mcl_2d {
 namespace math {
 class Vector2D {
 public:
     inline Vector2D() :
-    #if __SSE2__
-        v_(_mm_setzero_pd())
-  #else
-        v_{0.0,0.0}
-  #endif
-
+        x_(0.0),
+        y_(0.0)
     {
     }
 
     inline Vector2D(const double x,
                     const double y) :
-    #if __SSE2__
-        v_(_mm_set_pd(x,y))
-  #else
-        v_{x,y}
-  #endif
+        x_(x),
+        y_(y)
     {
     }
-
-#if __SSE2__
-    inline Vector2D(const __m128d &v) :
-        v_(v)
-    {
-    }
-#else
-    return Vector2D(v_[0] * d,v_[1] * d);
-#endif
-
 
     inline Vector2D(const Vector2D &other) :
-        v_(other.v_)
+        x_(other.x_),
+        y_(other.y_)
     {
     }
 
     inline Vector2D(Vector2D &&other) :
-        v_(other.v_)
+        x_(other.x_),
+        y_(other.y_)
     {
     }
 
     inline Vector2D operator * (const double d) const
     {
-#if __SSE2__
-        return Vector2D(_mm_mul_pd(v_, _mm_set1_pd(d)));
-#else
-        return Vector2D(v_[0] * d,v_[1] * d);
-#endif
+        return Vector2D(x_ * d, y_ * d);
     }
 
     inline Vector2D operator / (const double d) const
     {
-#if __SSE2__
-        return Vector2D(_mm_div_pd(v_, _mm_set1_pd(d)));
-#else
-        return Vector2D(v_[0] / d,v_[1] / d);
-#endif
+        return Vector2D(x_ / d, y_ / d);
     }
 
     inline Vector2D operator + (const Vector2D &other) const
     {
-#if __SSE2__
-        return Vector2D(_mm_add_pd(v_, other.v_));
-#else
-        return Vector2D(v_[0] + other.v_[0],v_[1] + other.v_[1]);
-#endif
+        return Vector2D(x_ + other.x_, y_ + other.y_);
     }
 
     inline Vector2D operator - (const Vector2D &other) const
     {
-#if __SSE2__
-        return Vector2D(_mm_add_pd(v_, other.v_));
-#else
-        return Vector2D(v_[0] - other.v_[0],v_[1] - other.v_[1]);
-#endif
+        return Vector2D(x_ - other.x_, y_ - other.y_);
     }
 
     inline double dot (const Vector2D &other) const
     {
-#if __SSE2__
-        return (_mm_dp_pd(v_, other.v_, 0x31))[0];
-#else
-        return v_[0] * other.v_[0] +v_[1] * other.v_[1];
-#endif
+        return x_ * other.x_ + y_ * other.y_;
     }
 
     inline double length () const
     {
-#if __SSE2__
-        return (_mm_sqrt_pd(_mm_dp_pd(v_, v_, 0x31)))[0];
-#else
-        return length2();
-#endif
+        return sqrt(length2());
     }
 
     inline double length2() const
     {
-#if __SSE2__
-        return (_mm_dp_pd(v_, v_, 0x31))[0];
-#else
-        return v_[0] * v_[0] +v_[1] *v_[1];
-#endif
+        return x_ * x_ + y_ * y_;
     }
 
     inline double angle() const
     {
-        return atan2(v_[1], v_[0]);
+        return atan2(y_, x_);
     }
 
     inline double & x()
     {
-#if __SSE2__
-        return v_[0];
-#else
-        return v_[0];
-#endif
+        return x_;
     }
 
     inline double & y()
     {
-#if __SSE2__
-        return v_[1];
-#else
-        return v_[1];
-#endif
+        return y_;
     }
 
     inline double const & x() const
     {
-#if __SSE2__
-        return v_[0];
-#else
-        return v_[0];
-#endif
+        return x_;
     }
 
     inline double const & y() const
     {
-#if __SSE2__
-        return v_[1];
-#else
-        return v_[1];
-#endif
+        return y_;
     }
 
     inline Vector2D & operator += (const Vector2D &other)
     {
-#if __SSE2__
-        v_ = _mm_add_pd(v_, other.v_);
-#else
-        v_[0] += other.v_[0];
-        v_[1] += other.v_[1];
-#endif
+        x_ += other.x_;
+        y_ += other.y_;
         return *this;
     }
 
     inline Vector2D & operator -= (const Vector2D &other)
     {
-#if __SSE2__
-        v_ = _mm_sub_pd(v_, other.v_);
-#else
-        v_[0] -= other.v_[0];
-        v_[1] -= other.v_[1];
-#endif
+        x_ -= other.x_;
+        y_ -= other.y_;
         return *this;
     }
 
     inline Vector2D & operator *= (const double d)
     {
-#if __SSE2__
-        v_ = _mm_mul_pd(v_, _mm_set1_pd(d));
-#else
-        v_[0] *= d;
-        v_[1] *= d;
-#endif
+        x_ *= d;
+        y_ *= d;
         return *this;
     }
 
     inline Vector2D & operator /= (const double d)
     {
-#if __SSE2__
-        v_ = _mm_div_pd(v_, _mm_set1_pd(d));
-#else
-        v_[0] /= d;
-        v_[1] /= d;
-#endif
+        x_ /= d;
+        y_ /= d;
         return *this;
     }
 
     inline Vector2D& operator = (const Vector2D &other)
     {
-#if __SSE2__
-        v_ = other.v_;
-#else
-        v_[0] = other.v_[0];
-        v_[1] = other.v_[1];
-#endif
+        x_ = other.x_;
+        y_ = other.y_;
         return *this;
     }
 
     inline Vector2D& operator = (Vector2D &&other)
     {
-#if __SSE2__
-        v_ = other.v_;
-#else
-        v_[0] = other.v_[0];
-        v_[1] = other.v_[1];
-#endif
+        x_ = other.x_;
+        y_ = other.y_;
         return *this;
     }
 
     inline Vector2D normalized() const
     {
-#if __SSE2__
-        return Vector2D(_mm_div_pd(v_, _mm_sqrt_pd(_mm_dp_pd(v_, v_, 0x31))));
-#else
-        return Vector2D(v_[0] / len,v_[1] / len);
-#endif
+        const double len = length();
+        return Vector2D(x_ / len, y_ / len);
     }
 
     inline Vector2D operator -() const
     {
-#if __SSE2__
-        return Vector2D(_mm_mul_pd(v_, _mm_set1_pd(-1.0)));
-#else
-        return Vector2D(-v_[0], -v_[1]);
-#endif
+        return Vector2D(-x_, -y_);
     }
 
     inline Eigen::Vector2d toEigen() const
     {
-#if __SSE2__
-        return Eigen::Vector2d(v_[0], v_[1]);
-#else
-        return Eigen::Vector2d(v_[0],v_[1]);
-#endif
+        return Eigen::Vector2d(x_, y_);
     }
 
     inline Vector2D min(const Vector2D &other) const
     {
-#if __SSE2__
-        return Vector2D(_mm_min_pd(v_, other.v_));
-#else
-        return Vector2D(min(v_[0], other.v_[0]),
-                        min(v_[1], other.v_[1]));
-#endif
+        return Vector2D(fmin(x_, other.x_),
+                        fmin(y_, other.y_));
     }
 
     inline Vector2D max(const Vector2D &other) const
     {
-#if __SSE2__
-        return Vector2D(_mm_max_pd(v_, other.v_));
-#else
-        return Vector2D(max(v_[0], other.v_[0]),
-                        max(v_[1], other.v_[1]));
-#endif
+        return Vector2D(fmax(x_, other.x_),
+                        fmax(y_, other.y_));
     }
 
     inline double distance(const Vector2D &other) const
     {
-#if __SSE2__
-        __m128d d = _mm_sub_pd(v_, other.v_);
-        return (_mm_sqrt_pd(_mm_dp_pd(d, d, 0x31)))[0];
-#else
-        return  hypot(v_[0] - other.v_[0],v_[1] - other.v_[1]);
-#endif
+        return  hypot(x_ - other.x_, y_ - other.y_);
     }
 
 private:
@@ -282,12 +174,8 @@ private:
         return sqrt(x*x + y*y);
     }
 
-#ifdef __SSE2__
-    __m128d v_;
-#else
-    std::array<double,2> v_;
-#endif
-
+    double x_;
+    double y_;
 } __attribute__ ((aligned (16)));
 }
 }

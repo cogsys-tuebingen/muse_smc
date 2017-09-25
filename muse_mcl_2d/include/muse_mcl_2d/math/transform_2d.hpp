@@ -50,8 +50,8 @@ public:
                        const double yaw) :
         translation_(x, y),
         yaw_(yaw),
-        sin_(std::sin(yaw_)),
-        cos_(std::cos(yaw_))
+        sin_(sin(yaw_)),
+        cos_(cos(yaw_))
     {
     }
 
@@ -59,8 +59,8 @@ public:
                        const double yaw) :
         translation_(translation),
         yaw_(yaw),
-        sin_(std::sin(yaw_)),
-        cos_(std::cos(yaw_))
+        sin_(sin(yaw_)),
+        cos_(cos(yaw_))
     {
     }
 
@@ -189,8 +189,8 @@ public:
     inline void setYaw(const double yaw)
     {
         yaw_ = yaw;
-        sin_ = std::sin(yaw_);
-        cos_ = std::cos(yaw_);
+        sin_ = sin(yaw_);
+        cos_ = cos(yaw_);
     }
 
     inline double yaw() const
@@ -198,12 +198,12 @@ public:
         return yaw_;
     }
 
-    inline double sin() const
+    inline double sine() const
     {
         return sin_;
     }
 
-    inline double cos() const
+    inline double cosine() const
     {
         return cos_;
     }

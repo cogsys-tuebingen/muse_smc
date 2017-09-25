@@ -534,6 +534,40 @@ void inverse()
     std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tf/ ITERATIONS << "ms" << "\n";
 }
 
+void length()
+{
+    muse_smc::math::random::Uniform<1> rng(-10.0, 10.0);
+    double mean_ms_t = 0.0;
+    double mean_ms_tf= 0.0;
+
+    for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
+        muse_smc::Time start = muse_smc::Time::now();
+        muse_mcl_2d::math::Vector2D tv(rng.get(), rng.get());
+        double length = 0.0;
+        for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
+            length = tv.length();
+        }
+        mean_ms_t += (muse_smc::Time::now() - start).milliseconds();
+
+        start = muse_smc::Time::now();
+        tf::Vector3   tf_v (rng.get(), rng.get(), 0.0);
+        for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
+           length = tf_v.length();
+        }
+        mean_ms_tf += (muse_smc::Time::now() - start).milliseconds();
+    }
+
+    std::cout << "vector length:" << "\n";
+    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_t / ITERATIONS << "ms" << "\n";
+    std::cout << "tf vector:"  << "\n";
+    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tf/ ITERATIONS << "ms" << "\n";
+}
+
+void distance()
+{
+
+}
+
 
 
 int main(int argc, char *argv[])
@@ -544,5 +578,7 @@ int main(int argc, char *argv[])
     multiplyAssignTransform();
     assign();
     inverse();
+    length();
+
     return 0;
 }

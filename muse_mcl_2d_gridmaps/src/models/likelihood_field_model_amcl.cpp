@@ -50,7 +50,7 @@ void LikelihoodFieldModelAMCL::apply(const data_t::ConstPtr          &data,
     const double p_rand = z_rand_ * 1.0 / range_max;
 
     auto p_hit = [this] (const double z) {
-        return z_hit_ * std::exp(-z * z * denominator_hit_);
+        return z_hit_ * exp(-z * z * denominator_hit_);
     };
 
 

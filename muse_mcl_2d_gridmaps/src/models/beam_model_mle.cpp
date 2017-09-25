@@ -56,12 +56,12 @@ void BeamModelMLE::apply(const data_t::ConstPtr          &data,
     auto p_hit = [this](const double ray_range, const double map_range) {
         const double dz = ray_range - map_range;
         return parameters_.z_hit * parameters_.denominator_hit *
-                std::exp(-dz * dz * parameters_.denominator_exponent_hit);
+                exp(-dz * dz * parameters_.denominator_exponent_hit);
     };
     auto p_short = [this](const double ray_range, const double map_range) {
         if(ray_range < map_range) {
             return parameters_.z_short *
-                    (1.0 / (1.0 - std::exp(-parameters_.lambda_short  * map_range))) *
+                    (1.0 / (1.0 - exp(-parameters_.lambda_short  * map_range))) *
                     parameters_.lambda_short * exp(-parameters_.lambda_short * ray_range);
         }
         return 0.0;
@@ -101,7 +101,7 @@ void BeamModelMLE::apply(const data_t::ConstPtr          &data,
                 muse_mcl_2d::math::Point2D   ray_end_point = m_T_l * ray.point;
                 const double        map_range = gridmap.getRange(m_T_l.translation(), ray_end_point);
                 const double pz = probability(ray_range, map_range);
-                p += std::log(pz);  /// @todo : fix the inprobable thing ;)
+                p += log(pz);  /// @todo : fix the inprobable thing ;)
                 z.emplace_back(ray_range);
                 z_bar.emplace_back(map_range);
                 particle_weights.emplace_back(prior);
