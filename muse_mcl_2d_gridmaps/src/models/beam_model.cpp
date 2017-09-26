@@ -97,7 +97,7 @@ void BeamModel::doSetup(ros::NodeHandle &nh)
     z_rand_       = nh.param(param_name("z_rand"), 0.05);
     sigma_hit_    = nh.param(param_name("sigma_hit"), 0.15);
     denominator_exponent_hit_   = -0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
-    denominator_hit_            = 1.0 / std::sqrt(2.0 * M_PI * sigma_hit_);
+    denominator_hit_            = 1.0 / sqrt(2.0 * M_PI * sigma_hit_ * sigma_hit_);
     lambda_short_ = nh.param(param_name("lambda_short"), 0.01);
     chi_outlier_  = nh.param(param_name("chi_outlier"), 0.05);
 }
