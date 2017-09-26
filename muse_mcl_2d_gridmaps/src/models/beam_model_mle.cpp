@@ -52,35 +52,32 @@ void BeamModelMLE::apply(const data_t::ConstPtr          &data,
     const double range_max = laser_data.getRangeMax();
     const double p_rand = parameters_.z_rand * 1.0 / range_max;
 
-    /// Mixture distribution
-    auto p_hit = [this](const double ray_range, const double map_range) {
-        const double dz = ray_range - map_range;
+    /// mixture distribution entries
+    auto pow2 = [](const double x) {return x*x;};
+    auto p_hit = [this, &pow2](const double ray_range, const double map_range) {
         return parameters_.z_hit * parameters_.denominator_hit *
-                std::exp(-dz * dz * parameters_.denominator_exponent_hit);
+                std::exp(pow2(ray_range - map_range) * parameters_.denominator_exponent_hit);
     };
     auto p_short = [this](const double ray_range, const double map_range) {
-        if(ray_range < map_range) {
-            return parameters_.z_short *
-                    (1.0 / (1.0 - std::exp(-parameters_.lambda_short  * map_range))) *
-                    parameters_.lambda_short * std::exp(-parameters_.lambda_short * ray_range);
-        }
-        return 0.0;
+        return ray_range < map_range ? parameters_.z_short * (1.0 / (1.0 - std::exp(-parameters_.lambda_short  * map_range))) * parameters_.lambda_short *
+                                       std::exp(-parameters_.lambda_short * ray_range)
+                                     : 0.0;
     };
     auto p_max = [this, range_max](const double ray_range)
     {
-        if(ray_range >= range_max)
-            return parameters_.z_max * 1.0;
-        return 0.0;
+        return ray_range >= range_max ? parameters_.z_max : 0.0;
     };
-    auto p_random = [this, p_rand, range_max](const double ray_range)
+    auto p_random = [this, range_max, p_rand](const double ray_range)
     {
-        if(ray_range < range_max)
-            return p_rand;
-        return 0.0;
+        return ray_range < range_max ? p_rand : 0.0;
     };
+    auto probability = [this, &gridmap, &p_hit, &p_short, &p_max, &p_random]
+            (const muse_mcl_2d_laser::LaserScan2D::Ray &ray, const muse_mcl_2d::math::Pose2D &m_T_l, double &map_range)
+    {
 
-    auto probability = [p_hit, p_short, p_max, p_random] (const double ray_range, const double map_range)
-    {
+        const double ray_range = ray.range;
+        auto         ray_end_point = m_T_l * ray.point;
+        map_range = gridmap.getRange(m_T_l.translation(), ray_end_point);
         return p_hit(ray_range, map_range) + p_short(ray_range, map_range) + p_max(ray_range) + p_random(ray_range);
     };
 
@@ -90,26 +87,19 @@ void BeamModelMLE::apply(const data_t::ConstPtr          &data,
 
     for(auto it = set.begin() ; it != end ; ++it) {
         const muse_mcl_2d::math::Pose2D m_T_l = m_T_w * it.getData().state * b_T_l; /// laser scanner pose in map coordinates
-        const double prior = *it;
-        double p = 0.0;
+        double p = 1.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
-            if(!ray.valid()) {
-                p += parameters_.z_max;
-            } else {
-                const double        ray_range = ray.range;
-                muse_mcl_2d::math::Point2D   ray_end_point = m_T_l * ray.point;
-                const double        map_range = gridmap.getRange(m_T_l.translation(), ray_end_point);
-                const double pz = probability(ray_range, map_range);
-                p *= pz;
-                z.emplace_back(ray_range);
+            double map_range = 0.0;
+            p *= ray.valid() ? probability(ray, m_T_l, map_range) : parameters_.z_max;
+            if(ray.valid()) {
+                z.emplace_back(ray.range);
                 z_bar.emplace_back(map_range);
-                particle_weights.emplace_back(prior);
+                particle_weights.emplace_back(*it);
             }
         }
         *it *= p;
     }
-
     if(use_weights_for_estimation_)
         parameter_estimator_mle_->setMeasurements(z, z_bar, particle_weights, range_max);
     else
