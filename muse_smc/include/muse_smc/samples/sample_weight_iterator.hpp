@@ -109,9 +109,14 @@ public:
         return iterator_t(&(*data_.end()), update_);
     }
 
-    inline const sample_vector_t& getData() const
+    inline std::size_t size() const
     {
-        return data_;
+        return data_.size();
+    }
+
+    inline std::size_t capacity() const
+    {
+        return data_.capacity();
     }
 
 private:

@@ -227,10 +227,11 @@ public:
      * @brief Resize only given size, so that capacity is set to size.
      * @param size  - the preferred / maximal size of the vector
      */
-    inline void resize(const std::size_t size)
+    inline void resize(const std::size_t size,
+                       const T default_value = T())
     {
-        size_ = size;
-        data_.resize(size, T());
+        size_ = 0ul;
+        data_.resize(size, default_value);
         data_ptr_ = data_.data();
 
     }
@@ -242,10 +243,11 @@ public:
      * @param capacity  - the preferred capacity.
      */
     inline void resize(const std::size_t size,
-                       const std::size_t capacity)
+                       const std::size_t capacity,
+                       const T default_value = T())
     {
         size_ = size;
-        data_.resize(capacity);
+        data_.resize(capacity, default_value);
         data_ptr_ = data_.data();
     }
 

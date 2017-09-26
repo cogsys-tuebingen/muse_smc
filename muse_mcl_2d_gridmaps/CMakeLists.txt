@@ -64,6 +64,13 @@ add_library(${PROJECT_NAME}_models SHARED
     src/models/likelihood_field_prob_model_amcl.cpp
     src/models/beam_model_mle.cpp
     src/models/beam_model_parameter_estimator.cpp
+
+    src/models/beam_model_log.cpp
+    src/models/likelihood_field_model_log.cpp
+    src/models/beam_model_amcl_log.cpp
+    src/models/likelihood_field_model_amcl_log.cpp
+    src/models/likelihood_field_model_pc.cpp
+    src/models/likelihood_field_model_pc_log.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}_models

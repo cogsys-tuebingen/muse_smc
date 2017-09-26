@@ -53,7 +53,7 @@ void LikelihoodFieldProbModelAMCL::apply(const data_t::ConstPtr          &data,
 
     std::fill(observation_histogram_.begin(), observation_histogram_.end(), 0);
     std::fill(observation_mask_.begin(), observation_mask_.end(), 0);
-    const std::size_t sample_size = set.getData().size();
+    const std::size_t sample_size = set.size();
     const std::size_t probability_buffer_size = sample_size * max_beams_;
     if(probability_buffer_size > observation_probability_buffer_.size()) {
         observation_probability_buffer_.resize(probability_buffer_size, 0.0);

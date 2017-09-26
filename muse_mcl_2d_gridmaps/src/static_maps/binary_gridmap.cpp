@@ -38,7 +38,7 @@ double BinaryGridMap::getRange(const muse_mcl_2d::math::Point2D &from,
         return -1.0;
 
     fromIndex({it.x(), it.y()}, to);
-    return  std::sqrt((to - from).length2());
+    return  to.distance(from);
 }
 
 bool BinaryGridMap::validate(const muse_mcl_2d::math::Pose2D &p) const

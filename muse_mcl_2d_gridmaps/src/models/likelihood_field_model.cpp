@@ -54,7 +54,7 @@ void LikelihoodFieldModel::apply(const data_t::ConstPtr          &data,
 
     for(auto it = set.begin() ; it != end ; ++it) {
         const muse_mcl_2d::math::Pose2D m_T_l = m_T_w * it.getData().state * b_T_l; /// laser scanner pose in map coordinates
-        double p = 0.0;
+        double p = 1.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
             if(!ray.valid())
