@@ -60,11 +60,12 @@ template<typename sample_t>
 class WeightIteration
 {
 public:
-    using sample_vector_t = std::buffered_vector<sample_t, typename sample_t::allocator_t>;
-    using notify_update   = delegate<void(const double)>;
-    using notify_touch    = delegate<void()>;
-    using notify_finished = delegate<void()>;
-    using iterator_t      = WeightIterator<sample_t>;
+    using sample_vector_t   = std::buffered_vector<sample_t, typename sample_t::allocator_t>;
+    using notify_update     = delegate<void(const double)>;
+    using notify_touch      = delegate<void()>;
+    using notify_finished   = delegate<void()>;
+    using iterator_t        = WeightIterator<sample_t>;
+    using const_iterator_t  = typename sample_vector_t::const_iterator;
 
     inline WeightIteration(sample_vector_t &data,
                            notify_touch     touch,
@@ -82,6 +83,16 @@ public:
     {
         if(!untouched_)
             finish_();
+    }
+
+    inline const_iterator_t const_begin() const
+    {
+        return data_.begin();
+    }
+
+    inline const_iterator_t const_end() const
+    {
+        return data_.begin();
     }
 
     inline iterator_t begin()
