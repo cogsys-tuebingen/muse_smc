@@ -221,7 +221,7 @@ public:
             PointType  q = p - mean_;
             double exponent = -0.5 * double(q.transpose() * inverse_covariance_ * q);
             double denominator = 1.0 / (covariance_.determinant() * sqrt_2_M_PI);
-            return denominator * exp(exponent);
+            return denominator * std::exp(exponent);
         }
         return 0.0;
     }
@@ -235,7 +235,7 @@ public:
             q = p - mean_;
             double exponent = -0.5 * double(q.transpose() * inverse_covariance_ * q);
             double denominator = 1.0 / (determinant_ * sqrt_2_M_PI);
-            return denominator * exp(exponent);
+            return denominator * std::exp(exponent);
         }
         return 0.0;
     }
@@ -248,7 +248,7 @@ public:
 
             PointType  q = p - mean_;
             double exponent = -0.5 * double(q.transpose() * inverse_covariance_ * q);
-            return exp(exponent);
+            return std::exp(exponent);
         }
         return 0.0;
     }
@@ -261,7 +261,7 @@ public:
                 update();
             q = p - mean_;
             double exponent = -0.5 * double(q.transpose() * inverse_covariance_ * q);
-            return exp(exponent);
+            return std::exp(exponent);
         }
         return 0.0;
     }

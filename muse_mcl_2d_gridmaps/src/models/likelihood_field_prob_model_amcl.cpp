@@ -64,9 +64,9 @@ void LikelihoodFieldProbModelAMCL::apply(const data_t::ConstPtr          &data,
     }
 
     {   /// sensor probabilty calculation.
-        const auto end = set.getData().end();
+        const auto end = set.const_end();
         std::size_t sample_index = 0;
-        for(auto it = set.getData().begin() ; it != end ; ++it, ++sample_index) {
+        for(auto it = set.const_begin() ; it != end ; ++it, ++sample_index) {
             const muse_mcl_2d::math::Pose2D m_T_l = m_T_w * it->state * b_T_l; /// laser scanner pose in map coordinates
             std::size_t observation_index = 0;
             for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step, ++observation_index) {
@@ -104,7 +104,7 @@ void LikelihoodFieldProbModelAMCL::apply(const data_t::ConstPtr          &data,
             double log_p = 0.0;
             for(std::size_t i = 0 ; i < max_beams_ ; ++i) {
                 if(error || observation_mask_[i]) {
-                    log_p += std::log(observation_probability_buffer_[sample_index * max_beams_ + i]);
+                    log_p += log(observation_probability_buffer_[sample_index * max_beams_ + i]);
                 }
             }
             *it *= std::exp(log_p);

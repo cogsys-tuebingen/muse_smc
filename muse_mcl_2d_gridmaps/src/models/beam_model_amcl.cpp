@@ -52,11 +52,11 @@ void BeamModelAMCL::apply(const data_t::ConstPtr          &data,
 
     /// mixture distribution entries
     auto p_hit = [this](const double z) {
-        return z_hit_ * exp(-z * z * denominator_hit_);
+        return z_hit_ * std::exp(-z * z * denominator_hit_);
     };
     auto p_short = [this](const double z, const double ray_range) {
         if(z < 0)
-            return z_short_ * lambda_short_ * exp(-lambda_short_ * ray_range);
+            return z_short_ * lambda_short_ * std::exp(-lambda_short_ * ray_range);
         return 0.0;
     };
     auto p_max = [this, range_max](const double ray_range)

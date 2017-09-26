@@ -48,11 +48,9 @@ void LikelihoodFieldModel::apply(const data_t::ConstPtr          &data,
     const double range_max      = laser_data.getRangeMax();
     const double p_rand         = z_rand_ * 1.0 / range_max;
 
-    auto p_hit = [this] (const double z) {
-        return z_hit_ * exp(-z * z * exp_factor_hit_);
+    auto p_hit = [this] (const double dz) {
+        return z_hit_ * std::exp(dz * dz * exp_factor_hit_);
     };
-
-
 
     for(auto it = set.begin() ; it != end ; ++it) {
         const muse_mcl_2d::math::Pose2D m_T_l = m_T_w * it.getData().state * b_T_l; /// laser scanner pose in map coordinates
@@ -64,9 +62,9 @@ void LikelihoodFieldModel::apply(const data_t::ConstPtr          &data,
 
             const muse_mcl_2d::math::Point2D   ray_end_point = m_T_l * ray.point;
             const double pz = p_hit(gridmap.at(ray_end_point)) + p_rand;
-            p += log(pz);
+            p *= pz;
         }
-        *it *= exp(p);
+        *it *= p;
     }
 }
 
@@ -78,5 +76,5 @@ void LikelihoodFieldModel::doSetup(ros::NodeHandle &nh)
     z_hit_          = nh.param(param_name("z_hit"), 0.8);
     z_rand_         = nh.param(param_name("z_rand"), 0.2);
     sigma_hit_      = nh.param(param_name("sigma_hit"), 0.15);
-    exp_factor_hit_ = 0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
+    exp_factor_hit_ = -0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
 }
