@@ -22,14 +22,14 @@ public:
                    const double range) :
             angle(angle),
             range(range),
-            point(point_t(std::cos(angle) * range,
-                          std::sin(angle) * range))
+            point(point_t(cos(angle) * range,
+                          sin(angle) * range))
         {
         }
 
         inline Ray(const point_t &pt) :
-                   angle(std::atan2(pt.y(), pt.x())),
-                   range(std::hypot(pt.y(), pt.x())),
+                   angle(atan2(pt.y(), pt.x())),
+                   range(hypot(pt.y(), pt.x())),
                    point(pt)
         {
         }

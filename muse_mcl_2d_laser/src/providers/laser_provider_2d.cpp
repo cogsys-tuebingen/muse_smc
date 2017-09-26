@@ -96,7 +96,7 @@ void LaserProvider2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
                 tf_->lookupTransform(undistortion_fixed_frame_,sensor_frame, stamp, fixed_T_current);
 
                 tf::Transform end_T_current = end_T_fixed * fixed_T_current;
-                tf::Point pt = end_T_current * tf::Point(std::cos(angle) * range, std::sin(angle) * range, 0.0);
+                tf::Point pt = end_T_current * tf::Point(cos(angle) * range, sin(angle) * range, 0.0);
                 scan.insert(point_t(pt.x(), pt.y()));
             } else {
                 scan.insertInvalid();
