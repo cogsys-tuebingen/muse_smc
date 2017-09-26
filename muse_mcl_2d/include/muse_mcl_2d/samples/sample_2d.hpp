@@ -14,6 +14,7 @@ struct Sample2D {
 public:
     using Ptr                       = std::shared_ptr<Sample2D>;
     using allocator_t               = std::allocator<Sample2D>;
+    using state_t                   = math::Pose2D;
 
     double       weight;
     math::Pose2D state;

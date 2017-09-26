@@ -5,10 +5,12 @@
 #include <muse_smc/utility/delegate.hpp>
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename state_space_description_t>
 class WeightIterator : public std::iterator<std::random_access_iterator_tag, double>
 {
 public:
+    using state_t   = typename state_space_description_t::state_t;
+    using sample_t  = typename state_space_description_t::sample_t;
     using parent    = std::iterator<std::random_access_iterator_tag, double>;
     using iterator  = typename parent::iterator;
     using reference = typename parent::reference;
@@ -30,12 +32,12 @@ public:
         return *this;
     }
 
-    inline bool operator ==(const WeightIterator<sample_t> &_other) const
+    inline bool operator ==(const WeightIterator &_other) const
     {
         return data_ == _other.data_;
     }
 
-    inline bool operator !=(const WeightIterator<sample_t> &_other) const
+    inline bool operator !=(const WeightIterator &_other) const
     {
         return !(*this == _other);
     }
@@ -46,9 +48,9 @@ public:
         return data_->weight;
     }
 
-    inline const sample_t& getData() const
+    inline const state_t& state() const
     {
-        return *data_;
+        return data_->state;
     }
 
 private:
@@ -56,15 +58,16 @@ private:
     notify_update    update_;
 };
 
-template<typename sample_t>
+template<typename state_space_description_t>
 class WeightIteration
 {
 public:
+    using sample_t          = typename state_space_description_t::sample_t;
     using sample_vector_t   = std::buffered_vector<sample_t, typename sample_t::allocator_t>;
     using notify_update     = delegate<void(const double)>;
     using notify_touch      = delegate<void()>;
     using notify_finished   = delegate<void()>;
-    using iterator_t        = WeightIterator<sample_t>;
+    using iterator_t        = WeightIterator<state_space_description_t>;
     using const_iterator_t  = typename sample_vector_t::const_iterator;
 
     inline WeightIteration(sample_vector_t &data,

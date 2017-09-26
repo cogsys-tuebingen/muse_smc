@@ -24,7 +24,7 @@ public:
     using sample_density_t   = SampleDensity<sample_t>;
     using sample_insertion_t = SampleInsertion<sample_t>;
     using state_iterator_t   = StateIteration<state_space_description_t>;
-    using weight_iterator_t  = WeightIteration<sample_t>;
+    using weight_iterator_t  = WeightIteration<state_space_description_t>;
 
     using Ptr = std::shared_ptr<sample_set_t>;
     using ConstPtr = std::shared_ptr<sample_set_t const>;

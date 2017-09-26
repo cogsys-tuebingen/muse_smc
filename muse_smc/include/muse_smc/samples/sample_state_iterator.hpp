@@ -39,9 +39,9 @@ public:
         return data_->state;
     }
 
-    inline const sample_t& getData() const
+    inline double weight() const
     {
-        return *data_;
+        return data_->weight;
     }
 
 private:
