@@ -48,6 +48,10 @@ void BeamModelLog::apply(const data_t::ConstPtr          &data,
     const double range_max = laser_data.getRangeMax();
     const double p_rand = z_rand_ * 1.0 / range_max;
 
+    if(ps_.size() != set.capacity()) {
+        ps_.resize(set.capacity(), 0.0);
+
+    }
 
     /// mixture distribution entries
     auto pow2 = [](const double x) {return x*x;};
@@ -76,25 +80,23 @@ void BeamModelLog::apply(const data_t::ConstPtr          &data,
         return p_hit(ray_range, map_range) + p_short(ray_range, map_range) + p_max(ray_range) + p_random(ray_range);
     };
 
-//    for(auto it = set.const_begin() ; it != const_end ; ++it) {
-//        const muse_mcl_2d::math::Pose2D m_T_l = m_T_w * it.state() * b_T_l; /// laser scanner pose in map coordinates
-//        double p = 1.0;
-//        for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
-//            const auto &ray = laser_rays[i];
-//            p *= ray.valid() ? probability(ray, m_T_l) : z_max_;
-//        }
-//        *it *= p;
-//    }
+    auto it_ps = ps_.begin();
+    double log_max = std::numeric_limits<double>::lowest();
+    for(auto it = set.const_begin() ; it != const_end ; ++it, ++it_ps) {
+        const muse_mcl_2d::math::Pose2D m_T_l = m_T_w * it->state * b_T_l; /// laser scanner pose in map coordinates
+        double p = 0.0;
+        for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
+            const auto &ray = laser_rays[i];
+            p += std::log(ray.valid() ? probability(ray, m_T_l) : z_max_);
+        }
+        *it_ps = p;
+        log_max = p >= log_max ? p : log_max;
+    }
 
-//    for(auto it = set.begin() ; it != end ; ++it) {
-//        const muse_mcl_2d::math::Pose2D m_T_l = m_T_w * it.state()().state * b_T_l; /// laser scanner pose in map coordinates
-//        double p = 1.0;
-//        for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
-//            const auto &ray = laser_rays[i];
-//            p *= ray.valid() ? probability(ray, m_T_l) : z_max_;
-//        }
-//        *it *= p;
-//    }
+    it_ps = ps_.begin();
+    for(auto it = set.begin() ; it != end ; ++it, ++it_ps) {
+        *it *= std::exp(*it_ps - log_max);
+    }
 }
 
 void BeamModelLog::doSetup(ros::NodeHandle &nh)
