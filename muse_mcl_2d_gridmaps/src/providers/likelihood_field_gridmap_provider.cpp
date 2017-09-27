@@ -43,14 +43,14 @@ void LikelihoodFieldGridmapProvider::callback(const nav_msgs::OccupancyGridConst
             loading_ = true;
 
             auto load = [this, msg]() {
-                static_maps::LikelihoodFieldGridMap::Ptr map(new static_maps::LikelihoodFieldGridMap(*msg, sigma_hit_, z_hit_, maximum_distance_, binarization_threshold_));
+                static_maps::LikelihoodFieldGridMap::Ptr map(new static_maps::LikelihoodFieldGridMap(*msg, sigma_hit_, maximum_distance_, binarization_threshold_));
                 std::unique_lock<std::mutex>l(map_mutex_);
                 map_ = map;
                 loading_ = false;
             };
             auto load_blocking = [this, msg]() {
                 std::unique_lock<std::mutex>l(map_mutex_);
-                static_maps::LikelihoodFieldGridMap::Ptr map(new static_maps::LikelihoodFieldGridMap(*msg, sigma_hit_, z_hit_, maximum_distance_, binarization_threshold_));
+                static_maps::LikelihoodFieldGridMap::Ptr map(new static_maps::LikelihoodFieldGridMap(*msg, sigma_hit_, maximum_distance_, binarization_threshold_));
                 map_ = map;
                 loading_ = false;
 

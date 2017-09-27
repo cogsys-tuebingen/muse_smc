@@ -10,7 +10,6 @@ using namespace static_maps;
 
 LikelihoodFieldGridMap::LikelihoodFieldGridMap(const nav_msgs::OccupancyGrid &occupancy_grid,
                                                const double sigma_hit,
-                                               const double z_hit,
                                                const double maximum_distance,
                                                const double threshold) :
     GridMap<double>(occupancy_grid.info.origin.position.x,
@@ -21,7 +20,6 @@ LikelihoodFieldGridMap::LikelihoodFieldGridMap(const nav_msgs::OccupancyGrid &oc
                     occupancy_grid.info.width,
                     0.5,
                     occupancy_grid.header.frame_id),
-    z_hit_(z_hit),
     sigma_hit_(sigma_hit),
     exp_factor_hit_(0.5 * 1.0 / (sigma_hit * sigma_hit)),
     maximum_distance_(maximum_distance)
@@ -32,10 +30,9 @@ LikelihoodFieldGridMap::LikelihoodFieldGridMap(const nav_msgs::OccupancyGrid &oc
 
 LikelihoodFieldGridMap::LikelihoodFieldGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupancy_grid,
                                                const double sigma_hit,
-                                               const double z_hit,
                                                const double maximum_distance,
                                                const double threshold) :
-    LikelihoodFieldGridMap(*occupancy_grid, sigma_hit, z_hit, maximum_distance, threshold)
+    LikelihoodFieldGridMap(*occupancy_grid, sigma_hit,  maximum_distance, threshold)
 {
 }
 
@@ -48,16 +45,10 @@ double LikelihoodFieldGridMap::at(const muse_mcl_2d::math::Point2D &point) const
     return GridMap<double>::at(i[0], i[1]);
 }
 
-double LikelihoodFieldGridMap::getZHit() const
-{
-    return z_hit_;
-}
-
 double LikelihoodFieldGridMap::getSigmaHit() const
 {
     return sigma_hit_;
 }
-
 
 void LikelihoodFieldGridMap::convert(const nav_msgs::OccupancyGrid &occupancy_grid,
                                      const double threshold)
@@ -75,9 +66,8 @@ void LikelihoodFieldGridMap::convert(const nav_msgs::OccupancyGrid &occupancy_gr
 
     /// 2.) pre-calculation of the hit likelihoods
     auto p_hit = [this] (const double z) {
-        return z_hit_ * std::exp(-z * z * exp_factor_hit_);
+        return std::exp(-z * z * exp_factor_hit_);
     };
-
 
     const std::size_t size = height_ * width_;
     data_.resize(size, 0);

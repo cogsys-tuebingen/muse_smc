@@ -17,7 +17,6 @@ void LikelihoodFieldGridmapServiceProvider::setup(ros::NodeHandle &nh)
     service_name_           = nh.param<std::string>(param_name("service"), "/static_map");
     binarization_threshold_ = nh.param<double>(param_name("threshold"), 0.5);
     maximum_distance_       = nh.param<double>(param_name("maximum_distance"), 2.0);
-    z_hit_                  = nh.param<double>(param_name("z_hit"), 0.8);
     sigma_hit_              = nh.param<double>(param_name("sigma_hit"), 0.2);
     blocking_               = nh.param<bool>(param_name("blocking"), false);
     source_                 = nh.serviceClient<nav_msgs::GetMap>(service_name_);
@@ -35,14 +34,14 @@ LikelihoodFieldGridmapServiceProvider::state_space_t::ConstPtr LikelihoodFieldGr
                 loading_ = true;
 
                 auto load = [this, req]() {
-                    static_maps::LikelihoodFieldGridMap::Ptr map(new static_maps::LikelihoodFieldGridMap(req.response.map, sigma_hit_, z_hit_, maximum_distance_, binarization_threshold_));
+                    static_maps::LikelihoodFieldGridMap::Ptr map(new static_maps::LikelihoodFieldGridMap(req.response.map, sigma_hit_, maximum_distance_, binarization_threshold_));
                     std::unique_lock<std::mutex>l(map_mutex_);
                     map_ = map;
                     loading_ = false;
                 };
                 auto load_blocking = [this, req]() {
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    static_maps::LikelihoodFieldGridMap::Ptr map(new static_maps::LikelihoodFieldGridMap(req.response.map, sigma_hit_, z_hit_, maximum_distance_, binarization_threshold_));
+                    static_maps::LikelihoodFieldGridMap::Ptr map(new static_maps::LikelihoodFieldGridMap(req.response.map, sigma_hit_, maximum_distance_, binarization_threshold_));
                     map_ = map;
                     loading_ = false;
                     map_loaded_.notify_one();

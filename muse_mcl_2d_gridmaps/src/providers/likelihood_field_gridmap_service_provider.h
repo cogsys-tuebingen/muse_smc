@@ -27,7 +27,6 @@ protected:
     std::string                                         service_name_;
     double                                              binarization_threshold_;
     double                                              maximum_distance_;
-    double                                              z_hit_;
     double                                              sigma_hit_;
     bool                                                blocking_;
 

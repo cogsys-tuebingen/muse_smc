@@ -11,12 +11,10 @@ class LikelihoodFieldGridMap : public GridMap<double>
 public:
     LikelihoodFieldGridMap(const nav_msgs::OccupancyGrid &occupancy_grid,
                            const double sigma_hit,
-                           const double z_hit,
                            const double maximum_distance = 2.0,
                            const double threshold = 1.0);
     LikelihoodFieldGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupancy_grid,
                            const double sigma_hit,
-                           const double z_hit,
                            const double maximum_distance = 2.0,
                            const double threshold = 1.0);
 
@@ -26,7 +24,6 @@ public:
     double getSigmaHit() const;
 
 private:
-    const double z_hit_;
     const double sigma_hit_;
     const double exp_factor_hit_;
     const double maximum_distance_;
