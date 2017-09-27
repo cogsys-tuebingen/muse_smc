@@ -34,6 +34,14 @@
    <class type="muse_mcl_2d_gridmaps::BeamModelMLE" base_class_type="muse_mcl_2d::UpdateModel2D">
      <description>Beam model update function.</description>
    </class>
+   <class type="muse_mcl_2d_gridmaps::BeamModelLog" base_class_type="muse_mcl_2d::UpdateModel2D">
+     <description>Beam model update function.</description>
+   </class>
+   <class type="muse_mcl_2d_gridmaps::BeamModelAMCLNormalized" base_class_type="muse_mcl_2d::UpdateModel2D">
+     <description>Beam model update function.</description>
+   </class>
+
+
    <class type="muse_mcl_2d_gridmaps::LikelihoodFieldModel" base_class_type="muse_mcl_2d::UpdateModel2D">
      <description>Likelihoodfield model update function.</description>
    </class>
@@ -42,5 +50,17 @@
    </class>
    <class type="muse_mcl_2d_gridmaps::LikelihoodFieldProbModelAMCL" base_class_type="muse_mcl_2d::UpdateModel2D">
      <description>Likelihoodfield model update function with consistency check.</description>
+   </class>
+   <class type="muse_mcl_2d_gridmaps::LikelihoodFieldModelLog" base_class_type="muse_mcl_2d::UpdateModel2D">
+     <description>Likelihoodfield model update function.</description>
+   </class>
+   <class type="muse_mcl_2d_gridmaps::LikelihoodFieldModelAMCLNormalized" base_class_type="muse_mcl_2d::UpdateModel2D">
+     <description>Likelihoodfield model update function with consistency check.</description>
+   </class>
+   <class type="muse_mcl_2d_gridmaps::LikelihoodFieldModelPC" base_class_type="muse_mcl_2d::UpdateModel2D">
+     <description>Likelihoodfield model update function.</description>
+   </class>
+   <class type="muse_mcl_2d_gridmaps::LikelihoodFieldModelPCNormalized" base_class_type="muse_mcl_2d::UpdateModel2D">
+     <description>Likelihoodfield model update function.</description>
    </class>
 </library>
