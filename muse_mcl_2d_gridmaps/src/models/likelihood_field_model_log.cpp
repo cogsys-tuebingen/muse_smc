@@ -75,7 +75,6 @@ void LikelihoodFieldModelLog::apply(const data_t::ConstPtr          &data,
     for(auto it = set.begin() ; it != end ; ++it, ++it_ps) {
         *it *= std::exp(*it_ps - log_max);
     }
-
 }
 
 void LikelihoodFieldModelLog::doSetup(ros::NodeHandle &nh)
