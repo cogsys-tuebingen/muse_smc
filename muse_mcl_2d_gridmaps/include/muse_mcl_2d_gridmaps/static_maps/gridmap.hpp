@@ -81,7 +81,7 @@ public:
         return at(i[0], i[1]);
     }
 
-    inline const T& at(const muse_mcl_2d::math::Point2D &point) const
+    inline const T at(const muse_mcl_2d::math::Point2D &point) const
     {
         index_t i;
         if(!toIndex(point, i)) {

@@ -39,6 +39,15 @@ LikelihoodFieldGridMap::LikelihoodFieldGridMap(const nav_msgs::OccupancyGrid::Co
 {
 }
 
+double LikelihoodFieldGridMap::at(const muse_mcl_2d::math::Point2D &point) const
+{
+    index_t i;
+    toIndex(point, i);
+    if(invalid(i))
+        return 0.0;
+    return GridMap<double>::at(i[0], i[1]);
+}
+
 double LikelihoodFieldGridMap::getZHit() const
 {
     return z_hit_;

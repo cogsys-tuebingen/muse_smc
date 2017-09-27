@@ -49,8 +49,8 @@ void LikelihoodFieldModelAMCL::apply(const data_t::ConstPtr          &data,
     const double range_max = laser_data.getRangeMax();
     const double p_rand = z_rand_ * 1.0 / range_max;
 
-    auto p_hit = [this] (const double z) {
-        return z_hit_ * std::exp(-z * z * denominator_hit_);
+    auto p_hit = [this] (const double dz) {
+        return z_hit_ * std::exp(-dz * dz * denominator_hit_);
     };
 
 
