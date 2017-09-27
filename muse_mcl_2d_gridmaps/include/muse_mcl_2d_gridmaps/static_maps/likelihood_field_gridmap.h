@@ -18,7 +18,7 @@ public:
                            const double maximum_distance = 2.0,
                            const double threshold = 1.0);
 
-    double at(const muse_mcl_2d::math::Point2D &point) const;
+    double at(const muse_mcl_2d::math::Point2D &point) const override;
 
     double getZHit() const;
     double getSigmaHit() const;

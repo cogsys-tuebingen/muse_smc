@@ -19,7 +19,6 @@ public:
 
     virtual bool validate(const muse_mcl_2d::math::Pose2D &p) const;
 
-
 private:
     void convert(const nav_msgs::OccupancyGrid &occupancy_grid,
                  const double threshold);

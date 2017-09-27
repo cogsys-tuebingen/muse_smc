@@ -66,8 +66,13 @@ public:
 
     inline Bresenham& operator++()
     {
-        if(done())
+        if(done()) {
+            if(active_chunk_) {
+                active_chunk_lock_.unlock();
+                active_chunk_ = nullptr;
+            }
             return *this;
+        }
 
         index_[0]       += step_x_;
         local_index_[0] += step_x_;
@@ -116,6 +121,7 @@ private:
         if(active_chunk_ == nullptr) {
             active_chunk_ = &(storage_->insert(chunk_index_, chunk_t(chunk_size_, default_value_)));
         }
+        active_chunk_lock_ = active_chunk_->lock();
     }
 
     inline void updateLocalIndex()
@@ -134,6 +140,7 @@ private:
     bool                        done_;
     std::shared_ptr<storage_t>  storage_;
     chunk_t                    *active_chunk_;
+    chunk_t::lock_t             active_chunk_lock_;
     int                         chunk_size_;
 
     index_t      start_;

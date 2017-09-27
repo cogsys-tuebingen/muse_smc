@@ -72,7 +72,7 @@ public:
         return data_ptr_[width_ * idy + idx];
     }
 
-    inline T& at(const muse_mcl_2d::math::Point2D &point)
+    virtual inline T& at(const muse_mcl_2d::math::Point2D &point)
     {
         index_t i;
         if(!toIndex(point, i)) {
@@ -81,13 +81,13 @@ public:
         return at(i[0], i[1]);
     }
 
-    inline const T at(const muse_mcl_2d::math::Point2D &point) const
+    virtual inline T at(const muse_mcl_2d::math::Point2D &point) const
     {
         index_t i;
         if(!toIndex(point, i)) {
             throw std::runtime_error("[GridMap] : Invalid Index!");
         }
-        return at(i);
+        return at(i[0], i[1]);
     }
 
     inline const_line_iterator_t getConstLineIterator(const index_t &start,

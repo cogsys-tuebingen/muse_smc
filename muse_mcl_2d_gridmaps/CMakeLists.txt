@@ -40,7 +40,6 @@ target_link_libraries(${PROJECT_NAME}_static_maps
 
 add_library(${PROJECT_NAME}_dynamic_maps SHARED
     src/dynamic_maps/probability_gridmap.cpp
-    src/dynamic_maps/concurrent_probability_gridmap.cpp
 )
 target_link_libraries(${PROJECT_NAME}_static_maps
     ${catkin_LIBRARIES}
@@ -99,6 +98,7 @@ if(${MUSE_MCL_2D_GRIDMAPS_PERF_TESTS})
     target_link_libraries(${PROJECT_NAME}_perf_runtimes_get_range
         ${catkin_LIBRARIES}
         ${PROJECT_NAME}_static_maps
+        ${OpenCV_LIBRARIES}
     )
     add_executable(${PROJECT_NAME}_perf_runtimes_line_iterator
         test/perf_runtimes_line_iterator.cpp
@@ -107,6 +107,7 @@ if(${MUSE_MCL_2D_GRIDMAPS_PERF_TESTS})
     target_link_libraries(${PROJECT_NAME}_perf_runtimes_line_iterator
         ${catkin_LIBRARIES}
         ${PROJECT_NAME}_static_maps
+        ${OpenCV_LIBRARIES}
     )
     add_executable(${PROJECT_NAME}_perf_runtimes_distance_transform
         test/perf_runtimes_distance_transform.cpp

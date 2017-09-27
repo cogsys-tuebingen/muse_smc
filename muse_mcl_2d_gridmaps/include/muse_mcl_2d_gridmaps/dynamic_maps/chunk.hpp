@@ -10,8 +10,9 @@ namespace dynamic_maps {
 template<typename T>
 class Chunk {
 public:
-    using index_t = std::array<int, 2>;
-    using mutex_t = std::mutex;
+    using index_t   = std::array<int, 2>;
+    using mutex_t   = std::mutex;
+    using lock_t    = std::unique_lock<mutex_t>;
 
     Chunk() = default;
     virtual ~Chunk() = default;
@@ -70,10 +71,16 @@ public:
     {
     }
 
+    inline lock_t lock()
+    {
+        return std::move(lock_t(data_mutex_));
+    }
+
 private:
     int                 size_;
     std::vector<T>      data_;
     T                  *data_ptr_;
+    mutex_t             data_mutex_;
 
 };
 }

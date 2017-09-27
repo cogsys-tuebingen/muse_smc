@@ -89,8 +89,8 @@ public:
         return chunk->at(local_chunk_index);
     }
 
-    inline const T& at(const std::size_t idx,
-                       const std::size_t idy) const
+    virtual inline T at(const std::size_t idx,
+                        const std::size_t idy) const
     {
         if(invalid(idx, idy)) {
             throw std::runtime_error("[GridMap] : Invalid Index!");
@@ -106,7 +106,7 @@ public:
         return chunk->at(local_chunk_index);
     }
 
-    inline T& at(const muse_mcl_2d::math::Point2D &point)
+    virtual inline T& at(const muse_mcl_2d::math::Point2D &point)
     {
         const index_t index             = toIndex(point);
         const index_t chunk_index       = toChunkIndex(index);
@@ -126,7 +126,7 @@ public:
         return chunk->at(local_chunk_index);
     }
 
-    inline const T& at(const muse_mcl_2d::math::Point2D &point) const
+    virtual inline T at(const muse_mcl_2d::math::Point2D &point) const
     {
         const index_t index = toIndex(point);
         const index_t chunk_index = toChunkIndex(index);
