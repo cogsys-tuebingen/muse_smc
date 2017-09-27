@@ -54,7 +54,6 @@ void LikelihoodFieldModelAMCL::apply(const data_t::ConstPtr          &data,
     };
 
 
-
     for(auto it = set.begin() ; it != end ; ++it) {
         const muse_mcl_2d::math::Pose2D m_T_l = m_T_w * it.state() * b_T_l; /// laser scanner pose in map coordinates
         double p = 1.0;
