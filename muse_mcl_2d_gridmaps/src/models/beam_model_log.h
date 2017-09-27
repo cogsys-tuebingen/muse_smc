@@ -23,7 +23,6 @@ protected:
     double                          denominator_exponent_hit_;
     double                          denominator_hit_;
     double                          lambda_short_;
-    double                          chi_outlier_;
     std::vector<double>             ps_;
 
     virtual void doSetup(ros::NodeHandle &nh) override;

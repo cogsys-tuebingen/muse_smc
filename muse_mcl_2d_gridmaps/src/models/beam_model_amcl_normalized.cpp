@@ -1,20 +1,20 @@
-#include "beam_model_amcl.h"
+#include "beam_model_amcl_normalized.h"
 
 #include <muse_mcl_2d_laser/laser/laser_2d_scan.hpp>
 #include <muse_mcl_2d_gridmaps/static_maps//binary_gridmap.h>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::BeamModelAMCL, muse_mcl_2d::UpdateModel2D)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::BeamModelAMCLNormalized, muse_mcl_2d::UpdateModel2D)
 
 using namespace muse_mcl_2d_gridmaps;
 
 #include <sensor_msgs/PointCloud.h>
 
-BeamModelAMCL::BeamModelAMCL()
+BeamModelAMCLNormalized::BeamModelAMCLNormalized()
 {
 }
 
-void BeamModelAMCL::apply(const data_t::ConstPtr          &data,
+void BeamModelAMCLNormalized::apply(const data_t::ConstPtr          &data,
                           const state_space_t::ConstPtr   &map,
                           sample_set_t::weight_iterator_t set)
 {
@@ -44,11 +44,15 @@ void BeamModelAMCL::apply(const data_t::ConstPtr          &data,
 
     const muse_mcl_2d_laser::LaserScan2D::Rays rays = laser_data.getRays();
     const auto end = set.end();
+    const auto const_end = set.const_end();
     const std::size_t rays_size = rays.size();
     const std::size_t ray_step  = std::max(1ul, rays_size / max_beams_);
     const double range_max = laser_data.getRangeMax();
     const double p_rand = z_rand_ * 1.0 / range_max;
 
+    if(ps_.size() != set.capacity()) {
+        ps_.resize(set.capacity(), 0.0);
+    }
 
     /// mixture distribution entries
     auto pow2 = [](const double x) {return x*x;};
@@ -87,9 +91,28 @@ void BeamModelAMCL::apply(const data_t::ConstPtr          &data,
         }
         *it *= p;
     }
+
+    auto it_ps = ps_.begin();
+    double max = std::numeric_limits<double>::lowest();
+    for(auto it = set.const_begin() ; it != const_end ; ++it, ++it_ps) {
+        const muse_mcl_2d::math::Pose2D m_T_l = m_T_w * it->state * b_T_l; /// laser scanner pose in map coordinates
+        double p = 1.0;
+        for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
+            const auto &ray = laser_rays[i];
+            p += ray.valid() ? pow3(probability(ray, m_T_l)) : pow3(z_max_);
+        }
+        *it_ps = p;
+        max = p >= max ? p : max;
+    }
+
+    it_ps = ps_.begin();
+    for(auto it = set.begin() ; it != end ; ++it, ++it_ps) {
+        *it *= *it_ps / max;
+    }
+
 }
 
-void BeamModelAMCL::doSetup(ros::NodeHandle &nh)
+void BeamModelAMCLNormalized::doSetup(ros::NodeHandle &nh)
 {
     auto param_name = [this](const std::string &name){return name_ + "/" + name;};
 

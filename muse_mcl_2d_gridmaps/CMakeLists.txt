@@ -67,8 +67,8 @@ add_library(${PROJECT_NAME}_models SHARED
 
     src/models/beam_model_log.cpp
     src/models/likelihood_field_model_log.cpp
-    src/models/beam_model_amcl_log.cpp
-    src/models/likelihood_field_model_amcl_log.cpp
+    src/models/beam_model_amcl_normalized.cpp
+    src/models/likelihood_field_model_amcl_normalized.cpp
     src/models/likelihood_field_model_pc.cpp
     src/models/likelihood_field_model_pc_log.cpp
 )

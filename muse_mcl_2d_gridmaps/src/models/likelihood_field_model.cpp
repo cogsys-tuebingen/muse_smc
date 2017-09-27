@@ -57,11 +57,8 @@ void LikelihoodFieldModel::apply(const data_t::ConstPtr          &data,
         double p = 1.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
-            if(!ray.valid())
-                continue;
-
-            const muse_mcl_2d::math::Point2D   ray_end_point = m_T_l * ray.point;
-            const double pz = p_hit(gridmap.at(ray_end_point)) + p_rand;
+            const muse_mcl_2d::math::Point2D ray_end_point = m_T_l * ray.point;
+            const double pz = ray.valid() ? p_hit(gridmap.at(ray_end_point)) + p_rand : 1.0;
             p *= pz;
         }
         *it *= p;

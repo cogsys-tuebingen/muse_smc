@@ -23,7 +23,6 @@ protected:
     double      sigma_hit_;
     double      denominator_exponent_hit_;
     double      lambda_short_;
-    double      chi_outlier_;
 
     ros::Publisher  pub_points_;
 
