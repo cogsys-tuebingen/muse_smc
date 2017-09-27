@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <array>
+#include <mutex>
 
 namespace muse_mcl_2d_gridmaps {
 namespace dynamic_maps {
@@ -10,6 +11,7 @@ template<typename T>
 class Chunk {
 public:
     using index_t = std::array<int, 2>;
+    using mutex_t = std::mutex;
 
     Chunk() = default;
     virtual ~Chunk() = default;

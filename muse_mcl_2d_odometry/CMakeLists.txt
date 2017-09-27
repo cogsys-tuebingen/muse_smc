@@ -10,6 +10,8 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 catkin_package(
+    LIBRARIES ${PROJECT_NAME}_providers ${PROJECT_NAME}_models
+    CATKIN_DEPENDS muse_mcl_2d
 )
 
 include_directories(

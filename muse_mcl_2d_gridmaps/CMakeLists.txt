@@ -18,8 +18,7 @@ find_package(Eigen3 REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}_static_maps ${PROJECT_NAME}_providers ${PROJECT_NAME}_models
-#  CATKIN_DEPENDS muse_mcl nav_msgs pluginlib roscpp rostest
-#  DEPENDS system_lib
+  CATKIN_DEPENDS muse_mcl_2d
 )
 
 include_directories(
@@ -37,8 +36,16 @@ add_library(${PROJECT_NAME}_static_maps SHARED
 )
 target_link_libraries(${PROJECT_NAME}_static_maps
     ${catkin_LIBRARIES}
-    ${OpenCV_LIBRARIES}
 )
+
+add_library(${PROJECT_NAME}_dynamic_maps SHARED
+    src/dynamic_maps/probability_gridmap.cpp
+    src/dynamic_maps/concurrent_probability_gridmap.cpp
+)
+target_link_libraries(${PROJECT_NAME}_static_maps
+    ${catkin_LIBRARIES}
+)
+
 
 add_library(${PROJECT_NAME}_providers SHARED
     src/providers/binary_gridmap_provider.cpp
