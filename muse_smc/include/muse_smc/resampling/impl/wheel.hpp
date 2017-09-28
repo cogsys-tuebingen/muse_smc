@@ -29,6 +29,7 @@ public:
         math::random::Uniform<1> rng(0.0, 1.0);
         double beta = 0.0;
         std::size_t index = (std::size_t(rng.get() * size)) % size;
+
         for(std::size_t i = 0 ; i < size ; ++i) {
             beta += 2 * w_max * rng.get();
             while (beta > p_t_1[index].weight) {
@@ -60,6 +61,7 @@ public:
         double beta = 0.0;
         std::size_t index = (std::size_t(rng.get() * size)) % size;
         sample_t sample;
+
         for(std::size_t i = 0 ; i < size ; ++i) {
             beta += 2 * w_max * rng.get();
             while (beta > p_t_1[index].weight) {

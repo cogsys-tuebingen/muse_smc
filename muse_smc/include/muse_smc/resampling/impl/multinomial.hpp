@@ -29,6 +29,7 @@ public:
         math::random::Uniform<1> rng(0.0, 1.0);
         std::vector<double> u(size, std::pow(rng.get(), 1.0 / static_cast<double>(size)));
         {
+
             for(std::size_t k = size - 1 ; k > 0 ; --k) {
                const double u_ = std::pow(rng.get(), 1.0 / static_cast<double>(k));
                u[k-1] = u[k] * u_;
@@ -45,6 +46,7 @@ public:
                 return u >= cumsum_last && u < cumsum;
             };
 
+
             for(auto &u_r : u) {
                 while(!in_range(u_r)) {
                     ++p_t_1_it;
@@ -55,6 +57,7 @@ public:
             }
         }
     }
+
     inline static  void applyRecovery(typename uniform_sampling_t::Ptr uniform_pose_sampler,
                                       const double recovery_random_pose_probability,
                                       sample_set_t &sample_set)
@@ -90,7 +93,7 @@ public:
                 return u >= cumsum_last && u < cumsum;
             };
 
-            Particle particle;
+            sample_t sample;
             for(auto &u_r : u) {
                 while(!in_range(u_r)) {
                     ++p_t_1_it;
@@ -99,12 +102,12 @@ public:
                 }
                 const double recovery_probability = rng_recovery.get();
                 if(recovery_probability < recovery_random_pose_probability) {
-                    uniform_pose_sampler->apply(particle);
-                    particle.weight_ = recovery_probability;
+                    uniform_pose_sampler->apply(sample);
+                    sample.weight_ = recovery_probability;
                 } else {
-                    particle.pose_ = p_t_1_it->pose_;
+                    sample.pose_ = p_t_1_it->pose_;
                 }
-                i_p_t.insert(particle);
+                i_p_t.insert(sample);
             }
         }
     }

@@ -29,6 +29,7 @@ public:
         math::random::Uniform<1> rng(0.0, 1.0);
         std::vector<double> u(size);
         {
+
             for(std::size_t i = 0 ; i < size ; ++i) {
                 u[i] = (i + rng.get()) / size;
             }
@@ -75,6 +76,7 @@ public:
         math::random::Uniform<1> rng(0.0, 1.0);
         std::vector<double> u(size);
         {
+
             for(std::size_t i = 0 ; i < size ; ++i) {
                 u[i] = (i + rng.get()) / size;
             }
@@ -92,6 +94,7 @@ public:
             };
 
             sample_t sample;
+
             for(auto &u_r : u) {
                 while(!in_range(u_r)) {
                     ++p_t_1_it;

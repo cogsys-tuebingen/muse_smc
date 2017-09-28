@@ -30,6 +30,7 @@ public:
         {
             math::random::Uniform<1> rng(0.0, 1.0);
             double u_static = rng.get();
+
             for(std::size_t i = 0 ; i < size ; ++i) {
                 u[i] = (i + u_static) / size;
             }
@@ -44,6 +45,7 @@ public:
             {
                 return u >= cumsum_last && u < cumsum;
             };
+
 
             for(auto &u_r : u) {
                 while(!in_range(u_r)) {
@@ -75,6 +77,7 @@ public:
         {
             math::random::Uniform<1> rng(0.0, 1.0);
             double u_static = rng.get();
+
             for(std::size_t i = 0 ; i < size ; ++i) {
                 u[i] = (i + u_static) / size;
             }
@@ -92,6 +95,7 @@ public:
             };
 
             sample_t sample;
+
             for(auto &u_r : u) {
                 while(!in_range(u_r)) {
                     ++p_t_1_it;

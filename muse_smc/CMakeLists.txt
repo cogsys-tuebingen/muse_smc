@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(muse_smc)
 
-set(OpenMP true)
 include(cmake/muse_smc_enable_c++11.cmake)
 include(cmake/muse_smc_extras.cmake)
 include(cmake/muse_smc_openmp.cmake)
@@ -24,6 +23,7 @@ catkin_package(
                     muse_smc_enable_c++11.cmake
                     muse_smc_add_unit_test_gtest.cmake
                     muse_smc_show_headers.cmake
+                    muse_smc_openmp.cmake
 )
 
 # add_definitions("-DMUSE_SMC_USE_DOTTY")

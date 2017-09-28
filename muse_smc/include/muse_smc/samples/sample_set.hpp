@@ -99,6 +99,7 @@ public:
         if(p_t_1_->size() == 0 || weight_sum_ == 0.0) {
             return;
         }
+
         for(auto &s : *p_t_1_) {
             s.weight /= weight_sum_;
         }
@@ -112,6 +113,7 @@ public:
         if(p_t_1_->size() == 0) {
             return;
         }
+
         const double weight = set_to_one ? 1.0 : 1.0 / static_cast<double>(p_t_1_->size());
         for(auto &s : *p_t_1_) {
             s.weight = weight;
@@ -204,10 +206,8 @@ private:
 
     inline void weightUpdate(const double weight)
     {
-        weight_sum_ += weight;
-        if(weight > maximum_weight_)
-            maximum_weight_ = weight;
-        average_weight_ = weight_sum_ / p_t_1_->size();
+        weight_sum_    += weight;
+        maximum_weight_ = weight > maximum_weight_ ? weight : maximum_weight_;
     }
 
     inline void insertionUpdate(const sample_t &sample)
