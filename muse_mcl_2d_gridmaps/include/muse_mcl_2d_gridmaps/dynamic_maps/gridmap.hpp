@@ -23,6 +23,8 @@ class GridMap : public muse_mcl_2d::Map2D
 public:
     using Ptr                   = std::shared_ptr<GridMap<T>>;
     using index_t               = std::array<int, 2>;
+    using mutex_t               = std::mutex;
+    using lock_t                = std::unique_lock<mutex_t>;
     using chunk_t               = Chunk<T>;
     using storage_t             = cis::Storage<chunk_t, index_t, cis::backend::kdtree::KDTree>;
     using line_iterator_t       = algorithms::Bresenham<T>;
@@ -82,6 +84,7 @@ public:
 
         const index_t chunk_index       = toChunkIndex(idx, idy);
         const index_t local_chunk_index = toLocalChunkIndex(idx,idy);
+        lock_t l(storage_mutex_);
         chunk_t *chunk = storage_->get(chunk_index);
         if(chunk == nullptr) {
             chunk = &(storage_->insert(chunk_index, chunk_t(chunk_size_, default_value_)));
@@ -98,6 +101,8 @@ public:
 
         const index_t chunk_index       = toChunkIndex(idx, idy);
         const index_t local_chunk_index = toLocalChunkIndex(idx,idy);
+
+        lock_t l(storage_mutex_);
         chunk_t *chunk = storage_->get(chunk_index);
         if(chunk == nullptr) {
             chunk = &(storage_->insert(chunk_index, chunk_t(chunk_size_, default_value_)));
@@ -111,17 +116,13 @@ public:
         const index_t index             = toIndex(point);
         const index_t chunk_index       = toChunkIndex(index);
         const index_t local_chunk_index = toLocalChunkIndex(index);
+
+        lock_t l(storage_mutex_);
         chunk_t *chunk = storage_->get(chunk_index);
-
-        std::cout << "chunk " << chunk_index[0] << " " << chunk_index[1] << std::endl;
-        std::cout << chunk << std::endl;
-
         if(chunk == nullptr) {
             chunk = &(storage_->insert(chunk_index, chunk_t(chunk_size_, default_value_)));
-            std::cout << "created " << chunk << std::endl;
             updateChunkIndices(chunk_index);
         }
-        std::cout << "----------------" << std::endl;
 
         return chunk->at(local_chunk_index);
     }
@@ -131,6 +132,8 @@ public:
         const index_t index = toIndex(point);
         const index_t chunk_index = toChunkIndex(index);
         const index_t local_chunk_index = toLocalChunkIndex(index);
+
+        lock_t l(storage_mutex_);
         chunk_t *chunk = storage_->get(chunk_index);
         if(chunk == nullptr) {
             chunk = &(storage_->insert(chunk_index, chunk_t(chunk_size_, default_value_)));
@@ -166,6 +169,7 @@ public:
         const index_t start_chunk_index = toChunkIndex(index);
         const index_t end_chunk_index   = toChunkIndex(index);
 
+        lock_t l(storage_mutex_);
         if(storage_->get(start_chunk_index) == nullptr) {
             storage_->insert(start_chunk_index, chunk_t(chunk_size_, default_value_));
             updateChunkIndices(start_chunk_index);
@@ -212,12 +216,13 @@ protected:
     const double                      resolution_inv_;
     const int                         chunk_size_;
     const T                           default_value_;
-    muse_mcl_2d::math::Transform2D          w_T_m_;
-    muse_mcl_2d::math::Transform2D          m_T_w_;
+    muse_mcl_2d::math::Transform2D    w_T_m_;
+    muse_mcl_2d::math::Transform2D    m_T_w_;
 
 
     mutable index_t                    min_chunk_index_;
     mutable index_t                    max_chunk_index_;
+    mutable mutex_t                    storage_mutex_;
     mutable std::shared_ptr<storage_t> storage_;
     mutable int                        height_;
     mutable int                        width_;
