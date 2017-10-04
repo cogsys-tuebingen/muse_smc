@@ -56,36 +56,41 @@ void BeamModelVector::apply(const data_t::ConstPtr          &data,
     /// mixture distribution entries
     auto p_hit = [this](const double ray_range, const double map_range) {
         const double dz = ray_range - map_range;
-        return z_hit_ * denominator_hit_ * std::exp(-dz * dz * denominator_exponenten_hit_);
+        return z_hit_ * denominator_hit_ * std::exp(dz * dz * denominator_exponent_hit_);
     };
     auto p_short = [this](const double ray_range, const double map_range) {
-        if(ray_range < map_range) {
-            return z_short_ *
-                   (1.0 / (1.0 - std::exp(-lambda_short_  * map_range))) *
-                    lambda_short_ * std::exp(-lambda_short_ * ray_range);
-        }
-        return 0.0;
+        return ray_range < map_range
+            ? z_short_ * (1.0 / (1.0 - std::exp(-lambda_short_ * map_range))) * lambda_short_ * std::exp(-lambda_short_ * ray_range)
+            : 0.0;
     };
     auto p_max = [this, range_max](const double ray_range)
     {
-        if(ray_range >= range_max)
-            return z_max_ * 1.0;
-        return 0.0;
+        return ray_range >= range_max ? z_max_ : 0.0;
     };
     auto p_random = [this, range_max, p_rand](const double ray_range)
     {
-        if(ray_range < range_max)
-            return p_rand;
-        return 0.0;
+        return ray_range < range_max ? p_rand : 0.0;
     };
-    auto probability = [p_hit, p_short, p_max, p_random] (const double ray_range, const double map_range)
+    auto probability = [&oriented_grid_vector_map, &p_hit, &p_short, &p_max, &p_random, range_max]
+            (const muse_mcl_2d_laser::LaserScan2D::Ray &ray, const muse_mcl_2d::math::Pose2D &m_T_l,
+            cslibs_vectormaps::VectorMap::Vector &vectormap_ray, unsigned int vrow, unsigned int vcol)
     {
+        /// <--- vectormap specific
+        const double ray_angle = m_T_l.yaw() + ray.angle; // ray angle in map coordinates
+        vectormap_ray.second.x(m_T_l.tx() + std::cos(ray_angle) * range_max);
+        vectormap_ray.second.y(m_T_l.ty() + std::sin(ray_angle) * range_max);
+        /// default range calculation
+        const double map_range = oriented_grid_vector_map.intersectScanRay(
+            vectormap_ray, vrow, vcol, ray_angle, range_max);
+        /// <--- vectormap specific
+
+        const double ray_range = ray.range;
         return p_hit(ray_range, map_range) + p_short(ray_range, map_range) + p_max(ray_range) + p_random(ray_range);
     };
 
     for(auto it = set.begin(); it != end; ++it) {
         const muse_mcl_2d::math::Pose2D m_T_l = m_T_w * it.state() * b_T_l; /// laser scanner pose in map coordinates
-        double p = 0.0;
+        double p = 1.0;
 
         /// <--- vectormap specific
         unsigned int vrow, vcol;
@@ -97,25 +102,9 @@ void BeamModelVector::apply(const data_t::ConstPtr          &data,
 
         for(std::size_t i = 0; i < rays_size; i += ray_step) {
             const auto &ray = laser_rays[i];
-            if(!ray.valid()) {
-                p += z_max_;
-                continue;
-            }
-
-            /// <--- vectormap specific
-            const double ray_angle = m_T_l.yaw() + ray.angle; // ray angle in map coordinates
-            vectormap_ray.second.x(m_T_l.tx() + std::cos(ray_angle) * range_max);
-            vectormap_ray.second.y(m_T_l.ty() + std::sin(ray_angle) * range_max);
-            /// default range calculation
-            const double map_range = oriented_grid_vector_map.intersectScanRay(
-                vectormap_ray, vrow, vcol, ray_angle, range_max);
-            /// <--- vectormap specific
-
-            const double ray_range = ray.range;
-            const double pz = probability(ray_range, map_range);
-            p += std::log(pz);
+            p *= ray.valid() ? probability(ray, m_T_l, vectormap_ray, vrow, vcol) : z_max_;
         }
-        *it *= std::exp(p);
+        *it *= p;
     }
 }
 
@@ -129,8 +118,8 @@ void BeamModelVector::doSetup(ros::NodeHandle &nh)
     z_max_        = nh.param(param_name("z_max"), 0.05);
     z_rand_       = nh.param(param_name("z_rand"), 0.05);
     sigma_hit_    = nh.param(param_name("sigma_hit"), 0.15);
-    denominator_exponenten_hit_ = 0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
-    denominator_hit_            = 1.0 / std::sqrt(2.0 * M_PI * sigma_hit_);
+    denominator_exponent_hit_ = -0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
+    denominator_hit_          = 1.0 / (std::sqrt(2.0 * M_PI) * sigma_hit_);
     lambda_short_ = nh.param(param_name("lambda_short"), 0.01);
     chi_outlier_  = nh.param(param_name("chi_outlier"), 0.05);
 }
