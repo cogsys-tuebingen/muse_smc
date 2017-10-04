@@ -168,7 +168,17 @@ public:
         return  hypot(x_ - other.x_, y_ - other.y_);
     }
 
+    inline double distance2(const Vector2D &other) const
+    {
+        return  hypot2(x_ - other.x_, y_ - other.y_);
+    }
+
 private:
+    static inline double hypot2(const double x, const double y)
+    {
+        return x*x + y*y;
+    }
+
     static inline double hypot (const double x, const double y)
     {
         return sqrt(x*x + y*y);
