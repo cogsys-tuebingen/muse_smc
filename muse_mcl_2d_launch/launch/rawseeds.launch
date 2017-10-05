@@ -135,8 +135,8 @@
         </group>
 
         <group ns="particle_filter">
-            <param name="resampling_threshold_linear"  value="0.05" />
-            <param name="resampling_threshold_angular" value="2.5" />
+            <param name="resampling_threshold_linear"  value="0.2" />
+            <param name="resampling_threshold_angular" value="5.0" />
             <param name="resampling_cycle"             value="5" />
             <param name="integrate_all_measurement"    value="false" />
 

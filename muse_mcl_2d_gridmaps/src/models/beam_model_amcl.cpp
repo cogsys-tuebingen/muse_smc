@@ -83,7 +83,7 @@ void BeamModelAMCL::apply(const data_t::ConstPtr          &data,
         double p = 1.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
-            p *= ray.valid() ? pow3(probability(ray, m_T_l)) : pow3(z_max_);
+            p += ray.valid() ? pow3(probability(ray, m_T_l)) : pow3(z_max_);
         }
         *it *= p;
     }
