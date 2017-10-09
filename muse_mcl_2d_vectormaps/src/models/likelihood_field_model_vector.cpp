@@ -51,8 +51,8 @@ void LikelihoodFieldModelVector::apply(const data_t::ConstPtr          &data,
     const double range_max = laser_data.getRangeMax();
     const double p_rand = z_rand_ * 1.0 / range_max;
 
-    auto p_hit = [this] (const double z) {
-        return z_hit_ * denominator_hit_ * std::exp(z * z * denominator_exponent_hit_);
+    auto p_hit = [this](const double zz) {
+        return z_hit_ * denominator_hit_ * std::exp(zz * denominator_exponent_hit_);
     };
 
 
@@ -76,10 +76,10 @@ void LikelihoodFieldModelVector::apply(const data_t::ConstPtr          &data,
             /// <--- vectormap specific
             const double ray_angle = m_T_l.yaw() + ray.angle; // ray angle in map coordinates
             const cslibs_vectormaps::VectorMap::Point vp(ray_end_point.tx(), ray_end_point.ty());
-            const double z = oriented_grid_vector_map.minDistanceNearbyStructure(vp, vrow, vcol, ray_angle);
+            const double zz = oriented_grid_vector_map.minSquaredDistanceNearbyStructure(vp, vrow, vcol, ray_angle);
             /// <--- vectormap specific
 
-            const double pz = p_hit(z) + p_rand;
+            const double pz = p_hit(zz) + p_rand;
             p *= pz;
         }
         *it *= p;
