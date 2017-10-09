@@ -18,7 +18,7 @@ find_package(Eigen3 REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}_static_maps ${PROJECT_NAME}_providers ${PROJECT_NAME}_models
-  CATKIN_DEPENDS muse_mcl_2d
+  CATKIN_DEPENDS muse_mcl_2d cslibs_indexed_storage
 )
 
 include_directories(

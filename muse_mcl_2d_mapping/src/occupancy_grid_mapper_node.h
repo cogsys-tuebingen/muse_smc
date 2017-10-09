@@ -25,13 +25,13 @@ private:
     ros::Publisher               pub_map_;
     muse_mcl_2d::TFProvider::Ptr tf_;
     OccupancyGridMapper::Ptr     mapper_;
-
+    std::string map_frame_;
 
     double      rate_;
 
     bool            undistortion_;              /// check if undistortion shall be applied
     std::string     undistortion_fixed_frame_;  /// the fixed frame necessary for the undistortion
-    ros::Duration   undistortion_tf_timeout_;   /// time out for the tf listener
+    ros::Duration   tf_timeout_;   /// time out for the tf listener
 
     interval_t linear_interval_;                /// linear field of view
     interval_t angular_interval_;               /// angular field of view

@@ -3,6 +3,7 @@
 
 #include <muse_smc/data/data.hpp>
 #include <muse_mcl_2d/math/point_2d.hpp>
+#include <muse_mcl_2d/math/pose_2d.hpp>
 
 namespace muse_mcl_2d_mapping {
 class Pointcloud2D  : public muse_smc::Data
@@ -45,8 +46,10 @@ public:
     using const_iterator_t = points_t::const_iterator;
 
     Pointcloud2D(const std::string &frame,
-                 const time_frame_t &time_frame) :
+                 const time_frame_t &time_frame,
+                 const muse_mcl_2d::math::Pose2D &origin) :
         muse_smc::Data(frame, time_frame),
+        origin_(origin),
         min_(std::numeric_limits<double>::max(),
              std::numeric_limits<double>::max()),
         max_(std::numeric_limits<double>::lowest(),
@@ -56,9 +59,11 @@ public:
 
     Pointcloud2D(const std::string &frame,
                  const time_frame_t &time_frame,
+                 const muse_mcl_2d::math::Pose2D &origin,
                  const std::size_t size) :
         muse_smc::Data(frame, time_frame),
         points_(size),
+        origin_(origin),
         min_(std::numeric_limits<double>::max(),
              std::numeric_limits<double>::max()),
         max_(std::numeric_limits<double>::lowest(),
@@ -96,6 +101,7 @@ public:
 
 private:
     std::vector<Point2D>       points_;
+    muse_mcl_2d::math::Pose2D  origin_;
     muse_mcl_2d::math::Point2D min_;
     muse_mcl_2d::math::Point2D max_;
 

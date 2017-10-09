@@ -140,7 +140,7 @@ private:
     bool                        done_;
     std::shared_ptr<storage_t>  storage_;
     chunk_t                    *active_chunk_;
-    chunk_t::lock_t             active_chunk_lock_;
+    typename chunk_t::lock_t    active_chunk_lock_;
     int                         chunk_size_;
 
     index_t      start_;

@@ -17,20 +17,27 @@ bool OccupancyGridMapperNode::setup()
     const std::size_t   subscriber_queue_size = nh_.param<int>("subscriber_queue_size", 1);
     const double        resolution            = nh_.param<double>("resolution", 0.05);
     const std::string   map_topic             = nh_.param<std::string>("map_topic", "/map");
-    const std::string   map_frame             = nh_.param<std::string>("map_frame", "/odom");
     const double        map_pub_rate          = nh_.param<double>("map_pub_rate", 10.0);
+    const double        prob_free             = nh_.param<double>("prob_free", 0.45);
+    const double        prob_occ              = nh_.param<double>("prob_occ", 0.55);
+    const double        prob_prior            = nh_.param<double>("prob_prior", 0.5);
+
     std::vector<std::string> lasers;
     if(!nh_.getParam("lasers", lasers)) {
         ROS_ERROR_STREAM("Did not find any laser inputs!");
         return false;
     }
+
+
+    map_frame_                = nh_.param<std::string>("map_frame", "/odom");
+
     rate_                     = nh_.param<double>("rate", 0.0);
     undistortion_             = nh_.param<bool>("undistortion", true);
     undistortion_fixed_frame_ = nh_.param<std::string>("undistortion_fixed_frame", "/odom");
 
     undistortion_             = nh_.param<bool>("undistortion", true);
     undistortion_fixed_frame_ = nh_.param<std::string>("undistortion_fixed_frame", "");
-    undistortion_tf_timeout_  = ros::Duration(nh_.param("undistotion_tf_timeout", 0.1));
+    tf_timeout_               = ros::Duration(nh_.param("tf_timeout", 0.1));
 
     linear_interval_[0]  = nh_.param<double>("range_min", 0.05);
     linear_interval_[1]  = nh_.param<double>("range_max", 30.0);
@@ -77,7 +84,7 @@ void OccupancyGridMapperNode::laserscan(const sensor_msgs::LaserScanConstPtr &ms
 {
     muse_mcl_2d_laser::LaserScan2D::Ptr laserscan;
     if(undistortion_ &&
-            !convertUndistorted(msg, linear_interval_, angular_interval_, tf_, undistortion_fixed_frame_, undistortion_tf_timeout_, laserscan)) {
+            !convertUndistorted(msg, linear_interval_, angular_interval_, tf_, undistortion_fixed_frame_, tf_timeout_, laserscan)) {
         if(!convert(msg, linear_interval_, angular_interval_, laserscan)) {
             return;
         }
@@ -85,13 +92,21 @@ void OccupancyGridMapperNode::laserscan(const sensor_msgs::LaserScanConstPtr &ms
         return;
     }
 
-    Pointcloud2D::Ptr points(new Pointcloud2D(laserscan->getFrame(),
-                                              laserscan->getTimeFrame()));
-    for(auto it = laserscan->begin() ; it != laserscan->end() ; ++it) {
-        if(it->valid())
-            points->insert(it->point);
+    muse_mcl_2d::math::Transform2D m_T_l;
+    if(tf_->lookupTransform(laserscan->getFrame(), map_frame_,
+                            ros::Time(laserscan->getTimeFrame().end.seconds()),
+                            m_T_l,
+                            tf_timeout_)) {
+
+        Pointcloud2D::Ptr points(new Pointcloud2D(laserscan->getFrame(),
+                                                  laserscan->getTimeFrame(),
+                                                  m_T_l));
+        for(auto it = laserscan->begin() ; it != laserscan->end() ; ++it) {
+            if(it->valid())
+                points->insert(m_T_l * it->point);
+        }
+        mapper_->insert(points);
     }
-    mapper_->insert(points);
 }
 
 
