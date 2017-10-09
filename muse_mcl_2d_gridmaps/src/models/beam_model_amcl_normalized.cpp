@@ -15,9 +15,9 @@ BeamModelAMCLNormalized::BeamModelAMCLNormalized()
 {
 }
 
-void BeamModelAMCLNormalized::apply(const data_t::ConstPtr          &data,
-                          const state_space_t::ConstPtr   &map,
-                          sample_set_t::weight_iterator_t set)
+void BeamModelAMCLNormalized::apply(const data_t::ConstPtr &data,
+                          const state_space_t::ConstPtr    &map,
+                          sample_set_t::weight_iterator_t   set)
 {
     if(!map->isType<static_maps::BinaryGridMap>()) {
         return;
@@ -25,7 +25,7 @@ void BeamModelAMCLNormalized::apply(const data_t::ConstPtr          &data,
 
     const static_maps::BinaryGridMap &gridmap = map->as<static_maps::BinaryGridMap>();
     const muse_mcl_2d_laser::LaserScan2D        &laser_data = data->as<muse_mcl_2d_laser::LaserScan2D>();
-    const muse_mcl_2d_laser::LaserScan2D::Rays  &laser_rays = laser_data.getRays();
+    const muse_mcl_2d_laser::LaserScan2D::rays_t  &laser_rays = laser_data.getRays();
 
     /// laser to base transform
     muse_mcl_2d::math::Transform2D b_T_l;
@@ -43,7 +43,7 @@ void BeamModelAMCLNormalized::apply(const data_t::ConstPtr          &data,
                              tf_timeout_))
         return;
 
-    const muse_mcl_2d_laser::LaserScan2D::Rays rays = laser_data.getRays();
+    const muse_mcl_2d_laser::LaserScan2D::rays_t rays = laser_data.getRays();
     const auto end = set.end();
     const auto const_end = set.const_end();
     const std::size_t rays_size = rays.size();

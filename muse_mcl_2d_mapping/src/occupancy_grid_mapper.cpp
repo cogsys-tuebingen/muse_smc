@@ -6,3 +6,9 @@ OccupancyGridMapper::OccupancyGridMapper()
 {
 
 }
+
+
+void OccupancyGridMapper::insert(const Pointcloud2D::Ptr &points)
+{
+
+}

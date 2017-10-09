@@ -27,7 +27,10 @@ void LaserProvider2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
         if(convert(msg, linear_interval_, angular_interval_, laserscan)) {
             data_received_(laserscan);
         }
+    } else if(convert(msg, linear_interval_, angular_interval_, laserscan)) {
+        data_received_(laserscan);
     }
+
     time_of_last_measurement_ = msg->header.stamp;
 }
 

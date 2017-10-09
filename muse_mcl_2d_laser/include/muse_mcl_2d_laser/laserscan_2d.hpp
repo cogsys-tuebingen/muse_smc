@@ -64,7 +64,8 @@ public:
     };
 
     using Ptr  = std::shared_ptr<LaserScan2D>;
-    using Rays = std::vector<Ray>;
+    using rays_t = std::vector<Ray>;
+    using const_iterator_t = rays_t::const_iterator;
 
     LaserScan2D(const std::string &frame,
                 const time_frame_t &time_frame) :
@@ -144,13 +145,23 @@ public:
         rays_.emplace_back(Ray());
     }
 
-    inline const Rays& getRays() const
+    inline const_iterator_t begin() const
+    {
+        return rays_.begin();
+    }
+
+    inline const_iterator_t end() const
+    {
+        return rays_.end();
+    }
+
+    inline const rays_t& getRays() const
     {
         return rays_;
     }
 
 private:
-    Rays   rays_;         /// only valid rays shall be contained here
+    rays_t     rays_;         /// only valid rays shall be contained here
     interval_t linear_interval_;
     interval_t angular_interval_;
 };

@@ -22,7 +22,7 @@ void BeamModel::apply(const data_t::ConstPtr          &data,
 
     const static_maps::BinaryGridMap &gridmap = map->as<static_maps::BinaryGridMap>();
     const muse_mcl_2d_laser::LaserScan2D        &laser_data = data->as<muse_mcl_2d_laser::LaserScan2D>();
-    const muse_mcl_2d_laser::LaserScan2D::Rays  &laser_rays = laser_data.getRays();
+    const muse_mcl_2d_laser::LaserScan2D::rays_t  &laser_rays = laser_data.getRays();
 
     /// laser to base transform
     muse_mcl_2d::math::Transform2D b_T_l;
@@ -40,7 +40,7 @@ void BeamModel::apply(const data_t::ConstPtr          &data,
                              tf_timeout_))
         return;
 
-    const muse_mcl_2d_laser::LaserScan2D::Rays rays = laser_data.getRays();
+    const muse_mcl_2d_laser::LaserScan2D::rays_t rays = laser_data.getRays();
     const auto end = set.end();
     const std::size_t rays_size = rays.size();
     const std::size_t ray_step  = std::max(1ul, rays_size / max_beams_);
