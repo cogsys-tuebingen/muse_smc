@@ -7,6 +7,8 @@ namespace muse_mcl_2d_mapping {
 class OccupancyGridMapper
 {
 public:
+    using Ptr = std::shared_ptr<OccupancyGridMapper>;
+
     OccupancyGridMapper();
 
     void insert(const Pointcloud2D::Ptr &points);

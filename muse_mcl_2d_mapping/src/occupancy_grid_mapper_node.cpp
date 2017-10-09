@@ -87,12 +87,11 @@ void OccupancyGridMapperNode::laserscan(const sensor_msgs::LaserScanConstPtr &ms
 
     Pointcloud2D::Ptr points(new Pointcloud2D(laserscan->getFrame(),
                                               laserscan->getTimeFrame()));
-    for(auto it = laserscan.begin() ; it != laserscan.end() ; ++it) {
-        if(it->isValid())
+    for(auto it = laserscan->begin() ; it != laserscan->end() ; ++it) {
+        if(it->valid())
             points->insert(it->point);
     }
-
-
+    mapper_->insert(points);
 }
 
 

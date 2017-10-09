@@ -24,6 +24,8 @@ private:
     std::vector<ros::Subscriber> sub_lasers_;
     ros::Publisher               pub_map_;
     muse_mcl_2d::TFProvider::Ptr tf_;
+    OccupancyGridMapper::Ptr     mapper_;
+
 
     double      rate_;
 
