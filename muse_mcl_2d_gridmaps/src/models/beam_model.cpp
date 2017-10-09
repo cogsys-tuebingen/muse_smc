@@ -1,6 +1,6 @@
 #include "beam_model.h"
 
-#include <muse_mcl_2d_laser/laser/laser_2d_scan.hpp>
+#include <muse_mcl_2d_laser/laserscan_2d.hpp>
 #include <muse_mcl_2d_gridmaps/static_maps/binary_gridmap.h>
 
 #include <class_loader/class_loader_register_macro.h>
@@ -44,7 +44,7 @@ void BeamModel::apply(const data_t::ConstPtr          &data,
     const auto end = set.end();
     const std::size_t rays_size = rays.size();
     const std::size_t ray_step  = std::max(1ul, rays_size / max_beams_);
-    const double range_max = laser_data.getRangeMax();
+    const double range_max = laser_data.getLinearMax();
     const double p_rand = z_rand_ * 1.0 / range_max;
 
 

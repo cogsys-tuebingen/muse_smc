@@ -12,6 +12,7 @@ class LaserScan2D : public muse_smc::Data
 public:
     using point_t = muse_mcl_2d::math::Point2D;
     using time_frame_t = muse_smc::TimeFrame;
+    using interval_t = std::array<double, 2>;
 
     struct Ray {
         const double  angle;
@@ -22,14 +23,14 @@ public:
                    const double range) :
             angle(angle),
             range(range),
-            point(point_t(cos(angle) * range,
-                          sin(angle) * range))
+            point(point_t(std::cos(angle) * range,
+                          std::sin(angle) * range))
         {
         }
 
         inline Ray(const point_t &pt) :
-                   angle(atan2(pt.y(), pt.x())),
-                   range(hypot(pt.y(), pt.x())),
+                   angle(std::atan2(pt.y(), pt.x())),
+                   range(std::hypot(pt.y(), pt.x())),
                    point(pt)
         {
         }
@@ -68,45 +69,63 @@ public:
     LaserScan2D(const std::string &frame,
                 const time_frame_t &time_frame) :
         Data(frame, time_frame),
-        range_min_(0.0),
-        range_max_(std::numeric_limits<double>::max()),
-        angle_min_(-M_PI),
-        angle_max_(+M_PI)
+        linear_interval_{0.0, std::numeric_limits<double>::max()},
+        angular_interval_{-M_PI, M_PI}
     {
     }
 
-    inline void setRangeInterval(const double range_min,
-                                 const double range_max)
+    LaserScan2D(const std::string &frame,
+                const time_frame_t &time_frame,
+                const interval_t &linear_interval,
+                const interval_t &angular_interval) :
+        Data(frame, time_frame),
+        linear_interval_(linear_interval),
+        angular_interval_(angular_interval)
     {
-        range_min_ = range_min;
-        range_max_ = range_max;
     }
 
-    inline void setAngleInterval(const double angle_min,
-                                  const double angle_max)
+    inline void setLinearInterval(const double min,
+                                  const double max)
     {
-        angle_min_ = angle_min;
-        angle_max_ = angle_max;
+        linear_interval_[0] = min;
+        linear_interval_[1] = max;
     }
 
-    inline double getRangeMin() const
+    inline void setLinearInterval(const interval_t &interval)
     {
-        return range_min_;
+        linear_interval_ = interval;
     }
 
-    inline double getRangeMax() const
+    inline void setAngularInterval(const double min,
+                                   const double max)
     {
-        return range_max_;
+        angular_interval_[0] = min;
+        angular_interval_[1] = max;
     }
 
-    inline double getAngleMin() const
+    inline void setAngularInterval(const interval_t &interval)
     {
-        return angle_min_;
+        angular_interval_ = interval;
     }
 
-    inline double getAngleMax() const
+    inline double getLinearMin() const
     {
-        return angle_max_;
+        return linear_interval_[0];
+    }
+
+    inline double getLinearMax() const
+    {
+        return linear_interval_[1];
+    }
+
+    inline double getAngularMin() const
+    {
+        return angular_interval_[0];
+    }
+
+    inline double getAngularMax() const
+    {
+        return angular_interval_[1];
     }
 
     inline void insert(const double angle,
@@ -132,11 +151,8 @@ public:
 
 private:
     Rays   rays_;         /// only valid rays shall be contained here
-
-    double range_min_;
-    double range_max_;
-    double angle_min_;
-    double angle_max_;
+    interval_t linear_interval_;
+    interval_t angular_interval_;
 };
 }
 
