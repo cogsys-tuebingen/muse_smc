@@ -17,7 +17,10 @@ find_package(Eigen3 REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}_static_maps ${PROJECT_NAME}_providers ${PROJECT_NAME}_models
+  LIBRARIES ${PROJECT_NAME}_static_maps
+            ${PROJECT_NAME}_dynamic_maps
+            ${PROJECT_NAME}_providers
+            ${PROJECT_NAME}_models
   CATKIN_DEPENDS muse_mcl_2d cslibs_indexed_storage
 )
 
@@ -41,7 +44,7 @@ target_link_libraries(${PROJECT_NAME}_static_maps
 add_library(${PROJECT_NAME}_dynamic_maps SHARED
     src/dynamic_maps/probability_gridmap.cpp
 )
-target_link_libraries(${PROJECT_NAME}_static_maps
+target_link_libraries(${PROJECT_NAME}_dynamic_maps
     ${catkin_LIBRARIES}
 )
 

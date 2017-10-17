@@ -235,7 +235,7 @@ protected:
                _i[1] >= height_;
     }
 
-    inline bool invalid(const int idx, const int idy)
+    inline bool invalid(const int idx, const int idy) const
     {
         return idx < 0 || idx >= width_ ||
                idy < 0 || idy >= height_;
@@ -251,7 +251,7 @@ protected:
         height_ = (max_chunk_index_[1] - min_chunk_index_[1] + 1) * chunk_size_;
     }
 
-    inline index_t toChunkIndex(const int idx, const int idy)
+    inline index_t toChunkIndex(const int idx, const int idy) const
     {
         return  {min_chunk_index_[0] + static_cast<int>(idx) / chunk_size_,
                  min_chunk_index_[1] + static_cast<int>(idy) / chunk_size_};

@@ -14,20 +14,20 @@ OccupancyGridMapperNode::OccupancyGridMapperNode() :
 bool OccupancyGridMapperNode::setup()
 {
     ROS_INFO_STREAM("Setting up subscribers");
-    const std::size_t   subscriber_queue_size = nh_.param<int>("subscriber_queue_size", 1);
-    const double        resolution            = nh_.param<double>("resolution", 0.05);
-    const std::string   map_topic             = nh_.param<std::string>("map_topic", "/map");
-    const double        map_pub_rate          = nh_.param<double>("map_pub_rate", 10.0);
-    const double        prob_free             = nh_.param<double>("prob_free", 0.45);
-    const double        prob_occ              = nh_.param<double>("prob_occ", 0.55);
-    const double        prob_prior            = nh_.param<double>("prob_prior", 0.5);
+    const std::size_t   subscriber_queue_size       = nh_.param<int>("subscriber_queue_size", 1);
+    const double        occ_grid_resolution         = nh_.param<double>("occ_grid_resolution", 0.05);
+    const double        occ_grid_chunk_resolution   = nh_.param<double>("occ_chunk_resolution", 5.0);
+    const std::string   occ_map_topic               = nh_.param<std::string>("occ_map_topic", "/map");
+    const double        occ_map_pub_rate            = nh_.param<double>("occ_map_pub_rate", 10.0);
+    const double        occ_map_prob_free           = nh_.param<double>("occ_map_prob_free", 0.45);
+    const double        occ_map_prob_occ            = nh_.param<double>("occ_map_prob_occ", 0.55);
+    const double        occ_map_prob_prior          = nh_.param<double>("occ_map_prob_prior", 0.5);
 
     std::vector<std::string> lasers;
     if(!nh_.getParam("lasers", lasers)) {
         ROS_ERROR_STREAM("Did not find any laser inputs!");
         return false;
     }
-
 
     map_frame_                = nh_.param<std::string>("map_frame", "/odom");
 
@@ -45,8 +45,11 @@ bool OccupancyGridMapperNode::setup()
     angular_interval_[1] = nh_.param<double>("angle_max", M_PI);
 
 
-    muse_mcl_2d_gridmaps::mapping::InverseModel inverse_model(prob_prior, prob_free, prob_occ);
-    mapper_.reset(new OccupancyGridMapper(inverse_model));
+    muse_mcl_2d_gridmaps::mapping::InverseModel inverse_model(occ_map_prob_prior, occ_map_prob_free, occ_map_prob_occ);
+    mapper_.reset(new OccupancyGridMapper(inverse_model,
+                                          occ_grid_resolution,
+                                          occ_grid_chunk_resolution,
+                                          map_frame_));
 
 
     for(const auto &l : lasers) {
@@ -55,7 +58,7 @@ bool OccupancyGridMapperNode::setup()
                                                &OccupancyGridMapperNode::laserscan,
                                                this));
     }
-    pub_map_ = nh_.advertise<nav_msgs::OccupancyGrid>(map_topic, 1);
+    pub_map_ = nh_.advertise<nav_msgs::OccupancyGrid>(occ_map_topic, 1);
 
     tf_.reset(new muse_mcl_2d::TFProvider);
 

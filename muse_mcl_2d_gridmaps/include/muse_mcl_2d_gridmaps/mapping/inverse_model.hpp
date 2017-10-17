@@ -32,6 +32,21 @@ public:
         return LogOdds::from(l_occupied_);
     }
 
+    inline double getLogOddsPrior() const
+    {
+        return l_prior_;
+    }
+
+    inline double getLogOddsFree() const
+    {
+        return l_free_;
+    }
+
+    inline double getLogOddsOccupied() const
+    {
+        return l_occupied_;
+    }
+
     inline double updateFree(const double l_rec)
     {
         return l_free_ + l_rec - l_prior_;
