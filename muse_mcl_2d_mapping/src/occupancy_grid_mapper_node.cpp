@@ -45,6 +45,10 @@ bool OccupancyGridMapperNode::setup()
     angular_interval_[1] = nh_.param<double>("angle_max", M_PI);
 
 
+    muse_mcl_2d_gridmaps::mapping::InverseModel inverse_model(prob_prior, prob_free, prob_occ);
+    mapper_.reset(new OccupancyGridMapper(inverse_model));
+
+
     for(const auto &l : lasers) {
         sub_lasers_.emplace_back(nh_.subscribe(l,
                                                subscriber_queue_size,

@@ -25,7 +25,7 @@ private:
     ros::Publisher               pub_map_;
     muse_mcl_2d::TFProvider::Ptr tf_;
     OccupancyGridMapper::Ptr     mapper_;
-    std::string map_frame_;
+    std::string                  map_frame_;
 
     double      rate_;
 

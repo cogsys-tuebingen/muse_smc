@@ -6,7 +6,7 @@
 
 namespace muse_smc {
 namespace synchronized {
-template<typename _Tp, typename _Sequence = std::vector<_Tp>>
+template<typename _Tp, typename _Sequence = std::deque<_Tp>>
 class queue
 {
 public:
@@ -36,7 +36,7 @@ public:
     inline _Tp pop()
     {
         lock_t l(mutex_);
-        _Tp t = q_.top();
+        _Tp t = q_.front();
         q_.pop();
         return t;
     }

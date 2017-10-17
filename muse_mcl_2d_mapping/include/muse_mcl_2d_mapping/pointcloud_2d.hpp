@@ -99,6 +99,11 @@ public:
         return points_;
     }
 
+    inline muse_mcl_2d::math::Pose2D const & getOrigin() const
+    {
+        return origin_;
+    }
+
 private:
     std::vector<Point2D>       points_;
     muse_mcl_2d::math::Pose2D  origin_;
