@@ -54,14 +54,22 @@ public:
         updateLocalIndex();
     }
 
+    inline virtual ~Bresenham()
+    {
+        if(active_chunk_) {
+            active_chunk_lock_.unlock();
+            active_chunk_ = nullptr;
+        }
+    }
+
     inline int x() const
     {
-        return steep_ ? index_[1] : index_[0];
-        }
+        return (steep_ ? index_[1] : index_[0]);
+    }
 
-        inline int y() const
-        {
-        return steep_ ? index_[0] : index_[1];
+    inline int y() const
+    {
+        return (steep_ ? index_[0] : index_[1]);
     }
 
     inline Bresenham& operator++()
@@ -95,6 +103,12 @@ public:
     inline bool done() const
     {
         return index_[0] == end_[0] && index_[1] == end_[1];
+    }
+
+    inline int length2() const
+    {
+        auto sq = [](const int d) { return d*d;};
+        return sq(index_[0] - end_[0]) + sq(index_[1] - end_[1]);
     }
 
     inline T& operator *() const
@@ -133,14 +147,14 @@ private:
     inline bool localIndexInvalid()
     {
         return local_index_[0] < 0 || local_index_[0] >= chunk_size_ ||
-               local_index_[1] < 0 || local_index_[1] >= chunk_size_;
+                local_index_[1] < 0 || local_index_[1] >= chunk_size_;
     }
 
 
     bool                        done_;
     std::shared_ptr<storage_t>  storage_;
     chunk_t                    *active_chunk_;
-    typename chunk_t::lock_t    active_chunk_lock_;
+    //typename chunk_t::lock_t    active_chunk_lock_;
     int                         chunk_size_;
 
     index_t      start_;

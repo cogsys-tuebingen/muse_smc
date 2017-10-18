@@ -66,15 +66,31 @@ void OccupancyGridMapper::process(const Pointcloud2D::Ptr &points)
     if(!map_) {
         const muse_mcl_2d::math::Pose2D &p = points->getOrigin();
         map_.reset(new dynamic_map_t(p.tx(), p.ty(), p.yaw(),
-                             resolution_,
-                             chunk_resolution_,
-                             inverse_model_.getLogOddsPrior(),
-                             frame_id_));
+                                     resolution_,
+                                     chunk_resolution_,
+                                     inverse_model_.getLogOddsPrior(),
+                                     frame_id_));
     }
 
+    const double resolution_2 = resolution_ * 0.5;
+    for(auto it = points->begin() ; it != points->end() ; ++it) {
+        if(it->valid) {
+            auto b = map_->getLineIterator(points->getOrigin().translation(),
+                                           it->point);
+            while(!b.done()) {
+                *b = b.length2() > resolution_2 ? inverse_model_.updateFree(*b) : inverse_model_.updateOccupied(*b);
+                ++b;
+            }
+            *b = inverse_model_.updateOccupied(*b);
+        }
+    }
 }
 
 void OccupancyGridMapper::buildMap()
 {
     promise_map_.set_value(static_map_t::Ptr());
+
+    /// iterate the chunks and build the static map
+
+
 }
