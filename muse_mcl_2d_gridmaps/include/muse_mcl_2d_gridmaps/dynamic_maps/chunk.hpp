@@ -1,5 +1,5 @@
-#ifndef CHUNK_HPP
-#define CHUNK_HPP
+#ifndef DYNAMIC_CHUNK_HPP
+#define DYNAMIC_CHUNK_HPP
 
 #include <vector>
 #include <array>
@@ -87,4 +87,4 @@ private:
 }
 
 
-#endif // CHUNK_HPP
+#endif // DYNAMIC_CHUNK_HPP

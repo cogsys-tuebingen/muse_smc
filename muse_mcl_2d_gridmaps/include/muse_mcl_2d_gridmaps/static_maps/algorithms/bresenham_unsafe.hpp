@@ -1,5 +1,5 @@
-#ifndef BRESENHAM_UNSAFE_HPP
-#define BRESENHAM_UNSAFE_HPP
+#ifndef STATIC_BRESENHAM_UNSAFE_HPP
+#define STATIC_BRESENHAM_UNSAFE_HPP
 
 #include <array>
 
@@ -116,4 +116,4 @@ private:
 }
 }
 
-#endif // BRESENHAM_UNSAFE_HPP
+#endif // STATIC_BRESENHAM_UNSAFE_HPP

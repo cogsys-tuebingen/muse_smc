@@ -1,10 +1,9 @@
-#ifndef GRIDMAP_HPP
-#define GRIDMAP_HPP
+#ifndef DYNAMIC_GRIDMAP_HPP
+#define DYNAMIC_GRIDMAP_HPP
 
 #include <array>
 #include <vector>
 #include <cmath>
-
 
 #include <muse_mcl_2d/map/map_2d.hpp>
 #include <muse_mcl_2d_gridmaps/dynamic_maps/algorithms/bresenham.hpp>
@@ -105,8 +104,7 @@ public:
         lock_t l(storage_mutex_);
         chunk_t *chunk = storage_->get(chunk_index);
         if(chunk == nullptr) {
-            chunk = &(storage_->insert(chunk_index, chunk_t(chunk_size_, default_value_)));
-            updateChunkIndices(chunk_index);
+            return default_value_;
         }
         return chunk->at(local_chunk_index);
     }
@@ -136,8 +134,7 @@ public:
         lock_t l(storage_mutex_);
         chunk_t *chunk = storage_->get(chunk_index);
         if(chunk == nullptr) {
-            chunk = &(storage_->insert(chunk_index, chunk_t(chunk_size_, default_value_)));
-            updateChunkIndices(chunk_index);
+            return default_value_;
         }
         return chunk->at(local_chunk_index);
     }
@@ -189,9 +186,29 @@ public:
                                 storage_);
     }
 
+    inline index_t getMinChunkIndex() const
+    {
+        return min_chunk_index_;
+    }
+
+    inline index_t getMaxChunkIndex() const
+    {
+        return max_chunk_index_;
+    }
+
+    inline chunk_t const * getChunk(const index_t &index)
+    {
+        return storage_->get(index);
+    }
+
     inline double getResolution() const
     {
         return resolution_;
+    }
+
+    inline int getChunkSize() const
+    {
+        return chunk_size_;
     }
 
     inline std::size_t getHeight() const
@@ -297,4 +314,4 @@ protected:
 
 
 
-#endif // GRIDMAP_HPP
+#endif // DYNAMIC_GRIDMAP_HPP

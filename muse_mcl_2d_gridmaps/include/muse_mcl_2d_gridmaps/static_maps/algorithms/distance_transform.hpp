@@ -1,5 +1,5 @@
-#ifndef DISTANCE_TRANSFORM_HPP
-#define DISTANCE_TRANSFORM_HPP
+#ifndef STATIC_DISTANCE_TRANSFORM_HPP
+#define STATIC_DISTANCE_TRANSFORM_HPP
 
 #include <array>
 #include <queue>
@@ -218,4 +218,4 @@ private:
 }
 }
 
-#endif // DISTANCE_TRANSFORM_HPP
+#endif // STATIC_DISTANCE_TRANSFORM_HPP

@@ -1,5 +1,5 @@
-#ifndef BRESENHAM_HPP
-#define BRESENHAM_HPP
+#ifndef STATIC_BRESENHAM_HPP
+#define STATIC_BRESENHAM_HPP
 
 #include <array>
 
@@ -139,4 +139,4 @@ private:
 }
 }
 
-#endif /* BRESENHAM_HPP */
+#endif /* STATIC_BRESENHAM_HPP */

@@ -1,5 +1,5 @@
-#ifndef GRIDMAP_HPP
-#define GRIDMAP_HPP
+#ifndef STATIC_GRIDMAP_HPP
+#define STATIC_GRIDMAP_HPP
 
 #include <array>
 #include <vector>
@@ -200,4 +200,4 @@ protected:
 
 }
 }
-#endif /* GRIDMAP_HPP */
+#endif /* STATIC_GRIDMAP_HPP */

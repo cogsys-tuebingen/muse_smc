@@ -1,5 +1,5 @@
-#ifndef LIKELIHOOD_FIELD_GRIDMAP_H
-#define LIKELIHOOD_FIELD_GRIDMAP_H
+#ifndef STATIC_LIKELIHOOD_FIELD_GRIDMAP_H
+#define STATIC_LIKELIHOOD_FIELD_GRIDMAP_H
 
 #include <muse_mcl_2d_gridmaps/static_maps/gridmap.hpp>
 #include <nav_msgs/OccupancyGrid.h>
@@ -35,4 +35,4 @@ private:
 }
 }
 
-#endif // LIKELIHOOD_FIELD_GRIDMAP_H
+#endif // STATIC_LIKELIHOOD_FIELD_GRIDMAP_H

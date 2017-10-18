@@ -31,7 +31,6 @@ include_directories(
 add_executable(${PROJECT_NAME}_ocm_node
     src/occupancy_grid_mapper.cpp
     src/occupancy_grid_mapper_node.cpp
-    src/mapper.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}_ocm_node

@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_GRIDMAP_H
-#define PROBABILITY_GRIDMAP_H
+#ifndef DYNAMIC_PROBABILITY_GRIDMAP_H
+#define DYNAMIC_PROBABILITY_GRIDMAP_H
 
 #include <muse_mcl_2d_gridmaps/dynamic_maps/gridmap.hpp>
 
@@ -16,4 +16,4 @@ public:
 }
 }
 
-#endif // PROBABILITY_GRIDMAP_H
+#endif // DYNAMIC_PROBABILITY_GRIDMAP_H

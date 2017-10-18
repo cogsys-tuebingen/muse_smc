@@ -31,7 +31,7 @@ bool OccupancyGridMapperNode::setup()
 
     map_frame_                = nh_.param<std::string>("map_frame", "/odom");
 
-    rate_                     = nh_.param<double>("rate", 0.0);
+    node_rate_                     = nh_.param<double>("rate", 0.0);
     undistortion_             = nh_.param<bool>("undistortion", true);
     undistortion_fixed_frame_ = nh_.param<std::string>("undistortion_fixed_frame", "/odom");
 
@@ -46,7 +46,7 @@ bool OccupancyGridMapperNode::setup()
 
 
     muse_mcl_2d_gridmaps::mapping::InverseModel inverse_model(occ_map_prob_prior, occ_map_prob_free, occ_map_prob_occ);
-    mapper_.reset(new OccupancyGridMapper(inverse_model,
+    occ_mapper_.reset(new OccupancyGridMapper(inverse_model,
                                           occ_grid_resolution,
                                           occ_grid_chunk_resolution,
                                           map_frame_));
@@ -58,7 +58,9 @@ bool OccupancyGridMapperNode::setup()
                                                &OccupancyGridMapperNode::laserscan,
                                                this));
     }
-    pub_map_ = nh_.advertise<nav_msgs::OccupancyGrid>(occ_map_topic, 1);
+    pub_occ_map_        = nh_.advertise<nav_msgs::OccupancyGrid>(occ_map_topic, 1);
+    pub_occ_interval_   = ros::Duration(occ_map_pub_rate > 0.0 ? 1.0 / occ_map_pub_rate : 0.0);
+    pub_occ_last_time_  = ros::Time::now();
 
     tf_.reset(new muse_mcl_2d::TFProvider);
 
@@ -68,20 +70,22 @@ bool OccupancyGridMapperNode::setup()
 
 void OccupancyGridMapperNode::run()
 {
-    auto update_map = [this] () {
-
-    };
-
-    if(rate_ == 0.0) {
+    if(node_rate_ == 0.0) {
         while(ros::ok()) {
-
+            const ros::Time now = ros::Time::now();
+            if(pub_occ_interval_.isZero() || pub_occ_last_time_ + pub_occ_interval_ < now) {
+                publish();
+            }
         }
     } else {
-        ros::Rate r(rate_);
+        ros::Rate r(node_rate_);
         while(ros::ok()) {
-
-
+            const ros::Time now = ros::Time::now();
+            if(pub_occ_interval_.isZero() || pub_occ_last_time_ + pub_occ_interval_ < now) {
+                publish();
+            }
             r.sleep();
+            ros::spinOnce();
         }
     }
 
@@ -112,10 +116,19 @@ void OccupancyGridMapperNode::laserscan(const sensor_msgs::LaserScanConstPtr &ms
             if(it->valid())
                 points->insert(m_T_l * it->point);
         }
-        mapper_->insert(points);
+        occ_mapper_->insert(points);
     }
 }
 
+void OccupancyGridMapperNode::publish()
+{
+
+}
+
+void OccupancyGridMapperNode::publishOcc()
+{
+
+}
 
 int main(int argc, char *argv[])
 {

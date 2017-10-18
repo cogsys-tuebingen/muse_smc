@@ -20,26 +20,30 @@ public:
 private:
     using interval_t = std::array<double, 2>;
 
-    ros::NodeHandle nh_;
-    std::vector<ros::Subscriber> sub_lasers_;
-    ros::Publisher               pub_map_;
-    muse_mcl_2d::TFProvider::Ptr tf_;
-    OccupancyGridMapper::Ptr     mapper_;
-    std::string                  map_frame_;
+    ros::NodeHandle                 nh_;
+    std::vector<ros::Subscriber>    sub_lasers_;
+    muse_mcl_2d::TFProvider::Ptr    tf_;
+    OccupancyGridMapper::Ptr        occ_mapper_;
+    std::string                     map_frame_;
 
-    double      rate_;
+    ros::Publisher                  pub_occ_map_;
+    ros::Duration                   pub_occ_interval_;
+    ros::Time                       pub_occ_last_time_;
 
-    bool            undistortion_;              /// check if undistortion shall be applied
-    std::string     undistortion_fixed_frame_;  /// the fixed frame necessary for the undistortion
-    ros::Duration   tf_timeout_;   /// time out for the tf listener
 
-    interval_t linear_interval_;                /// linear field of view
-    interval_t angular_interval_;               /// angular field of view
+    double                          node_rate_;
+
+    bool                            undistortion_;              /// check if undistortion shall be applied
+    std::string                     undistortion_fixed_frame_;  /// the fixed frame necessary for the undistortion
+    ros::Duration                   tf_timeout_;                /// time out for the tf listener
+
+    interval_t                      linear_interval_;           /// linear field of view
+    interval_t                      angular_interval_;          /// angular field of view
 
 
     void laserscan(const sensor_msgs::LaserScanConstPtr &msg);
-
-
+    void publish();
+    void publishOcc();
 
 };
 }
