@@ -2,7 +2,7 @@
 
 using namespace muse_mcl_2d_mapping;
 
-OccupancyGridMapper::OccupancyGridMapper(const muse_mcl_2d_gridmaps::mapping::InverseModel &inverse_model,
+OccupancyGridMapper::OccupancyGridMapper(const muse_mcl_2d_gridmaps::utility::InverseModel &inverse_model,
                                          const double resolution,
                                          const double chunk_resolution,
                                          const std::string &frame_id) :
@@ -65,7 +65,7 @@ void OccupancyGridMapper::process(const Pointcloud2D::Ptr &points)
 {
     if(!map_) {
         const muse_mcl_2d::math::Pose2D &p = points->getOrigin();
-        map_.reset(new dynamic_map_t(p.tx(), p.ty(), p.yaw(),
+        map_.reset(new dynamic_map_t(p,
                                      resolution_,
                                      chunk_resolution_,
                                      inverse_model_.getLogOddsPrior(),

@@ -8,9 +8,10 @@ namespace dynamic_maps {
 class ProbabilityGridMap : public GridMap<double>
 {
 public:
-    ProbabilityGridMap(const double  origin_x, const double  origin_y, const double  origin_phi,
-                       const double  resolution, const double  chunk_resolution,
-                       const double  default_value,
+    ProbabilityGridMap(const pose_t &origin,
+                       const double resolution,
+                       const double chunk_resolution,
+                       const double default_value,
                        const std::string &frame_id);
 };
 }

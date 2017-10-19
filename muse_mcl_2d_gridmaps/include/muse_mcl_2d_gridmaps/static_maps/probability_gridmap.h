@@ -9,11 +9,13 @@ namespace static_maps {
 class ProbabilityGridMap : public GridMap<double>
 {
 public:
-    ProbabilityGridMap(const nav_msgs::OccupancyGrid &occupancy_grid);
-    ProbabilityGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupancy_grid);
+    using Ptr = std::shared_ptr<ProbabilityGridMap>;
 
-private:
-    void convert(const nav_msgs::OccupancyGrid &occupancy_grid);
+    ProbabilityGridMap(const pose_t &origin,
+                       const double resolution,
+                       const std::size_t height,
+                       const std::size_t width,
+                       const std::string &frame_id);
 
 };
 }

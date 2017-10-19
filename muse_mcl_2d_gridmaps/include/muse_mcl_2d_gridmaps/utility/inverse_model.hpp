@@ -1,10 +1,10 @@
 #ifndef UPDATE_MODEL_HPP
 #define UPDATE_MODEL_HPP
 
-#include <muse_mcl_2d_gridmaps/mapping/log_odds.hpp>
+#include <muse_mcl_2d_gridmaps/utility/log_odds.hpp>
 
 namespace muse_mcl_2d_gridmaps {
-namespace mapping {
+namespace utility {
 class InverseModel
 {
 public:

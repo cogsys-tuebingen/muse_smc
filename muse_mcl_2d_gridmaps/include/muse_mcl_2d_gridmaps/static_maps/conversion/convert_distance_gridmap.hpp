@@ -10,9 +10,10 @@
 namespace muse_mcl_2d_gridmaps {
 namespace static_maps {
 namespace conversion {
-inline DistanceGridMap::Ptr from(const nav_msgs::OccupancyGrid &occupancy_grid,
-                                 const double threshold = 1.0,
-                                 const double maximum_distance = 2.0)
+inline void from(const nav_msgs::OccupancyGrid &occupancy_grid,
+                 DistanceGridMap::Ptr &map,
+                 const double threshold = 1.0,
+                 const double maximum_distance = 2.0)
 {
     assert(threshold <= 1.0);
     assert(threshold >= 0.0);
@@ -21,12 +22,12 @@ inline DistanceGridMap::Ptr from(const nav_msgs::OccupancyGrid &occupancy_grid,
                                      occupancy_grid.info.origin.position.y,
                                      tf::getYaw(occupancy_grid.info.origin.orientation));
 
-    DistanceGridMap::Ptr map(new DistanceGridMap(origin,
-                                                 occupancy_grid.info.resolution,
-                                                 maximum_distance,
-                                                 occupancy_grid.info.height,
-                                                 occupancy_grid.info.width,
-                                                 occupancy_grid.header.frame_id));
+    map.reset(new DistanceGridMap(origin,
+                                  occupancy_grid.info.resolution,
+                                  maximum_distance,
+                                  occupancy_grid.info.height,
+                                  occupancy_grid.info.width,
+                                  occupancy_grid.header.frame_id));
 
     std::vector<int8_t> occ;
     occ.reserve(occupancy_grid.data.size());
@@ -42,8 +43,6 @@ inline DistanceGridMap::Ptr from(const nav_msgs::OccupancyGrid &occupancy_grid,
     distance_transform.apply(occ,
                              map->getWidth(),
                              map->getData());
-
-    return map;
 }
 }
 }

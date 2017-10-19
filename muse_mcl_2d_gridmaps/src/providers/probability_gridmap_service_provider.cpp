@@ -1,5 +1,6 @@
 #include "probability_gridmap_service_provider.h"
 
+#include <muse_mcl_2d_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::ProbabilityGridmapServiceProvider, muse_mcl_2d::MapProvider2D)
 
@@ -31,14 +32,13 @@ ProbabilityGridmapServiceProvider::state_space_t::ConstPtr ProbabilityGridmapSer
                 loading_ = true;
 
                 auto load = [this, req]() {
-                    static_maps::ProbabilityGridMap::Ptr map(new static_maps::ProbabilityGridMap(req.response.map));
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    map_ = map;
+                    map_ = static_maps::conversion::from(req.response.map);;
                     loading_ = false;
                 };
                 auto load_blocking = [this, req]() {
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    map_.reset(new static_maps::ProbabilityGridMap(req.response.map));
+                    map_ = static_maps::conversion::from(req.response.map);
                     loading_ = false;
                     map_loaded_.notify_one();
                 };

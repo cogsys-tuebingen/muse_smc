@@ -21,6 +21,7 @@ class GridMap : public muse_mcl_2d::Map2D
 {
 public:
     using Ptr                   = std::shared_ptr<GridMap<T>>;
+    using pose_t                = muse_mcl_2d::math::Pose2D;
     using index_t               = std::array<int, 2>;
     using mutex_t               = std::mutex;
     using lock_t                = std::unique_lock<mutex_t>;
@@ -28,6 +29,27 @@ public:
     using storage_t             = cis::Storage<chunk_t, index_t, cis::backend::kdtree::KDTree>;
     using line_iterator_t       = algorithms::Bresenham<T>;
     using const_line_iterator_t = algorithms::Bresenham<T const>;
+
+    GridMap(const pose_t &origin,
+            const double  resolution,
+            const double  chunk_resolution,
+            const T      &default_value,
+            const std::string &frame_id) :
+        Map2D(frame_id),
+        resolution_(resolution),
+        resolution_inv_(1.0 / resolution_),
+        chunk_size_(static_cast<int>(chunk_resolution * resolution_inv_)),
+        default_value_(default_value),
+        w_T_m_(origin),
+        m_T_w_(w_T_m_.inverse()),
+        min_chunk_index_{0,0},
+        max_chunk_index_{0,0},
+        storage_(new storage_t),
+        height_(chunk_size_),
+        width_(chunk_size_)
+    {
+        storage_->insert({0,0}, chunk_t(chunk_size_, default_value_));
+    }
 
     GridMap(const double origin_x,
             const double origin_y,

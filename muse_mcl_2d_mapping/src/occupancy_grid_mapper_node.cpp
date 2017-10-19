@@ -45,7 +45,7 @@ bool OccupancyGridMapperNode::setup()
     angular_interval_[1] = nh_.param<double>("angle_max", M_PI);
 
 
-    muse_mcl_2d_gridmaps::mapping::InverseModel inverse_model(occ_map_prob_prior, occ_map_prob_free, occ_map_prob_occ);
+    muse_mcl_2d_gridmaps::utility::InverseModel inverse_model(occ_map_prob_prior, occ_map_prob_free, occ_map_prob_occ);
     occ_mapper_.reset(new OccupancyGridMapper(inverse_model,
                                           occ_grid_resolution,
                                           occ_grid_chunk_resolution,

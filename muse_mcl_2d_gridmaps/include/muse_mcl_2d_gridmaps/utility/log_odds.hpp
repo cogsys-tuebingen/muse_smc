@@ -4,7 +4,7 @@
 #include <cmath>
 
 namespace muse_mcl_2d_gridmaps {
-namespace mapping {
+namespace utility {
 struct LogOdds {
     inline static double to(const double p)
     {
