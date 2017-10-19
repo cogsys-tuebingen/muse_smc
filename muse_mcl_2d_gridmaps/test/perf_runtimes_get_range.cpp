@@ -3,6 +3,7 @@
 #include <muse_smc/math/random.hpp>
 #include <muse_smc/samples/sample_set.hpp>
 
+#include <muse_mcl_2d_gridmaps/static_maps/conversion/convert_binary_gridmap.hpp>
 #include <muse_mcl_2d_gridmaps/static_maps/binary_gridmap.h>
 #include <muse_mcl_2d/samples/sample_density_2d.hpp>
 #include <muse_mcl_2d/samples/sample_2d.hpp>
@@ -19,9 +20,7 @@ void mapOnly()
     grid.data.resize(2500 * 2500, 0);
     grid.info.origin.orientation = tf::createQuaternionMsgFromYaw(0.0);
 
-    muse_mcl_2d_gridmaps::static_maps::BinaryGridMap::Ptr
-            binary(new muse_mcl_2d_gridmaps::static_maps::BinaryGridMap(grid));
-
+    auto binary = muse_mcl_2d_gridmaps::static_maps::conversion::from(grid);
 
     muse_mcl_2d::math::Point2D start(62.5, 62.5);
 
@@ -98,8 +97,7 @@ void withParticles()
     grid.data.resize(2500 * 2500, 0);
     grid.info.origin.orientation = tf::createQuaternionMsgFromYaw(0.0);
 
-    muse_mcl_2d_gridmaps::static_maps::BinaryGridMap::Ptr
-            binary(new muse_mcl_2d_gridmaps::static_maps::BinaryGridMap(grid));
+    auto binary = muse_mcl_2d_gridmaps::static_maps::conversion::from(grid);
 
 
     muse_mcl_2d::math::Point2D start(62.5, 62.5);

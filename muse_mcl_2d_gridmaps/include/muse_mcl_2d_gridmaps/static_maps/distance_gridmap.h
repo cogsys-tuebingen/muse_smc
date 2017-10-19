@@ -9,20 +9,14 @@ namespace static_maps {
 class DistanceGridMap : public GridMap<double>
 {
 public:
-    DistanceGridMap(const nav_msgs::OccupancyGrid &occupancy_grid,
-                    const double maximum_distance = 2.0,
-                    const double threshold = 1.0);
-    DistanceGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupancy_grid,
-                    const double maximum_distance = 2.0,
-                    const double threshold = 1.0);
+    DistanceGridMap(const pose_t &origin,
+                    const double resolution,
+                    const double maximum_distance,
+                    const std::size_t height,
+                    const std::size_t width,
+                    const std::string &frame_id);
 
     double at(const muse_mcl_2d::math::Point2D &point) const override;
-
-private:
-    void convert(const nav_msgs::OccupancyGrid &occupancy_grid,
-                 const double threshold,
-                 const double maximum_distance);
-
 };
 }
 }

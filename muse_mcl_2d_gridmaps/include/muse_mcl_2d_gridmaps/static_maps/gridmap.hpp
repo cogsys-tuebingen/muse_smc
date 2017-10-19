@@ -6,9 +6,9 @@
 #include <cmath>
 
 #include <muse_mcl_2d/map/map_2d.hpp>
+#include <muse_mcl_2d/math/pose_2d.hpp>
 #include <muse_mcl_2d_gridmaps/static_maps/algorithms/bresenham.hpp>
 #include <muse_mcl_2d_gridmaps/static_maps/algorithms/bresenham_unsafe.hpp>
-
 
 namespace muse_mcl_2d_gridmaps {
 namespace static_maps {
@@ -19,6 +19,26 @@ public:
     using Ptr                    = std::shared_ptr<GridMap<T>>;
     using const_line_iterator_t  = algorithms::Bresenham<T const>;
     using index_t                = std::array<int, 2>;
+    using pose_t                 = muse_mcl_2d::math::Pose2D;
+
+    GridMap(const pose_t &origin,
+            const double resolution,
+            const std::size_t height,
+            const std::size_t width,
+            const T &default_value,
+            const std::string &frame) :
+        Map2D(frame),
+        resolution_(resolution),
+        resolution_inv_(1.0 / resolution),
+        height_(height),
+        width_(width),
+        max_index_({(int)(width)-1,(int)(height)-1}),
+        w_T_m_(origin),
+        m_T_w_(w_T_m_.inverse()),
+        data_(height * width, default_value),
+        data_ptr_(data_.data())
+    {
+    }
 
     GridMap(const double origin_x,
             const double origin_y,
@@ -27,7 +47,7 @@ public:
             const std::size_t height,
             const std::size_t width,
             const T &default_value,
-            const std::string frame) :
+            const std::string &frame) :
         Map2D(frame),
         resolution_(resolution),
         resolution_inv_(1.0 / resolution),
@@ -60,16 +80,24 @@ public:
         return w_T_m_;
     }
 
-    inline T& at(const std::size_t idx,
-                 const std::size_t idy)
+    inline T& at(const std::size_t idx, const std::size_t idy)
     {
         return data_ptr_[width_ * idy + idx];
     }
 
-    inline const T& at(const std::size_t idx,
-                       const std::size_t idy) const
+    inline const T& at(const std::size_t idx, const std::size_t idy) const
     {
         return data_ptr_[width_ * idy + idx];
+    }
+
+    inline T& at(const std::size_t i)
+    {
+        return data_ptr_[i];
+    }
+
+    inline const T& at(const std::size_t i) const
+    {
+        return data_ptr_[i];
     }
 
     virtual inline T& at(const muse_mcl_2d::math::Point2D &point)
@@ -147,6 +175,16 @@ public:
     inline index_t getMaxIndex() const
     {
         return max_index_;
+    }
+
+    std::vector<T> & getData()
+    {
+        return data_;
+    }
+
+    std::vector<T> const & getData() const
+    {
+        return data_;
     }
 
 

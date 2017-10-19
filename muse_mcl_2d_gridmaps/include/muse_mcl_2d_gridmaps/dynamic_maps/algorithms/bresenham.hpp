@@ -17,6 +17,7 @@ template<typename T>
 class Bresenham
 {
 public:
+    using Ptr       = std::shared_ptr<Bresenham>;
     using index_t   = std::array<int, 2>;
     using chunk_t   = dynamic_maps::Chunk<T>;
     using storage_t = cis::Storage<chunk_t, index_t, cis::backend::kdtree::KDTree>;
@@ -154,7 +155,7 @@ private:
     bool                        done_;
     std::shared_ptr<storage_t>  storage_;
     chunk_t                    *active_chunk_;
-    //typename chunk_t::lock_t    active_chunk_lock_;
+    typename chunk_t::lock_t    active_chunk_lock_;
     int                         chunk_size_;
 
     index_t      start_;

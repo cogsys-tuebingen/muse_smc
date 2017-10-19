@@ -47,7 +47,7 @@ protected:
     std::atomic_bool                                            request_map_;
     std::promise<static_map_t::Ptr>                             promise_map_;
 
-    dynamic_map_t::Ptr map_;
+    dynamic_map_t::Ptr                                          map_;
     muse_mcl_2d_gridmaps::mapping::InverseModel                 inverse_model_;
     double                                                      resolution_;
     double                                                      chunk_resolution_;

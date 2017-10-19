@@ -75,8 +75,10 @@ void OccupancyGridMapper::process(const Pointcloud2D::Ptr &points)
     const double resolution_2 = resolution_ * 0.5;
     for(auto it = points->begin() ; it != points->end() ; ++it) {
         if(it->valid) {
-            auto b = map_->getLineIterator(points->getOrigin().translation(),
-                                           it->point);
+            auto b_ptr = map_->getLineIterator(points->getOrigin().translation(),
+                                               it->point);
+            auto &b = *b_ptr;
+
             while(!b.done()) {
                 *b = b.length2() > resolution_2 ? inverse_model_.updateFree(*b) : inverse_model_.updateOccupied(*b);
                 ++b;
@@ -88,7 +90,14 @@ void OccupancyGridMapper::process(const Pointcloud2D::Ptr &points)
 
 void OccupancyGridMapper::buildMap()
 {
-    promise_map_.set_value(static_map_t::Ptr());
+//    static_map_t::Ptr built_map(new static_map_t(map_->getOrigin(),
+//                                                 map_->getResolution(),
+//                                                 map_->getHeight(),
+//                                                 map_->getWidth(),
+//                                                 map_->getFrame());
+
+
+//    promise_map_.set_value(static_map_t::Ptr());
 
     /// iterate the chunks and build the static map
 

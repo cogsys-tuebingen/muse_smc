@@ -1,5 +1,7 @@
 #include "binary_gridmap_service_provider.h"
 
+#include <muse_mcl_2d_gridmaps/static_maps/conversion/convert_binary_gridmap.hpp>
+
 #include <nav_msgs/GetMap.h>
 
 #include <class_loader/class_loader_register_macro.h>
@@ -34,14 +36,13 @@ BinaryGridmapServiceProvider::state_space_t::ConstPtr BinaryGridmapServiceProvid
                 loading_ = true;
 
                 auto load = [this, req]() {
-                    static_maps::BinaryGridMap::Ptr map(new static_maps::BinaryGridMap(req.response.map, binarization_threshold_));
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    map_ = map;
+                    map_ = static_maps::conversion::from(req.response.map, binarization_threshold_);
                     loading_ = false;
                 };
                 auto load_blocking = [this, req]() {
                    std::unique_lock<std::mutex> l(map_mutex_);
-                   map_.reset(new static_maps::BinaryGridMap(req.response.map, binarization_threshold_));
+                   map_ = static_maps::conversion::from(req.response.map, binarization_threshold_);
                    loading_ = false;
                    map_loaded_.notify_one();
                 };
