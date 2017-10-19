@@ -17,6 +17,7 @@ public:
                        const std::size_t width,
                        const std::string &frame_id);
 
+    ProbabilityGridMap(const ProbabilityGridMap &other) = default;
 };
 }
 }

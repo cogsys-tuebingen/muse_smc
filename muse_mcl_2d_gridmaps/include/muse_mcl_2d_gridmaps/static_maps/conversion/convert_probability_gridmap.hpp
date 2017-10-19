@@ -10,43 +10,43 @@
 namespace muse_mcl_2d_gridmaps {
 namespace static_maps {
 namespace conversion {
-inline ProbabilityGridMap::Ptr from(const nav_msgs::OccupancyGrid &occupancy_grid,
-                                    const bool log_odds = false)
+inline void from(const nav_msgs::OccupancyGrid &src,
+                 ProbabilityGridMap::Ptr &dst)
 {
     assert(threshold <= 1.0);
     assert(threshold >= 0.0);
 
-    muse_mcl_2d::math::Pose2D origin(occupancy_grid.info.origin.position.x,
-                                     occupancy_grid.info.origin.position.y,
-                                     tf::getYaw(occupancy_grid.info.origin.orientation));
+    muse_mcl_2d::math::Pose2D origin(src.info.origin.position.x,
+                                     src.info.origin.position.y,
+                                     tf::getYaw(src.info.origin.orientation));
 
-    ProbabilityGridMap::Ptr map(new ProbabilityGridMap(origin,
-                                                       occupancy_grid.info.resolution,
-                                                       occupancy_grid.info.height,
-                                                       occupancy_grid.info.width,
-                                                       occupancy_grid.header.frame_id));
+    dst.reset(new ProbabilityGridMap(origin,
+                                     src.info.resolution,
+                                     src.info.height,
+                                     src.info.width,
+                                     src.header.frame_id));
 
-    const int8_t *occupancy_grid_ptr = occupancy_grid.data.data();
-    const std::size_t size = map->getHeight() * map->getWidth();
+    const int8_t *occupancy_grid_ptr = src.data.data();
+    const std::size_t size = dst->getHeight() * dst->getWidth();
     for(std::size_t i = 0 ; i < size ; ++i) {
         const int8_t p = occupancy_grid_ptr[i];
         if(p != -1) {
-            map->at(i) = p * 0.01;
+            dst->at(i) = p * 0.01;
         }
     }
-
-    if(log_odds) {
-        std::for_each(map->getData().begin(),
-                      map->getData().end(),
-                      [](const double p){return utility::LogOdds::to(p);});
-    }
-
-    return map;
 }
 
+inline void logOdds(ProbabilityGridMap::Ptr &src,
+                    ProbabilityGridMap::Ptr &dst)
+{
+    if(src != dst) {
+        dst.reset(new ProbabilityGridMap(*src));
+    }
+    std::for_each(dst->getData().begin(),
+                  dst->getData().end(),
+                  [](const double p){return utility::LogOdds::to(p);});
 
-
-
+}
 }
 }
 }

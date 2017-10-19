@@ -40,12 +40,12 @@ void ProbabilityGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr 
 
             auto load = [this, msg]() {
                 std::unique_lock<std::mutex>l(map_mutex_);
-                map_ = static_maps::conversion::from(*msg);
+                static_maps::conversion::from(*msg, map_);
                 loading_ = false;
             };
             auto load_blocking = [this, msg]() {
                 std::unique_lock<std::mutex>l(map_mutex_);
-                map_ = static_maps::conversion::from(*msg);
+                static_maps::conversion::from(*msg, map_);
                 loading_ = false;
                 map_loaded_.notify_one();
             };

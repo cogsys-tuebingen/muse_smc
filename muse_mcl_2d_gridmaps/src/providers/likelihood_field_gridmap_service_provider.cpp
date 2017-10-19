@@ -37,12 +37,12 @@ LikelihoodFieldGridmapServiceProvider::state_space_t::ConstPtr LikelihoodFieldGr
 
                 auto load = [this, req]() {
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    map_ = muse_mcl_2d_gridmaps::static_maps::conversion::from(req.response.map, maximum_distance_, sigma_hit_, binarization_threshold_);
+                    muse_mcl_2d_gridmaps::static_maps::conversion::from(req.response.map, map_, maximum_distance_, sigma_hit_, binarization_threshold_);
                     loading_ = false;
                 };
                 auto load_blocking = [this, req]() {
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    map_ = muse_mcl_2d_gridmaps::static_maps::conversion::from(req.response.map, maximum_distance_, sigma_hit_, binarization_threshold_);
+                    muse_mcl_2d_gridmaps::static_maps::conversion::from(req.response.map, map_, maximum_distance_, sigma_hit_, binarization_threshold_);
                     loading_ = false;
                     map_loaded_.notify_one();
                 };

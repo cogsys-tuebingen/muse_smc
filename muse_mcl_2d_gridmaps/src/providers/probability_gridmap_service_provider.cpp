@@ -33,12 +33,12 @@ ProbabilityGridmapServiceProvider::state_space_t::ConstPtr ProbabilityGridmapSer
 
                 auto load = [this, req]() {
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    map_ = static_maps::conversion::from(req.response.map);;
+                    static_maps::conversion::from(req.response.map, map_);
                     loading_ = false;
                 };
                 auto load_blocking = [this, req]() {
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    map_ = static_maps::conversion::from(req.response.map);
+                    static_maps::conversion::from(req.response.map, map_);
                     loading_ = false;
                     map_loaded_.notify_one();
                 };
