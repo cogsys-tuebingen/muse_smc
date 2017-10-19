@@ -9,28 +9,21 @@ namespace static_maps {
 class LikelihoodFieldGridMap : public GridMap<double>
 {
 public:
-    LikelihoodFieldGridMap(const nav_msgs::OccupancyGrid &occupancy_grid,
+    LikelihoodFieldGridMap(const pose_t &origin,
+                           const double resolution,
+                           const std::size_t height,
+                           const std::size_t width,
+                           const double maximum_distance,
                            const double sigma_hit,
-                           const double maximum_distance = 2.0,
-                           const double threshold = 1.0);
-    LikelihoodFieldGridMap(const nav_msgs::OccupancyGrid::ConstPtr &occupancy_grid,
-                           const double sigma_hit,
-                           const double maximum_distance = 2.0,
-                           const double threshold = 1.0);
+                           const std::string &frame_id);
 
     double at(const muse_mcl_2d::math::Point2D &point) const override;
 
-    double getZHit() const;
     double getSigmaHit() const;
 
 private:
     const double sigma_hit_;
-    const double exp_factor_hit_;
     const double maximum_distance_;
-
-    void convert(const nav_msgs::OccupancyGrid &occupancy_grid,
-                 const double threshold);
-
 };
 }
 }

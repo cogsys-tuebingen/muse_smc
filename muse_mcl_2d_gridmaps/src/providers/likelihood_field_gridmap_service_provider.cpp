@@ -1,5 +1,7 @@
 #include "likelihood_field_gridmap_service_provider.h"
 
+#include <muse_mcl_2d_gridmaps/static_maps/conversion/convert_likelihood_field_gridmap.hpp>
+
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::LikelihoodFieldGridmapServiceProvider, muse_mcl_2d::MapProvider2D)
 
@@ -34,15 +36,13 @@ LikelihoodFieldGridmapServiceProvider::state_space_t::ConstPtr LikelihoodFieldGr
                 loading_ = true;
 
                 auto load = [this, req]() {
-                    static_maps::LikelihoodFieldGridMap::Ptr map(new static_maps::LikelihoodFieldGridMap(req.response.map, sigma_hit_, maximum_distance_, binarization_threshold_));
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    map_ = map;
+                    map_ = muse_mcl_2d_gridmaps::static_maps::conversion::from(req.response.map, maximum_distance_, sigma_hit_, binarization_threshold_);
                     loading_ = false;
                 };
                 auto load_blocking = [this, req]() {
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    static_maps::LikelihoodFieldGridMap::Ptr map(new static_maps::LikelihoodFieldGridMap(req.response.map, sigma_hit_, maximum_distance_, binarization_threshold_));
-                    map_ = map;
+                    map_ = muse_mcl_2d_gridmaps::static_maps::conversion::from(req.response.map, maximum_distance_, sigma_hit_, binarization_threshold_);
                     loading_ = false;
                     map_loaded_.notify_one();
                 };
