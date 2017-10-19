@@ -36,17 +36,30 @@ inline void from(const nav_msgs::OccupancyGrid &src,
     }
 }
 
-inline void logOdds(ProbabilityGridMap::Ptr &src,
-                    ProbabilityGridMap::Ptr &dst)
-{
-    if(src != dst) {
-        dst.reset(new ProbabilityGridMap(*src));
-    }
-    std::for_each(dst->getData().begin(),
-                  dst->getData().end(),
-                  [](const double p){return utility::LogOdds::to(p);});
+struct LogOdds {
+    static inline void to(ProbabilityGridMap::Ptr &src,
+                          ProbabilityGridMap::Ptr &dst)
+    {
+        if(src != dst) {
+            dst.reset(new ProbabilityGridMap(*src));
+        }
+        std::for_each(dst->getData().begin(),
+                      dst->getData().end(),
+                      [](const double p){return utility::LogOdds::to(p);});
 
-}
+    }
+    static inline void from(ProbabilityGridMap::Ptr &src,
+                            ProbabilityGridMap::Ptr &dst)
+    {
+        if(src != dst) {
+            dst.reset(new ProbabilityGridMap(*src));
+        }
+        std::for_each(dst->getData().begin(),
+                      dst->getData().end(),
+                      [](const double l){return utility::LogOdds::from(l);});
+
+    }
+};
 }
 }
 }
