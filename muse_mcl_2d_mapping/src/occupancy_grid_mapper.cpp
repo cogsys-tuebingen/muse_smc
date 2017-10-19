@@ -90,16 +90,31 @@ void OccupancyGridMapper::process(const Pointcloud2D::Ptr &points)
 
 void OccupancyGridMapper::buildMap()
 {
-//    static_map_t::Ptr built_map(new static_map_t(map_->getOrigin(),
-//                                                 map_->getResolution(),
-//                                                 map_->getHeight(),
-//                                                 map_->getWidth(),
-//                                                 map_->getFrame());
+    static_map_t::Ptr built_map(new static_map_t(map_->getOrigin(),
+                                                 map_->getResolution(),
+                                                 map_->getHeight(),
+                                                 map_->getWidth(),
+                                                 map_->getFrame()));
 
+    const int chunk_step = map_->getChunkSize();
+    const dynamic_map_t::index_t min_chunk_index = map_->getMinChunkIndex();
+    const dynamic_map_t::index_t max_chunk_index = map_->getMaxChunkIndex();
+    for(int i = min_chunk_index[1] ; i < max_chunk_index[1] ; ++i) {
+        for(int j = min_chunk_index[0] ; j < max_chunk_index[0] ; ++j) {
+            const dynamic_map_t::chunk_t *chunk = map_->getChunk({j,i});
+            if(chunk != nullptr) {
+                auto l = chunk->lock();
+                const int cx = (j - min_chunk_index[0]) * chunk_step;
+                const int cy = (i - min_chunk_index[1]) * chunk_step;
 
-//    promise_map_.set_value(static_map_t::Ptr());
+                for(int k = 0 ; k < chunk_step ; ++k) {
+                    for(int l = 0 ; l < chunk_step ; ++l) {
+                        built_map->at(cx + l, cy + k) = chunk->at(l,k);
+                    }
+                }
+            }
+        }
+    }
 
-    /// iterate the chunks and build the static map
-
-
+    promise_map_.set_value(built_map);
 }

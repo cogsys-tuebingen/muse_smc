@@ -71,7 +71,7 @@ public:
     {
     }
 
-    inline lock_t lock()
+    inline lock_t lock() const
     {
         return std::move(lock_t(data_mutex_));
     }
@@ -80,7 +80,7 @@ private:
     int                 size_;
     std::vector<T>      data_;
     T                  *data_ptr_;
-    mutex_t             data_mutex_;
+    mutable mutex_t     data_mutex_;
 
 };
 }

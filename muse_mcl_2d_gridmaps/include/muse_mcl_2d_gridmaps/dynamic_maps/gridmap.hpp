@@ -179,7 +179,7 @@ public:
     }
 
     inline typename line_iterator_t::Ptr getLineIterator(const muse_mcl_2d::math::Point2D &start,
-                                                const muse_mcl_2d::math::Point2D &end) const
+                                                         const muse_mcl_2d::math::Point2D &end) const
     {
 
         const index_t start_index = toIndex(start);
@@ -246,7 +246,7 @@ public:
     inline index_t getMaxIndex() const
     {
         return {(max_chunk_index_[0] - min_chunk_index_[0] + 1) * chunk_size_ - 1,
-                    (max_chunk_index_[1] - min_chunk_index_[1] + 1) * chunk_size_ - 1};
+                (max_chunk_index_[1] - min_chunk_index_[1] + 1) * chunk_size_ - 1};
     }
 
 
@@ -269,15 +269,15 @@ protected:
     inline bool invalid(const index_t &_i) const
     {
         return _i[0] < 0 ||
-                _i[1] < 0 ||
-                _i[0] >= width_ ||
-                _i[1] >= height_;
+               _i[1] < 0 ||
+               _i[0] >= width_ ||
+               _i[1] >= height_;
     }
 
     inline bool invalid(const int idx, const int idy) const
     {
         return idx < 0 || idx >= width_ ||
-                idy < 0 || idy >= height_;
+               idy < 0 || idy >= height_;
     }
 
     inline void updateChunkIndices(const index_t &chunk_index) const
@@ -293,36 +293,31 @@ protected:
     inline index_t toChunkIndex(const int idx, const int idy) const
     {
         return  {min_chunk_index_[0] + static_cast<int>(idx) / chunk_size_,
-                    min_chunk_index_[1] + static_cast<int>(idy) / chunk_size_};
+                 min_chunk_index_[1] + static_cast<int>(idy) / chunk_size_};
     }
 
     inline index_t toLocalChunkIndex(const int idx, const int idy) const
     {
-        return {idx % chunk_size_,
-                    idy % chunk_size_};
+        return {idx % chunk_size_, idy % chunk_size_};
     }
 
 
     inline index_t toChunkIndex(const index_t &index) const
     {
-        return {index[0] / chunk_size_,
-                    index[1] / chunk_size_};
+        return {index[0] / chunk_size_, index[1] / chunk_size_};
     }
 
     inline index_t toLocalChunkIndex(const index_t &index) const
     {
-        return {index[0] % chunk_size_,
-                    index[1] % chunk_size_};
+        return {index[0] % chunk_size_, index[1] % chunk_size_};
     }
 
     inline index_t toIndex(const muse_mcl_2d::math::Point2D &p_w) const
     {
         const muse_mcl_2d::math::Point2D p_m = m_T_w_ * p_w;
         return {static_cast<int>(p_m.x() * resolution_inv_),
-                    static_cast<int>(p_m.y() * resolution_inv_)};
+                static_cast<int>(p_m.y() * resolution_inv_)};
     }
-
-
 
     inline void fromIndex(const index_t &i,  muse_mcl_2d::math::Point2D &p_w) const
     {
