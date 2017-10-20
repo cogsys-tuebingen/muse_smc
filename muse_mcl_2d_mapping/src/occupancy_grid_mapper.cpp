@@ -8,10 +8,12 @@ OccupancyGridMapper::OccupancyGridMapper(const muse_mcl_2d_gridmaps::utility::In
                                          const double resolution,
                                          const double chunk_resolution,
                                          const std::string &frame_id) :
+    stop_(false),
     inverse_model_(inverse_model),
     resolution_(resolution),
     chunk_resolution_(chunk_resolution),
     frame_id_(frame_id)
+
 {
     thread_ = std::thread([this](){loop();});
     thread_.detach();
@@ -29,18 +31,20 @@ OccupancyGridMapper::~OccupancyGridMapper()
 
 void OccupancyGridMapper::insert(const Pointcloud2D::Ptr &points)
 {
+    ROS_INFO_STREAM("Inserted poitns!");
     q_.emplace(points);
+    notify_event_.notify_one();
 }
 
 
 OccupancyGridMapper::static_map_t::Ptr OccupancyGridMapper::get()
 {
+    ROS_INFO_STREAM("Requested a map!");
     request_map_ = true;
+    lock_t notify_map_lock(notify_map_mutex_);
     notify_event_.notify_one();
-
-    std::future<static_map_t::Ptr> f = promise_map_.get_future();
-    f.wait();
-    return f.get();
+    notify_map_.wait(notify_map_lock);
+    return static_map_;
 }
 
 
@@ -49,22 +53,27 @@ void OccupancyGridMapper::loop()
     lock_t notify_event_mutex_lock(notify_event_mutex_);
     while(!stop_) {
         notify_event_.wait(notify_event_mutex_lock);
+        ROS_ERROR_STREAM("Got notification!");
         while(q_.hasElements()) {
             if(stop_)
                 break;
-            if(request_map_)
+            if(request_map_) {
                 buildMap();
-
+                request_map_ = false;
+            }
             auto e = q_.pop();
             process(e);
         }
-        if(request_map_)
+        if(request_map_) {
             buildMap();
+            request_map_ = false;
+        }
     }
 }
 
 void OccupancyGridMapper::process(const Pointcloud2D::Ptr &points)
 {
+    ROS_ERROR_STREAM("Processing");
     if(!map_) {
         const muse_mcl_2d::math::Pose2D &p = points->getOrigin();
         map_.reset(new dynamic_map_t(p,
@@ -92,32 +101,39 @@ void OccupancyGridMapper::process(const Pointcloud2D::Ptr &points)
 
 void OccupancyGridMapper::buildMap()
 {
-    static_map_t::Ptr built_map(new static_map_t(map_->getOrigin(),
-                                                 map_->getResolution(),
-                                                 map_->getHeight(),
-                                                 map_->getWidth(),
-                                                 map_->getFrame()));
+    ROS_INFO_STREAM("Trying building a map!");
+    if(map_) {
+        ROS_INFO_STREAM("Building a map!");
+        static_map_.reset(new static_map_t(map_->getOrigin(),
+                                           map_->getResolution(),
+                                           map_->getHeight(),
+                                           map_->getWidth(),
+                                           map_->getFrame()));
 
-    const int chunk_step = map_->getChunkSize();
-    const dynamic_map_t::index_t min_chunk_index = map_->getMinChunkIndex();
-    const dynamic_map_t::index_t max_chunk_index = map_->getMaxChunkIndex();
-    for(int i = min_chunk_index[1] ; i < max_chunk_index[1] ; ++i) {
-        for(int j = min_chunk_index[0] ; j < max_chunk_index[0] ; ++j) {
-            const dynamic_map_t::chunk_t *chunk = map_->getChunk({j,i});
-            if(chunk != nullptr) {
-                auto l = chunk->lock();
-                const int cx = (j - min_chunk_index[0]) * chunk_step;
-                const int cy = (i - min_chunk_index[1]) * chunk_step;
+        const int chunk_step = map_->getChunkSize();
+        const dynamic_map_t::index_t min_chunk_index = map_->getMinChunkIndex();
+        const dynamic_map_t::index_t max_chunk_index = map_->getMaxChunkIndex();
+        for(int i = min_chunk_index[1] ; i < max_chunk_index[1] ; ++i) {
+            for(int j = min_chunk_index[0] ; j < max_chunk_index[0] ; ++j) {
+                const dynamic_map_t::chunk_t *chunk = map_->getChunk({j,i});
+                if(chunk != nullptr) {
+                    auto l = chunk->lock();
+                    const int cx = (j - min_chunk_index[0]) * chunk_step;
+                    const int cy = (i - min_chunk_index[1]) * chunk_step;
 
-                for(int k = 0 ; k < chunk_step ; ++k) {
-                    for(int l = 0 ; l < chunk_step ; ++l) {
-                        built_map->at(cx + l, cy + k) = chunk->at(l,k);
+                    for(int k = 0 ; k < chunk_step ; ++k) {
+                        for(int l = 0 ; l < chunk_step ; ++l) {
+                            static_map_->at(cx + l, cy + k) = chunk->at(l,k);
+                        }
                     }
                 }
             }
         }
-    }
 
-    muse_mcl_2d_gridmaps::static_maps::conversion::LogOdds::from(built_map, built_map);
-    promise_map_.set_value(built_map);
+        muse_mcl_2d_gridmaps::static_maps::conversion::LogOdds::from(static_map_, static_map_);
+        ROS_INFO_STREAM("Finished building a map.");
+    } else {
+        ROS_INFO_STREAM("Map was empty.");
+    }
+    notify_map_.notify_one();
 }

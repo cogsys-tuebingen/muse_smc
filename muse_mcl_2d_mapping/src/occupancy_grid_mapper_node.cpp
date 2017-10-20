@@ -32,12 +32,12 @@ bool OccupancyGridMapperNode::setup()
 
     map_frame_                = nh_.param<std::string>("map_frame", "/odom");
 
-    node_rate_                     = nh_.param<double>("rate", 0.0);
+    node_rate_                = nh_.param<double>("rate", 0.0);
     undistortion_             = nh_.param<bool>("undistortion", true);
     undistortion_fixed_frame_ = nh_.param<std::string>("undistortion_fixed_frame", "/odom");
 
     undistortion_             = nh_.param<bool>("undistortion", true);
-    undistortion_fixed_frame_ = nh_.param<std::string>("undistortion_fixed_frame", "");
+    undistortion_fixed_frame_ = nh_.param<std::string>("undistortion_fixed_frame", "/odom");
     tf_timeout_               = ros::Duration(nh_.param("tf_timeout", 0.1));
 
     linear_interval_[0]  = nh_.param<double>("range_min", 0.05);
@@ -48,16 +48,21 @@ bool OccupancyGridMapperNode::setup()
 
     muse_mcl_2d_gridmaps::utility::InverseModel inverse_model(occ_map_prob_prior, occ_map_prob_free, occ_map_prob_occ);
     occ_mapper_.reset(new OccupancyGridMapper(inverse_model,
-                                          occ_grid_resolution,
-                                          occ_grid_chunk_resolution,
-                                          map_frame_));
+                                              occ_grid_resolution,
+                                              occ_grid_chunk_resolution,
+                                              map_frame_));
 
 
+    sub_laser_ = nh_.subscribe("/sick/front",
+                               subscriber_queue_size,
+                               &OccupancyGridMapperNode::laserscan,
+                               this);
     for(const auto &l : lasers) {
-        sub_lasers_.emplace_back(nh_.subscribe(l,
-                                               subscriber_queue_size,
-                                               &OccupancyGridMapperNode::laserscan,
-                                               this));
+        ROS_INFO_STREAM("Subscribing to laser '" << l << "'");
+        sub_lasers_.emplace_back(std::move(nh_.subscribe(l,
+                                                         subscriber_queue_size,
+                                                         &OccupancyGridMapperNode::laserscan,
+                                                         this)));
     }
     pub_occ_map_        = nh_.advertise<nav_msgs::OccupancyGrid>(occ_map_topic, 1);
     pub_occ_interval_   = ros::Duration(occ_map_pub_rate > 0.0 ? 1.0 / occ_map_pub_rate : 0.0);
@@ -65,7 +70,7 @@ bool OccupancyGridMapperNode::setup()
 
     tf_.reset(new muse_mcl_2d::TFProvider);
 
-    ROS_INFO_STREAM("Setup succesfull!");
+    ROS_INFO_STREAM("Setup succesful!");
     return true;
 }
 
@@ -74,16 +79,19 @@ void OccupancyGridMapperNode::run()
     if(node_rate_ == 0.0) {
         while(ros::ok()) {
             const ros::Time now = ros::Time::now();
-            if(pub_occ_interval_.isZero() || pub_occ_last_time_ + pub_occ_interval_ < now) {
+            if(pub_occ_interval_.isZero() || pub_occ_last_time_ + pub_occ_interval_ > now) {
                 publishOcc();
+                pub_occ_last_time_ = now;
             }
+            ros::spinOnce();
         }
     } else {
         ros::Rate r(node_rate_);
         while(ros::ok()) {
             const ros::Time now = ros::Time::now();
-            if(pub_occ_interval_.isZero() || pub_occ_last_time_ + pub_occ_interval_ < now) {
+            if(pub_occ_interval_.isZero() || pub_occ_last_time_ + pub_occ_interval_ > now) {
                 publishOcc();
+                pub_occ_last_time_ = now;
             }
             r.sleep();
             ros::spinOnce();
@@ -94,6 +102,7 @@ void OccupancyGridMapperNode::run()
 
 void OccupancyGridMapperNode::laserscan(const sensor_msgs::LaserScanConstPtr &msg)
 {
+    ROS_ERROR_STREAM("Laser laser");
     muse_mcl_2d_laser::LaserScan2D::Ptr laserscan;
     if(undistortion_ &&
             !convertUndistorted(msg, linear_interval_, angular_interval_, tf_, undistortion_fixed_frame_, tf_timeout_, laserscan)) {
@@ -124,15 +133,19 @@ void OccupancyGridMapperNode::laserscan(const sensor_msgs::LaserScanConstPtr &ms
 void OccupancyGridMapperNode::publishOcc()
 {
     auto map = occ_mapper_->get();
-    nav_msgs::OccupancyGrid::Ptr msg;
-    muse_mcl_2d_gridmaps::static_maps::conversion::from(map, msg);
-    pub_occ_map_.publish(msg);
+    if(map) {
+        nav_msgs::OccupancyGrid::Ptr msg;
+        muse_mcl_2d_gridmaps::static_maps::conversion::from(map, msg);
+        pub_occ_map_.publish(msg);
+    }
 }
 
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "muse_mcl_2d_mapping_ocm_node");
-
+    OccupancyGridMapperNode instance;
+    instance.setup();
+    instance.run();
 
     return 0;
 }

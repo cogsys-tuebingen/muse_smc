@@ -5,7 +5,6 @@
 #include <thread>
 #include <condition_variable>
 #include <mutex>
-#include <future>
 
 #include <muse_mcl_2d_mapping/pointcloud_2d.hpp>
 #include <muse_smc/utility/synchronized_queue.hpp>
@@ -45,7 +44,9 @@ protected:
     std::mutex                                                  notify_event_mutex_;
     std::atomic_bool                                            stop_;
     std::atomic_bool                                            request_map_;
-    std::promise<static_map_t::Ptr>                             promise_map_;
+    std::condition_variable                                     notify_map_;
+    std::mutex                                                  notify_map_mutex_;
+    static_map_t::Ptr                                           static_map_;
 
     dynamic_map_t::Ptr                                          map_;
     muse_mcl_2d_gridmaps::utility::InverseModel                 inverse_model_;

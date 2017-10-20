@@ -21,6 +21,7 @@ private:
     using interval_t = std::array<double, 2>;
 
     ros::NodeHandle                 nh_;
+    ros::Subscriber                 sub_laser_;
     std::vector<ros::Subscriber>    sub_lasers_;
     muse_mcl_2d::TFProvider::Ptr    tf_;
     OccupancyGridMapper::Ptr        occ_mapper_;
