@@ -27,15 +27,17 @@ inline void from(const nav_msgs::OccupancyGrid &src,
                                 src.header.frame_id));
 
     const int8_t  t = threshold * 100;
-    const int8_t *occupancy_grid_ptr = src.data.data();
-    const std::size_t size = dst->getHeight() * dst->getWidth();
-    for(std::size_t i = 0 ; i < size ; ++i) {
-        int8_t occupancy = occupancy_grid_ptr[i];
-        if(occupancy == -1) {
-            occupancy = 50;
-        }
-        dst->at(i) = occupancy >= t ? 1 : 0;
-    }
+    std::transform(src.data.begin(), src.data.end(),
+                  dst->getData().begin(),
+                  [t](const int8_t p){int8_t occ = p == -1 ? 50 : p;
+                                      return occ >= t ? BinaryGridMap::OCCUPIED : BinaryGridMap::FREE;});
+}
+
+inline void from(const nav_msgs::OccupancyGrid::ConstPtr &src,
+                 BinaryGridMap::Ptr                      &dst,
+                 const double threshold = 1.0)
+{
+    from(*src, dst, threshold);
 }
 }
 }

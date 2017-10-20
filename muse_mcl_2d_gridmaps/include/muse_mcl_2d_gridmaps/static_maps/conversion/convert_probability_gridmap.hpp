@@ -16,24 +16,41 @@ inline void from(const nav_msgs::OccupancyGrid &src,
     assert(threshold <= 1.0);
     assert(threshold >= 0.0);
 
-    muse_mcl_2d::math::Pose2D origin(src.info.origin.position.x,
-                                     src.info.origin.position.y,
-                                     tf::getYaw(src.info.origin.orientation));
+    muse_mcl_2d::math::Pose2D origin(src->info.origin.position.x,
+                                     src->info.origin.position.y,
+                                     tf::getYaw(src->info.origin.orientation));
 
     dst.reset(new ProbabilityGridMap(origin,
-                                     src.info.resolution,
-                                     src.info.height,
-                                     src.info.width,
-                                     src.header.frame_id));
+                                     src->info.resolution,
+                                     src->info.height,
+                                     src->info.width,
+                                     src->header.frame_id));
+    std::transform(src->data.begin(), src->data.end(),
+                   dst->getData().begin(),
+                   [](const int8_t p){return p != -1 ? 0.01 * p : 0.5;});
+}
 
-    const int8_t *occupancy_grid_ptr = src.data.data();
-    const std::size_t size = dst->getHeight() * dst->getWidth();
-    for(std::size_t i = 0 ; i < size ; ++i) {
-        const int8_t p = occupancy_grid_ptr[i];
-        if(p != -1) {
-            dst->at(i) = p * 0.01;
-        }
-    }
+
+inline void from(const nav_msgs::OccupancyGrid::ConstPtr &src,
+                 ProbabilityGridMap::Ptr &dst)
+{
+   from(*src, dst);
+}
+
+inline void from(const ProbabilityGridMap::Ptr &src,
+                 nav_msgs::OccupancyGrid::Ptr &dst)
+{
+    dst.reset(new nav_msgs::OccupancyGrid);
+    dst->header.stamp       = ros::Time(src->getStamp().seconds());
+    dst->header.frame_id    = src->getFrame();
+    dst->info.resolution    = src->getResolution();
+    dst->info.height        = src->getHeight();
+    dst->info.width         = src->getWidth();
+    dst->info.map_load_time = dst->header.stamp;
+    dst->data.resize(src->getData().size());
+    std::transform(src->getData().begin(), src->getData().end(),
+                   dst->data.begin(),
+                   [](const double p){return p == 0.5 ? -1 : static_cast<int8_t>(p * 100.0);});
 }
 
 struct LogOdds {

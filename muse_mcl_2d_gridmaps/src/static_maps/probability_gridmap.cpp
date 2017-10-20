@@ -9,12 +9,13 @@ ProbabilityGridMap::ProbabilityGridMap(const pose_t &origin,
                                        const double resolution,
                                        const std::size_t height,
                                        const std::size_t width,
-                                       const std::string &frame_id) :
+                                       const std::string &frame_id,
+                                       const double default_value) :
     GridMap<double>(origin,
                     resolution,
                     height,
                     width,
-                    0,
+                    default_value,
                     frame_id)
 {
 }

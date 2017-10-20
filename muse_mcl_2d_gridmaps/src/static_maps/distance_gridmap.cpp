@@ -13,14 +13,21 @@ DistanceGridMap::DistanceGridMap(const pose_t &origin,
                                  const double maximum_distance,
                                  const std::size_t height,
                                  const std::size_t width,
-                                 const std::string &frame_id) :
+                                 const std::string &frame_id,
+                                 const double default_value) :
     GridMap<double>(origin,
                     resolution,
                     height,
                     width,
-                    maximum_distance,
-                    frame_id)
+                    default_value,
+                    frame_id),
+    maximum_distance_(maximum_distance)
 {
+}
+
+double DistanceGridMap::getMaximumDistance() const
+{
+    return maximum_distance_;
 }
 
 double DistanceGridMap::at(const muse_mcl_2d::math::Point2D &point) const
@@ -28,6 +35,6 @@ double DistanceGridMap::at(const muse_mcl_2d::math::Point2D &point) const
     index_t i;
     toIndex(point, i);
     if(invalid(i))
-        return std::numeric_limits<double>::max();
+        return maximum_distance_;
     return GridMap<double>::at(i[0], i[1]);
 }

@@ -9,13 +9,14 @@ BinaryGridMap::BinaryGridMap(const pose_t &origin,
                              const double resolution,
                              const std::size_t height,
                              const std::size_t width,
-                             const std::string &frame_id) :
-    GridMap<int8_t>(origin,
-                    resolution,
-                    height,
-                    width,
-                    0,
-                    frame_id)
+                             const std::string &frame_id,
+                             const state_t default_value) :
+    GridMap<int>(origin,
+                 resolution,
+                 height,
+                 width,
+                 default_value,
+                 frame_id)
 {
 }
 

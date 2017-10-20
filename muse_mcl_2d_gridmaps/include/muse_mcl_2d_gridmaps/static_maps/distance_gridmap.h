@@ -14,9 +14,15 @@ public:
                     const double maximum_distance,
                     const std::size_t height,
                     const std::size_t width,
-                    const std::string &frame_id);
+                    const std::string &frame_id,
+                    const double default_value = 2.0);
 
     double at(const muse_mcl_2d::math::Point2D &point) const override;
+    double getMaximumDistance() const;
+
+private:
+    double maximum_distance_;
+
 };
 }
 }

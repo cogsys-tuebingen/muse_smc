@@ -13,8 +13,8 @@ namespace conversion {
 inline void from(const nav_msgs::OccupancyGrid &src,
                  LikelihoodFieldGridMap::Ptr &dst,
                  const double maximum_distance = 2.0,
-                 const double sigma_hit = 0.5,
-                 const double threshold = 1.0)
+                 const double sigma_hit        = 0.5,
+                 const double threshold        = 1.0)
 {
     assert(threshold <= 1.0);
     assert(threshold >= 0.0);
@@ -31,11 +31,11 @@ inline void from(const nav_msgs::OccupancyGrid &src,
                                          maximum_distance,
                                          sigma_hit,
                                          src.header.frame_id));
-    std::vector<int8_t> occ;
-    occ.reserve(src.data.size());
+
+    std::vector<int8_t> occ(src.data.size());
     std::transform(src.data.begin(),
                    src.data.end(),
-                   std::back_inserter(occ),
+                   occ.begin(),
                    [](const int8_t p){return p != -1 ? p : 50;});
 
     /// 1.) calculate the distances
@@ -51,6 +51,16 @@ inline void from(const nav_msgs::OccupancyGrid &src,
                   dst->getData().end(),
                   [exp_factor_hit] (const double z) {return std::exp(-z * z * exp_factor_hit);});
 }
+
+inline void from(const nav_msgs::OccupancyGrid &src,
+                 LikelihoodFieldGridMap::Ptr   &dst,
+                 const double maximum_distance = 2.0,
+                 const double sigma_hit        = 0.5,
+                 const double threshold        = 1.0)
+{
+    from(*src, dst, maximum_distance, sigma_hit, threshold);
+}
+
 }
 }
 }

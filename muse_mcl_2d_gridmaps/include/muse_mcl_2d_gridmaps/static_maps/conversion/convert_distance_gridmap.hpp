@@ -27,13 +27,13 @@ inline void from(const nav_msgs::OccupancyGrid &src,
                                   maximum_distance,
                                   src.info.height,
                                   src.info.width,
-                                  src.header.frame_id));
+                                  src.header.frame_id,
+                                  maximum_distance));
 
-    std::vector<int8_t> occ;
-    occ.reserve(src.data.size());
+    std::vector<int8_t> occ(src.data.size());
     std::transform(src.data.begin(),
                    src.data.end(),
-                   std::back_inserter(occ),
+                   occ.begin(),
                    [](const int8_t p){return p != -1 ? p : 50;});
 
 
