@@ -16,16 +16,16 @@ inline void from(const nav_msgs::OccupancyGrid &src,
     assert(threshold <= 1.0);
     assert(threshold >= 0.0);
 
-    muse_mcl_2d::math::Pose2D origin(src->info.origin.position.x,
-                                     src->info.origin.position.y,
-                                     tf::getYaw(src->info.origin.orientation));
+    muse_mcl_2d::math::Pose2D origin(src.info.origin.position.x,
+                                     src.info.origin.position.y,
+                                     tf::getYaw(src.info.origin.orientation));
 
     dst.reset(new ProbabilityGridMap(origin,
-                                     src->info.resolution,
-                                     src->info.height,
-                                     src->info.width,
-                                     src->header.frame_id));
-    std::transform(src->data.begin(), src->data.end(),
+                                     src.info.resolution,
+                                     src.info.height,
+                                     src.info.width,
+                                     src.header.frame_id));
+    std::transform(src.data.begin(), src.data.end(),
                    dst->getData().begin(),
                    [](const int8_t p){return p != -1 ? 0.01 * p : 0.5;});
 }

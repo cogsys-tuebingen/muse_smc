@@ -52,7 +52,7 @@ inline void from(const nav_msgs::OccupancyGrid &src,
                   [exp_factor_hit] (const double z) {return std::exp(-z * z * exp_factor_hit);});
 }
 
-inline void from(const nav_msgs::OccupancyGrid &src,
+inline void from(const nav_msgs::OccupancyGrid::Ptr &src,
                  LikelihoodFieldGridMap::Ptr   &dst,
                  const double maximum_distance = 2.0,
                  const double sigma_hit        = 0.5,

@@ -82,7 +82,7 @@ void OccupancyGridMapperNode::run()
         while(ros::ok()) {
             const ros::Time now = ros::Time::now();
             if(pub_occ_interval_.isZero() || pub_occ_last_time_ + pub_occ_interval_ < now) {
-                publish();
+                publishOcc();
             }
             r.sleep();
             ros::spinOnce();
