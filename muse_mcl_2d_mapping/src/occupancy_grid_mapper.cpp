@@ -4,6 +4,8 @@
 
 using namespace muse_mcl_2d_mapping;
 
+/// have a look http://en.cppreference.com/w/cpp/thread/condition_variable
+
 OccupancyGridMapper::OccupancyGridMapper(const muse_mcl_2d_gridmaps::utility::InverseModel &inverse_model,
                                          const double resolution,
                                          const double chunk_resolution,
