@@ -1,5 +1,7 @@
 #include "occupancy_grid_mapper.h"
 
+#include <muse_mcl_2d_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
+
 using namespace muse_mcl_2d_mapping;
 
 OccupancyGridMapper::OccupancyGridMapper(const muse_mcl_2d_gridmaps::utility::InverseModel &inverse_model,
@@ -68,8 +70,8 @@ void OccupancyGridMapper::process(const Pointcloud2D::Ptr &points)
         map_.reset(new dynamic_map_t(p,
                                      resolution_,
                                      chunk_resolution_,
-                                     inverse_model_.getLogOddsPrior(),
-                                     frame_id_));
+                                     frame_id_,
+                                     inverse_model_.getLogOddsPrior()));
     }
 
     const double resolution_2 = resolution_ * 0.5;
@@ -116,5 +118,6 @@ void OccupancyGridMapper::buildMap()
         }
     }
 
+    muse_mcl_2d_gridmaps::static_maps::conversion::LogOdds::from(built_map, built_map);
     promise_map_.set_value(built_map);
 }

@@ -30,11 +30,11 @@ public:
     using line_iterator_t       = algorithms::Bresenham<T>;
     using const_line_iterator_t = algorithms::Bresenham<T const>;
 
-    GridMap(const pose_t &origin,
-            const double  resolution,
-            const double  chunk_resolution,
-            const T      &default_value,
-            const std::string &frame_id) :
+    GridMap(const pose_t        &origin,
+            const double         resolution,
+            const double         chunk_resolution,
+            const std::string   &frame_id,
+            const T             &default_value) :
         Map2D(frame_id),
         resolution_(resolution),
         resolution_inv_(1.0 / resolution_),

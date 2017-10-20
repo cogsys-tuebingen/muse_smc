@@ -11,8 +11,8 @@ public:
     ProbabilityGridMap(const pose_t &origin,
                        const double resolution,
                        const double chunk_resolution,
-                       const double default_value,
-                       const std::string &frame_id);
+                       const std::string &frame_id,
+                       const double default_value = 0.5);
 };
 }
 }

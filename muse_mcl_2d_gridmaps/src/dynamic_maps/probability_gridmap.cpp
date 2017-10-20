@@ -6,12 +6,12 @@ using namespace dynamic_maps;
 ProbabilityGridMap::ProbabilityGridMap(const pose_t &origin,
                                        const double resolution,
                                        const double chunk_resolution,
-                                       const double default_value,
-                                       const std::string &frame_id) :
+                                       const std::string &frame_id,
+                                       const double default_value) :
     GridMap<double>(origin,
                     resolution,
                     chunk_resolution,
-                    default_value,
-                    frame_id)
+                    frame_id,
+                    default_value)
 {
 }

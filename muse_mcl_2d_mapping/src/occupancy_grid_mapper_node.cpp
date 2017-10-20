@@ -1,5 +1,6 @@
 #include "occupancy_grid_mapper_node.h"
 
+#include <muse_mcl_2d_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
 #include <muse_mcl_2d_laser/convert.hpp>
 
 #include <nav_msgs/OccupancyGrid.h>
@@ -122,7 +123,10 @@ void OccupancyGridMapperNode::laserscan(const sensor_msgs::LaserScanConstPtr &ms
 
 void OccupancyGridMapperNode::publishOcc()
 {
-
+    auto map = occ_mapper_->get();
+    nav_msgs::OccupancyGrid::Ptr msg;
+    muse_mcl_2d_gridmaps::static_maps::conversion::from(map, msg);
+    pub_occ_map_.publish(msg);
 }
 
 int main(int argc, char *argv[])
