@@ -18,7 +18,7 @@ public:
                            const std::string &frame_id,
                            const double default_value = 0.0);
 
-    double at(const muse_mcl_math_2d::Point2D &point) const override;
+    double at(const cslibs_math_2d::Point2d &point) const override;
 
     double getSigmaHit() const;
 

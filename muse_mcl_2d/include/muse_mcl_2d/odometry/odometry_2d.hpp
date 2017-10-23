@@ -3,8 +3,8 @@
 
 #include <muse_smc/data/data.hpp>
 
-#include <cslibs_math_2d/pose_2d.hpp>
-#include <cslibs_math_2d/transform_2d.hpp>
+#include <cslibs_math_2d/types/pose.hpp>
+#include <cslibs_math_2d/types/transform.hpp>
 
 namespace muse_mcl_2d {
 class Odometry2D : public muse_smc::Data {
@@ -16,9 +16,9 @@ public:
 
     inline Odometry2D(const std::string &frame) :
         Data(frame),
-        start_pose_(muse_mcl_math_2d::Transform2D::identity()),
-        end_pose_(muse_mcl_math_2d::Transform2D::identity()),
-        delta_rel_(muse_mcl_math_2d::Transform2D::identity()),
+        start_pose_(cslibs_math_2d::Transform2d::identity()),
+        end_pose_(cslibs_math_2d::Transform2d::identity()),
+        delta_rel_(cslibs_math_2d::Transform2d::identity()),
         delta_linear_(0.0),
         delta_angular_(0.0)
     {
@@ -27,9 +27,9 @@ public:
     inline Odometry2D(const std::string &frame,
                const time_frame_t &time_frame) :
         Data(frame, time_frame),
-        start_pose_(muse_mcl_math_2d::Transform2D::identity()),
-        end_pose_(muse_mcl_math_2d::Transform2D::identity()),
-        delta_rel_(muse_mcl_math_2d::Transform2D::identity()),
+        start_pose_(cslibs_math_2d::Transform2d::identity()),
+        end_pose_(cslibs_math_2d::Transform2d::identity()),
+        delta_rel_(cslibs_math_2d::Transform2d::identity()),
         delta_linear_(0.0),
         delta_angular_(0.0)
     {
@@ -37,12 +37,12 @@ public:
 
     inline Odometry2D(const std::string &frame,
               const time_frame_t &time_frame,
-              const muse_mcl_math_2d::Pose2D &start,
-              const muse_mcl_math_2d::Pose2D &end) :
+              const cslibs_math_2d::Pose2d &start,
+              const cslibs_math_2d::Pose2d &end) :
        Data(frame, time_frame),
        start_pose_(start),
        end_pose_(start),
-       delta_rel_(muse_mcl_math_2d::Transform2D::identity())
+       delta_rel_(cslibs_math_2d::Transform2d::identity())
     {
         delta_rel_      = start.inverse() * end;
         start_pose_     = start;
@@ -59,17 +59,17 @@ public:
                           delta_lin_abs_.x());
     }
 
-    inline const muse_mcl_math_2d::Pose2D& getStartPose() const
+    inline const cslibs_math_2d::Pose2d& getStartPose() const
     {
         return start_pose_;
     }
 
-    inline const muse_mcl_math_2d::Pose2D &getEndPose() const
+    inline const cslibs_math_2d::Pose2d &getEndPose() const
     {
         return end_pose_;
     }
 
-    inline const muse_mcl_math_2d::Vector2D &getDelta() const
+    inline const cslibs_math_2d::Vector2d &getDelta() const
     {
         return delta_lin_abs_;
     }
@@ -92,19 +92,19 @@ public:
         const double ratio = (split_time - time_frame_.start).seconds() /
                               time_frame_.duration().seconds();
 
-        muse_mcl_math_2d::Pose2D split_pose = start_pose_.interpolate(end_pose_, ratio);
+        cslibs_math_2d::Pose2d split_pose = start_pose_.interpolate(end_pose_, ratio);
         a.reset(new Odometry2D(frame_, time_frame_t(time_frame_.start, split_time), start_pose_, split_pose));
         b.reset(new Odometry2D(frame_, time_frame_t(split_time, time_frame_.end), split_pose, end_pose_));
         return true;
     }
 
 private:
-    muse_mcl_math_2d::Pose2D    start_pose_;
-    muse_mcl_math_2d::Pose2D    end_pose_;
+    cslibs_math_2d::Pose2d    start_pose_;
+    cslibs_math_2d::Pose2d    end_pose_;
 
-    muse_mcl_math_2d::Pose2D    delta_rel_;
+    cslibs_math_2d::Pose2d    delta_rel_;
 
-    muse_mcl_math_2d::Vector2D  delta_lin_abs_;
+    cslibs_math_2d::Vector2d  delta_lin_abs_;
     double          delta_linear_;
     double          delta_angular_;
 };

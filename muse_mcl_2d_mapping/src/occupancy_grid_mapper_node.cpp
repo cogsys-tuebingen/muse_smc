@@ -102,7 +102,6 @@ void OccupancyGridMapperNode::run()
 
 void OccupancyGridMapperNode::laserscan(const sensor_msgs::LaserScanConstPtr &msg)
 {
-    ROS_ERROR_STREAM("Laser laser");
     muse_mcl_2d_laser::LaserScan2D::Ptr laserscan;
     if(undistortion_ &&
             !convertUndistorted(msg, linear_interval_, angular_interval_, tf_, undistortion_fixed_frame_, tf_timeout_, laserscan)) {
@@ -113,14 +112,13 @@ void OccupancyGridMapperNode::laserscan(const sensor_msgs::LaserScanConstPtr &ms
         return;
     }
 
-    muse_mcl_math_2d::Transform2D m_T_l;
+    cslibs_math_2d::Transform2d m_T_l;
     if(tf_->lookupTransform(laserscan->getFrame(), map_frame_,
                             ros::Time(laserscan->getTimeFrame().end.seconds()),
                             m_T_l,
                             tf_timeout_)) {
 
         Pointcloud2D::Ptr points(new Pointcloud2D(laserscan->getFrame(),
-                                                  laserscan->getTimeFrame(),
                                                   m_T_l));
         for(auto it = laserscan->begin() ; it != laserscan->end() ; ++it) {
             if(it->valid())

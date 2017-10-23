@@ -6,7 +6,7 @@
 #include <cmath>
 
 #include <muse_mcl_2d/map/map_2d.hpp>
-#include <cslibs_math_2d/pose_2d.hpp>
+#include <cslibs_math_2d/types/pose.hpp>
 #include <muse_mcl_2d_gridmaps/static_maps/algorithms/bresenham.hpp>
 #include <muse_mcl_2d_gridmaps/static_maps/algorithms/bresenham_unsafe.hpp>
 
@@ -19,7 +19,7 @@ public:
     using Ptr                    = std::shared_ptr<GridMap<T>>;
     using const_line_iterator_t  = algorithms::Bresenham<T const>;
     using index_t                = std::array<int, 2>;
-    using pose_t                 = muse_mcl_math_2d::Pose2D;
+    using pose_t                 = cslibs_math_2d::Pose2d;
 
     GridMap(const pose_t &origin,
             const double resolution,
@@ -61,21 +61,21 @@ public:
     {
     }
 
-    virtual inline muse_mcl_math_2d::Point2D getMin() const override
+    virtual inline cslibs_math_2d::Point2d getMin() const override
     {
-        muse_mcl_math_2d::Point2D p;
+        cslibs_math_2d::Point2d p;
         fromIndex({0,0},p);
         return p;
     }
 
-    virtual inline muse_mcl_math_2d::Point2D getMax() const override
+    virtual inline cslibs_math_2d::Point2d getMax() const override
     {
-        muse_mcl_math_2d::Point2D p;
+        cslibs_math_2d::Point2d p;
         fromIndex({(int)width_-1,(int)height_-1},p);
         return p;
     }
 
-    virtual inline muse_mcl_math_2d::Pose2D getOrigin() const
+    virtual inline cslibs_math_2d::Pose2d getOrigin() const
     {
         return w_T_m_;
     }
@@ -100,7 +100,7 @@ public:
         return data_ptr_[i];
     }
 
-    virtual inline T& at(const muse_mcl_math_2d::Point2D &point)
+    virtual inline T& at(const cslibs_math_2d::Point2d &point)
     {
         index_t i;
         if(!toIndex(point, i)) {
@@ -109,7 +109,7 @@ public:
         return at(i[0], i[1]);
     }
 
-    virtual inline T at(const muse_mcl_math_2d::Point2D &point) const
+    virtual inline T at(const cslibs_math_2d::Point2d &point) const
     {
         index_t i;
         if(!toIndex(point, i)) {
@@ -131,8 +131,8 @@ public:
         return const_line_iterator_t(start, end, width_, data_ptr_);
     }
 
-    inline const_line_iterator_t getConstLineIterator(const muse_mcl_math_2d::Point2D &start,
-                                                      const muse_mcl_math_2d::Point2D &end) const
+    inline const_line_iterator_t getConstLineIterator(const cslibs_math_2d::Point2d &start,
+                                                      const cslibs_math_2d::Point2d &end) const
     {
         index_t start_index;
         index_t end_index;
@@ -194,8 +194,8 @@ protected:
     const std::size_t                       height_;
     const std::size_t                       width_;
     const index_t                           max_index_;
-    const muse_mcl_math_2d::Transform2D    w_T_m_;
-    const muse_mcl_math_2d::Transform2D    m_T_w_;
+    const cslibs_math_2d::Transform2d    w_T_m_;
+    const cslibs_math_2d::Transform2d    m_T_w_;
 
     std::vector<T>                          data_;
     T*                                      data_ptr_;
@@ -208,10 +208,10 @@ protected:
                _i[1] > max_index_[1];
     }
 
-    inline bool toIndex(const muse_mcl_math_2d::Point2D &p_w,
+    inline bool toIndex(const cslibs_math_2d::Point2d &p_w,
                         index_t &i) const
     {
-        const muse_mcl_math_2d::Point2D p_m = m_T_w_ * p_w;
+        const cslibs_math_2d::Point2d p_m = m_T_w_ * p_w;
 
         i[0] = static_cast<int>(p_m.x() * resolution_inv_ + 0.5);
         i[1] = static_cast<int>(p_m.y() * resolution_inv_ + 0.5);
@@ -221,16 +221,16 @@ protected:
     }
 
     inline void fromIndex(const index_t &i,
-                          muse_mcl_math_2d::Point2D &p_w) const
+                          cslibs_math_2d::Point2d &p_w) const
     {
-        p_w = w_T_m_ * muse_mcl_math_2d::Point2D(i[0] * resolution_,
+        p_w = w_T_m_ * cslibs_math_2d::Point2d(i[0] * resolution_,
                                                   i[1] * resolution_);
     }
 
     inline void fromIndex(const const_line_iterator_t &it,
-                          muse_mcl_math_2d::Point2D &p_w) const
+                          cslibs_math_2d::Point2d &p_w) const
     {
-        p_w = w_T_m_ * muse_mcl_math_2d::Point2D(it.x() * resolution_,
+        p_w = w_T_m_ * cslibs_math_2d::Point2d(it.x() * resolution_,
                                                   it.y() * resolution_);
     }
 

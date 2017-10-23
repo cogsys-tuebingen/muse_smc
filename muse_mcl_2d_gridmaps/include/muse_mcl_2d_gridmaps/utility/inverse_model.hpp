@@ -1,7 +1,7 @@
 #ifndef UPDATE_MODEL_HPP
 #define UPDATE_MODEL_HPP
 
-#include <muse_mcl_2d_gridmaps/utility/log_odds.hpp>
+#include <cslibs_math/common/log_odds.hpp>
 
 namespace muse_mcl_2d_gridmaps {
 namespace utility {
@@ -11,25 +11,25 @@ public:
     inline InverseModel(const double prob_prior,
                         const double prob_free,
                         const double prob_occupied) :
-        l_prior_(LogOdds::to(prob_prior)),
-        l_free_(LogOdds::to(prob_free)),
-        l_occupied_(LogOdds::to(prob_occupied))
+        l_prior_(cslibs_math::common::LogOdds::to(prob_prior)),
+        l_free_(cslibs_math::common::LogOdds::to(prob_free)),
+        l_occupied_(cslibs_math::common::LogOdds::to(prob_occupied))
     {
     }
 
     inline double getProbPrior() const
     {
-        return LogOdds::from(l_prior_);
+        return cslibs_math::common::LogOdds::from(l_prior_);
     }
 
     inline double getProbFree() const
     {
-        return LogOdds::from(l_free_);
+        return cslibs_math::common::LogOdds::from(l_free_);
     }
 
     inline double getProbOccupied() const
     {
-        return LogOdds::from(l_occupied_);
+        return cslibs_math::common::LogOdds::from(l_occupied_);
     }
 
     inline double getLogOddsPrior() const

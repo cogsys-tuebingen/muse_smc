@@ -20,7 +20,7 @@ inline void from(const nav_msgs::OccupancyGrid &src,
     assert(threshold >= 0.0);
     const double exp_factor_hit = (0.5 * 1.0 / (sigma_hit * sigma_hit));
 
-    muse_mcl_math_2d::Pose2D origin(src.info.origin.position.x,
+    cslibs_math_2d::Pose2d origin(src.info.origin.position.x,
                                      src.info.origin.position.y,
                                      tf::getYaw(src.info.origin.orientation));
 

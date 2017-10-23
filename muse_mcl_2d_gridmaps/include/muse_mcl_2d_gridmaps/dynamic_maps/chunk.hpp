@@ -12,7 +12,6 @@ class Chunk {
 public:
     using index_t   = std::array<int, 2>;
     using mutex_t   = std::mutex;
-    using lock_t    = std::unique_lock<mutex_t>;
 
     Chunk() = default;
     virtual ~Chunk() = default;
@@ -71,9 +70,14 @@ public:
     {
     }
 
-    inline lock_t lock() const
+    inline void lock() const
     {
-        return std::move(lock_t(data_mutex_));
+        data_mutex_.lock();
+    }
+
+    inline void unlock() const
+    {
+        data_mutex_.unlock();
     }
 
 private:

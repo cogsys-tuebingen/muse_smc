@@ -30,8 +30,8 @@ void LikelihoodFieldModelVector::apply(const data_t::ConstPtr          &data,
     const muse_mcl_2d_laser::LaserScan2D::rays_t &laser_rays = laser_data.getRays();
 
     /// laser to base transform
-    muse_mcl_math_2d::Transform2D b_T_l;
-    muse_mcl_math_2d::Transform2D m_T_w;
+    cslibs_math_2d::Transform2d b_T_l;
+    cslibs_math_2d::Transform2d m_T_w;
     if(!tf_->lookupTransform(robot_base_frame_,
                              laser_data.getFrame(),
                              ros::Time(laser_data.getTimeFrame().end.seconds()),
@@ -59,7 +59,7 @@ void LikelihoodFieldModelVector::apply(const data_t::ConstPtr          &data,
 
 
     for(auto it = set.begin(); it != end; ++it) {
-        const muse_mcl_math_2d::Pose2D m_T_l = m_T_w * it.state() * b_T_l; /// laser scanner pose in map coordinates
+        const cslibs_math_2d::Pose2d m_T_l = m_T_w * it.state() * b_T_l; /// laser scanner pose in map coordinates
         double p = 1.0;
 
         /// <--- vectormap specific
@@ -72,7 +72,7 @@ void LikelihoodFieldModelVector::apply(const data_t::ConstPtr          &data,
             if(!ray.valid())
                 continue;
 
-            const muse_mcl_math_2d::Pose2D ray_end_point = m_T_l * ray.point;
+            const cslibs_math_2d::Pose2d ray_end_point = m_T_l * ray.point;
 
             /// <--- vectormap specific
             const double ray_angle = m_T_l.yaw() + ray.angle; // ray angle in map coordinates

@@ -15,6 +15,7 @@ class StatePublisher : public muse_smc::SMCState<StateSpaceDescription2D>
 {
 public:
     using Ptr = std::shared_ptr<StatePublisher>;
+    using stamped_t = muse_smc::Stamped<cslibs_math_2d::Transform2d>;
 
     StatePublisher();
     virtual ~StatePublisher();
@@ -32,8 +33,8 @@ private:
     std::string                 odom_frame_;
     std::string                 base_frame_;
 
-    muse_mcl_math_2d::StampedTransform2D    latest_w_T_b_;
-    muse_mcl_math_2d::Covariance2D          latest_w_T_b_covariance_;
+    stamped_t                             latest_w_T_b_;
+    cslibs_math_2d::Covariance2d          latest_w_T_b_covariance_;
 
     void publishState(const typename sample_set_t::Ptr &sample_set);
 

@@ -5,12 +5,12 @@
 #include <cslibs_math/sampling/uniform.hpp>
 
 #include <muse_mcl_2d/sampling/uniform_2d.hpp>
-#include <cslibs_math_2d/convert.hpp>
+#include <cslibs_math_2d/conversion/tf.hpp>
 
 namespace muse_mcl_2d {
 using Metric              = muse_smc::state_space_samplers::Metric;
 using Radian              = muse_smc::state_space_samplers::Radian;
-using RandomPoseGenerator = muse_smc::state_space_samplers::Uniform<Metric, Metric, Radian>;
+using rng_t = muse_smc::state_space_samplers::Uniform<Metric, Metric, Radian>;
 
 class UniformAllMaps2D : public UniformSampling2D
 {
@@ -19,9 +19,9 @@ public:
     {
         const ros::Time   now   = ros::Time::now();
 
-        muse_mcl_math_2d::Point2D min(std::numeric_limits<double>::max(),
+        cslibs_math_2d::Point2d min(std::numeric_limits<double>::max(),
                           std::numeric_limits<double>::max());
-        muse_mcl_math_2d::Point2D max(std::numeric_limits<double>::lowest(),
+        cslibs_math_2d::Point2d max(std::numeric_limits<double>::lowest(),
                           std::numeric_limits<double>::lowest());
 
         const std::size_t map_provider_count = map_providers_.size();
@@ -35,11 +35,11 @@ public:
             }
             tf::Transform tf_map_T_w;
             if(tf_->lookupTransform(map->getFrame(), frame, now, tf_map_T_w, tf_timeout_)) {
-                muse_mcl_math_2d::Transform2D map_T_w = muse_mcl_math_2d::from(tf_map_T_w);
+                cslibs_math_2d::Transform2d map_T_w = cslibs_math_2d::conversion::from(tf_map_T_w);
                 maps_[i] = map;
                 maps_T_w_[i] =map_T_w;
 
-                muse_mcl_math_2d::Transform2D w_T_map = map_T_w.inverse();
+                cslibs_math_2d::Transform2d w_T_map = map_T_w.inverse();
                 min = min.min(w_T_map * map->getMin());
                 max = max.max(w_T_map * map->getMax());
             } else {
@@ -47,9 +47,9 @@ public:
             }
         }
 
-        rng_.reset(new RandomPoseGenerator({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}));
+        rng_.reset(new rng_t({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}));
         if(random_seed_ >= 0) {
-            rng_.reset(new RandomPoseGenerator({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}, 0));
+            rng_.reset(new rng_t({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}, 0));
         }
 
         return true;
@@ -112,9 +112,9 @@ public:
 protected:
     int random_seed_;
     std::vector<Map2D::ConstPtr>    maps_;
-    std::vector<muse_mcl_math_2d::Transform2D>  maps_T_w_;
+    std::vector<cslibs_math_2d::Transform2d>  maps_T_w_;
     std::vector<MapProvider2D::Ptr> map_providers_;
-    RandomPoseGenerator::Ptr        rng_;
+    rng_t::Ptr        rng_;
 
     virtual void doSetup(const std::map<std::string, MapProvider2D::Ptr> &map_providers,
                          ros::NodeHandle &nh) override

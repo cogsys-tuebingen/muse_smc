@@ -8,9 +8,9 @@
 #include <atomic>
 #include <condition_variable>
 
-#include <cslibs_math_2d/transform_2d.hpp>
+#include <cslibs_math_2d/types/transform.hpp>
 #include <muse_mcl_2d/tf/tf_provider.hpp>
-#include <cslibs_math_2d/convert.hpp>
+#include <cslibs_math_2d/conversion/tf.hpp>
 
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
@@ -30,6 +30,7 @@ namespace muse_mcl_2d {
 class TFPublisher {
 public:
     using Ptr = std::shared_ptr<TFPublisher>;
+    using stamped_t = muse_smc::Stamped<cslibs_math_2d::Transform2d>;
 
     /**
      * @brief TransformPublisherAnchored constructor.
@@ -49,7 +50,7 @@ public:
         timeout_(timeout),
         running_(false),
         stop_(false),
-        w_T_b_(muse_mcl_math_2d::Transform2D::identity(), muse_smc::Time(ros::Time::now().toNSec())),
+        w_T_b_(cslibs_math_2d::Transform2d::identity(), muse_smc::Time(ros::Time::now().toNSec())),
         wait_for_transform_(true),
         tf_rate_(rate)
     {
@@ -79,15 +80,15 @@ public:
             worker_thread_.join();
     }
 
-    inline void setTransform(const muse_mcl_math_2d::StampedTransform2D &w_t_b)
+    inline void setTransform(const stamped_t &w_t_b)
     {
         std::unique_lock<std::mutex> l(tf_mutex_);
         w_T_b_ = w_t_b;
 
-        muse_mcl_math_2d::Transform2D b_T_o = muse_mcl_math_2d::Transform2D::identity();
+        cslibs_math_2d::Transform2d b_T_o = cslibs_math_2d::Transform2d::identity();
         if(tf_listener_.lookupTransform(base_frame_, odom_frame_, ros::Time(w_T_b_.stamp().seconds()), b_T_o, timeout_)) {
-            muse_mcl_math_2d::Transform2D w_T_o = w_T_b_.data() * b_T_o;
-            w_T_o_ = tf::StampedTransform(muse_mcl_math_2d::from(w_T_o), ros::Time(w_T_b_.stamp().seconds()), world_frame_, odom_frame_);
+            cslibs_math_2d::Transform2d w_T_o = w_T_b_.data() * b_T_o;
+            w_T_o_ = tf::StampedTransform(cslibs_math_2d::conversion::from(w_T_o), ros::Time(w_T_b_.stamp().seconds()), world_frame_, odom_frame_);
 
             tf_time_of_transform_ = w_T_o_.stamp_;
         }
@@ -116,7 +117,7 @@ private:
     TFProvider               tf_listener_;
 
     tf::StampedTransform     w_T_o_;
-    muse_mcl_math_2d::StampedTransform2D w_T_b_;
+    stamped_t                w_T_b_;
     std::atomic_bool         wait_for_transform_;
     ros::Rate                tf_rate_;
     ros::Time                tf_time_of_transform_;

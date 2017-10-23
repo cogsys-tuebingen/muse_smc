@@ -2,15 +2,16 @@
 
 #include <ros/time.h>
 
-#include <cslibs_math/sampling/uniform.hpp>
-
 #include <muse_mcl_2d/sampling/uniform_2d.hpp>
-#include <cslibs_math_2d/convert.hpp>
+
+
+#include <cslibs_math/sampling/uniform.hpp>
+#include <cslibs_math_2d/conversion/tf.hpp>
 
 namespace muse_mcl_2d {
 using Metric              = muse_smc::state_space_samplers::Metric;
 using Radian              = muse_smc::state_space_samplers::Radian;
-using RandomPoseGenerator = muse_smc::state_space_samplers::Uniform<Metric, Metric, Radian>;
+using rng_t = muse_smc::state_space_samplers::Uniform<Metric, Metric, Radian>;
 
 class UniformPrimaryMap2D : public UniformSampling2D
 {
@@ -32,7 +33,7 @@ public:
             return false;
         }
 
-        w_T_primary_ = muse_mcl_math_2d::from(tf_w_T_primary);
+        w_T_primary_ = cslibs_math_2d::conversion::from(tf_w_T_primary);
 
         const std::size_t map_provider_count = map_providers_.size();
         for(std::size_t i = 0 ; i < map_provider_count ; ++i) {
@@ -44,7 +45,7 @@ public:
 
             tf::Transform tf_secondary_map_T_w;
             if(tf_->lookupTransform(map->getFrame(), frame, now, tf_secondary_map_T_w, tf_timeout_)) {
-                secondary_maps_T_w_[i] = muse_mcl_math_2d::from(tf_secondary_map_T_w);
+                secondary_maps_T_w_[i] = cslibs_math_2d::conversion::from(tf_secondary_map_T_w);
                 secondary_maps_[i] = map;
             } else {
                 return false;
@@ -54,11 +55,11 @@ public:
         /// to be axis-aligned, relative to the map origin
         /// but internal frames are already within calculation
 
-        muse_mcl_math_2d::Point2D min = primary_map_->getMin();
-        muse_mcl_math_2d::Point2D max = primary_map_->getMax();
-        rng_.reset(new RandomPoseGenerator({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}));
+        cslibs_math_2d::Point2d min = primary_map_->getMin();
+        cslibs_math_2d::Point2d max = primary_map_->getMax();
+        rng_.reset(new rng_t({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}));
         if(random_seed_ >= 0) {
-            rng_.reset(new RandomPoseGenerator({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}, random_seed_));
+            rng_.reset(new rng_t({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}, random_seed_));
         }
 
         return true;
@@ -115,7 +116,7 @@ public:
             sample.state.setFrom(rng_->get());
             valid = primary_map_->validate(sample.state);
             if(valid) {
-                muse_mcl_math_2d::Transform2D pose  = w_T_primary_ * sample.state;
+                cslibs_math_2d::Transform2d pose  = w_T_primary_ * sample.state;
                 for(std::size_t i = 0 ; i < secondary_maps_count ; ++i) {
                     valid &= secondary_maps_[i]->validate(secondary_maps_T_w_[i] * pose);
                 }
@@ -127,12 +128,12 @@ protected:
     std::vector<MapProvider2D::Ptr> map_providers_;
     int                             random_seed_;
 
-    RandomPoseGenerator::Ptr        rng_;
-    muse_mcl_math_2d::Transform2D               w_T_primary_;
+    rng_t::Ptr        rng_;
+    cslibs_math_2d::Transform2d               w_T_primary_;
     Map2D::ConstPtr                 primary_map_;
     MapProvider2D::Ptr              primary_map_provider_;
     std::vector<Map2D::ConstPtr>    secondary_maps_;
-    std::vector<muse_mcl_math_2d::Transform2D>  secondary_maps_T_w_;
+    std::vector<cslibs_math_2d::Transform2d>  secondary_maps_T_w_;
 
 
     virtual void doSetup(const std::map<std::string, MapProvider2D::Ptr> &map_providers,

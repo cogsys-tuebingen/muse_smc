@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include <cslibs_math_2d/transform_2d.hpp>
-#include <cslibs_math_2d/point_2d.hpp>
+#include <cslibs_math_2d/types/transform.hpp>
+#include <cslibs_math_2d/types/point.hpp>
 
 #include <cslibs_math/random/random.hpp>
 #include <cslibs_math/common/angle.hpp>

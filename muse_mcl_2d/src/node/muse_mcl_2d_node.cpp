@@ -1,6 +1,6 @@
 #include "muse_mcl_2d_node.h"
 
-#include <cslibs_math_2d/convert.hpp>
+#include <cslibs_math_2d/conversion/tf.hpp>
 #include <cslibs_math/common/angle.hpp>
 
 using namespace muse_mcl_2d;
@@ -63,10 +63,10 @@ bool MuseMCL2DNode::requestPoseInitialization(muse_mcl_2d::PoseInitialization::R
     auto convert_pose = [&req]() {
         tf::Pose p;
         tf::poseMsgToTF(req.pose.pose, p);
-        return muse_mcl_math_2d::from(p);
+        return cslibs_math_2d::conversion::from(p);
     };
     auto convert_covariance = [&req]() {
-        muse_mcl_math_2d::Covariance2D cov;
+        cslibs_math_2d::Covariance2d cov;
         for(std::size_t i = 0 ; i < 2 ; ++i) {
             for(std::size_t j = 0 ; j < 2 ; ++j) {
                 cov(i,j) = req.pose.covariance[6*i+j];
@@ -85,10 +85,10 @@ void MuseMCL2DNode::poseInitialization(const geometry_msgs::PoseWithCovarianceSt
     auto convert_pose = [&msg]() {
         tf::Pose p;
         tf::poseMsgToTF(msg->pose.pose, p);
-        return muse_mcl_math_2d::from(p);
+        return cslibs_math_2d::conversion::from(p);
     };
     auto convert_covariance = [&msg]() {
-        muse_mcl_math_2d::Covariance2D cov;
+        cslibs_math_2d::Covariance2d cov;
         for(std::size_t i = 0 ; i < 2 ; ++i) {
             for(std::size_t j = 0 ; j < 2 ; ++j) {
                 cov(i,j) = msg->pose.covariance[6*i+j];
@@ -278,14 +278,14 @@ void MuseMCL2DNode::checkPoseInitialization()
             ROS_ERROR_STREAM("The initialization pose is expected to have 3 values [x, y, yaw]");
             return;
         }
-        muse_mcl_math_2d::Pose2D pose = muse_mcl_math_2d::Pose2D(p_v[0], p_v[1], p_v[2]);
+        cslibs_math_2d::Pose2d pose = cslibs_math_2d::Pose2d(p_v[0], p_v[1], p_v[2]);
 
         if(c_v.size() != 9) {
             ROS_ERROR_STREAM("The initliazation covariance is expected to have 9 values.");
             return;
         }
 
-        muse_mcl_math_2d::Covariance2D covariance;
+        cslibs_math_2d::Covariance2d covariance;
         auto get = [&c_v](std::size_t r, std::size_t c, std::size_t step)
         {
             return c_v[r * step + c];

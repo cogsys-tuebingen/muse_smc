@@ -31,8 +31,8 @@ void LikelihoodFieldModelPCLog::apply(const data_t::ConstPtr       &data,
     const muse_mcl_2d_laser::LaserScan2D::rays_t  &laser_rays = laser_data.getRays();
 
     /// laser to base transform
-    muse_mcl_math_2d::Transform2D b_T_l;
-    muse_mcl_math_2d::Transform2D m_T_w;
+    cslibs_math_2d::Transform2d b_T_l;
+    cslibs_math_2d::Transform2d m_T_w;
     if(!tf_->lookupTransform(robot_base_frame_,
                              laser_data.getFrame(),
                              ros::Time(laser_data.getTimeFrame().end.seconds()),
@@ -55,11 +55,11 @@ void LikelihoodFieldModelPCLog::apply(const data_t::ConstPtr       &data,
     const double p_rand         = z_rand_ * 1.0 / range_max;
 
     for(auto it = set.begin() ; it != end ; ++it) {
-        const muse_mcl_math_2d::Pose2D m_T_l = m_T_w * it.state() * b_T_l; /// laser scanner pose in map coordinates
+        const cslibs_math_2d::Pose2d m_T_l = m_T_w * it.state() * b_T_l; /// laser scanner pose in map coordinates
         double p = 1.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
-            const muse_mcl_math_2d::Point2D ray_end_point = m_T_l * ray.point;
+            const cslibs_math_2d::Point2d ray_end_point = m_T_l * ray.point;
             const double pz = ray.valid() ? z_hit_ * gridmap.at(ray_end_point) + p_rand : 1.0;
             p *= pz;
         }
@@ -69,11 +69,11 @@ void LikelihoodFieldModelPCLog::apply(const data_t::ConstPtr       &data,
     auto it_ps = ps_.begin();
     double log_max = std::numeric_limits<double>::lowest();
     for(auto it = set.const_begin() ; it != const_end ; ++it, ++it_ps) {
-        const muse_mcl_math_2d::Pose2D m_T_l = m_T_w * it->state * b_T_l; /// laser scanner pose in map coordinates
+        const cslibs_math_2d::Pose2d m_T_l = m_T_w * it->state * b_T_l; /// laser scanner pose in map coordinates
         double p = 0.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
-            const muse_mcl_math_2d::Point2D ray_end_point = m_T_l * ray.point;
+            const cslibs_math_2d::Point2d ray_end_point = m_T_l * ray.point;
             const double pz = ray.valid() ? z_hit_ * gridmap.at(ray_end_point) + p_rand : 1.0;
             p += std::log(pz);
         }

@@ -4,8 +4,8 @@
 #include <cslibs_math/random/random.hpp>
 #include <iomanip>
 
-#include <cslibs_math_2d/transform_2d.hpp>
-#include <cslibs_math_2d/vector_2d.hpp>
+#include <cslibs_math_2d/types/transform.hpp>
+#include <cslibs_math_2d/types/vector.hpp>
 #include <muse_smc/utility/stamped.hpp>
 #include <cslibs_math/common/angle.hpp>
 
@@ -29,7 +29,7 @@ public:
     {
     }
 
-    inline Transform2DLegacy(const muse_mcl_math_2d::Vector2D &translation) :
+    inline Transform2DLegacy(const cslibs_math_2d::Vector2d &translation) :
         translation_(translation),
         yaw_(0.0),
         sin_(0.0),
@@ -47,7 +47,7 @@ public:
     {
     }
 
-    inline Transform2DLegacy(const muse_mcl_math_2d::Vector2D &translation,
+    inline Transform2DLegacy(const cslibs_math_2d::Vector2d &translation,
                        const double yaw) :
         translation_(translation),
         yaw_(yaw),
@@ -72,9 +72,9 @@ public:
     {
     }
 
-    inline muse_mcl_math_2d::Vector2D operator * (const muse_mcl_math_2d::Vector2D &v) const
+    inline cslibs_math_2d::Vector2d operator * (const cslibs_math_2d::Vector2d &v) const
     {
-        return muse_mcl_math_2d::Vector2D(cos_ * v.x() - sin_ * v.y() + translation_.x(),
+        return cslibs_math_2d::Vector2d(cos_ * v.x() - sin_ * v.y() + translation_.x(),
                         sin_ * v.x() + cos_ * v.y() + translation_.y());
 
     }
@@ -152,12 +152,12 @@ public:
         return translation_.y();
     }
 
-    inline muse_mcl_math_2d::Vector2D & translation()
+    inline cslibs_math_2d::Vector2d & translation()
     {
         return translation_;
     }
 
-    inline muse_mcl_math_2d::Vector2D const & translation() const
+    inline cslibs_math_2d::Vector2d const & translation() const
     {
         return translation_;
     }
@@ -222,13 +222,13 @@ public:
         }
 
         const  double ratio_inverse = 1.0 - ratio;
-        const  muse_mcl_math_2d::Vector2D translation = translation_ * ratio_inverse + other.translation_ * ratio;
+        const  cslibs_math_2d::Vector2d translation = translation_ * ratio_inverse + other.translation_ * ratio;
         const  double   yaw = cslibs_math::common::angle::normalize(yaw_ * ratio_inverse + other.yaw_ * ratio);
         return Transform2DLegacy(translation, yaw);
     }
 
 private:
-    muse_mcl_math_2d::Vector2D translation_;
+    cslibs_math_2d::Vector2d translation_;
     double   yaw_;
     double   sin_;
     double   cos_;
@@ -253,7 +253,7 @@ void constructors()
     muse_smc::Time start = muse_smc::Time::now();
     double yaw = 0.0;
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
-        muse_mcl_math_2d::Transform2D t;
+        cslibs_math_2d::Transform2d t;
         yaw = t.yaw();
     }
     std::cout << "empty:" << "\n";
@@ -261,16 +261,16 @@ void constructors()
 
     start = muse_smc::Time::now();
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
-        muse_mcl_math_2d::Transform2D t(i, i);
+        cslibs_math_2d::Transform2d t(i, i);
         yaw = t.yaw();
     }
     std::cout << "x y:" << "\n";
     std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
 
     start = muse_smc::Time::now();
-    muse_mcl_math_2d::Vector2D v(rng.get(), rng.get());
+    cslibs_math_2d::Vector2d v(rng.get(), rng.get());
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
-        muse_mcl_math_2d::Transform2D t(v);
+        cslibs_math_2d::Transform2d t(v);
         yaw = t.yaw();
         v.x() += i;
     }
@@ -279,7 +279,7 @@ void constructors()
 
     start = muse_smc::Time::now();
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
-        muse_mcl_math_2d::Transform2D t(i,i,i);
+        cslibs_math_2d::Transform2d t(i,i,i);
         yaw = t.yaw();
     }
     std::cout << "x y yaw:" << "\n";
@@ -287,16 +287,16 @@ void constructors()
 
     start = muse_smc::Time::now();
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
-        muse_mcl_math_2d::Transform2D t(v,i);
+        cslibs_math_2d::Transform2d t(v,i);
         yaw = t.yaw();
     }
     std::cout << "v yaw:" << "\n";
     std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
 
     start = muse_smc::Time::now();
-    muse_mcl_math_2d::Transform2D t(rng.get(), rng.get());
+    cslibs_math_2d::Transform2d t(rng.get(), rng.get());
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
-        muse_mcl_math_2d::Transform2D t_(t);
+        cslibs_math_2d::Transform2d t_(t);
         yaw = t_.yaw();
     }
     std::cout << "t:" << "\n";
@@ -312,8 +312,8 @@ void multiplyVector()
 
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
         muse_smc::Time start = muse_smc::Time::now();
-        muse_mcl_math_2d::Transform2D t(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
-        muse_mcl_math_2d::Vector2D v(rng.get(), rng.get());
+        cslibs_math_2d::Transform2d t(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
+        cslibs_math_2d::Vector2d v(rng.get(), rng.get());
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             v = t * v;
         }
@@ -321,7 +321,7 @@ void multiplyVector()
 
         start = muse_smc::Time::now();
         muse_mcl_2d::Transform2DLegacy tl(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
-        muse_mcl_math_2d::Vector2D tv(rng.get(), rng.get());
+        cslibs_math_2d::Vector2d tv(rng.get(), rng.get());
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             tv = tl * tv;
         }
@@ -352,13 +352,13 @@ void multiplyTransform()
     double mean_ms_tl= 0.0;
     double mean_ms_tf= 0.0;
 
-    muse_mcl_math_2d::Transform2D t;
+    cslibs_math_2d::Transform2d t;
     muse_mcl_2d::Transform2DLegacy tl;
     tf::Transform tf;
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
         muse_smc::Time start = muse_smc::Time::now();
-        muse_mcl_math_2d::Transform2D ta(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
-        muse_mcl_math_2d::Transform2D tb(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
+        cslibs_math_2d::Transform2d ta(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
+        cslibs_math_2d::Transform2d tb(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             tb = ta * tb;
         }
@@ -401,13 +401,13 @@ void multiplyAssignTransform()
     double mean_ms_tl= 0.0;
     double mean_ms_tf= 0.0;
 
-    muse_mcl_math_2d::Transform2D t;
+    cslibs_math_2d::Transform2d t;
     muse_mcl_2d::Transform2DLegacy tl;
     tf::Transform tf;
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
         muse_smc::Time start = muse_smc::Time::now();
-        muse_mcl_math_2d::Transform2D ta(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
-        muse_mcl_math_2d::Transform2D tb(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
+        cslibs_math_2d::Transform2d ta(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
+        cslibs_math_2d::Transform2d tb(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             tb *= ta;
         }
@@ -450,13 +450,13 @@ void assign()
     double mean_ms_tl= 0.0;
     double mean_ms_tf= 0.0;
 
-    muse_mcl_math_2d::Transform2D t;
+    cslibs_math_2d::Transform2d t;
     muse_mcl_2d::Transform2DLegacy tl;
     tf::Transform tf;
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
         muse_smc::Time start = muse_smc::Time::now();
-        muse_mcl_math_2d::Transform2D ta(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
-        muse_mcl_math_2d::Transform2D tb(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
+        cslibs_math_2d::Transform2d ta(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
+        cslibs_math_2d::Transform2d tb(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             tb = ta;
         }
@@ -499,12 +499,12 @@ void inverse()
     double mean_ms_tl= 0.0;
     double mean_ms_tf= 0.0;
 
-    muse_mcl_math_2d::Transform2D t;
+    cslibs_math_2d::Transform2d t;
     muse_mcl_2d::Transform2DLegacy tl;
     tf::Transform tf;
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
         muse_smc::Time start = muse_smc::Time::now();
-        muse_mcl_math_2d::Transform2D ta(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
+        cslibs_math_2d::Transform2d ta(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             t = ta.inverse() * t;
         }
@@ -542,7 +542,7 @@ void length()
 
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
         muse_smc::Time start = muse_smc::Time::now();
-        muse_mcl_math_2d::Vector2D tv(rng.get(), rng.get());
+        cslibs_math_2d::Vector2d tv(rng.get(), rng.get());
         double length = 0.0;
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             length = tv.length();

@@ -12,6 +12,8 @@ namespace muse_mcl_2d_odometry {
 class OdometryProviderTF2D : public muse_mcl_2d::DataProvider2D
 {
 public:
+    using stamped_t = muse_smc::Stamped<cslibs_math_2d::Transform2d>;
+
     OdometryProviderTF2D();
     virtual ~OdometryProviderTF2D();
 
@@ -20,7 +22,7 @@ protected:
     std::string                           odom_frame_;
     std::string                           base_frame_;
 
-    muse_mcl_math_2d::StampedTransform2D o_T_b1_;
+    stamped_t                             o_T_b1_;
     bool                                  initialized_;
     ros::Rate                             rate_;
     ros::Duration                         timeout_;

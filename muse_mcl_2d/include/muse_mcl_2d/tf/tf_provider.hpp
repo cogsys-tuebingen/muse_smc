@@ -3,7 +3,7 @@
 
 #include <muse_smc/utility/delegate.hpp>
 
-#include <cslibs_math_2d/transform_2d.hpp>
+#include <cslibs_math_2d/types/transform.hpp>
 #include <tf/transform_listener.h>
 #include <memory>
 #include <mutex>
@@ -11,7 +11,8 @@
 namespace muse_mcl_2d {
 class TFProvider {
 public:
-    typedef std::shared_ptr<TFProvider> Ptr;
+    using Ptr = std::shared_ptr<TFProvider>;
+    using stamped_t = muse_smc::Stamped<cslibs_math_2d::Transform2d>;
 
     inline TFProvider()
     {
@@ -24,7 +25,7 @@ public:
     inline bool lookupTransform(const std::string    &target_frame,
                                 const std::string    &source_frame,
                                 const ros::Time      &time,
-                                muse_mcl_math_2d::StampedTransform2D   &transform)
+                                stamped_t            &transform)
     {
         tf::Transform tf_transform;
         if(lookupTransform(target_frame, source_frame,time, tf_transform)) {
@@ -38,7 +39,7 @@ public:
     inline bool lookupTransform(const std::string           &target_frame,
                                 const std::string           &source_frame,
                                 const ros::Time             &time,
-                                muse_mcl_math_2d::StampedTransform2D    &transform,
+                                stamped_t    &transform,
                                 const ros::Duration         &timeout)
     {
         tf::Transform tf_transform;
@@ -58,7 +59,7 @@ public:
     inline bool lookupTransform(const std::string    &target_frame,
                                 const std::string    &source_frame,
                                 const ros::Time      &time,
-                                muse_mcl_math_2d::Transform2D    &transform)
+                                cslibs_math_2d::Transform2d    &transform)
     {
         tf::Transform tf_transform;
         if(lookupTransform(target_frame, source_frame, time, tf_transform)) {
@@ -71,7 +72,7 @@ public:
     inline bool lookupTransform(const std::string    &target_frame,
                                 const std::string    &source_frame,
                                 const ros::Time      &time,
-                                muse_mcl_math_2d::Transform2D    &transform,
+                                cslibs_math_2d::Transform2d    &transform,
                                 const ros::Duration  &timeout)
     {
         tf::Transform tf_transform;
@@ -176,7 +177,7 @@ protected:
     std::mutex mutex_;
     tf::TransformListener tf_;
 
-    inline void convert(const tf::Transform &src, muse_mcl_math_2d::Transform2D &dst)
+    inline void convert(const tf::Transform &src, cslibs_math_2d::Transform2d &dst)
     {
         const tf::Vector3 &origin = src.getOrigin();
         const tf::Quaternion &rotation = src.getRotation();

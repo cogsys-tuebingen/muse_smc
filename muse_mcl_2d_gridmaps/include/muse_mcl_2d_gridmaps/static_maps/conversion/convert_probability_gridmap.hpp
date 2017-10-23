@@ -2,7 +2,8 @@
 #define CONVERT_PROBABILITY_GRIDMAP_HPP
 
 #include <muse_mcl_2d_gridmaps/static_maps/probability_gridmap.h>
-#include <muse_mcl_2d_gridmaps/utility/log_odds.hpp>
+
+#include <cslibs_math/common/log_odds.hpp>
 
 #include <nav_msgs/OccupancyGrid.h>
 #include <tf/tf.h>
@@ -13,7 +14,7 @@ namespace conversion {
 inline void from(const nav_msgs::OccupancyGrid &src,
                  ProbabilityGridMap::Ptr &dst)
 {
-    muse_mcl_math_2d::Pose2D origin(src.info.origin.position.x,
+    cslibs_math_2d::Pose2d origin(src.info.origin.position.x,
                                      src.info.origin.position.y,
                                      tf::getYaw(src.info.origin.orientation));
 
@@ -59,7 +60,7 @@ struct LogOdds {
         }
         std::for_each(dst->getData().begin(),
                       dst->getData().end(),
-                      [](const double p){return utility::LogOdds::to(p);});
+                      [](const double p){return cslibs_math::common::LogOdds::to(p);});
 
     }
     static inline void from(ProbabilityGridMap::Ptr &src,
@@ -70,7 +71,7 @@ struct LogOdds {
         }
         std::for_each(dst->getData().begin(),
                       dst->getData().end(),
-                      [](const double l){return utility::LogOdds::from(l);});
+                      [](const double l){return cslibs_math::common::LogOdds::from(l);});
 
     }
 };

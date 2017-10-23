@@ -30,6 +30,7 @@ public:
                               const std::shared_ptr<storage_t> &storage) :
         done_(false),
         storage_(storage),
+        active_chunk_(nullptr),
         chunk_size_(chunk_size),
         start_(start),
         end_(end),
@@ -58,8 +59,7 @@ public:
     inline virtual ~Bresenham()
     {
         if(active_chunk_) {
-            active_chunk_lock_.unlock();
-            active_chunk_ = nullptr;
+            active_chunk_->unlock();
         }
     }
 
@@ -77,7 +77,7 @@ public:
     {
         if(done()) {
             if(active_chunk_) {
-                active_chunk_lock_.unlock();
+                active_chunk_->unlock();
                 active_chunk_ = nullptr;
             }
             return *this;
@@ -126,17 +126,22 @@ private:
     inline void updateChunk()
     {
         if(steep_) {
-            chunk_index_[0] = min_chunk_index_[0] + static_cast<int>(index_[1]) / chunk_size_;
-            chunk_index_[1] = min_chunk_index_[1] + static_cast<int>(index_[0]) / chunk_size_;
+            chunk_index_[0] = min_chunk_index_[0] + index_[1] / chunk_size_;
+            chunk_index_[1] = min_chunk_index_[1] + index_[0] / chunk_size_;
         } else {
-            chunk_index_[0] = min_chunk_index_[0] + static_cast<int>(index_[0]) / chunk_size_;
-            chunk_index_[1] = min_chunk_index_[1] + static_cast<int>(index_[1]) / chunk_size_;
+            chunk_index_[0] = min_chunk_index_[0] + index_[0] / chunk_size_;
+            chunk_index_[1] = min_chunk_index_[1] + index_[1] / chunk_size_;
         }
+
+        if(active_chunk_) {
+            active_chunk_->unlock();
+        }
+
         active_chunk_ = storage_->get(chunk_index_);
         if(active_chunk_ == nullptr) {
             active_chunk_ = &(storage_->insert(chunk_index_, chunk_t(chunk_size_, default_value_)));
         }
-        active_chunk_lock_ = active_chunk_->lock();
+        active_chunk_->lock();
     }
 
     inline void updateLocalIndex()
@@ -148,14 +153,13 @@ private:
     inline bool localIndexInvalid()
     {
         return local_index_[0] < 0 || local_index_[0] >= chunk_size_ ||
-                local_index_[1] < 0 || local_index_[1] >= chunk_size_;
+               local_index_[1] < 0 || local_index_[1] >= chunk_size_;
     }
 
 
     bool                        done_;
     std::shared_ptr<storage_t>  storage_;
     chunk_t                    *active_chunk_;
-    typename chunk_t::lock_t    active_chunk_lock_;
     int                         chunk_size_;
 
     index_t      start_;

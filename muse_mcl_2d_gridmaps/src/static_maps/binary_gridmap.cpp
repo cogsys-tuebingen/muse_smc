@@ -20,8 +20,8 @@ BinaryGridMap::BinaryGridMap(const pose_t &origin,
 {
 }
 
-double BinaryGridMap::getRange(const muse_mcl_math_2d::Point2D &from,
-                               muse_mcl_math_2d::Point2D &to) const
+double BinaryGridMap::getRange(const cslibs_math_2d::Point2d &from,
+                               cslibs_math_2d::Point2d &to) const
 {
     const_line_iterator_t it = getConstLineIterator(from, to);
     while(it.iterate()) {
@@ -35,8 +35,8 @@ double BinaryGridMap::getRange(const muse_mcl_math_2d::Point2D &from,
     return  to.distance(from);
 }
 
-double BinaryGridMap::getRange2(const muse_mcl_math_2d::Point2D &from,
-                                muse_mcl_math_2d::Point2D &to) const
+double BinaryGridMap::getRange2(const cslibs_math_2d::Point2d &from,
+                                cslibs_math_2d::Point2d &to) const
 {
     const_line_iterator_t it = getConstLineIterator(from, to);
     while(it.iterate()) {
@@ -51,7 +51,7 @@ double BinaryGridMap::getRange2(const muse_mcl_math_2d::Point2D &from,
 }
 
 
-bool BinaryGridMap::validate(const muse_mcl_math_2d::Pose2D &p) const
+bool BinaryGridMap::validate(const cslibs_math_2d::Pose2d &p) const
 {
     index_t index;
     if(toIndex(p.translation(), index))

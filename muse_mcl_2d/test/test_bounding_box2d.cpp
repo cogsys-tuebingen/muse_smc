@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <cslibs_math_2dbox_2d.hpp>
-#include <cslibs_math_2d/transform_2d.hpp>
+#include <cslibs_math_2d/types/transform.hpp>
 #include <cslibs_math/random/random.hpp>
 
 using namespace muse_mcl_2d;
@@ -47,11 +47,11 @@ TEST(Test_muse_mcl_2d, testBoxIntersects)
     auto generate_outer = [&rng_out, &rng_out_sign]()
     {
         const double sign = rng_out_sign.get() > 0.5 ? 1. : -1.;
-        return muse_mcl_math_2d::Point2D(rng_out.get(), rng_out.get()) * sign;
+        return cslibs_math_2d::Point2d(rng_out.get(), rng_out.get()) * sign;
     };
     auto generate_inner = [&rng_in] ()
     {
-        return muse_mcl_math_2d::Point2D(rng_in.get(), rng_in.get());
+        return cslibs_math_2d::Point2d(rng_in.get(), rng_in.get());
     };
 
 
@@ -62,13 +62,13 @@ TEST(Test_muse_mcl_2d, testBoxIntersects)
 
     rng_out.set(10.0, 20.0);
     for(std::size_t i = 0 ; i < 1000 ; ++i) {
-        const auto start = muse_mcl_math_2d::Point2D(rng_out.get(), rng_out.get());
-        const auto end   = muse_mcl_math_2d::Point2D(rng_out.get(), rng_out.get());
+        const auto start = cslibs_math_2d::Point2d(rng_out.get(), rng_out.get());
+        const auto end   = cslibs_math_2d::Point2d(rng_out.get(), rng_out.get());
         const double angle_incr = M_PI / 18.0;
         double angle = 0.0;
 
         for(std::size_t i = 0 ; i < 36 ; ++i, angle+=angle_incr) {
-            muse_mcl_math_2d::Transform2D rot(angle);
+            cslibs_math_2d::Transform2d rot(angle);
             EXPECT_FALSE(bb.intersects({rot * start, rot * end}));
         }
     }

@@ -7,10 +7,11 @@ using namespace muse_mcl_2d_mapping;
 /// have a look http://en.cppreference.com/w/cpp/thread/condition_variable
 
 OccupancyGridMapper::OccupancyGridMapper(const muse_mcl_2d_gridmaps::utility::InverseModel &inverse_model,
-                                         const double resolution,
-                                         const double chunk_resolution,
-                                         const std::string &frame_id) :
+                                         const double                                       resolution,
+                                         const double                                       chunk_resolution,
+                                         const std::string                                 &frame_id) :
     stop_(false),
+    request_map_(false),
     inverse_model_(inverse_model),
     resolution_(resolution),
     chunk_resolution_(chunk_resolution),
@@ -33,7 +34,6 @@ OccupancyGridMapper::~OccupancyGridMapper()
 
 void OccupancyGridMapper::insert(const Pointcloud2D::Ptr &points)
 {
-    ROS_INFO_STREAM("Inserted points!");
     q_.emplace(points);
     notify_event_.notify_one();
 }
@@ -46,6 +46,7 @@ OccupancyGridMapper::static_map_t::Ptr OccupancyGridMapper::get()
     lock_t notify_map_lock(notify_map_mutex_);
     notify_event_.notify_one();
     notify_map_.wait(notify_map_lock);
+    ROS_INFO_STREAM("Got something!");
     return static_map_;
 }
 
@@ -60,6 +61,7 @@ void OccupancyGridMapper::loop()
             if(stop_)
                 break;
             if(request_map_) {
+                ROS_ERROR_STREAM("Process request #1!");
                 buildMap();
                 request_map_ = false;
             }
@@ -67,6 +69,7 @@ void OccupancyGridMapper::loop()
             process(e);
         }
         if(request_map_) {
+            ROS_ERROR_STREAM("Process request #2!");
             buildMap();
             request_map_ = false;
         }
@@ -77,7 +80,7 @@ void OccupancyGridMapper::process(const Pointcloud2D::Ptr &points)
 {
     ROS_ERROR_STREAM("Processing");
     if(!map_) {
-        const muse_mcl_math_2d::Pose2D &p = points->getOrigin();
+        const cslibs_math_2d::Pose2d &p = points->getOrigin();
         map_.reset(new dynamic_map_t(p,
                                      resolution_,
                                      chunk_resolution_,
@@ -119,7 +122,6 @@ void OccupancyGridMapper::buildMap()
             for(int j = min_chunk_index[0] ; j < max_chunk_index[0] ; ++j) {
                 const dynamic_map_t::chunk_t *chunk = map_->getChunk({j,i});
                 if(chunk != nullptr) {
-                    auto l = chunk->lock();
                     const int cx = (j - min_chunk_index[0]) * chunk_step;
                     const int cy = (i - min_chunk_index[1]) * chunk_step;
 

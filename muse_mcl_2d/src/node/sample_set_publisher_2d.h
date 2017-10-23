@@ -32,11 +32,11 @@ public:
     bool start();
     bool end();
 
-    void set(const sample_vector_t       &sample_vector,
-             const double                 weight_maximum,
-             const muse_mcl_math_2d::Pose2D          &mean,
-             const muse_mcl_math_2d::Covariance2D    &covariance,
-             const time_t                &stamp);
+    void set(const sample_vector_t                   &sample_vector,
+             const double                             weight_maximum,
+             const cslibs_math_2d::Pose2d          &mean,
+             const cslibs_math_2d::Covariance2d    &covariance,
+             const time_t                            &stamp);
 
 private:
     std::atomic_bool                    running_;
@@ -48,8 +48,8 @@ private:
     std::mutex                          data_mutex_;
     sample_vector_t::Ptr                sample_;
     double                              maximum_weight_;
-    muse_mcl_math_2d::Pose2D                        mean_;
-    muse_mcl_math_2d::Covariance2D                  covariance_;
+    cslibs_math_2d::Pose2d            mean_;
+    cslibs_math_2d::Covariance2d      covariance_;
     time_t                              stamp_;
 
     ros::Publisher                      pub_markers_;

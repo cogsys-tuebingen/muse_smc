@@ -17,16 +17,16 @@ public:
     {
     }
 
-    virtual muse_mcl_math_2d::Point2D getMin() const override
+    virtual cslibs_math_2d::Point2d getMin() const override
     {
         cslibs_vectormaps::VectorMap::Point p = vector_map_->minCorner();
-        return muse_mcl_math_2d::Point2D(p.x(), p.y());
+        return cslibs_math_2d::Point2d(p.x(), p.y());
     }
 
-    virtual muse_mcl_math_2d::Point2D getMax() const override
+    virtual cslibs_math_2d::Point2d getMax() const override
     {
         cslibs_vectormaps::VectorMap::Point p = vector_map_->maxCorner();
-        return muse_mcl_math_2d::Point2D(p.x(), p.y());
+        return cslibs_math_2d::Point2d(p.x(), p.y());
     }
 
     cslibs_vectormaps::VectorMap &getMap() const
