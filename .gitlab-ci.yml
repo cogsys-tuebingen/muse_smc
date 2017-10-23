@@ -28,6 +28,7 @@ before_script:
   - cd cslibs_indexed_storage
   - git checkout devel
   - cd ..
+  - git clone gitlab@gitlab.cs.uni-tuebingen.de:hanten/cslibs_math.git cslibs_math
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_boost_geometry.git cslibs_boost_geometry
   - cd cslibs_boost_geometry
   - git checkout devel
