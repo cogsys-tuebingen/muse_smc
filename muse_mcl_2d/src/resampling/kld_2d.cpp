@@ -1,4 +1,4 @@
-#include <muse_smc/math/random.hpp>
+#include <cslibs_math/random/random.hpp>
 
 #include <muse_mcl_2d/resampling/resampling_2d.hpp>
 #include <muse_mcl_2d/samples/sample_density_2d.hpp>
@@ -30,7 +30,7 @@ protected:
         const double w_max = sample_set.getMaximumWeight();
         typename sample_set_t::sample_insertion_t i_p_t = sample_set.getInsertion();
 
-        muse_smc::math::random::Uniform<1> rng(0.0, 1.0);
+        cslibs_math::random::Uniform<1> rng(0.0, 1.0);
         double beta = 0.0;
         std::size_t index = (std::size_t(rng.get() * size)) % size;
 
@@ -71,7 +71,7 @@ protected:
         auto  i_p_t = sample_set.getInsertion();
         const std::size_t size = p_t_1.size();
 
-        muse_smc::math::random::Uniform<1> rng(0.0, 1.0);
+        cslibs_math::random::Uniform<1> rng(0.0, 1.0);
         double beta = 0.0;
         std::size_t index = (std::size_t(rng.get() * size)) % size;
 
@@ -92,7 +92,7 @@ protected:
 
         };
 
-        muse_smc::math::random::Uniform<1> rng_recovery(0.0, 1.0);
+        cslibs_math::random::Uniform<1> rng_recovery(0.0, 1.0);
         for(std::size_t i = 1 ; i <= sample_size_maximum ; ++i) {
             beta += 2 * w_max * rng.get();
             while (beta > p_t_1[index].weight) {

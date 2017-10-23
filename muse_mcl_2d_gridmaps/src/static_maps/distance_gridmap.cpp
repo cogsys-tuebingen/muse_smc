@@ -30,7 +30,7 @@ double DistanceGridMap::getMaximumDistance() const
     return maximum_distance_;
 }
 
-double DistanceGridMap::at(const muse_mcl_2d::math::Point2D &point) const
+double DistanceGridMap::at(const muse_mcl_math_2d::Point2D &point) const
 {
     index_t i;
     toIndex(point, i);

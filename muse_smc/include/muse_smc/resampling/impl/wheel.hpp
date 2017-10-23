@@ -3,7 +3,7 @@
 
 #include <muse_smc/samples/sample_set.hpp>
 #include <muse_smc/sampling/uniform.hpp>
-#include <muse_smc/math/random.hpp>
+#include <cslibs_math/random/random.hpp>
 
 namespace muse_smc {
 namespace impl {
@@ -26,7 +26,7 @@ public:
         const double w_max = sample_set.getMaximumWeight();
         typename sample_set_t::sample_insertion_t  i_p_t = sample_set.getInsertion();
 
-        math::random::Uniform<1> rng(0.0, 1.0);
+        cslibs_math::random::Uniform<1> rng(0.0, 1.0);
         double beta = 0.0;
         std::size_t index = (std::size_t(rng.get() * size)) % size;
 
@@ -56,8 +56,8 @@ public:
         typename sample_set_t::sample_insertion_t  i_p_t = sample_set.getInsertion();
         const std::size_t size = p_t_1.size();
 
-        math::random::Uniform<1> rng(0.0, 1.0);
-        math::random::Uniform<1> rng_recovery(0.0, 1.0);
+        cslibs_math::random::Uniform<1> rng(0.0, 1.0);
+        cslibs_math::random::Uniform<1> rng_recovery(0.0, 1.0);
         double beta = 0.0;
         std::size_t index = (std::size_t(rng.get() * size)) % size;
         sample_t sample;

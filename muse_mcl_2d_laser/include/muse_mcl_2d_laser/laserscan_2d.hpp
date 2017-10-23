@@ -1,7 +1,7 @@
 #ifndef LASER_SCAN_2D_HPP
 #define LASER_SCAN_2D_HPP
 
-#include <muse_mcl_2d/math/point_2d.hpp>
+#include <cslibs_math_2d/point_2d.hpp>
 #include <muse_smc/data/data.hpp>
 
 #include <limits>
@@ -10,7 +10,7 @@ namespace muse_mcl_2d_laser {
 class LaserScan2D : public muse_smc::Data
 {
 public:
-    using point_t = muse_mcl_2d::math::Point2D;
+    using point_t = muse_mcl_math_2d::Point2D;
     using time_frame_t = muse_smc::TimeFrame;
     using interval_t = std::array<double, 2>;
 

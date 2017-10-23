@@ -5,6 +5,7 @@ find_package(catkin REQUIRED COMPONENTS
   muse_mcl_2d
   muse_mcl_2d_laser
   cslibs_indexed_storage
+  cslibs_math_2d
   nav_msgs
   pluginlib
   roscpp
@@ -21,12 +22,12 @@ catkin_package(
             ${PROJECT_NAME}_dynamic_maps
             ${PROJECT_NAME}_providers
             ${PROJECT_NAME}_models
-  CATKIN_DEPENDS muse_mcl_2d cslibs_indexed_storage
+  CATKIN_DEPENDS muse_mcl_2d cslibs_indexed_storage cslibs_math_2d
 )
 
 include_directories(
   include
-  ${Eigen3_INCLUDE_DIRS}
+  ${Eigen3_INCLUDE_DIR}
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
 )

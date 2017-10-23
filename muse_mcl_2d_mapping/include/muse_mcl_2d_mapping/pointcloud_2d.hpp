@@ -2,15 +2,15 @@
 #define POINTCLOUD_2D_HPP
 
 #include <muse_smc/data/data.hpp>
-#include <muse_mcl_2d/math/point_2d.hpp>
-#include <muse_mcl_2d/math/pose_2d.hpp>
+#include <cslibs_math_2d/point_2d.hpp>
+#include <cslibs_math_2d/pose_2d.hpp>
 
 namespace muse_mcl_2d_mapping {
 class Pointcloud2D  : public muse_smc::Data
 {
 public:
     struct Point2D {
-        const muse_mcl_2d::math::Point2D point;
+        const muse_mcl_math_2d::Point2D point;
         const bool                       valid;
 
         inline Point2D() :
@@ -20,7 +20,7 @@ public:
         {
         }
 
-        inline Point2D(const muse_mcl_2d::math::Point2D &point,
+        inline Point2D(const muse_mcl_math_2d::Point2D &point,
                        const bool valid = true) :
                 point(point),
                 valid(valid)
@@ -47,7 +47,7 @@ public:
 
     Pointcloud2D(const std::string &frame,
                  const time_frame_t &time_frame,
-                 const muse_mcl_2d::math::Pose2D &origin) :
+                 const muse_mcl_math_2d::Pose2D &origin) :
         muse_smc::Data(frame, time_frame),
         origin_(origin),
         min_(std::numeric_limits<double>::max(),
@@ -59,7 +59,7 @@ public:
 
     Pointcloud2D(const std::string &frame,
                  const time_frame_t &time_frame,
-                 const muse_mcl_2d::math::Pose2D &origin,
+                 const muse_mcl_math_2d::Pose2D &origin,
                  const std::size_t size) :
         muse_smc::Data(frame, time_frame),
         points_(size),
@@ -72,7 +72,7 @@ public:
     }
 
 
-    inline void insert(const muse_mcl_2d::math::Point2D &pt)
+    inline void insert(const muse_mcl_math_2d::Point2D &pt)
     {
         min_ = min_.min(pt);
         max_ = max_.max(pt);
@@ -99,16 +99,16 @@ public:
         return points_;
     }
 
-    inline muse_mcl_2d::math::Pose2D const & getOrigin() const
+    inline muse_mcl_math_2d::Pose2D const & getOrigin() const
     {
         return origin_;
     }
 
 private:
     std::vector<Point2D>       points_;
-    muse_mcl_2d::math::Pose2D  origin_;
-    muse_mcl_2d::math::Point2D min_;
-    muse_mcl_2d::math::Point2D max_;
+    muse_mcl_math_2d::Pose2D  origin_;
+    muse_mcl_math_2d::Point2D min_;
+    muse_mcl_math_2d::Point2D max_;
 
 };
 }

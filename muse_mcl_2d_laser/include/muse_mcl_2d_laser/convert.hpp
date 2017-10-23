@@ -136,7 +136,7 @@ inline bool convertUndistorted(const sensor_msgs::LaserScanConstPtr &src,
             tf_listener->lookupTransform(fixed_frame, dst->getFrame(), stamp, start_T_stamp);
             tf::Transform end_T_stamp = end_T_start * start_T_stamp;
             tf::Point pt = end_T_stamp * tf::Point(std::cos(angle) * range, std::sin(angle) * range, 0.0);
-            dst->insert(muse_mcl_2d::math::Point2D(pt.x(), pt.y()));
+            dst->insert(muse_mcl_math_2d::Point2D(pt.x(), pt.y()));
         } else {
             dst->insertInvalid();
         }

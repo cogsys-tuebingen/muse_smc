@@ -21,7 +21,7 @@ class GridMap : public muse_mcl_2d::Map2D
 {
 public:
     using Ptr                   = std::shared_ptr<GridMap<T>>;
-    using pose_t                = muse_mcl_2d::math::Pose2D;
+    using pose_t                = muse_mcl_math_2d::Pose2D;
     using index_t               = std::array<int, 2>;
     using mutex_t               = std::mutex;
     using lock_t                = std::unique_lock<mutex_t>;
@@ -74,23 +74,23 @@ public:
         storage_->insert({0,0}, chunk_t(chunk_size_, default_value_));
     }
 
-    virtual inline muse_mcl_2d::math::Point2D getMin() const override
+    virtual inline muse_mcl_math_2d::Point2D getMin() const override
     {
-        muse_mcl_2d::math::Point2D p;
+        muse_mcl_math_2d::Point2D p;
         fromIndex({0,0},p);
         return p;
     }
 
-    virtual inline muse_mcl_2d::math::Point2D getMax() const override
+    virtual inline muse_mcl_math_2d::Point2D getMax() const override
     {
-        muse_mcl_2d::math::Point2D p;
+        muse_mcl_math_2d::Point2D p;
         fromIndex(getMaxIndex(),p);
         return p;
     }
 
-    virtual inline muse_mcl_2d::math::Pose2D getOrigin() const
+    virtual inline muse_mcl_math_2d::Pose2D getOrigin() const
     {
-        muse_mcl_2d::math::Transform2D origin_offset = w_T_m_;
+        muse_mcl_math_2d::Transform2D origin_offset = w_T_m_;
         origin_offset.tx() += min_chunk_index_[0] * chunk_size_ * resolution_;
         origin_offset.ty() += min_chunk_index_[1] * chunk_size_ * resolution_;
         return origin_offset;
@@ -131,7 +131,7 @@ public:
         return chunk->at(local_chunk_index);
     }
 
-    virtual inline T& at(const muse_mcl_2d::math::Point2D &point)
+    virtual inline T& at(const muse_mcl_math_2d::Point2D &point)
     {
         const index_t index             = toIndex(point);
         const index_t chunk_index       = toChunkIndex(index);
@@ -147,7 +147,7 @@ public:
         return chunk->at(local_chunk_index);
     }
 
-    virtual inline T at(const muse_mcl_2d::math::Point2D &point) const
+    virtual inline T at(const muse_mcl_math_2d::Point2D &point) const
     {
         const index_t index = toIndex(point);
         const index_t chunk_index = toChunkIndex(index);
@@ -178,8 +178,8 @@ public:
                                storage_);
     }
 
-    inline typename line_iterator_t::Ptr getLineIterator(const muse_mcl_2d::math::Point2D &start,
-                                                         const muse_mcl_2d::math::Point2D &end) const
+    inline typename line_iterator_t::Ptr getLineIterator(const muse_mcl_math_2d::Point2D &start,
+                                                         const muse_mcl_math_2d::Point2D &end) const
     {
 
         const index_t start_index = toIndex(start);
@@ -255,8 +255,8 @@ protected:
     const double                      resolution_inv_;
     const int                         chunk_size_;
     const T                           default_value_;
-    muse_mcl_2d::math::Transform2D    w_T_m_;
-    muse_mcl_2d::math::Transform2D    m_T_w_;
+    muse_mcl_math_2d::Transform2D    w_T_m_;
+    muse_mcl_math_2d::Transform2D    m_T_w_;
 
 
     mutable index_t                    min_chunk_index_;
@@ -312,16 +312,16 @@ protected:
         return {index[0] % chunk_size_, index[1] % chunk_size_};
     }
 
-    inline index_t toIndex(const muse_mcl_2d::math::Point2D &p_w) const
+    inline index_t toIndex(const muse_mcl_math_2d::Point2D &p_w) const
     {
-        const muse_mcl_2d::math::Point2D p_m = m_T_w_ * p_w;
+        const muse_mcl_math_2d::Point2D p_m = m_T_w_ * p_w;
         return {static_cast<int>(p_m.x() * resolution_inv_),
                 static_cast<int>(p_m.y() * resolution_inv_)};
     }
 
-    inline void fromIndex(const index_t &i,  muse_mcl_2d::math::Point2D &p_w) const
+    inline void fromIndex(const index_t &i,  muse_mcl_math_2d::Point2D &p_w) const
     {
-        p_w = w_T_m_ * muse_mcl_2d::math::Point2D(i[0] * resolution_ - min_chunk_index_[0] * chunk_size_,
+        p_w = w_T_m_ * muse_mcl_math_2d::Point2D(i[0] * resolution_ - min_chunk_index_[0] * chunk_size_,
                 i[1] * resolution_ - min_chunk_index_[1] * chunk_size_);
     }
 

@@ -20,13 +20,13 @@ public:
                   const std::string &frame_id,
                   const state_t default_value = FREE);
 
-    double getRange(const muse_mcl_2d::math::Point2D &from,
-                    muse_mcl_2d::math::Point2D &to) const;
+    double getRange(const muse_mcl_math_2d::Point2D &from,
+                    muse_mcl_math_2d::Point2D &to) const;
 
-    double getRange2(const muse_mcl_2d::math::Point2D &from,
-                     muse_mcl_2d::math::Point2D &to) const;
+    double getRange2(const muse_mcl_math_2d::Point2D &from,
+                     muse_mcl_math_2d::Point2D &to) const;
 
-    virtual bool validate(const muse_mcl_2d::math::Pose2D &p) const;
+    virtual bool validate(const muse_mcl_math_2d::Pose2D &p) const;
 
 };
 }

@@ -11,6 +11,7 @@
     <buildtool_depend>catkin</buildtool_depend>
     <build_depend>muse_mcl_2d</build_depend>
     <build_depend>muse_mcl_2d_laser</build_depend>
+    <build_depend>cslibs_math_2d</build_depend>
     <build_depend>nav_msgs</build_depend>
     <build_depend>pluginlib</build_depend>
     <build_depend>roscpp</build_depend>
@@ -20,6 +21,7 @@
 
     <run_depend>muse_mcl_2d</run_depend>
     <run_depend>muse_mcl_2d_laser</run_depend>
+    <run_depend>cslibs_math_2d</run_depend>
     <run_depend>nav_msgs</run_depend>
     <run_depend>pluginlib</run_depend>
     <run_depend>roscpp</run_depend>

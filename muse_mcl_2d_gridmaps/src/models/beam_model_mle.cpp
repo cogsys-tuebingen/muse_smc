@@ -31,8 +31,8 @@ void BeamModelMLE::apply(const data_t::ConstPtr          &data,
 
 
     /// laser to base transform
-    muse_mcl_2d::math::Transform2D b_T_l;
-    muse_mcl_2d::math::Transform2D m_T_w;
+    muse_mcl_math_2d::Transform2D b_T_l;
+    muse_mcl_math_2d::Transform2D m_T_w;
     if(!tf_->lookupTransform(robot_base_frame_,
                              laser_data.getFrame(),
                              ros::Time(laser_data.getTimeFrame().end.seconds()),
@@ -73,7 +73,7 @@ void BeamModelMLE::apply(const data_t::ConstPtr          &data,
         return ray_range < range_max ? p_rand : 0.0;
     };
     auto probability = [this, &gridmap, &p_hit, &p_short, &p_max, &p_random]
-            (const muse_mcl_2d_laser::LaserScan2D::Ray &ray, const muse_mcl_2d::math::Pose2D &m_T_l, double &map_range)
+            (const muse_mcl_2d_laser::LaserScan2D::Ray &ray, const muse_mcl_math_2d::Pose2D &m_T_l, double &map_range)
     {
 
         const double ray_range = ray.range;
@@ -87,7 +87,7 @@ void BeamModelMLE::apply(const data_t::ConstPtr          &data,
     std::vector<double> particle_weights;
 
     for(auto it = set.begin() ; it != end ; ++it) {
-        const muse_mcl_2d::math::Pose2D m_T_l = m_T_w * it.state() * b_T_l; /// laser scanner pose in map coordinates
+        const muse_mcl_math_2d::Pose2D m_T_l = m_T_w * it.state() * b_T_l; /// laser scanner pose in map coordinates
         double p = 1.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];

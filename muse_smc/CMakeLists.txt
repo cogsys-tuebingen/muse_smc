@@ -14,6 +14,7 @@ find_package(TinyXML REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   pluginlib
+  cslibs_math
 )
 
 catkin_package(
@@ -31,7 +32,7 @@ catkin_package(
 
 include_directories(
   include
-  ${Eigen3_INCLUDE_DIRS}
+  ${Eigen3_INCLUDE_DIR}
   ${catkin_INCLUDE_DIRS}
 )
 

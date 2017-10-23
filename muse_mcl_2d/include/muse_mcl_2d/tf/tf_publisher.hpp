@@ -8,9 +8,9 @@
 #include <atomic>
 #include <condition_variable>
 
-#include <muse_mcl_2d/math/transform_2d.hpp>
+#include <cslibs_math_2d/transform_2d.hpp>
 #include <muse_mcl_2d/tf/tf_provider.hpp>
-#include <muse_mcl_2d/math/convert.hpp>
+#include <cslibs_math_2d/convert.hpp>
 
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
@@ -49,7 +49,7 @@ public:
         timeout_(timeout),
         running_(false),
         stop_(false),
-        w_T_b_(math::Transform2D::identity(), muse_smc::Time(ros::Time::now().toNSec())),
+        w_T_b_(muse_mcl_math_2d::Transform2D::identity(), muse_smc::Time(ros::Time::now().toNSec())),
         wait_for_transform_(true),
         tf_rate_(rate)
     {
@@ -79,15 +79,15 @@ public:
             worker_thread_.join();
     }
 
-    inline void setTransform(const math::StampedTransform2D &w_t_b)
+    inline void setTransform(const muse_mcl_math_2d::StampedTransform2D &w_t_b)
     {
         std::unique_lock<std::mutex> l(tf_mutex_);
         w_T_b_ = w_t_b;
 
-        math::Transform2D b_T_o = math::Transform2D::identity();
+        muse_mcl_math_2d::Transform2D b_T_o = muse_mcl_math_2d::Transform2D::identity();
         if(tf_listener_.lookupTransform(base_frame_, odom_frame_, ros::Time(w_T_b_.stamp().seconds()), b_T_o, timeout_)) {
-            math::Transform2D w_T_o = w_T_b_.data() * b_T_o;
-            w_T_o_ = tf::StampedTransform(math::from(w_T_o), ros::Time(w_T_b_.stamp().seconds()), world_frame_, odom_frame_);
+            muse_mcl_math_2d::Transform2D w_T_o = w_T_b_.data() * b_T_o;
+            w_T_o_ = tf::StampedTransform(muse_mcl_math_2d::from(w_T_o), ros::Time(w_T_b_.stamp().seconds()), world_frame_, odom_frame_);
 
             tf_time_of_transform_ = w_T_o_.stamp_;
         }
@@ -116,7 +116,7 @@ private:
     TFProvider               tf_listener_;
 
     tf::StampedTransform     w_T_o_;
-    math::StampedTransform2D w_T_b_;
+    muse_mcl_math_2d::StampedTransform2D w_T_b_;
     std::atomic_bool         wait_for_transform_;
     ros::Rate                tf_rate_;
     ros::Time                tf_time_of_transform_;

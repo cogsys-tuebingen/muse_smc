@@ -3,16 +3,17 @@
 
 #include <muse_mcl_2d/samples/sample_2d.hpp>
 
-#include <muse_smc/math/weighted_distribution.hpp>
-#include <muse_smc/math/weighted_angular_mean.hpp>
+#include <cslibs_math/statistics/weighted_distribution.hpp>
+#include <cslibs_math/statistics/weighted_angular_mean.hpp>
 
 #include <vector>
 
 namespace muse_mcl_2d {
 struct SampleDensityData2D {
     using sample_ptr_vector_t = std::vector<const Sample2D *>;
-    using distribution_t      = muse_smc::math::statistic::WeightedDistribution<2>;
-    using angular_mean_t      = muse_smc::math::statistic::WeightedAngularMean;
+
+    using distribution_t      = cslibs_math::statistics::WeightedDistribution<2>;
+    using angular_mean_t      = cslibs_math::statistics::WeightedAngularMean;
 
     int                 cluster = -1;
     sample_ptr_vector_t samples;

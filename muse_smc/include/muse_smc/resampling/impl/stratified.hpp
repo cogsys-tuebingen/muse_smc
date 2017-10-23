@@ -2,7 +2,7 @@
 #define STRATIFIED_HPP
 
 #include <muse_smc/samples/sample_set.hpp>
-#include <muse_smc/math/random.hpp>
+#include <cslibs_math/random/random.hpp>
 #include <muse_smc/sampling/uniform.hpp>
 
 namespace muse_smc {
@@ -26,7 +26,7 @@ public:
 
         typename sample_set_t::sample_insertion_t  i_p_t = sample_set.getInsertion();
         /// prepare ordered sequence of random numbers
-        math::random::Uniform<1> rng(0.0, 1.0);
+        cslibs_math::random::Uniform<1> rng(0.0, 1.0);
         std::vector<double> u(size);
         {
 
@@ -73,7 +73,7 @@ public:
         const std::size_t size = p_t_1.size();
 
         /// prepare ordered sequence of random numbers
-        math::random::Uniform<1> rng(0.0, 1.0);
+        cslibs_math::random::Uniform<1> rng(0.0, 1.0);
         std::vector<double> u(size);
         {
 
@@ -83,7 +83,7 @@ public:
         }
         /// draw samples
         {
-            math::random::Uniform<1> rng_recovery(0.0, 1.0);
+            cslibs_math::random::Uniform<1> rng_recovery(0.0, 1.0);
             auto p_t_1_it = p_t_1.begin();
             double cumsum_last = 0.0;
             double cumsum = p_t_1_it->weight;

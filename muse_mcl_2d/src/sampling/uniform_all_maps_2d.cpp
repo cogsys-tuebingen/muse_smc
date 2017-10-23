@@ -2,10 +2,10 @@
 
 #include <ros/time.h>
 
-#include <muse_smc/state_space_samplers/uniform.hpp>
+#include <cslibs_math/sampling/uniform.hpp>
 
 #include <muse_mcl_2d/sampling/uniform_2d.hpp>
-#include <muse_mcl_2d/math/convert.hpp>
+#include <cslibs_math_2d/convert.hpp>
 
 namespace muse_mcl_2d {
 using Metric              = muse_smc::state_space_samplers::Metric;
@@ -19,9 +19,9 @@ public:
     {
         const ros::Time   now   = ros::Time::now();
 
-        math::Point2D min(std::numeric_limits<double>::max(),
+        muse_mcl_math_2d::Point2D min(std::numeric_limits<double>::max(),
                           std::numeric_limits<double>::max());
-        math::Point2D max(std::numeric_limits<double>::lowest(),
+        muse_mcl_math_2d::Point2D max(std::numeric_limits<double>::lowest(),
                           std::numeric_limits<double>::lowest());
 
         const std::size_t map_provider_count = map_providers_.size();
@@ -35,11 +35,11 @@ public:
             }
             tf::Transform tf_map_T_w;
             if(tf_->lookupTransform(map->getFrame(), frame, now, tf_map_T_w, tf_timeout_)) {
-                math::Transform2D map_T_w = math::from(tf_map_T_w);
+                muse_mcl_math_2d::Transform2D map_T_w = muse_mcl_math_2d::from(tf_map_T_w);
                 maps_[i] = map;
                 maps_T_w_[i] =map_T_w;
 
-                math::Transform2D w_T_map = map_T_w.inverse();
+                muse_mcl_math_2d::Transform2D w_T_map = map_T_w.inverse();
                 min = min.min(w_T_map * map->getMin());
                 max = max.max(w_T_map * map->getMax());
             } else {
@@ -112,7 +112,7 @@ public:
 protected:
     int random_seed_;
     std::vector<Map2D::ConstPtr>    maps_;
-    std::vector<math::Transform2D>  maps_T_w_;
+    std::vector<muse_mcl_math_2d::Transform2D>  maps_T_w_;
     std::vector<MapProvider2D::Ptr> map_providers_;
     RandomPoseGenerator::Ptr        rng_;
 

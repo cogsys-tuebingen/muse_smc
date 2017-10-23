@@ -1,6 +1,6 @@
 #include "omni_drive.h"
 
-#include <muse_smc/math/angle.hpp>
+#include <cslibs_math/common/angle.hpp>
 
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_odometry::OmniDrive, muse_mcl_2d::PredictionModel2D)
@@ -44,28 +44,28 @@ OmniDrive::Result::Ptr OmniDrive::apply(const muse_smc::Data::ConstPtr &data,
     const double delta_strafe_hat_stddev    = std::sqrt(alpha_1_ * sq(delta_rot) +
                                                         alpha_5_ * sq(delta_trans));
     if(!rng_delta_trans_hat_) {
-        rng_delta_trans_hat_.reset(new muse_smc::math::random::Normal<1>(0.0,  delta_trans_hat_stddev, seed_));
+        rng_delta_trans_hat_.reset(new cslibs_math::random::Normal<1>(0.0,  delta_trans_hat_stddev, seed_));
     } else {
         rng_delta_trans_hat_->set(0.0, delta_trans_hat_stddev);
     }
     if(!rng_delta_rot_hat_) {
-        rng_delta_rot_hat_.reset(new muse_smc::math::random::Normal<1>(0.0,  delta_rot_hat_stddev, seed_));
+        rng_delta_rot_hat_.reset(new cslibs_math::random::Normal<1>(0.0,  delta_rot_hat_stddev, seed_));
     } else {
         rng_delta_rot_hat_->set(0.0, delta_rot_hat_stddev);
     }
     if(!rng_delta_strafe_hat_) {
-        rng_delta_strafe_hat_.reset(new muse_smc::math::random::Normal<1>(0.0,  delta_strafe_hat_stddev, seed_));
+        rng_delta_strafe_hat_.reset(new cslibs_math::random::Normal<1>(0.0,  delta_strafe_hat_stddev, seed_));
     } else {
         rng_delta_strafe_hat_->set(0.0, delta_strafe_hat_stddev);
     }
 
-    for(muse_mcl_2d::math::Pose2D &sample : states) {
+    for(muse_mcl_math_2d::Pose2D &sample : states) {
         double tx  = sample.tx();
         double ty  = sample.ty();
         double yaw = sample.yaw();
 
         const double delta_bearing =
-                muse_smc::math::angle::difference(delta_angle, odometry.getStartPose().yaw()) + yaw;
+                cslibs_math::common::angle::difference(delta_angle, odometry.getStartPose().yaw()) + yaw;
 
         const double cos_delta_bearing  = std::cos(delta_bearing);
         const double sin_delta_bearing  = std::sin(delta_bearing);

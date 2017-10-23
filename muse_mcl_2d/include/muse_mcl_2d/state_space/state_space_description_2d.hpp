@@ -8,10 +8,10 @@ struct StateSpaceDescription2D
 {
     using sample_allocator_t     = std::allocator<Sample2D>;
     using sample_t               = Sample2D;
-    using state_t                = math::Pose2D;
-    using state_space_boundary_t = math::Point2D;
-    using transform_t            = math::Transform2D;
-    using covariance_t           = math::Covariance2D;
+    using state_t                = muse_mcl_math_2d::Pose2D;
+    using state_space_boundary_t = muse_mcl_math_2d::Point2D;
+    using transform_t            = muse_mcl_math_2d::Transform2D;
+    using covariance_t           = muse_mcl_math_2d::Covariance2D;
 };
 }
 

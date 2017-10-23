@@ -20,7 +20,7 @@
 #include <muse_smc/utility/csv_logger.hpp>
 #endif
 #ifdef MUSE_SMC_DEBUG
-#include <muse_smc/math/mean.hpp>
+#include <cslibs_math/statistics/mean.hpp>
 #endif
 
 #include <memory>
@@ -290,7 +290,7 @@ protected:
         Time     last = Time::now();
         Time     now;
         Duration dur;
-        math::statistic::Mean<1> mean_rate;
+        cslibs_math::statistics::Mean<1> mean_rate;
 #endif
 
         while(!worker_thread_exit_) {

@@ -113,7 +113,7 @@ void OccupancyGridMapperNode::laserscan(const sensor_msgs::LaserScanConstPtr &ms
         return;
     }
 
-    muse_mcl_2d::math::Transform2D m_T_l;
+    muse_mcl_math_2d::Transform2D m_T_l;
     if(tf_->lookupTransform(laserscan->getFrame(), map_frame_,
                             ros::Time(laserscan->getTimeFrame().end.seconds()),
                             m_T_l,

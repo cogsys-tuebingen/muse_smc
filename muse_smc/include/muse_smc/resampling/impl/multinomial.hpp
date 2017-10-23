@@ -2,8 +2,8 @@
 #define MULTINOMIAL_HPP
 
 #include <muse_smc/samples/sample_set.hpp>
-#include <muse_smc/math/random.hpp>
-#include <muse_smc/sampling/uniform.hpp>
+#include <cslibs_math/random/random.hpp>
+#include <cslibs_math/sampling/uniform.hpp>
 
 namespace muse_smc {
 namespace impl {
@@ -26,7 +26,7 @@ public:
         sample_set_t::sample_insertion_t i_p_t = particle_set.getInsertion();
 
         /// prepare ordered sequence of random numbers
-        math::random::Uniform<1> rng(0.0, 1.0);
+        cslibs_math::random::Uniform<1> rng(0.0, 1.0);
         std::vector<double> u(size, std::pow(rng.get(), 1.0 / static_cast<double>(size)));
         {
 
@@ -73,7 +73,7 @@ public:
 
         /// prepare ordered sequence of random numbers
         const std::size_t size = p_t_1.size();
-        math::random::Uniform<1> rng(0.0, 1.0);
+        cslibs_math::random::Uniform<1> rng(0.0, 1.0);
         std::vector<double> u(size, std::pow(rng.get(), 1.0 / static_cast<double>(size)));
         {
             for(std::size_t k = size - 1 ; k > 0 ; --k) {
@@ -83,7 +83,7 @@ public:
         }
         /// draw samples
         {
-            math::random::Uniform<1> rng_recovery(0.0, 1.0);
+            cslibs_math::random::Uniform<1> rng_recovery(0.0, 1.0);
             auto p_t_1_it  = p_t_1.begin();
             double cumsum_last = 0.0;
             double cumsum = p_t_1_it->weight_;

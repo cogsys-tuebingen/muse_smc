@@ -1,7 +1,7 @@
 #include "muse_mcl_2d_node.h"
 
-#include <muse_mcl_2d/math/convert.hpp>
-#include <muse_smc/math/angle.hpp>
+#include <cslibs_math_2d/convert.hpp>
+#include <cslibs_math/common/angle.hpp>
 
 using namespace muse_mcl_2d;
 
@@ -63,10 +63,10 @@ bool MuseMCL2DNode::requestPoseInitialization(muse_mcl_2d::PoseInitialization::R
     auto convert_pose = [&req]() {
         tf::Pose p;
         tf::poseMsgToTF(req.pose.pose, p);
-        return math::from(p);
+        return muse_mcl_math_2d::from(p);
     };
     auto convert_covariance = [&req]() {
-        math::Covariance2D cov;
+        muse_mcl_math_2d::Covariance2D cov;
         for(std::size_t i = 0 ; i < 2 ; ++i) {
             for(std::size_t j = 0 ; j < 2 ; ++j) {
                 cov(i,j) = req.pose.covariance[6*i+j];
@@ -85,10 +85,10 @@ void MuseMCL2DNode::poseInitialization(const geometry_msgs::PoseWithCovarianceSt
     auto convert_pose = [&msg]() {
         tf::Pose p;
         tf::poseMsgToTF(msg->pose.pose, p);
-        return math::from(p);
+        return muse_mcl_math_2d::from(p);
     };
     auto convert_covariance = [&msg]() {
-        math::Covariance2D cov;
+        muse_mcl_math_2d::Covariance2D cov;
         for(std::size_t i = 0 ; i < 2 ; ++i) {
             for(std::size_t j = 0 ; j < 2 ; ++j) {
                 cov(i,j) = msg->pose.covariance[6*i+j];
@@ -195,11 +195,11 @@ bool MuseMCL2DNode::setup()
         auto param_name = [](const std::string &param){return "particle_filter/" + param;};
 
         const double resolution_linear              = nh_private_.param<double>(param_name("resolution_linear"), 0.1);
-        const double resolution_angular             = muse_smc::math::angle::toRad(nh_private_.param<double>(param_name("resolution_angular"), 5.0));
+        const double resolution_angular             = cslibs_math::common::angle::toRad(nh_private_.param<double>(param_name("resolution_angular"), 5.0));
         const double preferred_rate                 = nh_private_.param<double>(param_name("preferred_rate"), 60.0);
         const std::size_t resampling_cycle          = nh_private_.param<int>(param_name("resampling_cycle"), 20);
         const double resampling_threshold_linear    = nh_private_.param<double>(param_name("resampling_threshold_linear"), 0.1);
-        const double resampling_threshold_angular   = muse_smc::math::angle::toRad(nh_private_.param<double>(param_name("resampling_threshold_angular"), 5.0));
+        const double resampling_threshold_angular   = cslibs_math::common::angle::toRad(nh_private_.param<double>(param_name("resampling_threshold_angular"), 5.0));
 
         prediction_integrals_.reset(new prediction_integrals_t(PredictionIntegral2D::Ptr(new PredictionIntegral2D(resampling_threshold_linear,
                                                                                                                   resampling_threshold_angular))));
@@ -278,14 +278,14 @@ void MuseMCL2DNode::checkPoseInitialization()
             ROS_ERROR_STREAM("The initialization pose is expected to have 3 values [x, y, yaw]");
             return;
         }
-        math::Pose2D pose = math::Pose2D(p_v[0], p_v[1], p_v[2]);
+        muse_mcl_math_2d::Pose2D pose = muse_mcl_math_2d::Pose2D(p_v[0], p_v[1], p_v[2]);
 
         if(c_v.size() != 9) {
             ROS_ERROR_STREAM("The initliazation covariance is expected to have 9 values.");
             return;
         }
 
-        math::Covariance2D covariance;
+        muse_mcl_math_2d::Covariance2D covariance;
         auto get = [&c_v](std::size_t r, std::size_t c, std::size_t step)
         {
             return c_v[r * step + c];

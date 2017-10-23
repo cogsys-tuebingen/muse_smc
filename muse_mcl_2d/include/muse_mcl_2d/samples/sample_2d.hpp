@@ -3,9 +3,9 @@
 
 #include <memory>
 
-#include <muse_mcl_2d/math/point_2d.hpp>
-#include <muse_mcl_2d/math/pose_2d.hpp>
-#include <muse_mcl_2d/math/covariance_2d.hpp>
+#include <cslibs_math_2d/point_2d.hpp>
+#include <cslibs_math_2d/pose_2d.hpp>
+#include <cslibs_math_2d/covariance_2d.hpp>
 
 #include <memory>
 
@@ -14,14 +14,14 @@ struct Sample2D {
 public:
     using Ptr                       = std::shared_ptr<Sample2D>;
     using allocator_t               = std::allocator<Sample2D>;
-    using state_t                   = math::Pose2D;
+    using state_t                   = muse_mcl_math_2d::Pose2D;
 
     double       weight;
-    math::Pose2D state;
+    state_t      state;
 
     inline Sample2D() :
         weight(0.0),
-        state(math::Pose2D(0.0,0.0))
+        state(state_t(0.0,0.0))
     {
     }
 

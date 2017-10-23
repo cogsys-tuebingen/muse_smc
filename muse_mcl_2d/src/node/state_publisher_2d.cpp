@@ -5,7 +5,7 @@
 using namespace muse_mcl_2d;
 
 StatePublisher::StatePublisher() :
-    latest_w_T_b_(math::Transform2D(),
+    latest_w_T_b_(muse_mcl_math_2d::Transform2D(),
                   muse_smc::Time(ros::Time::now().toNSec()))
 {
 }

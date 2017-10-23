@@ -20,7 +20,7 @@ protected:
     std::string                           odom_frame_;
     std::string                           base_frame_;
 
-    muse_mcl_2d::math::StampedTransform2D o_T_b1_;
+    muse_mcl_math_2d::StampedTransform2D o_T_b1_;
     bool                                  initialized_;
     ros::Rate                             rate_;
     ros::Duration                         timeout_;

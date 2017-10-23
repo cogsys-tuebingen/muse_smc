@@ -13,7 +13,7 @@ namespace conversion {
 inline void from(const nav_msgs::OccupancyGrid &src,
                  ProbabilityGridMap::Ptr &dst)
 {
-    muse_mcl_2d::math::Pose2D origin(src.info.origin.position.x,
+    muse_mcl_math_2d::Pose2D origin(src.info.origin.position.x,
                                      src.info.origin.position.y,
                                      tf::getYaw(src.info.origin.orientation));
 

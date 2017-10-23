@@ -9,7 +9,7 @@ namespace muse_mcl_2d_laser {
 class LaserProvider2D : public muse_mcl_2d::DataProvider2D
 {
 public:
-    using point_t = muse_mcl_2d::math::Point2D;
+    using point_t = muse_mcl_math_2d::Point2D;
     using interval_t = std::array<double, 2>;
 
     LaserProvider2D();

@@ -33,7 +33,7 @@ OccupancyGridMapper::~OccupancyGridMapper()
 
 void OccupancyGridMapper::insert(const Pointcloud2D::Ptr &points)
 {
-    ROS_INFO_STREAM("Inserted poitns!");
+    ROS_INFO_STREAM("Inserted points!");
     q_.emplace(points);
     notify_event_.notify_one();
 }
@@ -77,7 +77,7 @@ void OccupancyGridMapper::process(const Pointcloud2D::Ptr &points)
 {
     ROS_ERROR_STREAM("Processing");
     if(!map_) {
-        const muse_mcl_2d::math::Pose2D &p = points->getOrigin();
+        const muse_mcl_math_2d::Pose2D &p = points->getOrigin();
         map_.reset(new dynamic_map_t(p,
                                      resolution_,
                                      chunk_resolution_,

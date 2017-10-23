@@ -3,7 +3,7 @@
 
 #include <muse_smc/samples/sample_set.hpp>
 #include <muse_smc/sampling/uniform.hpp>
-#include <muse_smc/math/random.hpp>
+#include <cslibs_math/random/random.hpp>
 
 namespace muse_smc {
 namespace impl {
@@ -30,7 +30,7 @@ public:
         double              n_w_residual = 0.0;
         std::size_t         i_p_t_size = 0;
         {
-            math::random::Uniform<1> rng(0.0, 1.0);
+            cslibs_math::random::Uniform<1> rng(0.0, 1.0);
             double u_static = rng.get();
             for(std::size_t i = 0 ; i < size ; ++i) {
                 const auto &sample = p_t_1[i];
@@ -85,7 +85,7 @@ public:
         const typename sample_set_t::sample_vector_t &p_t_1 = sample_set.getSamples();
         typename sample_set_t::sample_insertion_t i_p_t = sample_set.getInsertion();
 
-        math::random::Uniform<1> rng_recovery(0.0, 1.0);
+        cslibs_math::random::Uniform<1> rng_recovery(0.0, 1.0);
 
         const std::size_t size = p_t_1.size();
         std::vector<double> u(size);
@@ -93,7 +93,7 @@ public:
         double              n_w_residual = 0.0;
         std::size_t         i_p_t_size = 0;
         {
-            math::random::Uniform<1> rng(0.0, 1.0);
+            cslibs_math::random::Uniform<1> rng(0.0, 1.0);
             double u_static = rng.get();
             for(std::size_t i = 0 ; i < size ; ++i) {
                 const auto &sample_p_t_1 = p_t_1[i];

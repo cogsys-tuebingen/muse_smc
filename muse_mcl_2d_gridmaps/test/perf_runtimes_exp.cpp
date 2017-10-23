@@ -1,11 +1,11 @@
 #include <muse_smc/time/time.hpp>
-#include <muse_smc/math/random.hpp>
+#include <cslibs_math/random/random.hpp>
 
 static const int ITERATIONS = 1000000;
 
 void std_exp()
 {
-    muse_smc::math::random::Uniform<1> rng(-100.0, +100.0);
+    cslibs_math::random::Uniform<1> rng(-100.0, +100.0);
 
     double ms = 0;
     double y = 0.0;
@@ -21,7 +21,7 @@ void std_exp()
 
 void c_exp()
 {
-    muse_smc::math::random::Uniform<1> rng(-100.0, +100.0);
+    cslibs_math::random::Uniform<1> rng(-100.0, +100.0);
 
     double ms = 0;
     double y = 0.0;
@@ -37,7 +37,7 @@ void c_exp()
 
 void std_log()
 {
-    muse_smc::math::random::Uniform<1> rng(-100.0, +100.0);
+    cslibs_math::random::Uniform<1> rng(-100.0, +100.0);
 
     double ms = 0;
     double y = 0.0;
@@ -53,7 +53,7 @@ void std_log()
 
 void c_log()
 {
-    muse_smc::math::random::Uniform<1> rng(-100.0, +100.0);
+    cslibs_math::random::Uniform<1> rng(-100.0, +100.0);
 
     double ms = 0;
     double y = 0.0;

@@ -30,8 +30,8 @@ void LikelihoodFieldModelLog::apply(const data_t::ConstPtr          &data,
     const muse_mcl_2d_laser::LaserScan2D::rays_t  &laser_rays = laser_data.getRays();
 
     /// laser to base transform
-    muse_mcl_2d::math::Transform2D b_T_l;
-    muse_mcl_2d::math::Transform2D m_T_w;
+    muse_mcl_math_2d::Transform2D b_T_l;
+    muse_mcl_math_2d::Transform2D m_T_w;
     if(!tf_->lookupTransform(robot_base_frame_,
                              laser_data.getFrame(),
                              ros::Time(laser_data.getTimeFrame().end.seconds()),
@@ -60,11 +60,11 @@ void LikelihoodFieldModelLog::apply(const data_t::ConstPtr          &data,
     auto it_ps = ps_.begin();
     double log_max = std::numeric_limits<double>::lowest();
     for(auto it = set.const_begin() ; it != const_end ; ++it, ++it_ps) {
-        const muse_mcl_2d::math::Pose2D m_T_l = m_T_w * it->state * b_T_l; /// laser scanner pose in map coordinates
+        const muse_mcl_math_2d::Pose2D m_T_l = m_T_w * it->state * b_T_l; /// laser scanner pose in map coordinates
         double p = 0.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
-            const muse_mcl_2d::math::Point2D   ray_end_point = m_T_l * ray.point;
+            const muse_mcl_math_2d::Point2D   ray_end_point = m_T_l * ray.point;
             const double pz = ray.valid() ? p_hit(gridmap.at(ray_end_point)) + p_rand : 0.0;
             p += std::log(pz);
         }

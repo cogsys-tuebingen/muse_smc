@@ -5,7 +5,7 @@
 #include <muse_smc/sampling/uniform.hpp>
 #include <muse_smc/prediction/prediction_integral.hpp>
 
-#include <muse_smc/math/random.hpp>
+#include <cslibs_math/random/random.hpp>
 
 #include <memory>
 #include <vector>

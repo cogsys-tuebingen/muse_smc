@@ -1,6 +1,6 @@
 #include <muse_smc/time/time.hpp>
-#include <muse_smc/math/random.hpp>
-#include <muse_smc/math/angle.hpp>
+#include <cslibs_math/random/random.hpp>
+#include <cslibs_math/common/angle.hpp>
 #include <muse_smc/samples/sample_set.hpp>
 
 #include <muse_mcl_2d/samples/sample_density_2d.hpp>
@@ -11,8 +11,8 @@
 
 void insertion(muse_smc::SampleSet<muse_mcl_2d::StateSpaceDescription2D> &set)
 {
-    muse_smc::math::random::Uniform<1> rng_l(-100.0, 100.0);
-    muse_smc::math::random::Uniform<1> rng_a(-M_PI, M_PI);
+    cslibs_math::random::Uniform<1> rng_l(-100.0, 100.0);
+    cslibs_math::random::Uniform<1> rng_a(-M_PI, M_PI);
 
     const std::size_t size = set.getMaximumSampleSize();
     std::vector<muse_mcl_2d::Sample2D> buff;
@@ -20,7 +20,7 @@ void insertion(muse_smc::SampleSet<muse_mcl_2d::StateSpaceDescription2D> &set)
         muse_mcl_2d::Sample2D s;
         s.state.tx() = rng_l.get();
         s.state.ty() = rng_l.get();
-        s.state.setYaw(muse_smc::math::angle::normalize(rng_a.get()));
+        s.state.setYaw(cslibs_math::common::angle::normalize(rng_a.get()));
         buff.emplace_back(s);
     }
 
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
     std::cout << "Sizes of structs in use."             << "\n";
     std::cout << sizeof(tf::Transform)                  << "\n";
     std::cout << sizeof(muse_mcl_2d::Sample2D)          << "\n";
-    std::cout << sizeof(muse_mcl_2d::math::Transform2D) << "\n";
+    std::cout << sizeof(muse_mcl_math_2d::Transform2D) << "\n";
     std::cout << sizeof(muse_mcl_2d::Odometry2D)        << "\n";
 
     insertion(set);

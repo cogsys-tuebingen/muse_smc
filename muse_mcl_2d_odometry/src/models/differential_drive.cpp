@@ -1,6 +1,6 @@
 #include "differential_drive.h"
 
-#include <muse_smc/math/angle.hpp>
+#include <cslibs_math/common/angle.hpp>
 
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_odometry::DifferentialDrive, muse_mcl_2d::PredictionModel2D)
@@ -29,20 +29,20 @@ DifferentialDrive::Result::Ptr DifferentialDrive::apply(const muse_smc::Data::Co
     const double delta_trans = odometry.getDeltaLinear();
     double delta_rot1 = 0.0;
     if(delta_trans >= 0.01) {
-       delta_rot1  = muse_smc::math::angle::difference(odometry.getDeltaAngularAbs(),
+       delta_rot1  = cslibs_math::common::angle::difference(odometry.getDeltaAngularAbs(),
                                                        odometry.getStartPose().yaw());
     }
-    const double delta_rot2 = muse_smc::math::angle::difference(odometry.getDeltaAngular(), delta_rot1);
+    const double delta_rot2 = cslibs_math::common::angle::difference(odometry.getDeltaAngular(), delta_rot1);
 
     if(delta_trans < eps_zero_linear_ &&
             std::abs(delta_rot2) < eps_zero_angular_) {
         return DifferentialDrive::Result::Ptr(new Result2D(0.0, 0.0, apply, leave));
     }
 
-    const double delta_rot_noise1 = std::min(std::abs(muse_smc::math::angle::difference(delta_rot1, 0.0)),
-                                             std::abs(muse_smc::math::angle::difference(delta_rot1, M_PI)));
-    const double delta_rot_noise2 = std::min(std::abs(muse_smc::math::angle::difference(delta_rot2, 0.0)),
-                                             std::abs(muse_smc::math::angle::difference(delta_rot2, M_PI)));
+    const double delta_rot_noise1 = std::min(std::abs(cslibs_math::common::angle::difference(delta_rot1, 0.0)),
+                                             std::abs(cslibs_math::common::angle::difference(delta_rot1, M_PI)));
+    const double delta_rot_noise2 = std::min(std::abs(cslibs_math::common::angle::difference(delta_rot2, 0.0)),
+                                             std::abs(cslibs_math::common::angle::difference(delta_rot2, M_PI)));
 
     auto sq = [](const double x) { return x * x; };
 
@@ -55,28 +55,28 @@ DifferentialDrive::Result::Ptr DifferentialDrive::apply(const muse_smc::Data::Co
                                              alpha_2_ * sq(delta_trans));
 
     if(!rng_delta_rot_hat1_) {
-        rng_delta_rot_hat1_.reset(new muse_smc::math::random::Normal<1>(0.0,  sigma_rot_hat1, seed_));
+        rng_delta_rot_hat1_.reset(new cslibs_math::random::Normal<1>(0.0,  sigma_rot_hat1, seed_));
     } else {
         rng_delta_rot_hat1_->set(0.0, sigma_rot_hat1);
     }
     if(!rng_delta_trans_hat_) {
-        rng_delta_trans_hat_.reset(new muse_smc::math::random::Normal<1>(0.0, sigma_trans_hat, seed_ + 1));
+        rng_delta_trans_hat_.reset(new cslibs_math::random::Normal<1>(0.0, sigma_trans_hat, seed_ + 1));
     } else {
         rng_delta_trans_hat_->set(0.0, sigma_trans_hat);
     }
     if(!rng_delta_rot_hat2_) {
-        rng_delta_rot_hat2_.reset(new muse_smc::math::random::Normal<1>(0.0, sigma_rot_hat2, seed_ + 2));
+        rng_delta_rot_hat2_.reset(new cslibs_math::random::Normal<1>(0.0, sigma_rot_hat2, seed_ + 2));
     } else {
         rng_delta_rot_hat2_->set(0.0, sigma_rot_hat2);
     }
 
-    for(muse_mcl_2d::math::Pose2D &sample : states) {
-        const double delta_rot_hat1  = muse_smc::math::angle::difference(delta_rot1, rng_delta_rot_hat1_->get());
+    for(muse_mcl_math_2d::Pose2D &sample : states) {
+        const double delta_rot_hat1  = cslibs_math::common::angle::difference(delta_rot1, rng_delta_rot_hat1_->get());
         const double delta_trans_hat = delta_trans - rng_delta_trans_hat_->get();
-        const double delta_rot_hat2  = muse_smc::math::angle::difference(delta_rot2, rng_delta_rot_hat2_->get());
+        const double delta_rot_hat2  = cslibs_math::common::angle::difference(delta_rot2, rng_delta_rot_hat2_->get());
         const double tx = sample.tx() + delta_trans_hat * std::cos(sample.yaw() + delta_rot_hat1);
         const double ty = sample.ty() + delta_trans_hat * std::sin(sample.yaw() + delta_rot_hat1);
-        const double yaw = muse_smc::math::angle::normalize(sample.yaw() + delta_rot_hat1 + delta_rot_hat2);
+        const double yaw = cslibs_math::common::angle::normalize(sample.yaw() + delta_rot_hat1 + delta_rot_hat2);
         sample.setFrom(tx,ty,yaw);
     }
     return DifferentialDrive::Result::Ptr(new Result2D(delta_trans, std::abs(delta_rot2), apply, leave));

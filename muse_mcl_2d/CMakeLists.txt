@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rostest
   muse_smc
+  cslibs_math_2d
   visualization_msgs
   pluginlib
   geometry_msgs
@@ -44,7 +45,7 @@ generate_messages(
 catkin_package(
     INCLUDE_DIRS    include
     LIBRARIES       ${PROJECT_NAME}_resampling ${PROJECT_NAME}_sampling
-    CATKIN_DEPENDS  muse_smc
+    CATKIN_DEPENDS  muse_smc cslibs_math_2d
     DEPENDS         Eigen3
 )
 

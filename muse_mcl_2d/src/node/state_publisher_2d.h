@@ -32,8 +32,8 @@ private:
     std::string                 odom_frame_;
     std::string                 base_frame_;
 
-    math::StampedTransform2D    latest_w_T_b_;
-    math::Covariance2D          latest_w_T_b_covariance_;
+    muse_mcl_math_2d::StampedTransform2D    latest_w_T_b_;
+    muse_mcl_math_2d::Covariance2D          latest_w_T_b_covariance_;
 
     void publishState(const typename sample_set_t::Ptr &sample_set);
 

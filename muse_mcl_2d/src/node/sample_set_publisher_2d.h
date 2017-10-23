@@ -34,8 +34,8 @@ public:
 
     void set(const sample_vector_t       &sample_vector,
              const double                 weight_maximum,
-             const math::Pose2D          &mean,
-             const math::Covariance2D    &covariance,
+             const muse_mcl_math_2d::Pose2D          &mean,
+             const muse_mcl_math_2d::Covariance2D    &covariance,
              const time_t                &stamp);
 
 private:
@@ -48,8 +48,8 @@ private:
     std::mutex                          data_mutex_;
     sample_vector_t::Ptr                sample_;
     double                              maximum_weight_;
-    math::Pose2D                        mean_;
-    math::Covariance2D                  covariance_;
+    muse_mcl_math_2d::Pose2D                        mean_;
+    muse_mcl_math_2d::Covariance2D                  covariance_;
     time_t                              stamp_;
 
     ros::Publisher                      pub_markers_;

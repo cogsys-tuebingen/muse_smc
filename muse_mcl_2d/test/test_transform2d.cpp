@@ -1,16 +1,16 @@
 #include <gtest/gtest.h>
 
-#include <muse_mcl_2d/math/transform_2d.hpp>
-#include <muse_mcl_2d/math/point_2d.hpp>
+#include <cslibs_math_2d/transform_2d.hpp>
+#include <cslibs_math_2d/point_2d.hpp>
 
-#include <muse_smc/math/random.hpp>
-#include <muse_smc/math/angle.hpp>
+#include <cslibs_math/random/random.hpp>
+#include <cslibs_math/common/angle.hpp>
 
 #include <tf/tf.h>
 
 using namespace muse_mcl_2d;
 using namespace math;
-using rng_t = muse_smc::math::random::Uniform<1>;
+using rng_t = cslibs_math::random::Uniform<1>;
 
 
 TEST(Test_muse_mcl_2d, testTransformInitEye)
@@ -89,7 +89,7 @@ TEST(Test_muse_mcl_2d, testTransformInitTranslation)
 TEST(Test_muse_mcl_2d, testTransformInitRotation)
 {
     rng_t rng(-10.0, 10.0);
-    const double yaw = muse_smc::math::angle::normalize(rng.get());
+    const double yaw = cslibs_math::common::angle::normalize(rng.get());
     const double sin = std::sin(yaw);
     const double cos = std::cos(yaw);
 
@@ -113,7 +113,7 @@ TEST(Test_muse_mcl_2d, testTransformConstructors)
     rng_t rng(-10.0, 10.0);
     const double x = rng.get();
     const double y = rng.get();
-    const double yaw = muse_smc::math::angle::normalize(rng.get());
+    const double yaw = cslibs_math::common::angle::normalize(rng.get());
     const double sin = std::sin(yaw);
     const double cos = std::cos(yaw);
 
@@ -137,7 +137,7 @@ TEST(Test_muse_mcl_2d, testTransformSetFrom)
     rng_t rng(-10.0, 10.0);
     const double x = rng.get();
     const double y = rng.get();
-    const double yaw = muse_smc::math::angle::normalize(rng.get());
+    const double yaw = cslibs_math::common::angle::normalize(rng.get());
     const double sin = std::sin(yaw);
     const double cos = std::cos(yaw);
 
@@ -165,7 +165,7 @@ TEST(Test_muse_mcl_2d, testTransformSetYaw)
     rng_t rng(-10.0, 10.0);
     const double x = rng.get();
     const double y = rng.get();
-    const double yaw = muse_smc::math::angle::normalize(rng.get());
+    const double yaw = cslibs_math::common::angle::normalize(rng.get());
     const double sin = std::sin(yaw);
     const double cos = std::cos(yaw);
 
@@ -234,7 +234,7 @@ TEST(Test_muse_mcl_2d, testTransformTranslation)
 TEST(Test_muse_mcl_2d, testTransformRotation)
 {
     rng_t rng(-10.0, 10.0);
-    const double yaw_0 = muse_smc::math::angle::normalize(rng.get());
+    const double yaw_0 = cslibs_math::common::angle::normalize(rng.get());
     const double sin_0 = std::sin(yaw_0);
     const double cos_0 = std::cos(yaw_0);
     const double p_x = rng.get();
@@ -262,7 +262,7 @@ TEST(Test_muse_mcl_2d, testTransformRotation)
     EXPECT_NEAR(p.x(), p_tf.x(), 1e-5);
     EXPECT_NEAR(p.y(), p_tf.y(), 1e-5);
 
-    const double yaw_1 = muse_smc::math::angle::normalize(rng.get());
+    const double yaw_1 = cslibs_math::common::angle::normalize(rng.get());
 
     Transform2D t_1(0.0, 0.0, yaw_1);
     tf::Transform t_1_tf(tf::createQuaternionFromYaw(yaw_1),
@@ -287,7 +287,7 @@ TEST(Test_muse_mcl_2d, testTransformRotation)
 TEST(Test_muse_mcl_2d, testTransformFull)
 {
     rng_t rng(-10.0, 10.0);
-    const double yaw_0 = muse_smc::math::angle::normalize(rng.get());
+    const double yaw_0 = cslibs_math::common::angle::normalize(rng.get());
     const double sin_0 = std::sin(yaw_0);
     const double cos_0 = std::cos(yaw_0);
     const double x_0 = rng.get();
@@ -318,7 +318,7 @@ TEST(Test_muse_mcl_2d, testTransformFull)
     EXPECT_NEAR(p.x(), p_tf.x(), 1e-5);
     EXPECT_NEAR(p.y(), p_tf.y(), 1e-5);
 
-    const double yaw_1 = muse_smc::math::angle::normalize(rng.get());
+    const double yaw_1 = cslibs_math::common::angle::normalize(rng.get());
     const double x_1 = rng.get();
     const double y_1 = rng.get();
 
@@ -358,7 +358,7 @@ TEST(Test_muse_mcl_2d, testTransformInterpolation)
     rng_t rng(-10.0, 10.0);
     const double x_0 = rng.get();
     const double y_0 = rng.get();
-    const double yaw_0 = muse_smc::math::angle::normalize(rng.get());
+    const double yaw_0 = cslibs_math::common::angle::normalize(rng.get());
 
     tf::Transform tf_0(tf::createQuaternionFromYaw(yaw_0),
                        tf::Vector3(x_0, y_0, 0.0));
@@ -395,7 +395,7 @@ TEST(Test_muse_mcl_2d, testTransformInverse)
 
     const double x_1 = rng.get();
     const double y_1 = rng.get();
-    const double yaw_1 = muse_smc::math::angle::normalize(rng.get());
+    const double yaw_1 = cslibs_math::common::angle::normalize(rng.get());
     Transform2D   t_1(x_1, y_1, yaw_1);
     tf::Transform tf_1(tf::createQuaternionFromYaw(yaw_1),
                        tf::Vector3(x_1, y_1, 0.0));
