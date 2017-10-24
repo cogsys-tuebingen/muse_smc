@@ -7,10 +7,10 @@
 
     <arg name="bag_root" value="/home/hanten/Workspace/data/rawseeds/bags" />
     <arg name="bag_file" value="Bicocca_2009-02-25b-static-artificial-light.bag" />
-    <node pkg="rosbag" type="play" name="player" output="log" args="--clock --rate 1.0 -d 5 $(arg bag_root)/$(arg bag_file)" required="true" />
+    <node pkg="rosbag" type="play" name="player" output="screen" args="--pause --clock --rate 1.0 -d 5 $(arg bag_root)/$(arg bag_file)" required="true" />
     <include file="$(find rawseeds_ros)/launch/transforms.launch" />
 
-    <node name="muse_mcl_2d_mapping_ocm_node" pkg="muse_mcl_2d_mapping" type="muse_mcl_2d_mapping_ocm_node" output="screen">
+ <!--   <node name="muse_mcl_2d_mapping_ocm_node" pkg="muse_mcl_2d_mapping" type="muse_mcl_2d_mapping_ocm_node" output="screen">
         <rosparam param="lasers">
             ["/sick/front","/sick/rear"]
         </rosparam>
@@ -20,8 +20,8 @@
         <param name="map_topic" value="/map/simple"  />
         <param name="map_frame" value="/odom" />
         <param name="map_pub_rate" value="10.0" />
-        <param name="optimizitation" value="false" /> <!-- G20 will add support for this, later -->
-    </node>
+        <param name="optimizitation" value="false" /> 
+    </node>-->
 
     <!--<include file="$(find muse_mcl_2d_mapping)/launch/cartographer.launch" />-->
 

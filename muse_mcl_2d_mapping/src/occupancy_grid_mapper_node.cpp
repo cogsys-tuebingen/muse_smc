@@ -79,7 +79,8 @@ void OccupancyGridMapperNode::run()
     if(node_rate_ == 0.0) {
         while(ros::ok()) {
             const ros::Time now = ros::Time::now();
-            if(pub_occ_interval_.isZero() || pub_occ_last_time_ + pub_occ_interval_ > now) {
+            if(pub_occ_interval_.isZero() || (pub_occ_last_time_ + pub_occ_interval_ < now)) {
+                ROS_INFO_STREAM("Requested a map!");
                 publishOcc();
                 pub_occ_last_time_ = now;
             }
@@ -89,7 +90,7 @@ void OccupancyGridMapperNode::run()
         ros::Rate r(node_rate_);
         while(ros::ok()) {
             const ros::Time now = ros::Time::now();
-            if(pub_occ_interval_.isZero() || pub_occ_last_time_ + pub_occ_interval_ > now) {
+            if(pub_occ_interval_.isZero() || pub_occ_last_time_ + pub_occ_interval_ < now) {
                 publishOcc();
                 pub_occ_last_time_ = now;
             }

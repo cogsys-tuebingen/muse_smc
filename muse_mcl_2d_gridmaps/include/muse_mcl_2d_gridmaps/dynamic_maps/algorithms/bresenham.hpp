@@ -6,6 +6,8 @@
 #include <cslibs_indexed_storage/storage.hpp>
 #include <cslibs_indexed_storage/backend/kdtree/kdtree.hpp>
 
+#include <cslibs_math/common/mod.hpp>
+
 #include <muse_mcl_2d_gridmaps/dynamic_maps/chunk.hpp>
 
 namespace cis = cslibs_indexed_storage;
@@ -146,8 +148,8 @@ private:
 
     inline void updateLocalIndex()
     {
-        local_index_[0] = index_[0] % chunk_size_;
-        local_index_[1] = index_[1] % chunk_size_;
+        local_index_[0] = cslibs_math::common::mod(index_[0], chunk_size_);
+        local_index_[1] = cslibs_math::common::mod(index_[1], chunk_size_);
     }
 
     inline bool localIndexInvalid()

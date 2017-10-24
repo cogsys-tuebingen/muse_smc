@@ -41,13 +41,12 @@ void OccupancyGridMapper::insert(const Measurement &measurement)
 
 OccupancyGridMapper::static_map_t::Ptr OccupancyGridMapper::get()
 {
-    ROS_INFO_STREAM("Requested a map!");
     request_map_ = true;
-    lock_t notify_map_lock(notify_map_mutex_);
-    notify_event_.notify_one();
-    notify_map_.wait(notify_map_lock);
-    ROS_INFO_STREAM("Got something!");
-    return static_map_;
+//    lock_t notify_map_lock(notify_map_mutex_);
+//    notify_event_.notify_one();
+//    notify_map_.wait(notify_map_lock);
+//    ROS_INFO_STREAM("Got something!");
+    return OccupancyGridMapper::static_map_t::Ptr();
 }
 
 
@@ -56,8 +55,7 @@ void OccupancyGridMapper::loop()
     lock_t notify_event_mutex_lock(notify_event_mutex_);
     while(!stop_) {
         notify_event_.wait(notify_event_mutex_lock);
-        ROS_ERROR_STREAM("Got notification!");
-        while(q_.hasElements()) {
+          while(q_.hasElements()) {
             if(stop_)
                 break;
             if(request_map_) {
@@ -78,7 +76,6 @@ void OccupancyGridMapper::loop()
 
 void OccupancyGridMapper::process(const Measurement &m)
 {
-    ROS_ERROR_STREAM("Processing");
     if(!map_) {
         const cslibs_math_2d::Pose2d &p = m.origin;
         map_.reset(new dynamic_map_t(p,
@@ -88,7 +85,7 @@ void OccupancyGridMapper::process(const Measurement &m)
                                      inverse_model_.getLogOddsPrior()));
     }
 
-    const double resolution_2 = resolution_ * 0.5;
+     const double resolution_2 = resolution_ * 0.5;
     for(auto it = m.points->begin() ; it != m.points->end() ; ++it) {
         if(it->isNormal()) {
             auto b_ptr = map_->getLineIterator(m.origin.translation(),
