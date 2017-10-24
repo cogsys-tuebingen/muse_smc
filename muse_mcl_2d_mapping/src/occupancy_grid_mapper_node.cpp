@@ -118,13 +118,13 @@ void OccupancyGridMapperNode::laserscan(const sensor_msgs::LaserScanConstPtr &ms
                             m_T_l,
                             tf_timeout_)) {
 
-        Pointcloud2D::Ptr points(new Pointcloud2D(laserscan->getFrame(),
-                                                  m_T_l));
+        cslibs_math_2d::Pointcloud2d::Ptr points(new cslibs_math_2d::Pointcloud2d);
+        OccupancyGridMapper::Measurement  m(points, m_T_l);
         for(auto it = laserscan->begin() ; it != laserscan->end() ; ++it) {
             if(it->valid())
                 points->insert(m_T_l * it->point);
         }
-        occ_mapper_->insert(points);
+        occ_mapper_->insert(m);
     }
 }
 

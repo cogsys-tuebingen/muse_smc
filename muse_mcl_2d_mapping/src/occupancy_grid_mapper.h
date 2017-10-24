@@ -6,13 +6,13 @@
 #include <condition_variable>
 #include <mutex>
 
-#include <muse_mcl_2d_mapping/pointcloud_2d.hpp>
 #include <muse_smc/utility/synchronized_queue.hpp>
 
 #include <muse_mcl_2d_gridmaps/static_maps/probability_gridmap.h>
 #include <muse_mcl_2d_gridmaps/dynamic_maps/probability_gridmap.h>
 #include <muse_mcl_2d_gridmaps/utility/inverse_model.hpp>
 
+#include <cslibs_math_2d/types/pointcloud.hpp>
 
 namespace muse_mcl_2d_mapping {
 class OccupancyGridMapper
@@ -23,6 +23,18 @@ public:
     using dynamic_map_t = muse_mcl_2d_gridmaps::dynamic_maps::ProbabilityGridMap;
     using static_map_t  = muse_mcl_2d_gridmaps::static_maps::ProbabilityGridMap;
 
+    struct Measurement {
+        const cslibs_math_2d::Pointcloud2d::Ptr points;
+        const cslibs_math_2d::Pose2d            origin;
+
+        explicit Measurement(const cslibs_math_2d::Pointcloud2d::Ptr &points,
+                             const cslibs_math_2d::Pose2d            &origin) :
+            points(points),
+            origin(origin)
+        {
+        }
+    };
+
 
     OccupancyGridMapper(const muse_mcl_2d_gridmaps::utility::InverseModel &inverse_model,
                         const double resolution,
@@ -31,13 +43,13 @@ public:
 
     virtual ~OccupancyGridMapper();
 
-    void insert(const Pointcloud2D::Ptr &points);
+    void insert(const Measurement &measurement);
     static_map_t::Ptr get();
 
 
 protected:
     /// todo - maybe build an base class
-    muse_smc::synchronized::queue<Pointcloud2D::Ptr>            q_;
+    muse_smc::synchronized::queue<Measurement>                  q_;
 
     std::thread                                                 thread_;
     std::condition_variable                                     notify_event_;
@@ -55,7 +67,7 @@ protected:
     std::string                                                 frame_id_;
 
     void loop();
-    void process(const Pointcloud2D::Ptr &points);
+    void process(const Measurement &points);
     void buildMap();
 
 };

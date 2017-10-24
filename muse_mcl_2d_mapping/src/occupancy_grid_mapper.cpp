@@ -32,9 +32,9 @@ OccupancyGridMapper::~OccupancyGridMapper()
 }
 
 
-void OccupancyGridMapper::insert(const Pointcloud2D::Ptr &points)
+void OccupancyGridMapper::insert(const Measurement &measurement)
 {
-    q_.emplace(points);
+    q_.emplace(measurement);
     notify_event_.notify_one();
 }
 
@@ -65,8 +65,8 @@ void OccupancyGridMapper::loop()
                 buildMap();
                 request_map_ = false;
             }
-            auto e = q_.pop();
-            process(e);
+            auto m = q_.pop();
+            process(m);
         }
         if(request_map_) {
             ROS_ERROR_STREAM("Process request #2!");
@@ -76,11 +76,11 @@ void OccupancyGridMapper::loop()
     }
 }
 
-void OccupancyGridMapper::process(const Pointcloud2D::Ptr &points)
+void OccupancyGridMapper::process(const Measurement &m)
 {
     ROS_ERROR_STREAM("Processing");
     if(!map_) {
-        const cslibs_math_2d::Pose2d &p = points->getOrigin();
+        const cslibs_math_2d::Pose2d &p = m.origin;
         map_.reset(new dynamic_map_t(p,
                                      resolution_,
                                      chunk_resolution_,
@@ -89,10 +89,10 @@ void OccupancyGridMapper::process(const Pointcloud2D::Ptr &points)
     }
 
     const double resolution_2 = resolution_ * 0.5;
-    for(auto it = points->begin() ; it != points->end() ; ++it) {
-        if(it->valid) {
-            auto b_ptr = map_->getLineIterator(points->getOrigin().translation(),
-                                               it->point);
+    for(auto it = m.points->begin() ; it != m.points->end() ; ++it) {
+        if(it->isNormal()) {
+            auto b_ptr = map_->getLineIterator(m.origin.translation(),
+                                               *it);
             auto &b = *b_ptr;
 
             while(!b.done()) {
