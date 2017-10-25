@@ -63,7 +63,7 @@ protected:
     static_map_t::Ptr                                           static_map_;
 
     dynamic_map_t::Ptr                                          map_;
-    cslibs_math_2d::Transform2d                                 m_T_w_;
+    cslibs_math_2d::Transform2d                                 m0_T_m_;
     muse_mcl_2d_gridmaps::utility::InverseModel                 inverse_model_;
     double                                                      resolution_;
     double                                                      chunk_resolution_;

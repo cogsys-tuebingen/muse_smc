@@ -116,15 +116,14 @@ void OccupancyGridMapper::process(const Measurement &m)
                                      frame_id_,
                                      inverse_model_.getLogOddsPrior()));
 
-        m_T_w_ = m.origin.inverse();
-
+        m0_T_m_ = m.origin;
     }
 
     const double resolution2 = (resolution_ * resolution_ * 0.25);
     for(auto it = m.points->begin() ; it != m.points->end() ; ++it) {
         if(it->isNormal()) {
-            auto b_ptr = map_->getLineIterator(m.origin.translation(),
-                                               *it);
+            auto b_ptr = map_->getLineIterator((m0_T_m_ * m.origin).translation(),
+                                                m0_T_m_ * *it);
             auto &b = *b_ptr;
 
             while(!b.done()) {

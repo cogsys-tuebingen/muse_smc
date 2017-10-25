@@ -255,8 +255,8 @@ protected:
     const double                      resolution_inv_;
     const int                         chunk_size_;
     const T                           default_value_;
-    cslibs_math_2d::Transform2d    w_T_m_;
-    cslibs_math_2d::Transform2d    m_T_w_;
+    cslibs_math_2d::Transform2d       w_T_m_;
+    cslibs_math_2d::Transform2d       m_T_w_;
 
 
     mutable index_t                    min_chunk_index_;

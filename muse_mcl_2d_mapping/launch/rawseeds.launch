@@ -5,8 +5,8 @@
     <!-- using only one map, the world and map frame can be collapsed -->
     <node pkg="tf" type="static_transform_publisher" name="map_T_w" args="0 0 0 0 0 0 map world 10"/>
 
-    <arg name="bag_root" value="/localhome/hanten/localization/data" />
-    <!-- <arg name="bag_root" value="/home/hanten/Workspace/data/rawseeds/bags" /> -->
+    <!--<arg name="bag_root" value="/localhome/hanten/localization/data" /> -->
+    <arg name="bag_root" value="/home/hanten/Workspace/data/rawseeds/bags" />
     <arg name="bag_file" value="Bicocca_2009-02-25b-static-artificial-light.bag" />
     <node pkg="rosbag" type="play" name="player" output="screen" args="--pause --clock --rate 1.0 -d 5 $(arg bag_root)/$(arg bag_file)" required="true" />
     <include file="$(find rawseeds_ros)/launch/transforms.launch" />
