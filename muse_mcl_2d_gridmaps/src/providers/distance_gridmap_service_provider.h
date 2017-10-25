@@ -30,7 +30,7 @@ protected:
 
     mutable std::mutex                          map_mutex_;
     mutable std::condition_variable             map_loaded_;
-    mutable static_maps::DistanceGridMap::Ptr   map_;
+    mutable static_maps::DistanceGridmap::Ptr   map_;
     mutable std::atomic_bool                    loading_;
     mutable std::thread                         worker_;
 

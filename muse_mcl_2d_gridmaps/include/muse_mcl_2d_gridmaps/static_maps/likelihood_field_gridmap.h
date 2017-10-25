@@ -6,10 +6,10 @@
 
 namespace muse_mcl_2d_gridmaps {
 namespace static_maps {
-class LikelihoodFieldGridMap : public GridMap<double>
+class LikelihoodFieldGridmap : public Gridmap<double>
 {
 public:
-    LikelihoodFieldGridMap(const pose_t &origin,
+    LikelihoodFieldGridmap(const pose_t &origin,
                            const double resolution,
                            const std::size_t height,
                            const std::size_t width,
@@ -17,6 +17,8 @@ public:
                            const double sigma_hit,
                            const std::string &frame_id,
                            const double default_value = 0.0);
+
+    LikelihoodFieldGridmap(const LikelihoodFieldGridmap &other) = default;
 
     double at(const cslibs_math_2d::Point2d &point) const override;
 

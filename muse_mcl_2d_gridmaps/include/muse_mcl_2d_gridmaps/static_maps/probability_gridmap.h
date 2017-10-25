@@ -6,19 +6,19 @@
 
 namespace muse_mcl_2d_gridmaps {
 namespace static_maps {
-class ProbabilityGridMap : public GridMap<double>
+class ProbabilityGridmap : public Gridmap<double>
 {
 public:
-    using Ptr = std::shared_ptr<ProbabilityGridMap>;
+    using Ptr = std::shared_ptr<ProbabilityGridmap>;
 
-    ProbabilityGridMap(const pose_t &origin,
+    ProbabilityGridmap(const pose_t &origin,
                        const double resolution,
                        const std::size_t height,
                        const std::size_t width,
                        const std::string &frame_id,
                        const double default_value = 0.5);
 
-    ProbabilityGridMap(const ProbabilityGridMap &other) = default;
+    ProbabilityGridmap(const ProbabilityGridmap &other) = default;
 };
 }
 }

@@ -5,6 +5,7 @@
 
 #include <nav_msgs/OccupancyGrid.h>
 
+
 using namespace muse_mcl_2d_mapping;
 
 OccupancyGridMapperNode::OccupancyGridMapperNode() :
@@ -80,7 +81,6 @@ void OccupancyGridMapperNode::run()
         while(ros::ok()) {
             const ros::Time now = ros::Time::now();
             if(pub_occ_interval_.isZero() || (pub_occ_last_time_ + pub_occ_interval_ < now)) {
-                ROS_INFO_STREAM("Requested a map!");
                 publishOcc();
                 pub_occ_last_time_ = now;
             }
@@ -133,6 +133,8 @@ void OccupancyGridMapperNode::publishOcc()
 {
     auto map = occ_mapper_->get();
     if(map) {
+
+
         nav_msgs::OccupancyGrid::Ptr msg;
         muse_mcl_2d_gridmaps::static_maps::conversion::from(map, msg);
         pub_occ_map_.publish(msg);

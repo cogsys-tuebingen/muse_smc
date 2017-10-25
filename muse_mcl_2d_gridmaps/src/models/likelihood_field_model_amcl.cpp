@@ -19,11 +19,11 @@ void LikelihoodFieldModelAMCL::apply(const data_t::ConstPtr          &data,
                                      sample_set_t::weight_iterator_t set)
 {
 
-    if(!map->isType<static_maps::DistanceGridMap>()) {
+    if(!map->isType<static_maps::DistanceGridmap>()) {
         return;
     }
 
-    const static_maps::DistanceGridMap &gridmap = map->as<static_maps::DistanceGridMap>();
+    const static_maps::DistanceGridmap &gridmap = map->as<static_maps::DistanceGridmap>();
     const muse_mcl_2d_laser::LaserScan2D        &laser_data = data->as<muse_mcl_2d_laser::LaserScan2D>();
     const muse_mcl_2d_laser::LaserScan2D::rays_t  &laser_rays = laser_data.getRays();
 

@@ -11,7 +11,7 @@ namespace muse_mcl_2d_gridmaps {
 namespace static_maps {
 namespace conversion {
 inline void from(const nav_msgs::OccupancyGrid &src,
-                 LikelihoodFieldGridMap::Ptr &dst,
+                 LikelihoodFieldGridmap::Ptr &dst,
                  const double maximum_distance = 2.0,
                  const double sigma_hit        = 0.5,
                  const double threshold        = 1.0)
@@ -24,7 +24,7 @@ inline void from(const nav_msgs::OccupancyGrid &src,
                                      src.info.origin.position.y,
                                      tf::getYaw(src.info.origin.orientation));
 
-    dst.reset(new LikelihoodFieldGridMap(origin,
+    dst.reset(new LikelihoodFieldGridmap(origin,
                                          src.info.resolution,
                                          src.info.height,
                                          src.info.width,
@@ -49,11 +49,11 @@ inline void from(const nav_msgs::OccupancyGrid &src,
     /// 2.) pre-calculation of the hit likelihoods
     std::for_each(dst->getData().begin(),
                   dst->getData().end(),
-                  [exp_factor_hit] (const double z) {return std::exp(-z * z * exp_factor_hit);});
+                  [exp_factor_hit] (double &z) {z = std::exp(-z * z * exp_factor_hit);});
 }
 
 inline void from(const nav_msgs::OccupancyGrid::Ptr &src,
-                 LikelihoodFieldGridMap::Ptr   &dst,
+                 LikelihoodFieldGridmap::Ptr   &dst,
                  const double maximum_distance = 2.0,
                  const double sigma_hit        = 0.5,
                  const double threshold        = 1.0)

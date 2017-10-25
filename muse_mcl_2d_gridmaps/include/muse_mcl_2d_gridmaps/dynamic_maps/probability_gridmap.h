@@ -5,10 +5,10 @@
 
 namespace muse_mcl_2d_gridmaps {
 namespace dynamic_maps {
-class ProbabilityGridMap : public GridMap<double>
+class ProbabilityGridmap : public Gridmap<double>
 {
 public:
-    ProbabilityGridMap(const pose_t &origin,
+    ProbabilityGridmap(const pose_t &origin,
                        const double resolution,
                        const double chunk_resolution,
                        const std::string &frame_id,

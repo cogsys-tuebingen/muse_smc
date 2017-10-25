@@ -20,8 +20,8 @@ class OccupancyGridMapper
 public:
     using Ptr           = std::shared_ptr<OccupancyGridMapper>;
     using lock_t        = std::unique_lock<std::mutex>;
-    using dynamic_map_t = muse_mcl_2d_gridmaps::dynamic_maps::ProbabilityGridMap;
-    using static_map_t  = muse_mcl_2d_gridmaps::static_maps::ProbabilityGridMap;
+    using dynamic_map_t = muse_mcl_2d_gridmaps::dynamic_maps::ProbabilityGridmap;
+    using static_map_t  = muse_mcl_2d_gridmaps::static_maps::ProbabilityGridmap;
 
     struct Measurement {
         const cslibs_math_2d::Pointcloud2d::Ptr points;
@@ -56,8 +56,9 @@ protected:
     std::mutex                                                  notify_event_mutex_;
     std::atomic_bool                                            stop_;
     std::atomic_bool                                            request_map_;
-    std::condition_variable                                     notify_map_;
-    std::mutex                                                  notify_map_mutex_;
+    std::condition_variable                                     notify_static_map_;
+    std::mutex                                                  static_map_mutex_;
+
     static_map_t::Ptr                                           static_map_;
 
     dynamic_map_t::Ptr                                          map_;
@@ -67,8 +68,8 @@ protected:
     std::string                                                 frame_id_;
 
     void loop();
+    void mapRequest();
     void process(const Measurement &points);
-    void buildMap();
 
 };
 }

@@ -8,7 +8,7 @@ using namespace muse_mcl_2d_gridmaps;
 using namespace muse_mcl_2d;
 using namespace static_maps;
 
-LikelihoodFieldGridMap::LikelihoodFieldGridMap(const pose_t &origin,
+LikelihoodFieldGridmap::LikelihoodFieldGridmap(const pose_t &origin,
                                                const double resolution,
                                                const std::size_t height,
                                                const std::size_t width,
@@ -16,7 +16,7 @@ LikelihoodFieldGridMap::LikelihoodFieldGridMap(const pose_t &origin,
                                                const double sigma_hit,
                                                const std::string &frame_id,
                                                const double default_value) :
-    GridMap<double>(origin,
+    Gridmap<double>(origin,
                     resolution,
                     height,
                     width,
@@ -27,16 +27,16 @@ LikelihoodFieldGridMap::LikelihoodFieldGridMap(const pose_t &origin,
 {
 }
 
-double LikelihoodFieldGridMap::at(const cslibs_math_2d::Point2d &point) const
+double LikelihoodFieldGridmap::at(const cslibs_math_2d::Point2d &point) const
 {
     index_t i;
     toIndex(point, i);
     if(invalid(i))
         return 0.0;
-    return GridMap<double>::at(i[0], i[1]);
+    return Gridmap<double>::at(i[0], i[1]);
 }
 
-double LikelihoodFieldGridMap::getSigmaHit() const
+double LikelihoodFieldGridmap::getSigmaHit() const
 {
     return sigma_hit_;
 }

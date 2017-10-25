@@ -6,7 +6,7 @@
 
 namespace muse_mcl_2d_gridmaps {
 namespace static_maps {
-class BinaryGridMap : public GridMap<int>
+class BinaryGridMap : public Gridmap<int>
 {
 public:
     using Ptr = std::shared_ptr<BinaryGridMap>;
@@ -19,6 +19,8 @@ public:
                   const std::size_t width,
                   const std::string &frame_id,
                   const state_t default_value = FREE);
+
+    BinaryGridMap(const BinaryGridMap &other) = default;
 
     double getRange(const cslibs_math_2d::Point2d &from,
                     cslibs_math_2d::Point2d &to) const;

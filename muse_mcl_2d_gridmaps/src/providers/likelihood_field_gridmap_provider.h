@@ -33,7 +33,7 @@ protected:
 
     mutable std::mutex                          map_mutex_;
     mutable std::condition_variable             map_loaded_;
-    static_maps::LikelihoodFieldGridMap::Ptr    map_;
+    static_maps::LikelihoodFieldGridmap::Ptr    map_;
     std::atomic_bool                            loading_;
     std::thread                                 worker_;
 

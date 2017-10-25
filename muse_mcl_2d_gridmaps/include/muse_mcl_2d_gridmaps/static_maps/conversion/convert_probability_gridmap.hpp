@@ -12,13 +12,13 @@ namespace muse_mcl_2d_gridmaps {
 namespace static_maps {
 namespace conversion {
 inline void from(const nav_msgs::OccupancyGrid &src,
-                 ProbabilityGridMap::Ptr &dst)
+                 ProbabilityGridmap::Ptr &dst)
 {
     cslibs_math_2d::Pose2d origin(src.info.origin.position.x,
                                      src.info.origin.position.y,
                                      tf::getYaw(src.info.origin.orientation));
 
-    dst.reset(new ProbabilityGridMap(origin,
+    dst.reset(new ProbabilityGridmap(origin,
                                      src.info.resolution,
                                      src.info.height,
                                      src.info.width,
@@ -30,12 +30,12 @@ inline void from(const nav_msgs::OccupancyGrid &src,
 
 
 inline void from(const nav_msgs::OccupancyGrid::ConstPtr &src,
-                 ProbabilityGridMap::Ptr &dst)
+                 ProbabilityGridmap::Ptr &dst)
 {
    from(*src, dst);
 }
 
-inline void from(const ProbabilityGridMap::Ptr &src,
+inline void from(const ProbabilityGridmap::Ptr &src,
                  nav_msgs::OccupancyGrid::Ptr &dst)
 {
     dst.reset(new nav_msgs::OccupancyGrid);
@@ -52,26 +52,26 @@ inline void from(const ProbabilityGridMap::Ptr &src,
 }
 
 struct LogOdds {
-    static inline void to(ProbabilityGridMap::Ptr &src,
-                          ProbabilityGridMap::Ptr &dst)
+    static inline void to(ProbabilityGridmap::Ptr &src,
+                          ProbabilityGridmap::Ptr &dst)
     {
         if(src != dst) {
-            dst.reset(new ProbabilityGridMap(*src));
+            dst.reset(new ProbabilityGridmap(*src));
         }
         std::for_each(dst->getData().begin(),
                       dst->getData().end(),
-                      [](const double p){return cslibs_math::common::LogOdds::to(p);});
+                      [](double &p){p =  cslibs_math::common::LogOdds::to(p);});
 
     }
-    static inline void from(ProbabilityGridMap::Ptr &src,
-                            ProbabilityGridMap::Ptr &dst)
+    static inline void from(ProbabilityGridmap::Ptr &src,
+                            ProbabilityGridmap::Ptr &dst)
     {
         if(src != dst) {
-            dst.reset(new ProbabilityGridMap(*src));
+            dst.reset(new ProbabilityGridmap(*src));
         }
         std::for_each(dst->getData().begin(),
                       dst->getData().end(),
-                      [](const double l){return cslibs_math::common::LogOdds::from(l);});
+                      [](double &l){l = cslibs_math::common::LogOdds::from(l);});
 
     }
 };

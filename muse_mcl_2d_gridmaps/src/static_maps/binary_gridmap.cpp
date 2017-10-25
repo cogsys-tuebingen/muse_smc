@@ -11,7 +11,7 @@ BinaryGridMap::BinaryGridMap(const pose_t &origin,
                              const std::size_t width,
                              const std::string &frame_id,
                              const state_t default_value) :
-    GridMap<int>(origin,
+    Gridmap<int>(origin,
                  resolution,
                  height,
                  width,

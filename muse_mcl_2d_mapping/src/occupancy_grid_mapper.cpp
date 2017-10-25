@@ -42,11 +42,15 @@ void OccupancyGridMapper::insert(const Measurement &measurement)
 OccupancyGridMapper::static_map_t::Ptr OccupancyGridMapper::get()
 {
     request_map_ = true;
-//    lock_t notify_map_lock(notify_map_mutex_);
-//    notify_event_.notify_one();
-//    notify_map_.wait(notify_map_lock);
-//    ROS_INFO_STREAM("Got something!");
-    return OccupancyGridMapper::static_map_t::Ptr();
+    lock_t static_map_lock(static_map_mutex_);
+    notify_event_.notify_one();
+    notify_static_map_.wait(static_map_lock);
+
+    OccupancyGridMapper::static_map_t::Ptr map;
+    if(static_map_) {
+        map.reset(new OccupancyGridMapper::static_map_t(*static_map_));
+    }
+    return map;
 }
 
 
@@ -55,57 +59,22 @@ void OccupancyGridMapper::loop()
     lock_t notify_event_mutex_lock(notify_event_mutex_);
     while(!stop_) {
         notify_event_.wait(notify_event_mutex_lock);
-          while(q_.hasElements()) {
+        while(q_.hasElements()) {
             if(stop_)
                 break;
-            if(request_map_) {
-                ROS_ERROR_STREAM("Process request #1!");
-                buildMap();
-                request_map_ = false;
-            }
+
+            mapRequest();
+
             auto m = q_.pop();
             process(m);
         }
-        if(request_map_) {
-            ROS_ERROR_STREAM("Process request #2!");
-            buildMap();
-            request_map_ = false;
-        }
+        mapRequest();
     }
 }
 
-void OccupancyGridMapper::process(const Measurement &m)
+void OccupancyGridMapper::mapRequest()
 {
-    if(!map_) {
-        const cslibs_math_2d::Pose2d &p = m.origin;
-        map_.reset(new dynamic_map_t(p,
-                                     resolution_,
-                                     chunk_resolution_,
-                                     frame_id_,
-                                     inverse_model_.getLogOddsPrior()));
-    }
-
-     const double resolution_2 = resolution_ * 0.5;
-    for(auto it = m.points->begin() ; it != m.points->end() ; ++it) {
-        if(it->isNormal()) {
-            auto b_ptr = map_->getLineIterator(m.origin.translation(),
-                                               *it);
-            auto &b = *b_ptr;
-
-            while(!b.done()) {
-                *b = b.length2() > resolution_2 ? inverse_model_.updateFree(*b) : inverse_model_.updateOccupied(*b);
-                ++b;
-            }
-            *b = inverse_model_.updateOccupied(*b);
-        }
-    }
-}
-
-void OccupancyGridMapper::buildMap()
-{
-    ROS_INFO_STREAM("Trying building a map!");
-    if(map_) {
-        ROS_INFO_STREAM("Building a map!");
+    if(request_map_ && map_) {
         static_map_.reset(new static_map_t(map_->getOrigin(),
                                            map_->getResolution(),
                                            map_->getHeight(),
@@ -132,9 +101,35 @@ void OccupancyGridMapper::buildMap()
         }
 
         muse_mcl_2d_gridmaps::static_maps::conversion::LogOdds::from(static_map_, static_map_);
-        ROS_INFO_STREAM("Finished building a map.");
-    } else {
-        ROS_INFO_STREAM("Map was empty.");
     }
-    notify_map_.notify_one();
+    request_map_ = false;
+    notify_static_map_.notify_one();
+}
+
+void OccupancyGridMapper::process(const Measurement &m)
+{
+    if(!map_) {
+        const cslibs_math_2d::Pose2d &p = m.origin;
+        map_.reset(new dynamic_map_t(p,
+                                     resolution_,
+                                     chunk_resolution_,
+                                     frame_id_,
+                                     inverse_model_.getLogOddsPrior()));
+    }
+
+    const double resolution2 = (resolution_ * resolution_ * 0.25);
+    for(auto it = m.points->begin() ; it != m.points->end() ; ++it) {
+        if(it->isNormal()) {
+            auto b_ptr = map_->getLineIterator(m.origin.translation(),
+                                               *it);
+            auto &b = *b_ptr;
+
+            while(!b.done()) {
+                double l = b.length2() > resolution2 ? inverse_model_.updateFree(*b) : inverse_model_.updateOccupied(*b);
+                *b = l;
+                ++b;
+            }
+            *b = inverse_model_.updateOccupied(*b);
+        }
+    }
 }

@@ -17,10 +17,10 @@ namespace cis = cslibs_indexed_storage;
 namespace muse_mcl_2d_gridmaps {
 namespace dynamic_maps {
 template<typename T>
-class GridMap : public muse_mcl_2d::Map2D
+class Gridmap : public muse_mcl_2d::Map2D
 {
 public:
-    using Ptr                   = std::shared_ptr<GridMap<T>>;
+    using Ptr                   = std::shared_ptr<Gridmap<T>>;
     using pose_t                = cslibs_math_2d::Pose2d;
     using index_t               = std::array<int, 2>;
     using mutex_t               = std::mutex;
@@ -30,7 +30,7 @@ public:
     using line_iterator_t       = algorithms::Bresenham<T>;
     using const_line_iterator_t = algorithms::Bresenham<T const>;
 
-    GridMap(const pose_t        &origin,
+    Gridmap(const pose_t        &origin,
             const double         resolution,
             const double         chunk_resolution,
             const std::string   &frame_id,
@@ -48,11 +48,10 @@ public:
         height_(chunk_size_),
         width_(chunk_size_)
     {
-        std::cout << "chunk_size+++ " << chunk_size_ << std::endl;
         storage_->insert({0,0}, chunk_t(chunk_size_, default_value_));
     }
 
-    GridMap(const double origin_x,
+    Gridmap(const double origin_x,
             const double origin_y,
             const double origin_phi,
             const double resolution,
@@ -315,6 +314,7 @@ protected:
 
     inline index_t toIndex(const cslibs_math_2d::Point2d &p_w) const
     {
+        /// offset and rounding correction!
         const cslibs_math_2d::Point2d p_m = m_T_w_ * p_w;
         return {static_cast<int>(p_m.x() * resolution_inv_),
                 static_cast<int>(p_m.y() * resolution_inv_)};
@@ -323,7 +323,7 @@ protected:
     inline void fromIndex(const index_t &i,  cslibs_math_2d::Point2d &p_w) const
     {
         p_w = w_T_m_ * cslibs_math_2d::Point2d(i[0] * resolution_ - min_chunk_index_[0] * chunk_size_,
-                i[1] * resolution_ - min_chunk_index_[1] * chunk_size_);
+                                               i[1] * resolution_ - min_chunk_index_[1] * chunk_size_);
     }
 
 };

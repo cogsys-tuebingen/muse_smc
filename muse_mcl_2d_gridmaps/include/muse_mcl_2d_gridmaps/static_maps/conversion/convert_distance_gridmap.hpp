@@ -11,7 +11,7 @@ namespace muse_mcl_2d_gridmaps {
 namespace static_maps {
 namespace conversion {
 inline void from(const nav_msgs::OccupancyGrid &src,
-                 DistanceGridMap::Ptr &dst,
+                 DistanceGridmap::Ptr &dst,
                  const double threshold = 1.0,
                  const double maximum_distance = 2.0)
 {
@@ -22,7 +22,7 @@ inline void from(const nav_msgs::OccupancyGrid &src,
                                      src.info.origin.position.y,
                                      tf::getYaw(src.info.origin.orientation));
 
-    dst.reset(new DistanceGridMap(origin,
+    dst.reset(new DistanceGridmap(origin,
                                   src.info.resolution,
                                   maximum_distance,
                                   src.info.height,

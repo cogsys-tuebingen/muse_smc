@@ -18,7 +18,7 @@ void LikelihoodFieldModelPCLog::apply(const data_t::ConstPtr       &data,
                                       const state_space_t::ConstPtr   &map,
                                       sample_set_t::weight_iterator_t set)
 {
-    if(!map->isType<static_maps::LikelihoodFieldGridMap>()) {
+    if(!map->isType<static_maps::LikelihoodFieldGridmap>()) {
         return;
     }
 
@@ -26,7 +26,7 @@ void LikelihoodFieldModelPCLog::apply(const data_t::ConstPtr       &data,
         ps_.resize(set.capacity(), 0.0);
     }
 
-    const static_maps::LikelihoodFieldGridMap   &gridmap = map->as<static_maps::LikelihoodFieldGridMap>();
+    const static_maps::LikelihoodFieldGridmap   &gridmap = map->as<static_maps::LikelihoodFieldGridmap>();
     const muse_mcl_2d_laser::LaserScan2D        &laser_data = data->as<muse_mcl_2d_laser::LaserScan2D>();
     const muse_mcl_2d_laser::LaserScan2D::rays_t  &laser_rays = laser_data.getRays();
 

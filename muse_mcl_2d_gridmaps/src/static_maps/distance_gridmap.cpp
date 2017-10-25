@@ -8,14 +8,14 @@ using namespace muse_mcl_2d_gridmaps;
 using namespace muse_mcl_2d;
 using namespace static_maps;
 
-DistanceGridMap::DistanceGridMap(const pose_t &origin,
+DistanceGridmap::DistanceGridmap(const pose_t &origin,
                                  const double resolution,
                                  const double maximum_distance,
                                  const std::size_t height,
                                  const std::size_t width,
                                  const std::string &frame_id,
                                  const double default_value) :
-    GridMap<double>(origin,
+    Gridmap<double>(origin,
                     resolution,
                     height,
                     width,
@@ -25,16 +25,16 @@ DistanceGridMap::DistanceGridMap(const pose_t &origin,
 {
 }
 
-double DistanceGridMap::getMaximumDistance() const
+double DistanceGridmap::getMaximumDistance() const
 {
     return maximum_distance_;
 }
 
-double DistanceGridMap::at(const cslibs_math_2d::Point2d &point) const
+double DistanceGridmap::at(const cslibs_math_2d::Point2d &point) const
 {
     index_t i;
     toIndex(point, i);
     if(invalid(i))
         return maximum_distance_;
-    return GridMap<double>::at(i[0], i[1]);
+    return Gridmap<double>::at(i[0], i[1]);
 }

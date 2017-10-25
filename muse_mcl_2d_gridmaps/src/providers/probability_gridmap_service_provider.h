@@ -27,7 +27,7 @@ protected:
 
     mutable std::mutex                    map_mutex_;
     mutable std::condition_variable       map_loaded_;
-    mutable static_maps::ProbabilityGridMap::Ptr map_;
+    mutable static_maps::ProbabilityGridmap::Ptr map_;
     mutable std::atomic_bool              loading_;
     mutable std::thread                   worker_;
 

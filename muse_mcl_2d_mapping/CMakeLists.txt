@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   muse_smc
   roscpp
 )
+find_package(OpenCV REQUIRED)
 
 catkin_package(
 #  INCLUDE_DIRS include
@@ -25,6 +26,7 @@ catkin_package(
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
 
 add_executable(${PROJECT_NAME}_ocm_node
@@ -34,4 +36,5 @@ add_executable(${PROJECT_NAME}_ocm_node
 
 target_link_libraries(${PROJECT_NAME}_ocm_node
     ${catkin_LIBRARIES}
+    ${OpenCV_LIBRARIES}
 )

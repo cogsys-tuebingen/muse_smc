@@ -13,15 +13,15 @@
 namespace muse_mcl_2d_gridmaps {
 namespace static_maps {
 template<typename T>
-class GridMap : public muse_mcl_2d::Map2D
+class Gridmap : public muse_mcl_2d::Map2D
 {
 public:
-    using Ptr                    = std::shared_ptr<GridMap<T>>;
+    using Ptr                    = std::shared_ptr<Gridmap<T>>;
     using const_line_iterator_t  = algorithms::Bresenham<T const>;
     using index_t                = std::array<int, 2>;
     using pose_t                 = cslibs_math_2d::Pose2d;
 
-    GridMap(const pose_t &origin,
+    Gridmap(const pose_t &origin,
             const double resolution,
             const std::size_t height,
             const std::size_t width,
@@ -40,7 +40,7 @@ public:
     {
     }
 
-    GridMap(const double origin_x,
+    Gridmap(const double origin_x,
             const double origin_y,
             const double origin_phi,
             const double resolution,
@@ -58,6 +58,39 @@ public:
         m_T_w_(w_T_m_.inverse()),
         data_(height * width, default_value),
         data_ptr_(data_.data())
+    {
+    }
+
+    Gridmap(const Gridmap &other) :
+        Map2D(other.frame_),
+        resolution_(other.resolution_),
+        resolution_inv_(other.resolution_inv_),
+        height_(other.height_),
+        width_(other.width_),
+        max_index_(other.max_index_),
+        w_T_m_(other.w_T_m_),
+        m_T_w_(other.m_T_w_),
+        data_(other.data_),
+        data_ptr_(data_.data())
+    {
+    }
+
+    Gridmap(Gridmap &&other) :
+        Map2D(other.frame_),
+        resolution_(other.resolution_),
+        resolution_inv_(other.resolution_inv_),
+        height_(other.height_),
+        width_(other.width_),
+        max_index_(other.max_index_),
+        w_T_m_(other.w_T_m_),
+        m_T_w_(other.m_T_w_),
+        data_(other.data_),
+        data_ptr_(data_.data())
+    {
+    }
+
+
+    virtual ~Gridmap()
     {
     }
 
@@ -194,8 +227,8 @@ protected:
     const std::size_t                       height_;
     const std::size_t                       width_;
     const index_t                           max_index_;
-    const cslibs_math_2d::Transform2d    w_T_m_;
-    const cslibs_math_2d::Transform2d    m_T_w_;
+    const cslibs_math_2d::Transform2d       w_T_m_;
+    const cslibs_math_2d::Transform2d       m_T_w_;
 
     std::vector<T>                          data_;
     T*                                      data_ptr_;
