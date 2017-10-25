@@ -257,14 +257,14 @@ protected:
                           cslibs_math_2d::Point2d &p_w) const
     {
         p_w = w_T_m_ * cslibs_math_2d::Point2d(i[0] * resolution_,
-                                                  i[1] * resolution_);
+                                               i[1] * resolution_);
     }
 
     inline void fromIndex(const const_line_iterator_t &it,
                           cslibs_math_2d::Point2d &p_w) const
     {
         p_w = w_T_m_ * cslibs_math_2d::Point2d(it.x() * resolution_,
-                                                  it.y() * resolution_);
+                                               it.y() * resolution_);
     }
 
     };

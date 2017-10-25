@@ -3,11 +3,15 @@
 
 #include <cslibs_math/common/log_odds.hpp>
 
+#include <memory>
+
 namespace muse_mcl_2d_gridmaps {
 namespace utility {
 class InverseModel
 {
 public:
+    using Ptr = std::shared_ptr<InverseModel>;
+
     inline InverseModel(const double prob_prior,
                         const double prob_free,
                         const double prob_occupied) :

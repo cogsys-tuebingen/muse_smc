@@ -5,10 +5,24 @@
     <!-- using only one map, the world and map frame can be collapsed -->
     <node pkg="tf" type="static_transform_publisher" name="map_T_w" args="0 0 0 0 0 0 map world 10"/>
 
-    <arg name="bag_root" value="/home/hanten/Workspace/data/rawseeds/bags" />
+    <arg name="bag_root" value="/localhome/hanten/localization/data" />
+    <!-- <arg name="bag_root" value="/home/hanten/Workspace/data/rawseeds/bags" /> -->
     <arg name="bag_file" value="Bicocca_2009-02-25b-static-artificial-light.bag" />
     <node pkg="rosbag" type="play" name="player" output="screen" args="--pause --clock --rate 1.0 -d 5 $(arg bag_root)/$(arg bag_file)" required="true" />
     <include file="$(find rawseeds_ros)/launch/transforms.launch" />
+
+ 	<group ns="muse_mcl_2d_mapping_ocm_node">
+        <rosparam param="lasers">
+            ["/sick/front","/sick/rear"]
+        </rosparam>
+        <param name="subscriber_queue_size" value="10" />
+        <param name="rate" value="0.0" />
+        <param name="resolution" value="0.05" />
+        <param name="map_topic" value="/map/simple"  />
+        <param name="map_frame" value="/odom" />
+        <param name="map_pub_rate" value="10.0" />
+        <param name="optimizitation" value="false" /> 
+    </group>
 
  <!--   <node name="muse_mcl_2d_mapping_ocm_node" pkg="muse_mcl_2d_mapping" type="muse_mcl_2d_mapping_ocm_node" output="screen">
         <rosparam param="lasers">

@@ -39,11 +39,14 @@ inline void from(const ProbabilityGridmap::Ptr &src,
                  nav_msgs::OccupancyGrid::Ptr &dst)
 {
     dst.reset(new nav_msgs::OccupancyGrid);
-    dst->header.stamp       = ros::Time(src->getStamp().seconds());
-    dst->header.frame_id    = src->getFrame();
-    dst->info.resolution    = src->getResolution();
-    dst->info.height        = src->getHeight();
-    dst->info.width         = src->getWidth();
+    dst->header.stamp            = ros::Time(src->getStamp().seconds());
+    dst->header.frame_id         = src->getFrame();
+    dst->info.resolution         = src->getResolution();
+    dst->info.height             = src->getHeight();
+    dst->info.width              = src->getWidth();
+    dst->info.origin.position.x  = src->getOrigin().tx();
+    dst->info.origin.position.y  = src->getOrigin().ty();
+    dst->info.origin.orientation = tf::createQuaternionMsgFromYaw(src->getOrigin().yaw());
     dst->info.map_load_time = dst->header.stamp;
     dst->data.resize(src->getData().size());
     std::transform(src->getData().begin(), src->getData().end(),

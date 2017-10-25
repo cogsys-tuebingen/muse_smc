@@ -115,6 +115,9 @@ void OccupancyGridMapper::process(const Measurement &m)
                                      chunk_resolution_,
                                      frame_id_,
                                      inverse_model_.getLogOddsPrior()));
+
+        m_T_w_ = m.origin.inverse();
+
     }
 
     const double resolution2 = (resolution_ * resolution_ * 0.25);
