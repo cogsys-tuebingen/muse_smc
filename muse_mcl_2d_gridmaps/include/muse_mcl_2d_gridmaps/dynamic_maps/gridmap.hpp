@@ -23,6 +23,7 @@ class Gridmap : public muse_mcl_2d::Map2D
 {
 public:
     using Ptr                   = std::shared_ptr<Gridmap<T>>;
+    using gridmap_t             = Gridmap<T>;
     using pose_t                = cslibs_math_2d::Pose2d;
     using index_t               = std::array<int, 2>;
     using mutex_t               = std::mutex;
@@ -31,6 +32,7 @@ public:
     using storage_t             = cis::Storage<chunk_t, index_t, cis::backend::kdtree::KDTree>;
     using line_iterator_t       = algorithms::Bresenham<T>;
     using const_line_iterator_t = algorithms::Bresenham<T const>;
+    using get_chunk_t           = delegate<chunk_t*(const index_t &)>;
 
     Gridmap(const pose_t        &origin,
             const double         resolution,
@@ -126,7 +128,8 @@ public:
         const index_t chunk_index       = toChunkIndex(index);
         const index_t local_chunk_index = toLocalChunkIndex(index);
 
-        return getChunk(chunk_index)->at(local_chunk_index);
+        const chunk_t *chunk = lookupChunk(chunk_index);
+        return chunk != nullptr ? chunk->at(local_chunk_index) : default_value_;
     }
 
     /// build a handle
@@ -144,11 +147,12 @@ public:
         const index_t index             = toIndex(point);
         const index_t chunk_index       = toChunkIndex(index);
         const index_t local_chunk_index = toLocalChunkIndex(index);
-        return getChunk(chunk_index)->at(local_chunk_index);
+        const chunk_t *chunk = lookupChunk(chunk_index);
+        return chunk != nullptr ? chunk->at(local_chunk_index) : default_value_;
     }
 
     inline line_iterator_t getLineIterator(const index_t &start_index,
-                                           const index_t &end_index) const
+                                           const index_t &end_index)
     {
         const index_t start_chunk_index = toChunkIndex(start_index);
         const index_t end_chunk_index   = toChunkIndex(end_index);
@@ -159,11 +163,11 @@ public:
                                end_index + min_index_,
                                chunk_size_,
                                default_value_,
-                               storage_);
+                               get_chunk_t::template from<gridmap_t, &gridmap_t::getChunk>(this));
     }
 
     inline line_iterator_t getLineIterator(const cslibs_math_2d::Point2d &start,
-                                           const cslibs_math_2d::Point2d &end) const
+                                           const cslibs_math_2d::Point2d &end)
     {
 
         const index_t start_index = toIndex(start);
@@ -176,8 +180,31 @@ public:
         return  line_iterator_t(start_index, end_index,
                                 chunk_size_,
                                 default_value_,
-                                storage_);
+                                get_chunk_t::template from<gridmap_t, &gridmap_t::getChunk>(this));
     }
+
+    inline line_iterator_t getLineIterator(const index_t &start_index,
+                                           const index_t &end_index) const
+    {
+        return line_iterator_t(start_index,
+                               end_index,
+                               chunk_size_,
+                               default_value_,
+                               get_chunk_t::template from<gridmap_t, &gridmap_t::getChunk>(this));
+    }
+
+    inline line_iterator_t getLineIterator(const cslibs_math_2d::Point2d &start,
+                                           const cslibs_math_2d::Point2d &end) const
+    {
+
+        const index_t start_index = toIndex(start);
+        const index_t end_index   = toIndex(end);
+        return  line_iterator_t(start_index, end_index,
+                                chunk_size_,
+                                default_value_,
+                                get_chunk_t::template from<gridmap_t, &gridmap_t::getChunk>(this));
+    }
+
 
     inline index_t getMinChunkIndex() const
     {
@@ -189,13 +216,13 @@ public:
         return max_chunk_index_;
     }
 
-    inline chunk_t const * getChunk(const index_t &chunk_index) const
+    inline chunk_t const * lookupChunk(const index_t &chunk_index) const
     {
         lock_t l(storage_mutex_);
         return storage_->get(chunk_index);
     }
 
-    inline chunk_t* getChunk(const index_t &chunk_index)
+    inline chunk_t* getChunk(const index_t &chunk_index) const
     {
         lock_t l(storage_mutex_);
         chunk_t *chunk = storage_->get(chunk_index);

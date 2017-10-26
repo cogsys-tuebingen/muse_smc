@@ -3,14 +3,11 @@
 
 #include <array>
 
-#include <cslibs_indexed_storage/storage.hpp>
-#include <cslibs_indexed_storage/backend/kdtree/kdtree.hpp>
+#include <muse_smc/utility/delegate.hpp>
 
 #include <cslibs_math/common/mod.hpp>
 
 #include <muse_mcl_2d_gridmaps/dynamic_maps/chunk.hpp>
-
-namespace cis = cslibs_indexed_storage;
 
 namespace muse_mcl_2d_gridmaps {
 namespace dynamic_maps {
@@ -19,18 +16,18 @@ template<typename T>
 class Bresenham
 {
 public:
-    using Ptr       = std::shared_ptr<Bresenham>;
-    using index_t   = std::array<int, 2>;
-    using chunk_t   = dynamic_maps::Chunk<T>;
-    using storage_t = cis::Storage<chunk_t, index_t, cis::backend::kdtree::KDTree>;
+    using Ptr           = std::shared_ptr<Bresenham>;
+    using index_t       = std::array<int, 2>;
+    using chunk_t       = dynamic_maps::Chunk<T>;
+    using get_chunk_t   = delegate<chunk_t*(const index_t&)>;
 
-    inline explicit Bresenham(const index_t                    &start,
-                              const index_t                    &end,
-                              const int                         chunk_size,
-                              const T                          &default_value,
-                              const std::shared_ptr<storage_t> &storage) :
+    inline explicit Bresenham(const index_t     &start,
+                              const index_t     &end,
+                              const int          chunk_size,
+                              const T           &default_value,
+                              const get_chunk_t &get_chunk) :
         done_(false),
-        storage_(storage),
+        get_chunk_(get_chunk),
         active_chunk_(nullptr),
         chunk_size_(chunk_size),
         start_(start),
@@ -137,10 +134,7 @@ private:
             active_chunk_->unlock();
         }
 
-        active_chunk_ = storage_->get(chunk_index_);
-        if(active_chunk_ == nullptr) {
-            active_chunk_ = &(storage_->insert(chunk_index_, chunk_t(chunk_size_, default_value_)));
-        }
+        active_chunk_ = get_chunk_(chunk_index_);
         active_chunk_->lock();
     }
 
@@ -158,7 +152,7 @@ private:
 
 
     bool                        done_;
-    std::shared_ptr<storage_t>  storage_;
+    get_chunk_t                 get_chunk_;
     chunk_t                    *active_chunk_;
     int                         chunk_size_;
 
