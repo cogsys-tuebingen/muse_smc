@@ -27,7 +27,6 @@ public:
     inline explicit Bresenham(const index_t                    &start,
                               const index_t                    &end,
                               const int                         chunk_size,
-                              const index_t                    &min_chunk_index,
                               const T                          &default_value,
                               const std::shared_ptr<storage_t> &storage) :
         done_(false),
@@ -36,7 +35,6 @@ public:
         chunk_size_(chunk_size),
         start_(start),
         end_(end),
-        min_chunk_index_(min_chunk_index),
         default_value_(default_value),
         steep_(std::abs(end[1] - start[1]) > std::abs(end[0] - start[0])),
         error_(0)
@@ -128,11 +126,11 @@ private:
     inline void updateChunk()
     {
         if(steep_) {
-            chunk_index_[0] = min_chunk_index_[0] + index_[1] / chunk_size_;
-            chunk_index_[1] = min_chunk_index_[1] + index_[0] / chunk_size_;
+            chunk_index_[0] = index_[1] / chunk_size_;
+            chunk_index_[1] = index_[0] / chunk_size_;
         } else {
-            chunk_index_[0] = min_chunk_index_[0] + index_[0] / chunk_size_;
-            chunk_index_[1] = min_chunk_index_[1] + index_[1] / chunk_size_;
+            chunk_index_[0] = index_[0] / chunk_size_;
+            chunk_index_[1] = index_[1] / chunk_size_;
         }
 
         if(active_chunk_) {
@@ -170,7 +168,6 @@ private:
 
     index_t      chunk_index_;
     index_t      local_index_;
-    index_t      min_chunk_index_;
     T            default_value_;
 
     bool         steep_;

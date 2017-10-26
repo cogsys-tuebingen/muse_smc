@@ -13,7 +13,7 @@
 
  	<group ns="muse_mcl_2d_mapping_ocm_node">
         <rosparam param="lasers">
-            ["/sick/front","/sick/rear"]
+            ["/sick/front"]
         </rosparam>
         <param name="subscriber_queue_size" value="10" />
         <param name="rate" value="0.0" />
@@ -23,6 +23,7 @@
         <param name="map_pub_rate" value="10.0" />
         <param name="optimizitation" value="false" /> 
     </group>
+    <!-- ,"/sick/rear" -->
 
  <!--   <node name="muse_mcl_2d_mapping_ocm_node" pkg="muse_mcl_2d_mapping" type="muse_mcl_2d_mapping_ocm_node" output="screen">
         <rosparam param="lasers">

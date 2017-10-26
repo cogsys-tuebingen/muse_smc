@@ -113,17 +113,17 @@ void OccupancyGridMapperNode::laserscan(const sensor_msgs::LaserScanConstPtr &ms
         return;
     }
 
-    cslibs_math_2d::Transform2d m_T_l;
-    if(tf_->lookupTransform(laserscan->getFrame(), map_frame_,
+    cslibs_math_2d::Transform2d o_T_l;
+    if(tf_->lookupTransform(map_frame_, laserscan->getFrame(),
                             ros::Time(laserscan->getTimeFrame().end.seconds()),
-                            m_T_l,
+                            o_T_l,
                             tf_timeout_)) {
 
         cslibs_math_2d::Pointcloud2d::Ptr points(new cslibs_math_2d::Pointcloud2d);
-        OccupancyGridMapper::Measurement  m(points, m_T_l);
+        OccupancyGridMapper::Measurement  m(points, o_T_l);
         for(auto it = laserscan->begin() ; it != laserscan->end() ; ++it) {
             if(it->valid())
-                points->insert(m_T_l * it->point);
+                points->insert(it->point);
         }
         occ_mapper_->insert(m);
     }
@@ -133,8 +133,6 @@ void OccupancyGridMapperNode::publishOcc()
 {
     auto map = occ_mapper_->get();
     if(map) {
-
-
         nav_msgs::OccupancyGrid::Ptr msg;
         muse_mcl_2d_gridmaps::static_maps::conversion::from(map, msg);
         pub_occ_map_.publish(msg);

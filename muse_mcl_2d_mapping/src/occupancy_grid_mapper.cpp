@@ -75,7 +75,7 @@ void OccupancyGridMapper::loop()
 void OccupancyGridMapper::mapRequest()
 {
     if(request_map_ && map_) {
-        static_map_.reset(new static_map_t(map_->getOrigin(),
+        static_map_.reset(new static_map_t(map_->getInitialOrigin(),
                                            map_->getResolution(),
                                            map_->getHeight(),
                                            map_->getWidth(),
@@ -115,16 +115,28 @@ void OccupancyGridMapper::process(const Measurement &m)
                                      chunk_resolution_,
                                      frame_id_,
                                      inverse_model_.getLogOddsPrior()));
-
-        m0_T_m_ = m.origin;
     }
+
+    auto discretize = [this](const double x)
+    {
+        return static_cast<int>(std::floor(x / resolution_ + 0.5));
+    };
+
+    const cslibs_math_2d::Transform2d o_T_m = map_->getInitialOrigin();
+    const cslibs_math_2d::Transform2d m_T_o = o_T_m.inverse();
+    const cslibs_math_2d::Transform2d m_T_l = m_T_o * m.origin;
+    const dynamic_map_t::index_t      start_index = {discretize(m_T_l.translation().x()),
+                                                     discretize(m_T_l.translation().y())};
 
     const double resolution2 = (resolution_ * resolution_ * 0.25);
     for(auto it = m.points->begin() ; it != m.points->end() ; ++it) {
         if(it->isNormal()) {
-            auto b_ptr = map_->getLineIterator((m0_T_m_ * m.origin).translation(),
-                                                m0_T_m_ * *it);
-            auto &b = *b_ptr;
+            const cslibs_math_2d::Point2d end_point = m_T_l * *it;
+            const dynamic_map_t::index_t  end_index = {discretize(end_point.x()),
+                                                       discretize(end_point.y())};
+
+            auto b = map_->getLineIterator(start_index,
+                                           end_index);
 
             while(!b.done()) {
                 double l = b.length2() > resolution2 ? inverse_model_.updateFree(*b) : inverse_model_.updateOccupied(*b);
