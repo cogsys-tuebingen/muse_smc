@@ -84,8 +84,8 @@ void OccupancyGridMapper::mapRequest()
         const int chunk_step = map_->getChunkSize();
         const dynamic_map_t::index_t min_chunk_index = map_->getMinChunkIndex();
         const dynamic_map_t::index_t max_chunk_index = map_->getMaxChunkIndex();
-        for(int i = min_chunk_index[1] ; i < max_chunk_index[1] ; ++i) {
-            for(int j = min_chunk_index[0] ; j < max_chunk_index[0] ; ++j) {
+        for(int i = min_chunk_index[1] ; i <= max_chunk_index[1] ; ++i) {
+            for(int j = min_chunk_index[0] ; j <= max_chunk_index[0] ; ++j) {
                 const dynamic_map_t::chunk_t *chunk = map_->getChunk({j,i});
                 if(chunk != nullptr) {
                     const int cx = (j - min_chunk_index[0]) * chunk_step;
@@ -125,15 +125,17 @@ void OccupancyGridMapper::process(const Measurement &m)
     const cslibs_math_2d::Transform2d o_T_m = map_->getInitialOrigin();
     const cslibs_math_2d::Transform2d m_T_o = o_T_m.inverse();
     const cslibs_math_2d::Transform2d m_T_l = m_T_o * m.origin;
-    const dynamic_map_t::index_t      start_index = {discretize(m_T_l.translation().x()),
-                                                     discretize(m_T_l.translation().y())};
+    const dynamic_map_t::index_t      start_index = {discretize(m.origin.translation().x()),
+                                                     discretize(m.origin.translation().y())};
 
     const double resolution2 = (resolution_ * resolution_ * 0.25);
     for(auto it = m.points->begin() ; it != m.points->end() ; ++it) {
         if(it->isNormal()) {
-            const cslibs_math_2d::Point2d end_point = m_T_l * *it;
+            const cslibs_math_2d::Point2d end_point = m.origin * *it;
             const dynamic_map_t::index_t  end_index = {discretize(end_point.x()),
                                                        discretize(end_point.y())};
+
+            std::cout << start_index << " " << end_index << std::endl;
 
             auto b = map_->getLineIterator(start_index,
                                            end_index);
