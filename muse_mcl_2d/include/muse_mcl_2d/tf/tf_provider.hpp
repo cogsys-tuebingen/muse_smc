@@ -2,6 +2,7 @@
 #define TF_PROVIDER_HPP
 
 #include <muse_smc/utility/delegate.hpp>
+#include <muse_smc/utility/stamped.hpp>
 
 #include <cslibs_math_2d/types/transform.hpp>
 #include <tf/transform_listener.h>

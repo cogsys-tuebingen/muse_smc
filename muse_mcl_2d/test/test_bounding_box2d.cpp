@@ -1,17 +1,16 @@
 #include <gtest/gtest.h>
 
-#include <cslibs_math_2dbox_2d.hpp>
+#include <cslibs_math_2d/types/box.hpp>
 #include <cslibs_math_2d/types/transform.hpp>
 #include <cslibs_math/random/random.hpp>
 
-using namespace muse_mcl_2d;
 using rng_t = cslibs_math::random::Uniform<1>;
 
 TEST(Test_muse_mcl_2d, testBoxConstructors)
 {
     rng_t rng(-10.0, 10.0);
 
-    math::Box2D b0;
+    cslibs_math_2d::Box2d b0;
     EXPECT_EQ(b0.getMin().x(), std::numeric_limits<double>::lowest());
     EXPECT_EQ(b0.getMin().y(), std::numeric_limits<double>::lowest());
     EXPECT_EQ(b0.getMax().x(), std::numeric_limits<double>::max());
@@ -25,13 +24,13 @@ TEST(Test_muse_mcl_2d, testBoxConstructors)
         std::swap(x0, x1);
     if(y0 > y1)
         std::swap(y0, y1);
-    math::Box2D b1(x0,y0,x1,y1);
+    cslibs_math_2d::Box2d b1(x0,y0,x1,y1);
     EXPECT_EQ(b1.getMin().x(), x0);
     EXPECT_EQ(b1.getMin().y(), y0);
     EXPECT_EQ(b1.getMax().x(), x1);
     EXPECT_EQ(b1.getMax().y(), y1);
 
-    math::Box2D b2({x0,y0},{x1,y1});
+    cslibs_math_2d::Box2d b2({x0,y0},{x1,y1});
     EXPECT_EQ(b1.getMin().x(), x0);
     EXPECT_EQ(b1.getMin().y(), y0);
     EXPECT_EQ(b1.getMax().x(), x1);
@@ -55,7 +54,7 @@ TEST(Test_muse_mcl_2d, testBoxIntersects)
     };
 
 
-    const math::Box2D bb(-1.0, -1.0, 1.0, 1.0);
+    const     cslibs_math_2d::Box2d bb(-1.0, -1.0, 1.0, 1.0);
     for(std::size_t i = 0 ; i < 1000 ; ++i) {
         EXPECT_TRUE(bb.intersects({generate_inner(), generate_outer()}));
     }

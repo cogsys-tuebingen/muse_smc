@@ -1,6 +1,7 @@
 #include "occupancy_grid_mapper.h"
 
 #include <muse_mcl_2d_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
+#include <cslibs_math/common/array.hpp>
 
 using namespace muse_mcl_2d_mapping;
 
