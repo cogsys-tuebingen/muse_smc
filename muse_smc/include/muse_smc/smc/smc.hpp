@@ -10,7 +10,7 @@
 #include <muse_smc/resampling/resampling.hpp>
 #include <muse_smc/smc/smc_state.hpp>
 #include <muse_smc/utility/synchronized_priority_queue.hpp>
-#include <muse_smc/time/rate.hpp>
+#include <cslibs_time/rate.hpp>
 
 
 #ifdef MUSE_SMC_USE_DOTTY
@@ -87,7 +87,7 @@ public:
                       typename resampling_t::Ptr            resampling,
                       typename filter_state_t::Ptr          state_publisher,
                       typename prediction_integrals_t::Ptr  prediction_integrals,
-                      const Rate                           &preferred_filter_rate,
+                      const cslibs_time::Rate              &preferred_filter_rate,
                       const std::size_t                     minimum_update_cycles)
     {
         sample_set_             = sample_set;
@@ -173,7 +173,7 @@ protected:
     typename resampling_t::Ptr              resampling_;
     typename prediction_integrals_t::Ptr    prediction_integrals_;
 
-    Rate                                    preferred_filter_rate_;
+    cslibs_time::Rate                       preferred_filter_rate_;
     std::size_t                             updates_applied_after_resampling_;
     std::size_t                             minimum_update_cycles_;
 
@@ -239,14 +239,14 @@ protected:
         }
     }
 
-    inline void predict(const Time &until)
+    inline void predict(const cslibs_time::Time &until)
     {
         auto wait_for_prediction = [this] () {
             lock_t l(notify_prediction_mutex_);
             notify_prediction_.wait(l);
         };
 
-        const Time &time_stamp = sample_set_->getStamp();
+        const cslibs_time::Time &time_stamp = sample_set_->getStamp();
         while(until > time_stamp) {
             if(prediction_queue_.empty())
                 wait_for_prediction();
@@ -287,9 +287,9 @@ protected:
         sample_uniform_->apply(*sample_set_);
 
 #ifdef MUSE_SMC_DEBUG
-        Time     last = Time::now();
-        Time     now;
-        Duration dur;
+        cslibs_time::Time     last = cslibs_time::Time::now();
+        cslibs_time::Time     now;
+        cslibs_time::Duration dur;
         cslibs_math::statistics::Mean<1> mean_rate;
 #endif
 
@@ -306,11 +306,11 @@ protected:
                 requests();
 
                 typename update_t::Ptr u = update_queue_.pop();
-                const Time &t = u->getStamp();
-                const Time &sample_set_stamp = sample_set_->getStamp();
+                const cslibs_time::Time &t = u->getStamp();
+                const cslibs_time::Time &sample_set_stamp = sample_set_->getStamp();
 
                 if(t >= sample_set_stamp) {
-                    now = Time::now();
+                    now = cslibs_time::Time::now();
 
                     predict(t);
 
@@ -319,7 +319,7 @@ protected:
                     } else if (t == sample_set_stamp) {
                         const auto model_id = u->getModelId();
                         if(!prediction_integrals_->isZero(model_id)) {
-                            now = Time::now();
+                            now = cslibs_time::Time::now();
                             u->apply(sample_set_->getWeightIterator());
 
                             prediction_integrals_->reset(model_id);
@@ -348,7 +348,7 @@ protected:
                 }
 
 #ifdef MUSE_SMC_DEBUG
-                now = Time::now();
+                now = cslibs_time::Time::now();
                 dur = now - last;
                 if(!dur.isZero() && !prediction_integrals_->isZero()) {
                     const double rate = 1.0 / dur.seconds();

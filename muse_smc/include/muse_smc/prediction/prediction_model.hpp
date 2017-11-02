@@ -87,7 +87,7 @@ public:
     }
 
     virtual typename Result::Ptr apply(const Data::ConstPtr                    &data,
-                                       const Time                              &until,
+                                       const cslibs_time::Time                 &until,
                                        typename sample_set_t::state_iterator_t  states) = 0;
 
 protected:

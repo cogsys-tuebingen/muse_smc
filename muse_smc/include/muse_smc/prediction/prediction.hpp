@@ -48,18 +48,18 @@ public:
     }
 
     inline typename predition_model_t::Result operator ()
-        (const Time &until, typename sample_set_t::state_iterator_t states)
+        (const cslibs_time::Time &until, typename sample_set_t::state_iterator_t states)
     {
         return model_->apply(data_, until, states);
     }
 
-    inline typename predition_model_t::Result::Ptr apply(const Time  &until,
+    inline typename predition_model_t::Result::Ptr apply(const cslibs_time::Time  &until,
                                                          typename sample_set_t::state_iterator_t states)
     {
         return model_->apply(data_, until, states);
     }
 
-    inline const Time& getStamp() const
+    inline const cslibs_time::Time& getStamp() const
     {
         return data_->getTimeFrame().start;
     }

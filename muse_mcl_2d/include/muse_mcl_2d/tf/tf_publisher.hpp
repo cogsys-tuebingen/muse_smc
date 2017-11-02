@@ -30,7 +30,7 @@ namespace muse_mcl_2d {
 class TFPublisher {
 public:
     using Ptr = std::shared_ptr<TFPublisher>;
-    using stamped_t = muse_smc::Stamped<cslibs_math_2d::Transform2d>;
+    using stamped_t = cslibs_time::Stamped<cslibs_math_2d::Transform2d>;
 
     /**
      * @brief TransformPublisherAnchored constructor.
@@ -50,7 +50,7 @@ public:
         timeout_(timeout),
         running_(false),
         stop_(false),
-        w_T_b_(cslibs_math_2d::Transform2d::identity(), muse_smc::Time(ros::Time::now().toNSec())),
+        w_T_b_(cslibs_math_2d::Transform2d::identity(), cslibs_time::Time(ros::Time::now().toNSec())),
         wait_for_transform_(true),
         tf_rate_(rate)
     {

@@ -1,12 +1,12 @@
 #include <tf/tf.h>
 
-#include <muse_smc/time/time.hpp>
+#include <cslibs_time/time.hpp>
 #include <cslibs_math/random/random.hpp>
 #include <iomanip>
 
 #include <cslibs_math_2d/types/transform.hpp>
 #include <cslibs_math_2d/types/vector.hpp>
-#include <muse_smc/utility/stamped.hpp>
+#include <cslibs_time/stamped.hpp>
 #include <cslibs_math/common/angle.hpp>
 
 namespace muse_mcl_2d {
@@ -240,7 +240,7 @@ inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d::Transfo
     return out;
 }
 
-using StampedTransform2DLegacy = muse_smc::Stamped<Transform2DLegacy>;
+using StampedTransform2DLegacy = cslibs_time::Stamped<Transform2DLegacy>;
 }
 
 
@@ -250,24 +250,24 @@ void constructors()
 {
     cslibs_math::random::Uniform<1> rng(-10.0, 10.0);
 
-    muse_smc::Time start = muse_smc::Time::now();
+    cslibs_time::Time start = cslibs_time::Time::now();
     double yaw = 0.0;
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
         cslibs_math_2d::Transform2d t;
         yaw = t.yaw();
     }
     std::cout << "empty:" << "\n";
-    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
+    std::cout << "took time: " << (cslibs_time::Time::now() - start).milliseconds() << "ms" << "\n";
 
-    start = muse_smc::Time::now();
+    start = cslibs_time::Time::now();
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
         cslibs_math_2d::Transform2d t(i, i);
         yaw = t.yaw();
     }
     std::cout << "x y:" << "\n";
-    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
+    std::cout << "took time: " << (cslibs_time::Time::now() - start).milliseconds() << "ms" << "\n";
 
-    start = muse_smc::Time::now();
+    start = cslibs_time::Time::now();
     cslibs_math_2d::Vector2d v(rng.get(), rng.get());
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
         cslibs_math_2d::Transform2d t(v);
@@ -275,32 +275,32 @@ void constructors()
         v.x() += i;
     }
     std::cout << "v:" << "\n";
-    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
+    std::cout << "took time: " << (cslibs_time::Time::now() - start).milliseconds() << "ms" << "\n";
 
-    start = muse_smc::Time::now();
+    start = cslibs_time::Time::now();
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
         cslibs_math_2d::Transform2d t(i,i,i);
         yaw = t.yaw();
     }
     std::cout << "x y yaw:" << "\n";
-    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
+    std::cout << "took time: " << (cslibs_time::Time::now() - start).milliseconds() << "ms" << "\n";
 
-    start = muse_smc::Time::now();
+    start = cslibs_time::Time::now();
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
         cslibs_math_2d::Transform2d t(v,i);
         yaw = t.yaw();
     }
     std::cout << "v yaw:" << "\n";
-    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
+    std::cout << "took time: " << (cslibs_time::Time::now() - start).milliseconds() << "ms" << "\n";
 
-    start = muse_smc::Time::now();
+    start = cslibs_time::Time::now();
     cslibs_math_2d::Transform2d t(rng.get(), rng.get());
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
         cslibs_math_2d::Transform2d t_(t);
         yaw = t_.yaw();
     }
     std::cout << "t:" << "\n";
-    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
+    std::cout << "took time: " << (cslibs_time::Time::now() - start).milliseconds() << "ms" << "\n";
 }
 
 void multiplyVector()
@@ -311,30 +311,30 @@ void multiplyVector()
     double mean_ms_tf= 0.0;
 
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
-        muse_smc::Time start = muse_smc::Time::now();
+        cslibs_time::Time start = cslibs_time::Time::now();
         cslibs_math_2d::Transform2d t(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
         cslibs_math_2d::Vector2d v(rng.get(), rng.get());
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             v = t * v;
         }
-        mean_ms_t += (muse_smc::Time::now() - start).milliseconds();
+        mean_ms_t += (cslibs_time::Time::now() - start).milliseconds();
 
-        start = muse_smc::Time::now();
+        start = cslibs_time::Time::now();
         muse_mcl_2d::Transform2DLegacy tl(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
         cslibs_math_2d::Vector2d tv(rng.get(), rng.get());
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             tv = tl * tv;
         }
-        mean_ms_tl += (muse_smc::Time::now() - start).milliseconds();
+        mean_ms_tl += (cslibs_time::Time::now() - start).milliseconds();
 
-        start = muse_smc::Time::now();
+        start = cslibs_time::Time::now();
         tf::Transform tf_t(tf::createQuaternionFromYaw(cslibs_math::common::angle::normalize(rng.get())),
                            tf::Vector3(rng.get(), rng.get(), 0.0));
         tf::Vector3   tf_v (rng.get(), rng.get(), 0.0);
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             tf_v = tf_t * tf_v;
         }
-        mean_ms_tf += (muse_smc::Time::now() - start).milliseconds();
+        mean_ms_tf += (cslibs_time::Time::now() - start).milliseconds();
     }
 
     std::cout << "vector:" << "\n";
@@ -356,25 +356,25 @@ void multiplyTransform()
     muse_mcl_2d::Transform2DLegacy tl;
     tf::Transform tf;
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
-        muse_smc::Time start = muse_smc::Time::now();
+        cslibs_time::Time start = cslibs_time::Time::now();
         cslibs_math_2d::Transform2d ta(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
         cslibs_math_2d::Transform2d tb(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             tb = ta * tb;
         }
-        mean_ms_t += (muse_smc::Time::now() - start).milliseconds();
+        mean_ms_t += (cslibs_time::Time::now() - start).milliseconds();
         t = tb;
 
-        start = muse_smc::Time::now();
+        start = cslibs_time::Time::now();
         muse_mcl_2d::Transform2DLegacy tla(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
         muse_mcl_2d::Transform2DLegacy tlb(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             tlb = tla * tlb;
         }
-        mean_ms_tl += (muse_smc::Time::now() - start).milliseconds();
+        mean_ms_tl += (cslibs_time::Time::now() - start).milliseconds();
         tl = tlb;
 
-        start = muse_smc::Time::now();
+        start = cslibs_time::Time::now();
         tf::Transform tf_ta(tf::createQuaternionFromYaw(cslibs_math::common::angle::normalize(rng.get())),
                             tf::Vector3(rng.get(), rng.get(), 0.0));
         tf::Transform tf_tb(tf::createQuaternionFromYaw(cslibs_math::common::angle::normalize(rng.get())),
@@ -382,7 +382,7 @@ void multiplyTransform()
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             tf_tb = tf_ta * tf_tb;
         }
-        mean_ms_tf += (muse_smc::Time::now() - start).milliseconds();
+        mean_ms_tf += (cslibs_time::Time::now() - start).milliseconds();
         tf = tf_tb;
     }
 
@@ -405,25 +405,25 @@ void multiplyAssignTransform()
     muse_mcl_2d::Transform2DLegacy tl;
     tf::Transform tf;
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
-        muse_smc::Time start = muse_smc::Time::now();
+        cslibs_time::Time start = cslibs_time::Time::now();
         cslibs_math_2d::Transform2d ta(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
         cslibs_math_2d::Transform2d tb(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             tb *= ta;
         }
-        mean_ms_t += (muse_smc::Time::now() - start).milliseconds();
+        mean_ms_t += (cslibs_time::Time::now() - start).milliseconds();
         t = tb;
 
-        start = muse_smc::Time::now();
+        start = cslibs_time::Time::now();
         muse_mcl_2d::Transform2DLegacy tla(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
         muse_mcl_2d::Transform2DLegacy tlb(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             tlb *= tla;
         }
-        mean_ms_tl += (muse_smc::Time::now() - start).milliseconds();
+        mean_ms_tl += (cslibs_time::Time::now() - start).milliseconds();
         tl = tlb;
 
-        start = muse_smc::Time::now();
+        start = cslibs_time::Time::now();
         tf::Transform tf_ta(tf::createQuaternionFromYaw(cslibs_math::common::angle::normalize(rng.get())),
                             tf::Vector3(rng.get(), rng.get(), 0.0));
         tf::Transform tf_tb(tf::createQuaternionFromYaw(cslibs_math::common::angle::normalize(rng.get())),
@@ -431,7 +431,7 @@ void multiplyAssignTransform()
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             tf_tb *= tf_ta;
         }
-        mean_ms_tf += (muse_smc::Time::now() - start).milliseconds();
+        mean_ms_tf += (cslibs_time::Time::now() - start).milliseconds();
         tf = tf_tb;
     }
 
@@ -454,25 +454,25 @@ void assign()
     muse_mcl_2d::Transform2DLegacy tl;
     tf::Transform tf;
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
-        muse_smc::Time start = muse_smc::Time::now();
+        cslibs_time::Time start = cslibs_time::Time::now();
         cslibs_math_2d::Transform2d ta(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
         cslibs_math_2d::Transform2d tb(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             tb = ta;
         }
-        mean_ms_t += (muse_smc::Time::now() - start).milliseconds();
+        mean_ms_t += (cslibs_time::Time::now() - start).milliseconds();
         t = tb;
 
-        start = muse_smc::Time::now();
+        start = cslibs_time::Time::now();
         muse_mcl_2d::Transform2DLegacy tla(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
         muse_mcl_2d::Transform2DLegacy tlb(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             tlb = tla;
         }
-        mean_ms_tl += (muse_smc::Time::now() - start).milliseconds();
+        mean_ms_tl += (cslibs_time::Time::now() - start).milliseconds();
         tl = tlb;
 
-        start = muse_smc::Time::now();
+        start = cslibs_time::Time::now();
         tf::Transform tf_ta(tf::createQuaternionFromYaw(cslibs_math::common::angle::normalize(rng.get())),
                             tf::Vector3(rng.get(), rng.get(), 0.0));
         tf::Transform tf_tb(tf::createQuaternionFromYaw(cslibs_math::common::angle::normalize(rng.get())),
@@ -480,7 +480,7 @@ void assign()
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             tf_tb = tf_ta;
         }
-        mean_ms_tf += (muse_smc::Time::now() - start).milliseconds();
+        mean_ms_tf += (cslibs_time::Time::now() - start).milliseconds();
         tf = tf_tb;
     }
 
@@ -503,27 +503,27 @@ void inverse()
     muse_mcl_2d::Transform2DLegacy tl;
     tf::Transform tf;
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
-        muse_smc::Time start = muse_smc::Time::now();
+        cslibs_time::Time start = cslibs_time::Time::now();
         cslibs_math_2d::Transform2d ta(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             t = ta.inverse() * t;
         }
-        mean_ms_t += (muse_smc::Time::now() - start).milliseconds();
+        mean_ms_t += (cslibs_time::Time::now() - start).milliseconds();
 
-        start = muse_smc::Time::now();
+        start = cslibs_time::Time::now();
         muse_mcl_2d::Transform2DLegacy tla(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             tl = tla.inverse() * tl;
         }
-        mean_ms_tl += (muse_smc::Time::now() - start).milliseconds();
+        mean_ms_tl += (cslibs_time::Time::now() - start).milliseconds();
 
-        start = muse_smc::Time::now();
+        start = cslibs_time::Time::now();
         tf::Transform tf_ta(tf::createQuaternionFromYaw(cslibs_math::common::angle::normalize(rng.get())),
                             tf::Vector3(rng.get(), rng.get(), 0.0));
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             tf = tf_ta.inverse() * tf;
         }
-        mean_ms_tf += (muse_smc::Time::now() - start).milliseconds();
+        mean_ms_tf += (cslibs_time::Time::now() - start).milliseconds();
     }
 
     std::cout << "transform inverse:" << "\n";
@@ -541,20 +541,20 @@ void length()
     double mean_ms_tf= 0.0;
 
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
-        muse_smc::Time start = muse_smc::Time::now();
+        cslibs_time::Time start = cslibs_time::Time::now();
         cslibs_math_2d::Vector2d tv(rng.get(), rng.get());
         double length = 0.0;
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
             length = tv.length();
         }
-        mean_ms_t += (muse_smc::Time::now() - start).milliseconds();
+        mean_ms_t += (cslibs_time::Time::now() - start).milliseconds();
 
-        start = muse_smc::Time::now();
+        start = cslibs_time::Time::now();
         tf::Vector3   tf_v (rng.get(), rng.get(), 0.0);
         for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
            length = tf_v.length();
         }
-        mean_ms_tf += (muse_smc::Time::now() - start).milliseconds();
+        mean_ms_tf += (cslibs_time::Time::now() - start).milliseconds();
     }
 
     std::cout << "vector length:" << "\n";

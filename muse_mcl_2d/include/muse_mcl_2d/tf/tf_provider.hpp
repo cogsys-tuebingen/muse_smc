@@ -2,7 +2,7 @@
 #define TF_PROVIDER_HPP
 
 #include <muse_smc/utility/delegate.hpp>
-#include <muse_smc/utility/stamped.hpp>
+#include <cslibs_time/stamped.hpp>
 
 #include <cslibs_math_2d/types/transform.hpp>
 #include <tf/transform_listener.h>
@@ -13,7 +13,7 @@ namespace muse_mcl_2d {
 class TFProvider {
 public:
     using Ptr = std::shared_ptr<TFProvider>;
-    using stamped_t = muse_smc::Stamped<cslibs_math_2d::Transform2d>;
+    using stamped_t = cslibs_time::Stamped<cslibs_math_2d::Transform2d>;
 
     inline TFProvider()
     {
@@ -31,7 +31,7 @@ public:
         tf::Transform tf_transform;
         if(lookupTransform(target_frame, source_frame,time, tf_transform)) {
             convert(tf_transform, transform.data());
-            transform.stamp() = muse_smc::Time(time.toNSec());
+            transform.stamp() = cslibs_time::Time(time.toNSec());
             return true;
         }
         return false;
@@ -50,7 +50,7 @@ public:
                            tf_transform,
                            timeout)) {
             convert(tf_transform, transform.data());
-            transform.stamp() = muse_smc::Time(time.toNSec());
+            transform.stamp() = cslibs_time::Time(time.toNSec());
             return true;
         }
         return false;

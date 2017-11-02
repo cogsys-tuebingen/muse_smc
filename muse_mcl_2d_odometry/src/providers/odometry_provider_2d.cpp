@@ -18,7 +18,7 @@ void OdometryProvider2D::callback(const nav_msgs::OdometryConstPtr &msg)
     };
 
     if(last_msg_) {
-        muse_smc::TimeFrame time_frame(last_msg_->header.stamp.toNSec(),
+        cslibs_time::TimeFrame time_frame(last_msg_->header.stamp.toNSec(),
                                        msg->header.stamp.toNSec());
         Odometry2D::Ptr odometry(new Odometry2D(msg->header.frame_id,
                                                 time_frame,

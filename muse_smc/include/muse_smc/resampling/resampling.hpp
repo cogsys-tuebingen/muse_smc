@@ -9,6 +9,7 @@
 
 #include <memory>
 #include <vector>
+#include <iostream>
 
 namespace muse_smc {
 template<typename state_space_description_t>

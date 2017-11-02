@@ -12,7 +12,7 @@ namespace muse_mcl_2d_odometry {
 class OdometryProviderTF2D : public muse_mcl_2d::DataProvider2D
 {
 public:
-    using stamped_t = muse_smc::Stamped<cslibs_math_2d::Transform2d>;
+    using stamped_t = cslibs_time::Stamped<cslibs_math_2d::Transform2d>;
 
     OdometryProviderTF2D();
     virtual ~OdometryProviderTF2D();

@@ -5,6 +5,8 @@
 #include <cslibs_math/random/random.hpp>
 #include <muse_smc/sampling/uniform.hpp>
 
+#include <iostream>
+
 namespace muse_smc {
 namespace impl {
 template<typename state_space_description_t>

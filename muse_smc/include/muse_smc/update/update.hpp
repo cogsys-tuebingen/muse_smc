@@ -3,7 +3,7 @@
 
 #include <muse_smc/update/update_model.hpp>
 #include <muse_smc/samples/sample_set.hpp>
-#include <muse_smc/time/time_frame.hpp>
+#include <cslibs_time/time_frame.hpp>
 
 namespace muse_smc {
 template<typename state_space_description_t>
@@ -65,7 +65,7 @@ public:
         model_->apply(data_, state_space, weights);
     }
 
-    inline Time const & getStamp() const
+    inline cslibs_time::Time const & getStamp() const
     {
         return data_->getTimeFrame().end;
     }

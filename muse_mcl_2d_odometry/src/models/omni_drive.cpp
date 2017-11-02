@@ -9,7 +9,7 @@ using namespace muse_mcl_2d_odometry;
 using namespace muse_mcl_2d;
 
 OmniDrive::Result::Ptr OmniDrive::apply(const muse_smc::Data::ConstPtr &data,
-                                        const muse_smc::Time           &until,
+                                        const cslibs_time::Time           &until,
                                         sample_set_t::state_iterator_t  states)
 {
     Odometry2D::ConstPtr apply;

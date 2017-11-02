@@ -2,7 +2,7 @@
 #define STATE_PUBLISHER_HPP
 
 #include <muse_smc/samples/sample_set.hpp>
-#include <muse_smc/time/time.hpp>
+#include <cslibs_time/time.hpp>
 
 namespace muse_smc {
 template<typename state_space_description_t>

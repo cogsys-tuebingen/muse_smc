@@ -22,7 +22,7 @@ public:
     using Ptr = std::shared_ptr<SampleSetPublisher2D>;
     using sample_set_t    = muse_smc::SampleSet<StateSpaceDescription2D>;
     using sample_vector_t = sample_set_t::sample_vector_t;
-    using time_t          = muse_smc::Time;
+    using time_t          = cslibs_time::Time;
     using lock_t          = std::unique_lock<std::mutex>;
 
     SampleSetPublisher2D();

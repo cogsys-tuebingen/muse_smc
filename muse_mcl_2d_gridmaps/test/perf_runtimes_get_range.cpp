@@ -29,7 +29,7 @@ void mapOnly()
     const double radius = 10.0;
     double angle = 0.0;
     double range = 0.0;
-    muse_smc::Time now = muse_smc::Time::now();
+    cslibs_time::Time now = cslibs_time::Time::now();
     const std::size_t iterations = 100000;
     for(std::size_t i = 0 ; i < iterations ; ++i) {
         cslibs_math_2d::Point2d end = start + cslibs_math_2d::Vector2d(std::cos(angle) * radius,
@@ -37,55 +37,55 @@ void mapOnly()
         range = binary->getRange(start, end);
         angle += angle_incr;
     }
-    std::cout << "took : " << (muse_smc::Time::now() - now).milliseconds() / iterations << "\n";
+    std::cout << "took : " << (cslibs_time::Time::now() - now).milliseconds() / iterations << "\n";
 
     cslibs_math::random::Uniform<1>uniform(-10.0, 10.0);
-    now = muse_smc::Time::now();
+    now = cslibs_time::Time::now();
     double val = 0.0;
     for(std::size_t i = 9 ; i < iterations ; ++i) {
         val = tfSqrt(uniform.get());
     }
-    std::cout << "took : " << (muse_smc::Time::now() - now).milliseconds() / iterations << "\n";
+    std::cout << "took : " << (cslibs_time::Time::now() - now).milliseconds() / iterations << "\n";
 
-    now = muse_smc::Time::now();
+    now = cslibs_time::Time::now();
     for(std::size_t i = 9 ; i < iterations ; ++i) {
         val = std::sqrt(uniform.get());
     }
-    std::cout << "took : " << (muse_smc::Time::now() - now).milliseconds() / iterations << "\n";
+    std::cout << "took : " << (cslibs_time::Time::now() - now).milliseconds() / iterations << "\n";
 
     cslibs_math_2d::Vector2d v1(0.0,0.0);
     cslibs_math_2d::Vector2d v2(1.0,2.0);
-    now = muse_smc::Time::now();
+    now = cslibs_time::Time::now();
     double l = 0.0;
     for(std::size_t i = 0 ; i < iterations * iterations * iterations ; ++i) {
         l = (v1 - v2).length();
     }
-    std::cout << "(v1 - v2).length() took :             " << (muse_smc::Time::now() - now).milliseconds() << "\n";
+    std::cout << "(v1 - v2).length() took :             " << (cslibs_time::Time::now() - now).milliseconds() << "\n";
 
-    now = muse_smc::Time::now();
+    now = cslibs_time::Time::now();
     l = 0.0;
     for(std::size_t i = 0 ; i < iterations * iterations * iterations ; ++i) {
         l = std::sqrt((v1 - v2).length2());
     }
-    std::cout << "std::sqrt((v1 - v2).length2()) took : " << (muse_smc::Time::now() - now).milliseconds() << "\n";
+    std::cout << "std::sqrt((v1 - v2).length2()) took : " << (cslibs_time::Time::now() - now).milliseconds() << "\n";
 
 
-    now = muse_smc::Time::now();
+    now = cslibs_time::Time::now();
     l = 0.0;
     for(std::size_t i = 0 ; i < iterations * iterations * iterations ; ++i) {
         l = v1.distance(v2);
     }
-    std::cout << "v1.distance(v2) took :                " << (muse_smc::Time::now() - now).milliseconds() << "\n";
+    std::cout << "v1.distance(v2) took :                " << (cslibs_time::Time::now() - now).milliseconds() << "\n";
 
 
     tf::Vector3 v1_tf(0.0,0.0,0.0);
     tf::Vector3 v2_tf(1.0,2.0,0.0);
-    now = muse_smc::Time::now();
+    now = cslibs_time::Time::now();
     l = 0.0;
     for(std::size_t i = 0 ; i < iterations * iterations * iterations ; ++i) {
         l = v1_tf.distance(v2_tf);
     }
-    std::cout << "v1_tf.distance(v2_tf) took :          " << (muse_smc::Time::now() - now).milliseconds() << "\n";
+    std::cout << "v1_tf.distance(v2_tf) took :          " << (cslibs_time::Time::now() - now).milliseconds() << "\n";
 }
 
 void withParticles()
@@ -107,7 +107,7 @@ void withParticles()
     muse_mcl_2d::SampleIndexation2D  indexation({0.5, M_PI / 180.0 * 10.0});
     muse_mcl_2d::SampleDensity2D::Ptr density (new muse_mcl_2d::SampleDensity2D(indexation, 500000));
     muse_smc::SampleSet<muse_mcl_2d::StateSpaceDescription2D> set("frame",
-                                                                   muse_smc::Time::now(),
+                                                                   cslibs_time::Time::now(),
                                                                    100,
                                                                    500000,
                                                                    density);
@@ -128,7 +128,7 @@ void withParticles()
 
 
 
-    auto start_time = muse_smc::Time::now();
+    auto start_time = cslibs_time::Time::now();
     auto i = set.getInsertion();
     std::size_t  inserted = 0ul;
     while(i.canInsert()) {
@@ -137,7 +137,7 @@ void withParticles()
     }
 
     std::cout << "inserted : " << inserted << "\n";
-    std::cout << "took time: " << (muse_smc::Time::now() - start_time).milliseconds() << "ms" << "\n";
+    std::cout << "took time: " << (cslibs_time::Time::now() - start_time).milliseconds() << "ms" << "\n";
 
     auto iteration = set.getWeightIterator();
     auto end = iteration.end();
@@ -148,13 +148,13 @@ void withParticles()
     double range = 0.0;
     cslibs_math_2d::Point2d ray_end = start + cslibs_math_2d::Vector2d(std::cos(angle) * radius,
                                                              std::sin(angle) * radius);
-    start_time = muse_smc::Time::now();
+    start_time = cslibs_time::Time::now();
     for(auto it = iteration.begin() ; it != end ; ++it) {
         cslibs_math_2d::Point2d   ray_end_point = m_T_l * ray_end;
         range = binary->getRange(start, ray_end_point);
     }
 
-    std::cout << "took : " << (muse_smc::Time::now() - start_time).milliseconds() << "\n";
+    std::cout << "took : " << (cslibs_time::Time::now() - start_time).milliseconds() << "\n";
 }
 
 int main(int argc, char *argv[])

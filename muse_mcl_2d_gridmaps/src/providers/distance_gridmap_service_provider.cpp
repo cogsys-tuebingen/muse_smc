@@ -31,7 +31,7 @@ DistanceGridmapServiceProvider::state_space_t::ConstPtr DistanceGridmapServicePr
         /// conversion can take time
         /// we allow concurrent loading, this way, the front end thread is not blocking.
         if(!loading_) {
-            if(!map_ || muse_smc::Time(req.response.map.info.map_load_time.toNSec()) > map_->getStamp()) {
+            if(!map_ || cslibs_time::Time(req.response.map.info.map_load_time.toNSec()) > map_->getStamp()) {
                 loading_ = true;
 
                 auto load = [this, req]() {

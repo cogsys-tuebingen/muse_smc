@@ -4,7 +4,7 @@
 #include <memory>
 #include <chrono>
 
-#include <muse_smc/time/time.hpp>
+#include <cslibs_time/time.hpp>
 
 namespace muse_smc {
 template<typename state_space_description_t>
@@ -20,12 +20,12 @@ public:
 
     StateSpace(const std::string &frame) :
         frame_(frame),
-        stamp_(Time::now())
+        stamp_(cslibs_time::Time::now())
     {
     }
 
-    StateSpace(const std::string &frame,
-               const Time &stamp) :
+    StateSpace(const std::string       &frame,
+               const cslibs_time::Time &stamp) :
         frame_(frame),
         stamp_(stamp)
     {
@@ -50,7 +50,7 @@ public:
         return frame_;
     }
 
-    inline Time getStamp() const
+    inline cslibs_time::Time getStamp() const
     {
         return stamp_;
     }
@@ -71,8 +71,8 @@ public:
 protected:
     StateSpace() = delete;
 
-    std::string frame_;
-    Time        stamp_;
+    std::string         frame_;
+    cslibs_time::Time   stamp_;
 };
 }
 

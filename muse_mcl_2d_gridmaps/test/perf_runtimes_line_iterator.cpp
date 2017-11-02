@@ -50,12 +50,12 @@ int main(int argc, char *argv[])
             }
 
             std::size_t iterations = 0ul;
-            muse_smc::Time start = muse_smc::Time::now();
+            cslibs_time::Time start = cslibs_time::Time::now();
             while(!const_it.done()) {
                 ++const_it;
                 ++iterations;
             }
-            std::cout << "took " << (muse_smc::Time::now() - start).milliseconds() << "ms for " << iterations << " iterations" << "\n";
+            std::cout << "took " << (cslibs_time::Time::now() - start).milliseconds() << "ms for " << iterations << " iterations" << "\n";
 
             cv::imshow("display", display);
             cv::imshow("mask", mask);

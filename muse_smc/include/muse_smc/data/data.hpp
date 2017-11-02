@@ -2,7 +2,7 @@
 #define DATA_HPP
 
 #include <memory>
-#include <muse_smc/time/time_frame.hpp>
+#include <cslibs_time/time_frame.hpp>
 
 namespace muse_smc {
 class Data {
@@ -15,8 +15,8 @@ public:
     {
     }
 
-    Data(const std::string &frame,
-         const TimeFrame   &time_frame) :
+    Data(const std::string              &frame,
+         const cslibs_time::TimeFrame   &time_frame) :
         frame_(frame),
         time_frame_(time_frame)
     {
@@ -31,7 +31,7 @@ public:
         return frame_;
     }
 
-    inline const TimeFrame & getTimeFrame() const
+    inline const cslibs_time::TimeFrame & getTimeFrame() const
     {
         return time_frame_;
     }
@@ -54,8 +54,8 @@ protected:
     Data(const Data &other) = default;
     Data(Data &&other) = default;
 
-    std::string frame_;
-    TimeFrame   time_frame_;
+    std::string              frame_;
+    cslibs_time::TimeFrame   time_frame_;
 };
 }
 

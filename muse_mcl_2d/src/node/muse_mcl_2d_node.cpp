@@ -223,7 +223,7 @@ bool MuseMCL2DNode::setup()
         SampleIndexation2D::resolution_t resolution{resolution_linear, resolution_angular};
         sample_density_.reset(new SampleDensity2D(SampleIndexation2D(resolution), maximum_sample_size));
         sample_set_.reset(new sample_set_t(world_frame,
-                                           muse_smc::Time(ros::Time::now().toNSec()),
+                                           cslibs_time::Time(ros::Time::now().toNSec()),
                                            minimum_sample_size,
                                            maximum_sample_size,
                                            sample_density_));
@@ -236,7 +236,7 @@ bool MuseMCL2DNode::setup()
                                 resampling_,
                                 state_publisher_,
                                 prediction_integrals_,
-                                muse_smc::Rate(preferred_rate),
+                                cslibs_time::Rate(preferred_rate),
                                 resampling_cycle);
     }
 

@@ -1,6 +1,8 @@
 #ifndef SYSTEMATIC_HPP
 #define SYSTEMATIC_HPP
 
+#include <iostream>
+
 #include <muse_smc/samples/sample_set.hpp>
 #include <muse_smc/sampling/uniform.hpp>
 #include <cslibs_math/random/random.hpp>

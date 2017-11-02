@@ -13,7 +13,7 @@ public:
     DifferentialDriveAbs() = default;
 
     virtual Result::Ptr apply(const muse_smc::Data::ConstPtr          &data,
-                              const muse_smc::Time                    &until,
+                              const cslibs_time::Time                    &until,
                               sample_set_t::state_iterator_t  states) override;
 
 protected:

@@ -6,7 +6,7 @@
 
 #include <muse_smc/utility/buffered_vector.hpp>
 
-#include <muse_smc/time/time.hpp>
+#include <cslibs_time/time.hpp>
 
 #include <muse_smc/samples/sample_density.hpp>
 #include <muse_smc/samples/sample_insertion.hpp>
@@ -33,7 +33,7 @@ public:
     SampleSet& operator = (const SampleSet &other) = delete;
 
     SampleSet(const std::string                    &frame_id,
-              const Time                           &time_stamp,
+              const cslibs_time::Time              &time_stamp,
               const std::size_t                     sample_size,
               const typename sample_density_t::Ptr &density) :
         frame_id_(frame_id),
@@ -49,10 +49,10 @@ public:
     {
     }
 
-    SampleSet(const std::string &frame_id,
-              const Time        &time_stamp,
-              const std::size_t sample_size_minimum,
-              const std::size_t sample_size_maxmimum,
+    SampleSet(const std::string                    &frame_id,
+              const cslibs_time::Time              &time_stamp,
+              const std::size_t                     sample_size_minimum,
+              const std::size_t                     sample_size_maxmimum,
               const typename sample_density_t::Ptr &density) :
         frame_id_(frame_id),
         stamp_(time_stamp),
@@ -143,12 +143,12 @@ public:
         return frame_id_;
     }
 
-    inline Time const & getStamp() const
+    inline cslibs_time::Time const & getStamp() const
     {
         return stamp_;
     }
 
-    inline void setStamp(const Time &time)
+    inline void setStamp(const cslibs_time::Time &time)
     {
         stamp_ = time;
     }
@@ -185,7 +185,7 @@ public:
 
 private:
     std::string             frame_id_;
-    Time                    stamp_;
+    cslibs_time::Time       stamp_;
     std::size_t             minimum_sample_size_;
     std::size_t             maximum_sample_size_;
 

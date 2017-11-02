@@ -1,4 +1,4 @@
-#include <muse_smc/time/time.hpp>
+#include <cslibs_time/time.hpp>
 #include <cslibs_math/random/random.hpp>
 #include <cslibs_math/common/angle.hpp>
 #include <muse_smc/samples/sample_set.hpp>
@@ -26,7 +26,7 @@ void insertion(muse_smc::SampleSet<muse_mcl_2d::StateSpaceDescription2D> &set)
 
 
 
-    muse_smc::Time start = muse_smc::Time::now();
+    cslibs_time::Time start = cslibs_time::Time::now();
     auto i = set.getInsertion();
     std::size_t  inserted = 0ul;
     while(i.canInsert()) {
@@ -35,55 +35,55 @@ void insertion(muse_smc::SampleSet<muse_mcl_2d::StateSpaceDescription2D> &set)
     }
 
     std::cout << "inserted : " << inserted << "\n";
-    std::cout << "took time: " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
+    std::cout << "took time: " << (cslibs_time::Time::now() - start).milliseconds() << "ms" << "\n";
 }
 
 
 void stateIteration(muse_smc::SampleSet<muse_mcl_2d::StateSpaceDescription2D> &set)
 {
     auto interface = set.getStateIterator();
-    muse_smc::Time start = muse_smc::Time::now();
+    cslibs_time::Time start = cslibs_time::Time::now();
     for(auto it = interface.begin() ; it != interface.end() ; ++it) {
         auto &state = (*it);
         state.tx() += 0.1;
         state.ty() += 0.1;
     }
-    std::cout << "stateIteration took time:                 " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
+    std::cout << "stateIteration took time:                 " << (cslibs_time::Time::now() - start).milliseconds() << "ms" << "\n";
 }
 
 void stateIterationForEach(muse_smc::SampleSet<muse_mcl_2d::StateSpaceDescription2D> &set)
 {
     auto interface = set.getStateIterator();
-    muse_smc::Time start = muse_smc::Time::now();
+    cslibs_time::Time start = cslibs_time::Time::now();
     for(auto &state : interface) {
         state.tx() += 0.1;
         state.ty() += 0.1;
     }
 
-    std::cout << "stateIterationForEach took time:          " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
+    std::cout << "stateIterationForEach took time:          " << (cslibs_time::Time::now() - start).milliseconds() << "ms" << "\n";
 }
 
 void weightIteration(muse_smc::SampleSet<muse_mcl_2d::StateSpaceDescription2D> &set)
 {
     auto interface = set.getWeightIterator();
-    muse_smc::Time start = muse_smc::Time::now();
+    cslibs_time::Time start = cslibs_time::Time::now();
     auto end = interface.end();
     for(auto it = interface.begin() ; it != end ; ++it) {
         auto &weight = (*it);
         weight = 0.01;
     }
-    std::cout << "weightIteration took time:                " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
+    std::cout << "weightIteration took time:                " << (cslibs_time::Time::now() - start).milliseconds() << "ms" << "\n";
 }
 
 void weightIterationForEach(muse_smc::SampleSet<muse_mcl_2d::StateSpaceDescription2D> &set)
 {
     auto interface = set.getWeightIterator();
-    muse_smc::Time start = muse_smc::Time::now();
+    cslibs_time::Time start = cslibs_time::Time::now();
     for(auto &weight : interface) {
         weight = 0.05;
     }
     std::cout << set.getMaximumWeight() << "\n";
-    std::cout << "weightIterationForEach took time:         " << (muse_smc::Time::now() - start).milliseconds() << "ms" << "\n";
+    std::cout << "weightIterationForEach took time:         " << (cslibs_time::Time::now() - start).milliseconds() << "ms" << "\n";
 }
 
 #include <muse_mcl_2d/odometry/odometry_2d.hpp>
@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
     muse_mcl_2d::SampleIndexation2D  indexation({0.5, M_PI / 180.0 * 10.0});
     muse_mcl_2d::SampleDensity2D::Ptr density (new muse_mcl_2d::SampleDensity2D(indexation, 500000));
     muse_smc::SampleSet<muse_mcl_2d::StateSpaceDescription2D> set("frame",
-                                                   muse_smc::Time::now(),
+                                                   cslibs_time::Time::now(),
                                                    100,
                                                    500000,
                                                    density);

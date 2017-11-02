@@ -1,18 +1,21 @@
 #ifndef LASER_SCAN_2D_HPP
 #define LASER_SCAN_2D_HPP
 
-#include <cslibs_math_2d/types/point.hpp>
 #include <muse_smc/data/data.hpp>
 
+#include <cslibs_math_2d/types/point.hpp>
+#include <cslibs_time/time_frame.hpp>
+
 #include <limits>
+#include <vector>
 
 namespace muse_mcl_2d_laser {
 class LaserScan2D : public muse_smc::Data
 {
 public:
-    using point_t = cslibs_math_2d::Point2d;
-    using time_frame_t = muse_smc::TimeFrame;
-    using interval_t = std::array<double, 2>;
+    using point_t       = cslibs_math_2d::Point2d;
+    using time_frame_t  = cslibs_time::TimeFrame;
+    using interval_t    = std::array<double, 2>;
 
     struct Ray {
         const double  angle;
@@ -63,8 +66,8 @@ public:
 
     };
 
-    using Ptr  = std::shared_ptr<LaserScan2D>;
-    using rays_t = std::vector<Ray>;
+    using Ptr              = std::shared_ptr<LaserScan2D>;
+    using rays_t           = std::vector<Ray>;
     using const_iterator_t = rays_t::const_iterator;
 
     LaserScan2D(const std::string &frame,

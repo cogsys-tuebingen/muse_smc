@@ -10,7 +10,7 @@ using namespace muse_mcl_2d_odometry;
 using namespace muse_mcl_2d;
 
 OdometryProviderTF2D::OdometryProviderTF2D() :
-    o_T_b1_(cslibs_math_2d::Transform2d(), muse_smc::Time(ros::Time::now().toNSec())),
+    o_T_b1_(cslibs_math_2d::Transform2d(), cslibs_time::Time(ros::Time::now().toNSec())),
     initialized_(false),
     rate_(60.0),
     running_(false),
@@ -47,10 +47,10 @@ void OdometryProviderTF2D::loop()
     running_ = true;
     while(!stop_) {
         const ros::Time now = ros::Time::now();
-        stamped_t o_T_b2(cslibs_math_2d::Transform2d(), muse_smc::Time(now.toNSec()));
+        stamped_t o_T_b2(cslibs_math_2d::Transform2d(), cslibs_time::Time(now.toNSec()));
         if(tf_.lookupTransform(odom_frame_, base_frame_, now, o_T_b2, timeout_)) {
             if(initialized_) {
-                muse_smc::TimeFrame time_frame(o_T_b1_.stamp(), o_T_b2.stamp());
+                cslibs_time::TimeFrame time_frame(o_T_b1_.stamp(), o_T_b2.stamp());
                 Odometry2D::Ptr odometry(new Odometry2D(odom_frame_,
                                                         time_frame,
                                                         o_T_b1_.data(),

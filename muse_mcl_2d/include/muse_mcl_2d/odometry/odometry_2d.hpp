@@ -11,8 +11,8 @@ class Odometry2D : public muse_smc::Data {
 public:
     using Ptr = std::shared_ptr<Odometry2D>;
     using ConstPtr = std::shared_ptr<const Odometry2D>;
-    using time_frame_t = muse_smc::TimeFrame;
-    using time_t = muse_smc::Time;
+    using time_frame_t = cslibs_time::TimeFrame;
+    using time_t = cslibs_time::Time;
 
     inline Odometry2D(const std::string &frame) :
         Data(frame),
