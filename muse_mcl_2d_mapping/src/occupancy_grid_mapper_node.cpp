@@ -4,7 +4,7 @@
 #include <muse_mcl_2d_laser/convert.hpp>
 
 #include <nav_msgs/OccupancyGrid.h>
-
+#include <visualization_msgs/MarkerArray.h>
 
 using namespace muse_mcl_2d_mapping;
 
@@ -20,6 +20,7 @@ bool OccupancyGridMapperNode::setup()
     const double        occ_grid_resolution         = nh_.param<double>("occ_grid_resolution", 0.05);
     const double        occ_grid_chunk_resolution   = nh_.param<double>("occ_chunk_resolution", 5.0);
     const std::string   occ_map_topic               = nh_.param<std::string>("occ_map_topic", "/map");
+    const std::string   occ_map_marker_topic        = nh_.param<std::string>("occ_map_marker_topic", occ_map_topic + "/chunks");
     const double        occ_map_pub_rate            = nh_.param<double>("occ_map_pub_rate", 10.0);
     const double        occ_map_prob_free           = nh_.param<double>("occ_map_prob_free", 0.45);
     const double        occ_map_prob_occ            = nh_.param<double>("occ_map_prob_occ", 0.55);
@@ -41,10 +42,10 @@ bool OccupancyGridMapperNode::setup()
     undistortion_fixed_frame_ = nh_.param<std::string>("undistortion_fixed_frame", "/odom");
     tf_timeout_               = ros::Duration(nh_.param("tf_timeout", 0.1));
 
-    linear_interval_[0]  = nh_.param<double>("range_min", 0.05);
-    linear_interval_[1]  = nh_.param<double>("range_max", 30.0);
-    angular_interval_[0] = nh_.param<double>("angle_min",-M_PI);
-    angular_interval_[1] = nh_.param<double>("angle_max", M_PI);
+    linear_interval_[0]       = nh_.param<double>("range_min", 0.05);
+    linear_interval_[1]       = nh_.param<double>("range_max", 30.0);
+    angular_interval_[0]      = nh_.param<double>("angle_min",-M_PI);
+    angular_interval_[1]      = nh_.param<double>("angle_max", M_PI);
 
 
     muse_mcl_2d_gridmaps::utility::InverseModel inverse_model(occ_map_prob_prior, occ_map_prob_free, occ_map_prob_occ);
@@ -66,6 +67,7 @@ bool OccupancyGridMapperNode::setup()
                                                          this)));
     }
     pub_occ_map_        = nh_.advertise<nav_msgs::OccupancyGrid>(occ_map_topic, 1);
+    pub_occ_map_chunks_ = nh_.advertise<visualization_msgs::MarkerArray>(occ_map_marker_topic, 1);
     pub_occ_interval_   = ros::Duration(occ_map_pub_rate > 0.0 ? 1.0 / occ_map_pub_rate : 0.0);
     pub_occ_last_time_  = ros::Time::now();
 
@@ -131,11 +133,44 @@ void OccupancyGridMapperNode::laserscan(const sensor_msgs::LaserScanConstPtr &ms
 
 void OccupancyGridMapperNode::publishOcc()
 {
-    auto map = occ_mapper_->get();
+    muse_mcl_2d_gridmaps::static_maps::ProbabilityGridmap::Ptr map;
+    OccupancyGridMapper::allocated_chunks_t chunks;
+    occ_mapper_->get(map, chunks);
     if(map) {
         nav_msgs::OccupancyGrid::Ptr msg;
         muse_mcl_2d_gridmaps::static_maps::conversion::from(map, msg);
         pub_occ_map_.publish(msg);
+
+        visualization_msgs::MarkerArray::Ptr vis_chunks(new visualization_msgs::MarkerArray);
+        visualization_msgs::Marker vis_chunk;
+        vis_chunk.header = msg->header;
+        vis_chunk.ns     = "muse_mcl_2d_mapping_ocm_node";
+        vis_chunk.type   = visualization_msgs::Marker::LINE_STRIP;
+        vis_chunk.color.a = 1.f;
+        vis_chunk.color.r = 0.f;
+        vis_chunk.color.g = 1.f;
+        vis_chunk.color.b = 0.f;
+        vis_chunk.scale.x = 0.1f;
+
+        auto convert_point = [](const cslibs_math_2d::Point2d &p) {
+            geometry_msgs::Point gp;
+            gp.x = p.x();
+            gp.y = p.y();
+            gp.z = 0.0;
+            return gp;
+        };
+
+        for(const cslibs_math_2d::Box2d &b : chunks) {
+            vis_chunk.points.clear();
+            vis_chunk.points.emplace_back(convert_point(b.ll()));
+            vis_chunk.points.emplace_back(convert_point(b.rl()));
+            vis_chunk.points.emplace_back(convert_point(b.ru()));
+            vis_chunk.points.emplace_back(convert_point(b.lu()));
+            vis_chunk.points.emplace_back(convert_point(b.ll()));
+            vis_chunks->markers.emplace_back(vis_chunk);
+        }
+        pub_occ_map_chunks_.publish(vis_chunks);
+        std::cerr << chunks.size() << std::endl;
     }
 }
 

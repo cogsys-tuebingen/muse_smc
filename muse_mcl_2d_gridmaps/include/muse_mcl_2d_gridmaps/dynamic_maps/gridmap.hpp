@@ -256,7 +256,7 @@ public:
     inline index_t getMaxIndex() const
     {
         return {(max_chunk_index_[0] - min_chunk_index_[0] + 1) * chunk_size_ - 1,
-                    (max_chunk_index_[1] - min_chunk_index_[1] + 1) * chunk_size_ - 1};
+                (max_chunk_index_[1] - min_chunk_index_[1] + 1) * chunk_size_ - 1};
     }
 
 

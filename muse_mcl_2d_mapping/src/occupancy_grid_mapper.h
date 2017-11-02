@@ -18,11 +18,12 @@ namespace muse_mcl_2d_mapping {
 class OccupancyGridMapper
 {
 public:
-    using Ptr           = std::shared_ptr<OccupancyGridMapper>;
-    using lock_t        = std::unique_lock<std::mutex>;
-    using dynamic_map_t = muse_mcl_2d_gridmaps::dynamic_maps::ProbabilityGridmap;
-    using static_map_t  = muse_mcl_2d_gridmaps::static_maps::ProbabilityGridmap;
-    using model_t       = muse_mcl_2d_gridmaps::utility::InverseModel;
+    using Ptr                = std::shared_ptr<OccupancyGridMapper>;
+    using lock_t             = std::unique_lock<std::mutex>;
+    using dynamic_map_t      = muse_mcl_2d_gridmaps::dynamic_maps::ProbabilityGridmap;
+    using static_map_t       = muse_mcl_2d_gridmaps::static_maps::ProbabilityGridmap;
+    using model_t            = muse_mcl_2d_gridmaps::utility::InverseModel;
+    using allocated_chunks_t = std::vector<cslibs_math_2d::Box2d>;
 
     struct Measurement {
         const cslibs_math_2d::Pointcloud2d::Ptr points;
@@ -45,7 +46,9 @@ public:
     virtual ~OccupancyGridMapper();
 
     void insert(const Measurement &measurement);
-    static_map_t::Ptr get();
+    void get(static_map_t::Ptr &map);
+    void get(static_map_t::Ptr &map, allocated_chunks_t &chunks);
+
 
 
 protected:
@@ -61,6 +64,7 @@ protected:
     std::mutex                                                  static_map_mutex_;
 
     static_map_t::Ptr                                           static_map_;
+    allocated_chunks_t                                          allocated_chunks_;
 
     dynamic_map_t::Ptr                                          map_;
     muse_mcl_2d_gridmaps::utility::InverseModel                 inverse_model_;

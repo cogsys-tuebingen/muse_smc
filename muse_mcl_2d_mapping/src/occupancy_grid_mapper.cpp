@@ -39,19 +39,31 @@ void OccupancyGridMapper::insert(const Measurement &measurement)
     notify_event_.notify_one();
 }
 
-
-OccupancyGridMapper::static_map_t::Ptr OccupancyGridMapper::get()
+void OccupancyGridMapper::get(static_map_t::Ptr &map)
 {
     request_map_ = true;
     lock_t static_map_lock(static_map_mutex_);
     notify_event_.notify_one();
     notify_static_map_.wait(static_map_lock);
 
-    OccupancyGridMapper::static_map_t::Ptr map;
     if(static_map_) {
         map.reset(new OccupancyGridMapper::static_map_t(*static_map_));
     }
-    return map;
+}
+
+
+void OccupancyGridMapper::get(muse_mcl_2d_gridmaps::static_maps::ProbabilityGridmap::Ptr &map,
+                              allocated_chunks_t                                         &chunks)
+{
+    request_map_ = true;
+    lock_t static_map_lock(static_map_mutex_);
+    notify_event_.notify_one();
+    notify_static_map_.wait(static_map_lock);
+
+    if(static_map_) {
+        map.reset(new OccupancyGridMapper::static_map_t(*static_map_));
+        chunks = allocated_chunks_;
+    }
 }
 
 
@@ -81,6 +93,7 @@ void OccupancyGridMapper::mapRequest()
                                            map_->getHeight(),
                                            map_->getWidth(),
                                            map_->getFrame()));
+        allocated_chunks_.clear();
 
         const int chunk_step = map_->getChunkSize();
         const dynamic_map_t::index_t min_chunk_index = map_->getMinChunkIndex();
@@ -91,6 +104,11 @@ void OccupancyGridMapper::mapRequest()
                 if(chunk != nullptr) {
                     const int cx = (j - min_chunk_index[0]) * chunk_step;
                     const int cy = (i - min_chunk_index[1]) * chunk_step;
+
+                    allocated_chunks_.emplace_back(cslibs_math_2d::Box2d(cx * resolution_,
+                                                                         cy * resolution_,
+                                                                         (cx + chunk_step) * resolution_,
+                                                                         (cy + chunk_step) * resolution_));
 
                     for(int k = 0 ; k < chunk_step ; ++k) {
                         for(int l = 0 ; l < chunk_step ; ++l) {
@@ -136,14 +154,14 @@ void OccupancyGridMapper::process(const Measurement &m)
             const dynamic_map_t::index_t  end_index = {discretize(end_point.x()),
                                                        discretize(end_point.y())};
 
-            std::cout << start_index[0] << " " << start_index[1] << " "
-                      <<   end_index[0] << " " <<   end_index[1] << std::endl;
+//            std::cout << m.origin.translation() << " " << end_point << std::endl;
+//            std::cout << start_index << " " << end_index << std::endl;
 
             auto b = map_->getLineIterator(start_index,
                                            end_index);
 
             while(!b.done()) {
-                double l = b.length2() > resolution2 ? inverse_model_.updateFree(*b) : inverse_model_.updateOccupied(*b);
+            double l = b.length2() > resolution2 ? inverse_model_.updateFree(*b) : inverse_model_.updateOccupied(*b);
                 *b = l;
                 ++b;
             }

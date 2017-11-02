@@ -49,8 +49,7 @@ public:
         step_x_      = start_[0] < end_[0] ? 1 : -1;
         step_y_      = start_[1] < end_[1] ? 1 : -1;
 
-        updateChunk();
-        updateLocalIndex();
+        update();
     }
 
     inline virtual ~Bresenham()
@@ -70,6 +69,16 @@ public:
         return (steep_ ? index_[0] : index_[1]);
     }
 
+    inline int lx() const
+    {
+        return (steep_ ? local_index_[1] : local_index_[0]);
+    }
+
+    inline int ly() const
+    {
+        return (steep_ ? local_index_[0] : local_index_[1]);
+    }
+
     inline Bresenham& operator++()
     {
         if(done()) {
@@ -87,12 +96,11 @@ public:
         if(2 * error_ >= delta_x_) {
             index_[1]       += step_y_;
             local_index_[1] += step_y_;
-            error_ -= delta_x_;
+            error_          -= delta_x_;
         }
 
         if(localIndexInvalid()) {
-            updateChunk();
-            updateLocalIndex();
+            update();
         }
 
         return *this;
@@ -111,37 +119,24 @@ public:
 
     inline T& operator *() const
     {
-        if(steep_) {
-            return active_chunk_->at(local_index_[1], local_index_[0]);
-        } else {
-            return active_chunk_->at(local_index_[0], local_index_[1]);
-        }
+        assert(active_chunk_);
+        return active_chunk_->at(lx(), ly());
     }
 
-
 private:
-    inline void updateChunk()
+    inline void update()
     {
-        if(steep_) {
-            chunk_index_[0] = index_[1] / chunk_size_;
-            chunk_index_[1] = index_[0] / chunk_size_;
-        } else {
-            chunk_index_[0] = index_[0] / chunk_size_;
-            chunk_index_[1] = index_[1] / chunk_size_;
-        }
-
         if(active_chunk_) {
             active_chunk_->unlock();
         }
 
-        active_chunk_ = get_chunk_(chunk_index_);
-        active_chunk_->lock();
-    }
-
-    inline void updateLocalIndex()
-    {
+        chunk_index_[0] = x() / chunk_size_;
+        chunk_index_[1] = y() / chunk_size_;
         local_index_[0] = cslibs_math::common::mod(index_[0], chunk_size_);
         local_index_[1] = cslibs_math::common::mod(index_[1], chunk_size_);
+
+        active_chunk_ = get_chunk_(chunk_index_);
+        active_chunk_->lock();
     }
 
     inline bool localIndexInvalid()

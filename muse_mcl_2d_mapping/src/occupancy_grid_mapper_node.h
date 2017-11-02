@@ -28,6 +28,7 @@ private:
     std::string                     map_frame_;
 
     ros::Publisher                  pub_occ_map_;
+    ros::Publisher                  pub_occ_map_chunks_;
     ros::Duration                   pub_occ_interval_;
     ros::Time                       pub_occ_last_time_;
 
