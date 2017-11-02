@@ -111,7 +111,7 @@ void OccupancyGridMapper::process(const Measurement &m)
 {
     if(!map_) {
         const cslibs_math_2d::Pose2d &p = m.origin;
-        map_.reset(new dynamic_map_t(p,
+        map_.reset(new dynamic_map_t(cslibs_math_2d::Transform2d::identity(),
                                      resolution_,
                                      chunk_resolution_,
                                      frame_id_,
@@ -136,7 +136,8 @@ void OccupancyGridMapper::process(const Measurement &m)
             const dynamic_map_t::index_t  end_index = {discretize(end_point.x()),
                                                        discretize(end_point.y())};
 
-            std::cout << start_index << " " << end_index << std::endl;
+            std::cout << start_index[0] << " " << start_index[1] << " "
+                      <<   end_index[0] << " " <<   end_index[1] << std::endl;
 
             auto b = map_->getLineIterator(start_index,
                                            end_index);
