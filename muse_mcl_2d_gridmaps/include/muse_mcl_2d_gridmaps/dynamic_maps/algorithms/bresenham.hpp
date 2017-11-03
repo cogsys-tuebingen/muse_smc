@@ -6,6 +6,7 @@
 #include <muse_smc/utility/delegate.hpp>
 
 #include <cslibs_math/common/mod.hpp>
+#include <cslibs_math/common/array.hpp>
 
 #include <muse_mcl_2d_gridmaps/dynamic_maps/chunk.hpp>
 
@@ -137,6 +138,8 @@ private:
 
         active_chunk_ = get_chunk_(chunk_index_);
         active_chunk_->lock();
+
+        std::cout << "new active chunk " << chunk_index_ << std::endl;
     }
 
     inline bool localIndexInvalid()
