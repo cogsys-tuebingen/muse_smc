@@ -138,24 +138,21 @@ void OccupancyGridMapper::process(const Measurement &m)
 
     auto discretize = [this](const double x)
     {
-        return static_cast<int>(std::floor(x / resolution_ + 0.5));
+        return static_cast<int>(std::floor(x / resolution_));
     };
 
     const cslibs_math_2d::Transform2d o_T_m = map_->getInitialOrigin();
     const cslibs_math_2d::Transform2d m_T_o = o_T_m.inverse();
     const cslibs_math_2d::Transform2d m_T_l = m_T_o * m.origin;
-    const dynamic_map_t::index_t      start_index = {discretize(m.origin.translation().x()),
-                                                     discretize(m.origin.translation().y())};
+    const dynamic_map_t::index_t      start_index = {{discretize(m.origin.translation().x()),
+                                                      discretize(m.origin.translation().y())}};
 
     const double resolution2 = (resolution_ * resolution_ * 0.25);
     for(auto it = m.points->begin() ; it != m.points->end() ; ++it) {
         if(it->isNormal()) {
             const cslibs_math_2d::Point2d end_point = m.origin * *it;
-            const dynamic_map_t::index_t  end_index = {discretize(end_point.x()),
-                                                       discretize(end_point.y())};
-
-//            std::cout << m.origin.translation() << " " << end_point << std::endl;
-//            std::cout << start_index << " " << end_index << std::endl;
+            const dynamic_map_t::index_t  end_index = {{discretize(end_point.x()),
+                                                        discretize(end_point.y())}};
 
             auto b = map_->getLineIterator(start_index,
                                            end_index);

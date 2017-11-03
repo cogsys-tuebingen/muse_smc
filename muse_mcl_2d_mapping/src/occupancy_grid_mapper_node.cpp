@@ -150,7 +150,10 @@ void OccupancyGridMapperNode::publishOcc()
         vis_chunk.color.r = 0.f;
         vis_chunk.color.g = 1.f;
         vis_chunk.color.b = 0.f;
-        vis_chunk.scale.x = 0.1f;
+        vis_chunk.scale.x = 0.1;
+        vis_chunk.action = visualization_msgs::Marker::DELETEALL;
+        vis_chunks->markers.emplace_back(vis_chunk);
+        vis_chunk.action = visualization_msgs::Marker::ADD;
 
         auto convert_point = [](const cslibs_math_2d::Point2d &p) {
             geometry_msgs::Point gp;
@@ -161,6 +164,7 @@ void OccupancyGridMapperNode::publishOcc()
         };
 
         for(const cslibs_math_2d::Box2d &b : chunks) {
+            ++vis_chunk.id;
             vis_chunk.points.clear();
             vis_chunk.points.emplace_back(convert_point(b.ll()));
             vis_chunk.points.emplace_back(convert_point(b.rl()));

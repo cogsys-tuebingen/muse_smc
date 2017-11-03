@@ -6,8 +6,11 @@
 #include <muse_smc/utility/delegate.hpp>
 
 #include <cslibs_math/common/mod.hpp>
+#include <cslibs_math/common/array.hpp>
 
 #include <muse_mcl_2d_gridmaps/dynamic_maps/chunk.hpp>
+
+#include <iostream>
 
 namespace muse_mcl_2d_gridmaps {
 namespace dynamic_maps {
@@ -144,7 +147,6 @@ private:
         return local_index_[0] < 0 || local_index_[0] >= chunk_size_ ||
                local_index_[1] < 0 || local_index_[1] >= chunk_size_;
     }
-
 
     bool                        done_;
     get_chunk_t                 get_chunk_;

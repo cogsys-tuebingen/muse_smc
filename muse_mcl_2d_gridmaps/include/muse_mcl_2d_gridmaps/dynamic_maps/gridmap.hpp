@@ -46,14 +46,13 @@ public:
         default_value_(default_value),
         w_T_m_(origin),
         m_T_w_(w_T_m_.inverse()),
-        min_chunk_index_{0,0},
-        max_chunk_index_{0,0},
-        min_index_{0,0},
+        min_chunk_index_{{std::numeric_limits<int>::max(), std::numeric_limits<int>::max()}},
+        max_chunk_index_{{std::numeric_limits<int>::min(), std::numeric_limits<int>::min()}},
+        min_index_{{std::numeric_limits<int>::max(), std::numeric_limits<int>::max()}},
         storage_(new storage_t),
         height_(chunk_size_),
         width_(chunk_size_)
     {
-        storage_->insert({0,0}, chunk_t(chunk_size_, default_value_));
     }
 
     Gridmap(const double origin_x,
@@ -70,14 +69,13 @@ public:
         default_value_(default_value),
         w_T_m_(origin_x, origin_y, origin_phi),
         m_T_w_(w_T_m_.inverse()),
-        min_chunk_index_{0,0},
-        max_chunk_index_{0,0},
-        min_index_{0,0},
+        min_chunk_index_{{std::numeric_limits<int>::max(), std::numeric_limits<int>::max()}},
+        max_chunk_index_{{std::numeric_limits<int>::min(), std::numeric_limits<int>::min()}},
+        min_index_{{std::numeric_limits<int>::max(), std::numeric_limits<int>::max()}},
         storage_(new storage_t),
         height_(chunk_size_),
         width_(chunk_size_)
     {
-        storage_->insert({0,0}, chunk_t(chunk_size_, default_value_));
     }
 
     virtual inline cslibs_math_2d::Point2d getMin() const override
@@ -154,13 +152,8 @@ public:
     inline line_iterator_t getLineIterator(const index_t &start_index,
                                            const index_t &end_index)
     {
-        const index_t start_chunk_index = toChunkIndex(start_index);
-        const index_t end_chunk_index   = toChunkIndex(end_index);
-        getChunk(start_chunk_index);
-        getChunk(end_chunk_index);
-
-        return line_iterator_t(start_index + min_index_,
-                               end_index + min_index_,
+        return line_iterator_t(start_index,
+                               end_index,
                                chunk_size_,
                                default_value_,
                                get_chunk_t::template from<gridmap_t, &gridmap_t::getChunk>(this));
@@ -172,10 +165,6 @@ public:
 
         const index_t start_index = toIndex(start);
         const index_t end_index   = toIndex(end);
-        const index_t start_chunk_index = toChunkIndex(start_index);
-        const index_t end_chunk_index   = toChunkIndex(end_index);
-        getChunk(start_chunk_index);
-        getChunk(end_chunk_index);
 
         return  line_iterator_t(start_index, end_index,
                                 chunk_size_,
@@ -288,21 +277,21 @@ protected:
 
     inline index_t toChunkIndex(const index_t &index) const
     {
-        return {index[0] / chunk_size_, index[1] / chunk_size_};
+        return {{index[0] / chunk_size_, index[1] / chunk_size_}};
     }
 
     inline index_t toLocalChunkIndex(const index_t &index) const
     {
-        return {cslibs_math::common::mod(index[0], chunk_size_),
-                    cslibs_math::common::mod(index[1], chunk_size_)};
+        return {{cslibs_math::common::mod(index[0], chunk_size_),
+                 cslibs_math::common::mod(index[1], chunk_size_)}};
     }
 
     inline index_t toIndex(const cslibs_math_2d::Point2d &p_w) const
     {
         /// offset and rounding correction!
         const cslibs_math_2d::Point2d p_m = m_T_w_ * p_w;
-        return {static_cast<int>(p_m.x() * resolution_inv_),
-                static_cast<int>(p_m.y() * resolution_inv_)};
+        return {{static_cast<int>(p_m.x() * resolution_inv_),
+                static_cast<int>(p_m.y() * resolution_inv_)}};
     }
 
     inline cslibs_math_2d::Point2d fromIndex(const index_t &i) const
