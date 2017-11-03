@@ -174,7 +174,6 @@ void OccupancyGridMapperNode::publishOcc()
             vis_chunks->markers.emplace_back(vis_chunk);
         }
         pub_occ_map_chunks_.publish(vis_chunks);
-        std::cerr << chunks.size() << std::endl;
     }
 }
 

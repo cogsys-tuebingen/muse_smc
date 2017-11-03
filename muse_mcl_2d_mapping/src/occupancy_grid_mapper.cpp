@@ -88,30 +88,30 @@ void OccupancyGridMapper::loop()
 void OccupancyGridMapper::mapRequest()
 {
     if(request_map_ && map_) {
-        static_map_.reset(new static_map_t(map_->getInitialOrigin(),
+        cslibs_math_2d::Transform2d origin = map_->getOrigin();
+        static_map_.reset(new static_map_t(origin,
                                            map_->getResolution(),
                                            map_->getHeight(),
                                            map_->getWidth(),
                                            map_->getFrame()));
         allocated_chunks_.clear();
 
-        const int chunk_step = map_->getChunkSize();
+        const std::size_t chunk_step = map_->getChunkSize();
         const dynamic_map_t::index_t min_chunk_index = map_->getMinChunkIndex();
         const dynamic_map_t::index_t max_chunk_index = map_->getMaxChunkIndex();
         for(int i = min_chunk_index[1] ; i <= max_chunk_index[1] ; ++i) {
             for(int j = min_chunk_index[0] ; j <= max_chunk_index[0] ; ++j) {
-                const dynamic_map_t::chunk_t *chunk = map_->getChunk({j,i});
+                const dynamic_map_t::chunk_t *chunk = map_->getChunk({{j,i}});
                 if(chunk != nullptr) {
-                    const int cx = (j - min_chunk_index[0]) * chunk_step;
-                    const int cy = (i - min_chunk_index[1]) * chunk_step;
+                    const std::size_t cx = static_cast<std::size_t>((j - min_chunk_index[0]) * static_cast<int>(chunk_step));
+                    const std::size_t cy = static_cast<std::size_t>((i - min_chunk_index[1]) * static_cast<int>(chunk_step));
 
-                    allocated_chunks_.emplace_back(cslibs_math_2d::Box2d(cx * resolution_,
-                                                                         cy * resolution_,
-                                                                         (cx + chunk_step) * resolution_,
-                                                                         (cy + chunk_step) * resolution_));
+                    cslibs_math_2d::Point2d ll(cx * resolution_, cy * resolution_);
+                    cslibs_math_2d::Point2d ru = ll + cslibs_math_2d::Point2d(chunk_step * resolution_);
+                    allocated_chunks_.emplace_back(cslibs_math_2d::Box2d(origin * ll, origin * ru));
 
-                    for(int k = 0 ; k < chunk_step ; ++k) {
-                        for(int l = 0 ; l < chunk_step ; ++l) {
+                    for(std::size_t k = 0 ; k < chunk_step ; ++k) {
+                        for(std::size_t l = 0 ; l < chunk_step ; ++l) {
                             static_map_->at(cx + l, cy + k) = chunk->at(l,k);
                         }
                     }
@@ -141,9 +141,6 @@ void OccupancyGridMapper::process(const Measurement &m)
         return static_cast<int>(std::floor(x / resolution_));
     };
 
-    const cslibs_math_2d::Transform2d o_T_m = map_->getInitialOrigin();
-    const cslibs_math_2d::Transform2d m_T_o = o_T_m.inverse();
-    const cslibs_math_2d::Transform2d m_T_l = m_T_o * m.origin;
     const dynamic_map_t::index_t      start_index = {{discretize(m.origin.translation().x()),
                                                       discretize(m.origin.translation().y())}};
 
@@ -153,7 +150,6 @@ void OccupancyGridMapper::process(const Measurement &m)
             const cslibs_math_2d::Point2d end_point = m.origin * *it;
             const dynamic_map_t::index_t  end_index = {{discretize(end_point.x()),
                                                         discretize(end_point.y())}};
-
             auto b = map_->getLineIterator(start_index,
                                            end_index);
 

@@ -8,7 +8,7 @@
     <!--<arg name="bag_root" value="/localhome/hanten/localization/data" /> -->
     <arg name="bag_root" value="/home/hanten/Workspace/data/rawseeds/bags" />
     <arg name="bag_file" value="Bicocca_2009-02-25b-static-artificial-light.bag" />
-    <node pkg="rosbag" type="play" name="player" output="screen" args="--pause --clock --rate 1.0 -d 5 $(arg bag_root)/$(arg bag_file)" required="true" />
+    <node pkg="rosbag" type="play" name="player" output="screen" args="--pause --clock --rate 2.0 -d 5 $(arg bag_root)/$(arg bag_file)" required="true" />
     <include file="$(find rawseeds_ros)/launch/transforms.launch" />
 
  	<group ns="muse_mcl_2d_mapping_ocm_node">

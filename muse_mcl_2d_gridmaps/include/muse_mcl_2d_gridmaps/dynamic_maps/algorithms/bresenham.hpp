@@ -5,6 +5,7 @@
 
 #include <muse_smc/utility/delegate.hpp>
 
+#include <cslibs_math/common/div.hpp>
 #include <cslibs_math/common/mod.hpp>
 #include <cslibs_math/common/array.hpp>
 
@@ -133,8 +134,8 @@ private:
             active_chunk_->unlock();
         }
 
-        chunk_index_[0] = x() / chunk_size_;
-        chunk_index_[1] = y() / chunk_size_;
+        chunk_index_[0] = cslibs_math::common::div(x(), chunk_size_);
+        chunk_index_[1] = cslibs_math::common::div(y(), chunk_size_);
         local_index_[0] = cslibs_math::common::mod(index_[0], chunk_size_);
         local_index_[1] = cslibs_math::common::mod(index_[1], chunk_size_);
 
