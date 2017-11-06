@@ -23,23 +23,18 @@ public:
     virtual state_space_boundary_t getMin() const
     {
         return cslibs_math_2d::Point2d(limits_t::lowest(),
-                                         limits_t::lowest());
+                                       limits_t::lowest());
     }
 
     virtual state_space_boundary_t getMax() const
     {
         return cslibs_math_2d::Point2d(limits_t::max(),
-                                         limits_t::max());
+                                       limits_t::max());
     }
 
     virtual state_space_transform_t getOrigin() const
     {
         return cslibs_math_2d::Transform2d::identity();
-    }
-
-    virtual bool isAvailable() const
-    {
-        return true;
     }
 
 protected:

@@ -1,6 +1,6 @@
 #include "likelihood_field_gridmap_provider.h"
 
-#include <muse_mcl_2d_gridmaps/static_maps/conversion/convert_likelihood_field_gridmap.hpp>
+#include <cslibs_gridmaps/static_maps/conversion/convert_likelihood_field_gridmap.hpp>
 
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::LikelihoodFieldGridmapProvider, muse_mcl_2d::MapProvider2D)
@@ -45,15 +45,18 @@ void LikelihoodFieldGridmapProvider::callback(const nav_msgs::OccupancyGridConst
             loading_ = true;
 
             auto load = [this, msg]() {
+                cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr map;
+                cslibs_gridmaps::static_maps::conversion::from(*msg, map, maximum_distance_, sigma_hit_, binarization_threshold_);
                 std::unique_lock<std::mutex>l(map_mutex_);
-                muse_mcl_2d_gridmaps::static_maps::conversion::from(*msg, map_, maximum_distance_, sigma_hit_, binarization_threshold_);
+                map_.reset(new LikelihoodFieldGridmap(map, msg->header.frame_id));
                 loading_ = false;
             };
             auto load_blocking = [this, msg]() {
+                cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr map;
+                cslibs_gridmaps::static_maps::conversion::from(*msg, map, maximum_distance_, sigma_hit_, binarization_threshold_);
                 std::unique_lock<std::mutex>l(map_mutex_);
-                muse_mcl_2d_gridmaps::static_maps::conversion::from(*msg, map_, maximum_distance_, sigma_hit_, binarization_threshold_);
+                map_.reset(new LikelihoodFieldGridmap(map, msg->header.frame_id));
                 loading_ = false;
-
                 map_loaded_.notify_one();
             };
             if(blocking_) {

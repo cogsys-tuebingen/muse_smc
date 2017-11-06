@@ -43,7 +43,6 @@ public:
     virtual state_space_boundary_t  getMin()    const = 0;
     virtual state_space_boundary_t  getMax()    const = 0;
     virtual state_space_transform_t getOrigin() const = 0;
-    virtual bool isAvailable()      const = 0;
 
     inline std::string getFrame() const
     {

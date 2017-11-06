@@ -1,6 +1,6 @@
 #include "distance_gridmap_provider.h"
 
-#include <muse_mcl_2d_gridmaps/static_maps/conversion/convert_distance_gridmap.hpp>
+#include <cslibs_gridmaps/static_maps/conversion/convert_distance_gridmap.hpp>
 
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::DistanceGridmapProvider, muse_mcl_2d::MapProvider2D)
@@ -43,15 +43,17 @@ void DistanceGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr &ms
             loading_ = true;
 
             auto load = [this, msg]() {
+                cslibs_gridmaps::static_maps::DistanceGridmap::Ptr map;
+                cslibs_gridmaps::static_maps::conversion::from(*msg, map, binarization_threshold_, maximum_distance_);
                 std::unique_lock<std::mutex>l(map_mutex_);
-                muse_mcl_2d_gridmaps::static_maps::conversion::from(*msg, map_, binarization_threshold_, maximum_distance_);
+                map_.reset(new DistanceGridmap(map, msg->header.frame_id));
                 loading_ = false;
             };
             auto load_blocking = [this, msg]() {
-                std::unique_lock<std::mutex>l(map_mutex_);
-                muse_mcl_2d_gridmaps::static_maps::conversion::from(*msg, map_, binarization_threshold_, maximum_distance_);
+                cslibs_gridmaps::static_maps::DistanceGridmap::Ptr map;
+                cslibs_gridmaps::static_maps::conversion::from(*msg, map, binarization_threshold_, maximum_distance_);
+                map_.reset(new DistanceGridmap(map, msg->header.frame_id));
                 loading_ = false;
-
                 map_loaded_.notify_one();
             };
             if(blocking_) {

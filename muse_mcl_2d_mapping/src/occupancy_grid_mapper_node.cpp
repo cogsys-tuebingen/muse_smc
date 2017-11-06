@@ -1,6 +1,6 @@
 #include "occupancy_grid_mapper_node.h"
 
-#include <muse_mcl_2d_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
+#include <cslibs_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
 #include <muse_mcl_2d_laser/convert.hpp>
 
 #include <nav_msgs/OccupancyGrid.h>
@@ -48,7 +48,7 @@ bool OccupancyGridMapperNode::setup()
     angular_interval_[1]      = nh_.param<double>("angle_max", M_PI);
 
 
-    muse_mcl_2d_gridmaps::utility::InverseModel inverse_model(occ_map_prob_prior, occ_map_prob_free, occ_map_prob_occ);
+    cslibs_gridmaps::utility::InverseModel inverse_model(occ_map_prob_prior, occ_map_prob_free, occ_map_prob_occ);
     occ_mapper_.reset(new OccupancyGridMapper(inverse_model,
                                               occ_grid_resolution,
                                               occ_grid_chunk_resolution,
@@ -122,7 +122,7 @@ void OccupancyGridMapperNode::laserscan(const sensor_msgs::LaserScanConstPtr &ms
                             tf_timeout_)) {
 
         cslibs_math_2d::Pointcloud2d::Ptr points(new cslibs_math_2d::Pointcloud2d);
-        OccupancyGridMapper::Measurement  m(points, o_T_l);
+        OccupancyGridMapper::Measurement  m(points, o_T_l, cslibs_time::Time(laserscan->getTimeFrame().end));
         for(auto it = laserscan->begin() ; it != laserscan->end() ; ++it) {
             if(it->valid())
                 points->insert(it->point);
@@ -133,12 +133,14 @@ void OccupancyGridMapperNode::laserscan(const sensor_msgs::LaserScanConstPtr &ms
 
 void OccupancyGridMapperNode::publishOcc()
 {
-    muse_mcl_2d_gridmaps::static_maps::ProbabilityGridmap::Ptr map;
+    OccupancyGridMapper::static_map_stamped_t map;
     OccupancyGridMapper::allocated_chunks_t chunks;
     occ_mapper_->get(map, chunks);
-    if(map) {
+    if(map.data()) {
         nav_msgs::OccupancyGrid::Ptr msg;
-        muse_mcl_2d_gridmaps::static_maps::conversion::from(map, msg);
+        cslibs_gridmaps::static_maps::conversion::from(map.data(), msg);
+        msg->header.stamp.fromNSec(map.stamp().nanoseconds());
+        msg->header.frame_id = map_frame_;
         pub_occ_map_.publish(msg);
 
         visualization_msgs::MarkerArray::Ptr vis_chunks(new visualization_msgs::MarkerArray);

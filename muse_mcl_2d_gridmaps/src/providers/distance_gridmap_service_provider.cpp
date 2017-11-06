@@ -1,6 +1,6 @@
 #include "distance_gridmap_service_provider.h"
 
-#include <muse_mcl_2d_gridmaps/static_maps/conversion/convert_distance_gridmap.hpp>
+#include <cslibs_gridmaps/static_maps/conversion/convert_distance_gridmap.hpp>
 
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::DistanceGridmapServiceProvider, muse_mcl_2d::MapProvider2D)
@@ -35,13 +35,17 @@ DistanceGridmapServiceProvider::state_space_t::ConstPtr DistanceGridmapServicePr
                 loading_ = true;
 
                 auto load = [this, req]() {
+                    cslibs_gridmaps::static_maps::DistanceGridmap::Ptr map;
+                    cslibs_gridmaps::static_maps::conversion::from(req.response.map, map, binarization_threshold_, maximum_distance_);
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    muse_mcl_2d_gridmaps::static_maps::conversion::from(req.response.map, map_, binarization_threshold_, maximum_distance_);
+                    map_.reset(new DistanceGridmap(map, req.response.map.header.frame_id));
                     loading_ = false;
                 };
                 auto load_blocking = [this, req]() {
+                    cslibs_gridmaps::static_maps::DistanceGridmap::Ptr map;
+                    cslibs_gridmaps::static_maps::conversion::from(req.response.map, map, binarization_threshold_, maximum_distance_);
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    muse_mcl_2d_gridmaps::static_maps::conversion::from(req.response.map, map_, binarization_threshold_, maximum_distance_);
+                    map_.reset(new DistanceGridmap(map, req.response.map.header.frame_id));
                     loading_ = false;
                     map_loaded_.notify_one();
                 };

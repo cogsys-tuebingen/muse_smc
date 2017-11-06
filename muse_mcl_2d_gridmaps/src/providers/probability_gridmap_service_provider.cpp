@@ -1,6 +1,6 @@
 #include "probability_gridmap_service_provider.h"
 
-#include <muse_mcl_2d_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
+#include <cslibs_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::ProbabilityGridmapServiceProvider, muse_mcl_2d::MapProvider2D)
 
@@ -32,13 +32,17 @@ ProbabilityGridmapServiceProvider::state_space_t::ConstPtr ProbabilityGridmapSer
                 loading_ = true;
 
                 auto load = [this, req]() {
+                    cslibs_gridmaps::static_maps::ProbabilityGridmap::Ptr map;
+                    cslibs_gridmaps::static_maps::conversion::from(req.response.map, map);
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    static_maps::conversion::from(req.response.map, map_);
+                    map_.reset(new ProbabilityGridmap(map, req.response.map.header.frame_id));
                     loading_ = false;
                 };
                 auto load_blocking = [this, req]() {
+                    cslibs_gridmaps::static_maps::ProbabilityGridmap::Ptr map;
+                    cslibs_gridmaps::static_maps::conversion::from(req.response.map, map);
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    static_maps::conversion::from(req.response.map, map_);
+                    map_.reset(new ProbabilityGridmap(map, req.response.map.header.frame_id));
                     loading_ = false;
                     map_loaded_.notify_one();
                 };

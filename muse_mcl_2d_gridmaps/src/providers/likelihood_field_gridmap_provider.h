@@ -9,7 +9,7 @@
 #include <condition_variable>
 
 #include <muse_mcl_2d/map/map_provider_2d.hpp>
-#include <muse_mcl_2d_gridmaps/static_maps/likelihood_field_gridmap.h>
+#include <muse_mcl_2d_gridmaps/likelihood_field_gridmap.hpp>
 
 
 namespace muse_mcl_2d_gridmaps {
@@ -33,7 +33,7 @@ protected:
 
     mutable std::mutex                          map_mutex_;
     mutable std::condition_variable             map_loaded_;
-    static_maps::LikelihoodFieldGridmap::Ptr    map_;
+    LikelihoodFieldGridmap::Ptr                 map_;
     std::atomic_bool                            loading_;
     std::thread                                 worker_;
 

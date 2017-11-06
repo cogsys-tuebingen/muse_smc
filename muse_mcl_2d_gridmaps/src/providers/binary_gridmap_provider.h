@@ -9,7 +9,7 @@
 #include <condition_variable>
 
 #include <muse_mcl_2d/map/map_provider_2d.hpp>
-#include <muse_mcl_2d_gridmaps/static_maps/binary_gridmap.h>
+#include <muse_mcl_2d_gridmaps/binary_gridmap.hpp>
 
 namespace muse_mcl_2d_gridmaps {
 class BinaryGridmapProvider : public muse_mcl_2d::MapProvider2D
@@ -21,16 +21,16 @@ public:
     void setup(ros::NodeHandle &nh) override;
 
 protected:
-    ros::Subscriber source_;
-    std::string     topic_;
-    double          binarization_threshold_;
-    bool            blocking_;
+    ros::Subscriber                                     source_;
+    std::string                                         topic_;
+    double                                              binarization_threshold_;
+    bool                                                blocking_;
 
-    mutable std::mutex               map_mutex_;
-    mutable std::condition_variable  map_loaded_;
-    static_maps::BinaryGridMap::Ptr map_;
-    std::atomic_bool         loading_;
-    std::thread              worker_;
+    mutable std::mutex                                  map_mutex_;
+    mutable std::condition_variable                     map_loaded_;
+    muse_mcl_2d_gridmaps::BinaryGridmap::Ptr            map_;
+    std::atomic_bool                                    loading_;
+    std::thread                                         worker_;
 
     void callback(const nav_msgs::OccupancyGridConstPtr &msg);
 

@@ -1,6 +1,6 @@
 #include "binary_gridmap_provider.h"
 
-#include <muse_mcl_2d_gridmaps/static_maps/conversion/convert_binary_gridmap.hpp>
+#include <cslibs_gridmaps/static_maps/conversion/convert_binary_gridmap.hpp>
 
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::BinaryGridmapProvider, muse_mcl_2d::MapProvider2D)
@@ -40,13 +40,17 @@ void BinaryGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr &msg)
             loading_ = true;
 
             auto load = [this, msg]() {
+                cslibs_gridmaps::static_maps::BinaryGridMap::Ptr map;
+                cslibs_gridmaps::static_maps::conversion::from(*msg, map, binarization_threshold_);
                 std::unique_lock<std::mutex>l(map_mutex_);
-                static_maps::conversion::from(*msg, map_, binarization_threshold_);
+                map_.reset(new BinaryGridmap(map, msg->header.frame_id));
                 loading_ = false;
             };
             auto load_blocking = [this, msg]() {
+                cslibs_gridmaps::static_maps::BinaryGridMap::Ptr map;
+                cslibs_gridmaps::static_maps::conversion::from(*msg, map, binarization_threshold_);
                 std::unique_lock<std::mutex>l(map_mutex_);
-                static_maps::conversion::from(*msg, map_, binarization_threshold_);
+                map_.reset(new BinaryGridmap(map, msg->header.frame_id));
                 loading_ = false;
                 map_loaded_.notify_one();
             };
