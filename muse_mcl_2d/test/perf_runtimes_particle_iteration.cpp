@@ -86,7 +86,7 @@ void weightIterationForEach(muse_smc::SampleSet<muse_mcl_2d::StateSpaceDescripti
     std::cout << "weightIterationForEach took time:         " << (cslibs_time::Time::now() - start).milliseconds() << "ms" << "\n";
 }
 
-#include <muse_mcl_2d/odometry/odometry_2d.hpp>
+#include <muse_mcl_2d/odometry/odometry_2d.h>
 int main(int argc, char *argv[])
 {
     muse_mcl_2d::SampleIndexation2D  indexation({0.5, M_PI / 180.0 * 10.0});

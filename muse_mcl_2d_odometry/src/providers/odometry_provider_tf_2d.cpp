@@ -1,6 +1,6 @@
 #include "odometry_provider_tf_2d.h"
 
-#include <muse_mcl_2d/odometry/odometry_2d.hpp>
+#include <muse_mcl_2d/odometry/odometry_2d.h>
 #include <tf/tf.h>
 
 #include <class_loader/class_loader_register_macro.h>

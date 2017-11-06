@@ -1,6 +1,6 @@
 #include "differential_drive_abs.h"
 
-#include <muse_mcl_2d/odometry/odometry_2d.hpp>
+#include <muse_mcl_2d/odometry/odometry_2d.h>
 
 #include <cslibs_math/common/angle.hpp>
 

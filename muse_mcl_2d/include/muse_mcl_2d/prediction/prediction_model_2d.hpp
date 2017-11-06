@@ -5,7 +5,7 @@
 
 #include <muse_mcl_2d/samples/sample_2d.hpp>
 #include <muse_mcl_2d/tf/tf_provider.hpp>
-#include <muse_mcl_2d/odometry/odometry_2d.hpp>
+#include <muse_mcl_2d/odometry/odometry_2d.h>
 #include <muse_mcl_2d/state_space/state_space_description_2d.hpp>
 
 namespace muse_mcl_2d {

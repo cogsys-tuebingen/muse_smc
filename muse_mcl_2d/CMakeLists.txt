@@ -44,7 +44,7 @@ generate_messages(
 
 catkin_package(
     INCLUDE_DIRS    include
-    LIBRARIES       ${PROJECT_NAME}_resampling ${PROJECT_NAME}_sampling
+    LIBRARIES       ${PROJECT_NAME}_resampling ${PROJECT_NAME}_sampling ${PROJECT_NAME}_odometry
     CATKIN_DEPENDS  muse_smc cslibs_math_2d
     DEPENDS         Eigen3
 )
@@ -74,6 +74,14 @@ add_library(${PROJECT_NAME}_sampling
 )
 
 target_link_libraries(${PROJECT_NAME}_sampling
+    ${catkin_LIBRARIES}
+)
+
+add_library(${PROJECT_NAME}_odometry
+    src/odometry/odometry.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}_odometry
     ${catkin_LIBRARIES}
 )
 
