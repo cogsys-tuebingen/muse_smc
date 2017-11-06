@@ -22,7 +22,7 @@ public:
     {
     }
 
-    inline virtual ~UpdateModel2D()
+    virtual ~UpdateModel2D()
     {
     }
 

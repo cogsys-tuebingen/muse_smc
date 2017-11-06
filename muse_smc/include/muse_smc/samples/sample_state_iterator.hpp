@@ -61,7 +61,7 @@ public:
     {
     }
 
-    inline virtual ~StateIteration()
+    virtual ~StateIteration()
     {
     }
 

@@ -2,7 +2,7 @@
 
 #include <muse_mcl_2d_laser/laserscan_2d.hpp>
 
-#include <cslibs_gridmaps/static_maps//binary_gridmap.h>
+#include <muse_mcl_2d_gridmaps/maps/binary_gridmap.h>
 
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::BeamModelMLE, muse_mcl_2d::UpdateModel2D)
@@ -18,16 +18,16 @@ void BeamModelMLE::apply(const data_t::ConstPtr          &data,
                          const state_space_t::ConstPtr   &map,
                          sample_set_t::weight_iterator_t set)
 {
-    if(!map->isType<static_maps::BinaryGridMap>()) {
+    if(!map->isType<BinaryGridmap>()) {
         return;
     }
 
     if(use_estimated_parameters_)
         parameter_estimator_mle_->getParameters(parameters_);
 
-    const static_maps::BinaryGridMap &gridmap = map->as<static_maps::BinaryGridMap>();
-    const muse_mcl_2d_laser::LaserScan2D        &laser_data = data->as<muse_mcl_2d_laser::LaserScan2D>();
-    const muse_mcl_2d_laser::LaserScan2D::rays_t  &laser_rays = laser_data.getRays();
+    const cslibs_gridmaps::static_maps::BinaryGridmap &gridmap = *(map->as<BinaryGridmap>().data());
+    const muse_mcl_2d_laser::LaserScan2D           &laser_data = data->as<muse_mcl_2d_laser::LaserScan2D>();
+    const muse_mcl_2d_laser::LaserScan2D::rays_t   &laser_rays = laser_data.getRays();
 
 
     /// laser to base transform
@@ -40,7 +40,7 @@ void BeamModelMLE::apply(const data_t::ConstPtr          &data,
                              tf_timeout_))
         return;
     if(!tf_->lookupTransform(world_frame_,
-                             gridmap.getFrame(),
+                             map->getFrame(),
                              ros::Time(laser_data.getTimeFrame().end.seconds()),
                              m_T_w,
                              tf_timeout_))

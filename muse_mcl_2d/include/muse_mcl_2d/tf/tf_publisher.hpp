@@ -56,7 +56,7 @@ public:
     {
     }
 
-    inline virtual ~TFPublisher()
+    virtual ~TFPublisher()
     {
         end();
     }

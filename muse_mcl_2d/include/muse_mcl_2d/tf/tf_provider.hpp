@@ -19,7 +19,7 @@ public:
     {
     }
 
-    inline virtual ~TFProvider()
+    virtual ~TFProvider()
     {
     }
 

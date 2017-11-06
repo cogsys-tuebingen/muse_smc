@@ -19,6 +19,7 @@ find_package(Eigen3 REQUIRED)
 catkin_package(
   LIBRARIES ${PROJECT_NAME}_providers
             ${PROJECT_NAME}_models
+            ${PROJECT_NAME}_maps
   CATKIN_DEPENDS muse_mcl_2d cslibs_math_2d cslibs_gridmaps
 )
 
@@ -27,6 +28,17 @@ include_directories(
   ${Eigen3_INCLUDE_DIR}
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
+)
+
+add_library(${PROJECT_NAME}_maps SHARED
+    src/maps/binary_gridmap.cpp
+    src/maps/distance_gridmap.cpp
+    src/maps/likelihood_field_gridmap.cpp
+    src/maps/probability_gridmap.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}_maps
+    ${catkin_LIBRARIES}
 )
 
 add_library(${PROJECT_NAME}_providers SHARED
@@ -42,6 +54,7 @@ add_library(${PROJECT_NAME}_providers SHARED
 
 target_link_libraries(${PROJECT_NAME}_providers
     ${catkin_LIBRARIES}
+    ${PROJECT_NAME}_maps
 )
 
 add_library(${PROJECT_NAME}_models SHARED
@@ -63,6 +76,7 @@ add_library(${PROJECT_NAME}_models SHARED
 
 target_link_libraries(${PROJECT_NAME}_models
     ${catkin_LIBRARIES}
+    ${PROJECT_NAME}_maps
 )
 
 set(MUSE_MCL_2D_GRIDMAPS_PERF_TESTS True)

@@ -76,7 +76,7 @@ public:
     {
     }
 
-    inline virtual ~SMC()
+    virtual ~SMC()
     {
         end();
     }

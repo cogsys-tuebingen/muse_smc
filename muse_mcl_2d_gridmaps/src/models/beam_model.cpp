@@ -1,7 +1,7 @@
 #include "beam_model.h"
 
 #include <muse_mcl_2d_laser/laserscan_2d.hpp>
-#include <muse_mcl_2d_gridmaps/binary_gridmap.hpp>
+#include <muse_mcl_2d_gridmaps/maps/binary_gridmap.h>
 
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::BeamModel, muse_mcl_2d::UpdateModel2D)
@@ -20,7 +20,7 @@ void BeamModel::apply(const data_t::ConstPtr          &data,
         return;
     }
 
-    const cslibs_gridmaps::static_maps::BinaryGridMap &gridmap = *(map->as<BinaryGridmap>().data());
+    const cslibs_gridmaps::static_maps::BinaryGridmap &gridmap = *(map->as<BinaryGridmap>().data());
     const muse_mcl_2d_laser::LaserScan2D              &laser_data = data->as<muse_mcl_2d_laser::LaserScan2D>();
     const muse_mcl_2d_laser::LaserScan2D::rays_t      &laser_rays = laser_data.getRays();
 

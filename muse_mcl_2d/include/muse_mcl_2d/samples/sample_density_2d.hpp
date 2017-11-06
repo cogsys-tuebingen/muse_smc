@@ -44,18 +44,18 @@ public:
         kdtree_->set<cis::option::tags::node_allocator_chunk_size>(2 * maximum_sample_size + 1);
     }
 
-    inline virtual void clear() override
+    virtual void clear() override
     {
         clustering_impl_.clear();
         kdtree_->clear();
     }
 
-    inline virtual void insert(const Sample2D &sample) override
+    virtual void insert(const Sample2D &sample) override
     {
         kdtree_->insert(indexation_.create(sample), sample_data_t(sample));
     }
 
-    inline virtual void estimate() override
+    virtual void estimate() override
     {
         cis_kd_tree_clustering_t clustering(*kdtree_);
         clustering.cluster(clustering_impl_);

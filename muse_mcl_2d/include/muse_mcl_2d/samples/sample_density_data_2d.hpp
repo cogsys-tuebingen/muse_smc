@@ -50,7 +50,7 @@ struct SampleDensityData2D {
         return *this;
     }
 
-    inline virtual ~SampleDensityData2D()
+    virtual ~SampleDensityData2D()
     {
     }
 

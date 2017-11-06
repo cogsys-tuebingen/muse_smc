@@ -40,14 +40,14 @@ void BinaryGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr &msg)
             loading_ = true;
 
             auto load = [this, msg]() {
-                cslibs_gridmaps::static_maps::BinaryGridMap::Ptr map;
+                cslibs_gridmaps::static_maps::BinaryGridmap::Ptr map;
                 cslibs_gridmaps::static_maps::conversion::from(*msg, map, binarization_threshold_);
                 std::unique_lock<std::mutex>l(map_mutex_);
                 map_.reset(new BinaryGridmap(map, msg->header.frame_id));
                 loading_ = false;
             };
             auto load_blocking = [this, msg]() {
-                cslibs_gridmaps::static_maps::BinaryGridMap::Ptr map;
+                cslibs_gridmaps::static_maps::BinaryGridmap::Ptr map;
                 cslibs_gridmaps::static_maps::conversion::from(*msg, map, binarization_threshold_);
                 std::unique_lock<std::mutex>l(map_mutex_);
                 map_.reset(new BinaryGridmap(map, msg->header.frame_id));

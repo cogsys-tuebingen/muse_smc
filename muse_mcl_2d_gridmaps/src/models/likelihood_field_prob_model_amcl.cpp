@@ -2,7 +2,7 @@
 
 #include <muse_mcl_2d_laser/laserscan_2d.hpp>
 
-#include <muse_mcl_2d_gridmaps/distance_gridmap.hpp>
+#include <muse_mcl_2d_gridmaps/maps/distance_gridmap.h>
 
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::LikelihoodFieldProbModelAMCL, muse_mcl_2d::UpdateModel2D)

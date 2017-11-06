@@ -39,14 +39,14 @@ LikelihoodFieldGridmapServiceProvider::state_space_t::ConstPtr LikelihoodFieldGr
                     cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr map;
                     cslibs_gridmaps::static_maps::conversion::from(req.response.map, map, maximum_distance_, sigma_hit_, binarization_threshold_);
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    map_.reset(LikelihoodFieldGridmap(map, req.response.map.header.stamp));
+                    map_.reset(new LikelihoodFieldGridmap(map, req.response.map.header.frame_id));
                     loading_ = false;
                 };
                 auto load_blocking = [this, req]() {
                     cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr map;
                     cslibs_gridmaps::static_maps::conversion::from(req.response.map, map, maximum_distance_, sigma_hit_, binarization_threshold_);
                     std::unique_lock<std::mutex>l(map_mutex_);
-                    map_.reset(LikelihoodFieldGridmap(map, req.response.map.header.stamp));
+                    map_.reset(new LikelihoodFieldGridmap(map, req.response.map.header.frame_id));
                     loading_ = false;
                     map_loaded_.notify_one();
                 };

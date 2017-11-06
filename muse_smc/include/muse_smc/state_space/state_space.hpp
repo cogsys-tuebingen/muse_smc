@@ -35,11 +35,7 @@ public:
     {
     }
 
-    virtual bool validate(const state_t &state) const
-    {
-        return true;
-    }
-
+    virtual bool validate(const state_t&)       const = 0;
     virtual state_space_boundary_t  getMin()    const = 0;
     virtual state_space_boundary_t  getMax()    const = 0;
     virtual state_space_transform_t getOrigin() const = 0;

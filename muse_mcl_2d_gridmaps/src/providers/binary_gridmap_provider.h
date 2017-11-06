@@ -9,7 +9,7 @@
 #include <condition_variable>
 
 #include <muse_mcl_2d/map/map_provider_2d.hpp>
-#include <muse_mcl_2d_gridmaps/binary_gridmap.hpp>
+#include <muse_mcl_2d_gridmaps/maps/binary_gridmap.h>
 
 namespace muse_mcl_2d_gridmaps {
 class BinaryGridmapProvider : public muse_mcl_2d::MapProvider2D

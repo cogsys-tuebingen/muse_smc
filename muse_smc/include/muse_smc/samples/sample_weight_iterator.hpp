@@ -82,7 +82,7 @@ public:
     {
     }
 
-    inline virtual ~WeightIteration()
+    virtual ~WeightIteration()
     {
         if(!untouched_)
             finish_();

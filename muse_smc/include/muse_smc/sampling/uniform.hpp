@@ -18,7 +18,7 @@ public:
     {
     }
 
-    inline virtual ~UniformSampling()
+    virtual ~UniformSampling()
     {
     }
 

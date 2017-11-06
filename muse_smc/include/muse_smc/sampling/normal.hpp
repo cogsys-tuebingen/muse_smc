@@ -23,7 +23,7 @@ public:
     {
     }
 
-    inline virtual ~NormalSampling()
+    virtual ~NormalSampling()
     {
     }
 

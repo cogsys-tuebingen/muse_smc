@@ -9,7 +9,7 @@
 #include <condition_variable>
 
 #include <muse_mcl_2d/map/map_provider_2d.hpp>
-#include <muse_mcl_2d_gridmaps/likelihood_field_gridmap.hpp>
+#include <muse_mcl_2d_gridmaps/maps/likelihood_field_gridmap.h>
 
 
 namespace muse_mcl_2d_gridmaps {

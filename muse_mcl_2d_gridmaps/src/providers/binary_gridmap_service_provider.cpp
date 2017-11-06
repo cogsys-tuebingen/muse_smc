@@ -36,14 +36,14 @@ BinaryGridmapServiceProvider::state_space_t::ConstPtr BinaryGridmapServiceProvid
                 loading_ = true;
 
                 auto load = [this, req]() {
-                    cslibs_gridmaps::static_maps::BinaryGridMap::Ptr map;
+                    cslibs_gridmaps::static_maps::BinaryGridmap::Ptr map;
                     cslibs_gridmaps::static_maps::conversion::from(req.response.map, map, binarization_threshold_);
                     std::unique_lock<std::mutex>l(map_mutex_);
                     map_.reset(new BinaryGridmap(map, req.response.map.header.frame_id));
                     loading_ = false;
                 };
                 auto load_blocking = [this, req]() {
-                    cslibs_gridmaps::static_maps::BinaryGridMap::Ptr map;
+                    cslibs_gridmaps::static_maps::BinaryGridmap::Ptr map;
                     cslibs_gridmaps::static_maps::conversion::from(req.response.map, map, binarization_threshold_);
                     std::unique_lock<std::mutex>l(map_mutex_);
                     map_.reset(new BinaryGridmap(map, req.response.map.header.frame_id));
