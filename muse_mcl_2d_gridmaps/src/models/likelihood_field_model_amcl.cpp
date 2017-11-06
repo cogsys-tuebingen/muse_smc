@@ -7,9 +7,7 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::LikelihoodFieldModelAMCL, muse_mcl_2d::UpdateModel2D)
 
-using namespace muse_mcl_2d_gridmaps;
-
-
+namespace muse_mcl_2d_gridmaps {
 LikelihoodFieldModelAMCL::LikelihoodFieldModelAMCL()
 {
 }
@@ -77,4 +75,5 @@ void LikelihoodFieldModelAMCL::doSetup(ros::NodeHandle &nh)
     z_rand_ = nh.param(param_name("z_rand"), 0.05);
     sigma_hit_ = nh.param(param_name("sigma_hit"), 0.15);
     denominator_hit_ = 0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
+}
 }

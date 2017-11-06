@@ -6,9 +6,7 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_laser::LaserProvider2D, muse_mcl_2d::DataProvider2D)
 
-using namespace muse_mcl_2d_laser;
-using namespace muse_mcl_2d;
-
+namespace muse_mcl_2d_laser {
 LaserProvider2D::LaserProvider2D() :
     time_offset_(0.0)
 {
@@ -56,4 +54,5 @@ void LaserProvider2D::doSetup(ros::NodeHandle &nh)
         time_offset_ = ros::Duration(1.0 / rate);
         ROS_INFO_STREAM(name_ << ": Throttling laser scan to rate of " << rate << "Hz!");
     }
+}
 }

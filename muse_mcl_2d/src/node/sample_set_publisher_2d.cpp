@@ -5,8 +5,7 @@
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <visualization_msgs/MarkerArray.h>
 
-using namespace muse_mcl_2d;
-
+namespace muse_mcl_2d {
 namespace color {
 #define __HSV2RGB__(H, S, V, R, G, B) \
 { \
@@ -286,4 +285,5 @@ void SampleSetPublisher2D::loop()
     }
 
     running_ = false;
+}
 }

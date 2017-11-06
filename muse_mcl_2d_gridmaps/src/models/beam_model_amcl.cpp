@@ -1,16 +1,13 @@
 #include "beam_model_amcl.h"
 
 #include <muse_mcl_2d_laser/laserscan_2d.hpp>
-
 #include <muse_mcl_2d_gridmaps/maps/binary_gridmap.h>
 
+#include <sensor_msgs/PointCloud.h>
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::BeamModelAMCL, muse_mcl_2d::UpdateModel2D)
 
-using namespace muse_mcl_2d_gridmaps;
-
-#include <sensor_msgs/PointCloud.h>
-
+namespace muse_mcl_2d_gridmaps{
 BeamModelAMCL::BeamModelAMCL()
 {
 }
@@ -103,4 +100,4 @@ void BeamModelAMCL::doSetup(ros::NodeHandle &nh)
     denominator_exponent_hit_ = -0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
     lambda_short_ = nh.param(param_name("lambda_short"), 0.01);
 }
-
+}

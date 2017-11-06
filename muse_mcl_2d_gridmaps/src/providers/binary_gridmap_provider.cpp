@@ -5,9 +5,7 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::BinaryGridmapProvider, muse_mcl_2d::MapProvider2D)
 
-using namespace muse_mcl_2d_gridmaps;
-using namespace muse_mcl_2d;
-
+namespace muse_mcl_2d_gridmaps {
 BinaryGridmapProvider::BinaryGridmapProvider() :
     loading_(false)
 {
@@ -64,4 +62,4 @@ void BinaryGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr &msg)
         }
     }
 }
-
+}

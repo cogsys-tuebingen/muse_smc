@@ -6,9 +6,7 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_odometry::OdometryProviderTF2D, muse_mcl_2d::DataProvider2D)
 
-using namespace muse_mcl_2d_odometry;
-using namespace muse_mcl_2d;
-
+namespace muse_mcl_2d_odometry {
 OdometryProviderTF2D::OdometryProviderTF2D() :
     o_T_b1_(cslibs_math_2d::Transform2d(), cslibs_time::Time(ros::Time::now().toNSec())),
     initialized_(false),
@@ -64,4 +62,5 @@ void OdometryProviderTF2D::loop()
         rate_.sleep();
     }
     running_ = false;
+}
 }

@@ -5,9 +5,7 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_odometry::OmniDrive, muse_mcl_2d::PredictionModel2D)
 
-using namespace muse_mcl_2d_odometry;
-using namespace muse_mcl_2d;
-
+namespace muse_mcl_2d_odometry {
 OmniDrive::Result::Ptr OmniDrive::apply(const muse_smc::Data::ConstPtr &data,
                                         const cslibs_time::Time           &until,
                                         sample_set_t::state_iterator_t  states)
@@ -91,4 +89,5 @@ void OmniDrive::doSetup(ros::NodeHandle &nh_private)
     alpha_3_ = nh_private.param<double>(param_name("alpha1"), alpha_3_);
     alpha_4_ = nh_private.param<double>(param_name("alpha1"), alpha_4_);
     alpha_5_ = nh_private.param<double>(param_name("alpha5"), 0.1);
+}
 }

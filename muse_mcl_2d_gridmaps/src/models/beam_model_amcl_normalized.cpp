@@ -7,10 +7,7 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::BeamModelAMCLNormalized, muse_mcl_2d::UpdateModel2D)
 
-using namespace muse_mcl_2d_gridmaps;
-
-#include <sensor_msgs/PointCloud.h>
-
+namespace muse_mcl_2d_gridmaps {
 BeamModelAMCLNormalized::BeamModelAMCLNormalized()
 {
 }
@@ -126,4 +123,4 @@ void BeamModelAMCLNormalized::doSetup(ros::NodeHandle &nh)
     denominator_exponent_hit_ = -0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
     lambda_short_ = nh.param(param_name("lambda_short"), 0.01);
 }
-
+}

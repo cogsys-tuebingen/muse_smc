@@ -7,9 +7,7 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::BinaryGridmapServiceProvider, muse_mcl_2d::MapProvider2D)
 
-using namespace muse_mcl_2d_gridmaps;
-using namespace muse_mcl_2d;
-
+namespace muse_mcl_2d_gridmaps {
 BinaryGridmapServiceProvider::BinaryGridmapServiceProvider() :
     loading_(false)
 {
@@ -21,7 +19,7 @@ void BinaryGridmapServiceProvider::setup(ros::NodeHandle &nh)
     service_name_ = nh.param<std::string>(param_name("service"), "/static_map");
     binarization_threshold_ = nh.param<double>(param_name("threshold"), 0.5);
     source_= nh.serviceClient<nav_msgs::GetMap>(service_name_);
-    blocking_ = nh.param<double>(param_name("blocking"), false);
+    blocking_ = nh.param<bool>(param_name("blocking"), false);
 }
 
 
@@ -65,4 +63,4 @@ BinaryGridmapServiceProvider::state_space_t::ConstPtr BinaryGridmapServiceProvid
     }
     return map_;
 }
-
+}

@@ -8,8 +8,7 @@
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::BeamModelMLE, muse_mcl_2d::UpdateModel2D)
 
 
-using namespace muse_mcl_2d_gridmaps;
-
+namespace muse_mcl_2d_gridmaps {
 BeamModelMLE::BeamModelMLE()
 {
 }
@@ -125,4 +124,5 @@ void BeamModelMLE::doSetup(ros::NodeHandle &nh)
             static_cast<std::size_t>(nh.param<int>(param_name("max_estimation_iterations"), 20));
 
     parameter_estimator_mle_.reset(new BeamModelParameterEstimator(parameters_, max_estimation_iterations));
+}
 }

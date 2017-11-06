@@ -6,8 +6,7 @@
 #include <nav_msgs/OccupancyGrid.h>
 #include <visualization_msgs/MarkerArray.h>
 
-using namespace muse_mcl_2d_mapping;
-
+namespace muse_mcl_2d_mapping {
 OccupancyGridMapperNode::OccupancyGridMapperNode() :
     nh_("~")
 {
@@ -178,11 +177,12 @@ void OccupancyGridMapperNode::publishOcc()
         pub_occ_map_chunks_.publish(vis_chunks);
     }
 }
+}
 
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "muse_mcl_2d_mapping_ocm_node");
-    OccupancyGridMapperNode instance;
+    muse_mcl_2d_mapping::OccupancyGridMapperNode instance;
     instance.setup();
     instance.run();
 

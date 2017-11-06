@@ -7,9 +7,7 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_odometry::DifferentialDriveAbs, muse_mcl_2d::PredictionModel2D)
 
-using namespace muse_mcl_2d_odometry;
-using namespace muse_mcl_2d;
-
+namespace muse_mcl_2d_odometry {
 DifferentialDriveAbs::Result::Ptr DifferentialDriveAbs::apply(const muse_smc::Data::ConstPtr &data,
                                                               const cslibs_time::Time           &until,
                                                               sample_set_t::state_iterator_t  states)
@@ -91,4 +89,5 @@ void DifferentialDriveAbs::doSetup(ros::NodeHandle &nh_private)
     alpha_2_ = nh_private.param<double>(param_name("alpha2"), 0.1);
     alpha_3_ = nh_private.param<double>(param_name("alpha3"), 0.1);
     alpha_4_ = nh_private.param<double>(param_name("alpha4"), 0.1);
+}
 }

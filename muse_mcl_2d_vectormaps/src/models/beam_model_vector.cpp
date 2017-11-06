@@ -10,8 +10,7 @@
 
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_vectormaps::BeamModelVector, muse_mcl_2d::UpdateModel2D)
 
-using namespace muse_mcl_2d_vectormaps;
-
+namespace muse_mcl_2d_vectormaps {
 BeamModelVector::BeamModelVector()
 {
 }
@@ -123,4 +122,5 @@ void BeamModelVector::doSetup(ros::NodeHandle &nh)
     denominator_hit_          = 1.0 / (std::sqrt(2.0 * M_PI) * sigma_hit_);
     lambda_short_ = nh.param(param_name("lambda_short"), 0.01);
     chi_outlier_  = nh.param(param_name("chi_outlier"), 0.05);
+}
 }

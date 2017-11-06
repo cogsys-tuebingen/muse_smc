@@ -7,8 +7,7 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::LikelihoodFieldProbModelAMCL, muse_mcl_2d::UpdateModel2D)
 
-using namespace muse_mcl_2d_gridmaps;
-
+namespace muse_mcl_2d_gridmaps {
 LikelihoodFieldProbModelAMCL::LikelihoodFieldProbModelAMCL()
 {
 }
@@ -129,4 +128,5 @@ void LikelihoodFieldProbModelAMCL::doSetup(ros::NodeHandle &nh)
 
     observation_histogram_.resize(max_beams_, 0);
     observation_mask_.resize(max_beams_, 0);
+}
 }

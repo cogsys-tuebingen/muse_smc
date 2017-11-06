@@ -3,8 +3,7 @@
 #include <cslibs_math_2d/conversion/tf.hpp>
 #include <cslibs_math/common/angle.hpp>
 
-using namespace muse_mcl_2d;
-
+namespace muse_mcl_2d{
 MuseMCL2DNode::MuseMCL2DNode() :
     nh_private_("~"),
     tf_provider_frontend_(new TFProvider),
@@ -355,12 +354,13 @@ bool MuseMCL2DNode::getPredictionProvider(DataProvider2D::Ptr &prediction_provid
     prediction_provider = data_providers_.at(provider_name);
     return true;
 }
+}
 
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "muse_mcl_2d");
 
-    MuseMCL2DNode node;
+    muse_mcl_2d::MuseMCL2DNode node;
     if(node.setup()) {
         ROS_INFO_STREAM("Node is set up and ready to start!");
         node.start();

@@ -2,8 +2,7 @@
 
 #include <muse_mcl_2d/samples/sample_density_2d.hpp>
 
-using namespace muse_mcl_2d;
-
+namespace muse_mcl_2d {
 StatePublisher::StatePublisher() :
     latest_w_T_b_(cslibs_math_2d::Transform2d(),
                   cslibs_time::Time(ros::Time::now().toNSec()))
@@ -90,4 +89,5 @@ void StatePublisher::publishState(const sample_set_t::Ptr &sample_set)
                            latest_w_T_b_,
                            latest_w_T_b_covariance_,
                            sample_set->getStamp());
+}
 }

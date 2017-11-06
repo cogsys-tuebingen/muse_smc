@@ -5,9 +5,7 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::DistanceGridmapServiceProvider, muse_mcl_2d::MapProvider2D)
 
-using namespace muse_mcl_2d_gridmaps;
-using namespace muse_mcl_2d;
-
+namespace muse_mcl_2d_gridmaps {
 DistanceGridmapServiceProvider::DistanceGridmapServiceProvider() :
     loading_(false)
 {
@@ -68,5 +66,4 @@ DistanceGridmapServiceProvider::state_space_t::ConstPtr DistanceGridmapServicePr
     return map_;
 
 }
-
-
+}

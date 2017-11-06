@@ -7,9 +7,7 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::LikelihoodFieldModelPCLog, muse_mcl_2d::UpdateModel2D)
 
-using namespace muse_mcl_2d_gridmaps;
-
-
+namespace muse_mcl_2d_gridmaps {
 LikelihoodFieldModelPCLog::LikelihoodFieldModelPCLog()
 {
 }
@@ -94,4 +92,5 @@ void LikelihoodFieldModelPCLog::doSetup(ros::NodeHandle &nh)
     max_beams_                = nh.param(param_name("max_beams"), 30);
     z_hit_                    = nh.param(param_name("z_hit"), 0.8);
     z_rand_                   = nh.param(param_name("z_rand"), 0.2);
+}
 }

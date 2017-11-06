@@ -6,8 +6,7 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::BeamModelLog, muse_mcl_2d::UpdateModel2D)
 
-using namespace muse_mcl_2d_gridmaps;
-
+namespace muse_mcl_2d_gridmaps {
 BeamModelLog::BeamModelLog()
 {
 }
@@ -111,4 +110,5 @@ void BeamModelLog::doSetup(ros::NodeHandle &nh)
     denominator_exponent_hit_   = -0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
     denominator_hit_            = 1.0 / sqrt(2.0 * M_PI * sigma_hit_ * sigma_hit_);
     lambda_short_ = nh.param(param_name("lambda_short"), 0.01);
+}
 }

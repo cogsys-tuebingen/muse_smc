@@ -5,9 +5,7 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::LikelihoodFieldGridmapServiceProvider, muse_mcl_2d::MapProvider2D)
 
-using namespace muse_mcl_2d_gridmaps;
-using namespace muse_mcl_2d;
-
+namespace muse_mcl_2d_gridmaps {
 LikelihoodFieldGridmapServiceProvider::LikelihoodFieldGridmapServiceProvider() :
     loading_(false)
 {
@@ -67,6 +65,5 @@ LikelihoodFieldGridmapServiceProvider::state_space_t::ConstPtr LikelihoodFieldGr
         map_loaded_.wait(l);
     }
     return map_;
-
 }
-
+}

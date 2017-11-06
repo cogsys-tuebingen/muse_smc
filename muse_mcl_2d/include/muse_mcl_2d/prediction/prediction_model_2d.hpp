@@ -18,8 +18,8 @@ public:
     {
         inline Result2D(const double linear_distance_abs,
                         const double angular_distance_abs,
-                        const Odometry2D::ConstPtr &applied,
-                        const Odometry2D::ConstPtr &left_to_apply) :
+                        const muse_mcl_2d_odometry::Odometry2D::ConstPtr &applied,
+                        const muse_mcl_2d_odometry::Odometry2D::ConstPtr &left_to_apply) :
             Result(applied, left_to_apply),
             linear_distance_abs(linear_distance_abs),
             angular_distance_abs(angular_distance_abs)

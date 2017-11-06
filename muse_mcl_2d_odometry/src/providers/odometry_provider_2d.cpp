@@ -5,9 +5,7 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_odometry::OdometryProvider2D, muse_mcl_2d::DataProvider2D)
 
-using namespace muse_mcl_2d_odometry;
-using namespace muse_mcl_2d;
-
+namespace muse_mcl_2d_odometry {
 void OdometryProvider2D::callback(const nav_msgs::OdometryConstPtr &msg)
 {
     auto to_pose = [](const nav_msgs::OdometryConstPtr &msg)
@@ -36,4 +34,5 @@ void OdometryProvider2D::doSetup(ros::NodeHandle &nh)
     const int queue_size = nh.param<int>(param_name("queue_size"), 1);
     topic_ = nh.param<std::string>(param_name("topic"), "/odom");
     source_= nh.subscribe(topic_, queue_size, &OdometryProvider2D::callback, this);
+}
 }

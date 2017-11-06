@@ -101,8 +101,8 @@ int main(int argc, char *argv[])
     std::cout << "Sizes of structs in use."             << "\n";
     std::cout << sizeof(tf::Transform)                  << "\n";
     std::cout << sizeof(muse_mcl_2d::Sample2D)          << "\n";
-    std::cout << sizeof(cslibs_math_2d::Transform2d) << "\n";
-    std::cout << sizeof(muse_mcl_2d::Odometry2D)        << "\n";
+    std::cout << sizeof(cslibs_math_2d::Transform2d)         << "\n";
+    std::cout << sizeof(muse_mcl_2d_odometry::Odometry2D)  << "\n";
 
     insertion(set);
     stateIteration(set);

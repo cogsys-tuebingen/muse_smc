@@ -3,8 +3,7 @@
 #include <cslibs_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
 #include <cslibs_math/common/array.hpp>
 
-using namespace muse_mcl_2d_mapping;
-
+namespace muse_mcl_2d_mapping {
 OccupancyGridMapper::OccupancyGridMapper(const cslibs_gridmaps::utility::InverseModel &inverse_model,
                                          const double                                  resolution,
                                          const double                                  chunk_resolution,
@@ -166,4 +165,5 @@ void OccupancyGridMapper::process(const Measurement &m)
             *b = inverse_model_.updateOccupied(*b);
         }
     }
+}
 }

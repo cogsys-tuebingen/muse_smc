@@ -6,9 +6,7 @@
 
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_vectormaps::VectorMapProvider, muse_mcl_2d::MapProvider2D)
 
-using namespace muse_mcl_2d_vectormaps;
-using namespace muse_mcl_2d;
-
+namespace muse_mcl_2d_vectormaps {
 VectorMapProvider::VectorMapProvider()
 {
 }
@@ -31,4 +29,5 @@ void VectorMapProvider::setup(ros::NodeHandle &nh)
     }
 
     map_.reset(new static_maps::VectorMap(map));
+}
 }

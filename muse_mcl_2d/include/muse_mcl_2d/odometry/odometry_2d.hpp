@@ -6,7 +6,7 @@
 #include <cslibs_math_2d/types/pose.hpp>
 #include <cslibs_math_2d/types/transform.hpp>
 
-namespace muse_mcl_2d {
+namespace muse_mcl_2d_odometry {
 class Odometry2D : public muse_smc::Data {
 public:
     using Ptr = std::shared_ptr<Odometry2D>;
@@ -110,7 +110,7 @@ private:
 };
 }
 
-inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d::Odometry2D &odom)
+inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d_odometry::Odometry2D &odom)
 {
     out << "[Odometry]: linear  " << odom.getDeltaLinear()  << "\n";
     out << "            angular " << odom.getDeltaAngular() << "\n";

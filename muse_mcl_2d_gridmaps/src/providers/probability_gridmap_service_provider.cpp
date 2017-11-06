@@ -4,9 +4,7 @@
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::ProbabilityGridmapServiceProvider, muse_mcl_2d::MapProvider2D)
 
-using namespace muse_mcl_2d_gridmaps;
-using namespace muse_mcl_2d;
-
+namespace muse_mcl_2d_gridmaps {
 ProbabilityGridmapServiceProvider::ProbabilityGridmapServiceProvider() :
     loading_(false)
 {
@@ -61,6 +59,5 @@ ProbabilityGridmapServiceProvider::state_space_t::ConstPtr ProbabilityGridmapSer
         map_loaded_.wait(l);
     }
     return map_;
-
 }
-
+}

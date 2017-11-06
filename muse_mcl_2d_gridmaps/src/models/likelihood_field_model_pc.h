@@ -4,7 +4,7 @@
 #include <muse_mcl_2d/update/update_model_2d.hpp>
 
 namespace muse_mcl_2d_gridmaps {
-class LikelihoodFieldModelPC :  public muse_mcl_2d::UpdateModel2D
+class LikelihoodFieldModelPC : public muse_mcl_2d::UpdateModel2D
 {
 public:
     LikelihoodFieldModelPC();
