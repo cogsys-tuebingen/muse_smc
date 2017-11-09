@@ -40,7 +40,6 @@ public:
             Map2D::ConstPtr map = map_providers_[i]->getStateSpace();
             if(!map) {
                 throw std::runtime_error("[UniformPrimaryMap2D] : a secondary map was null!");
-                return false;
             }
 
             tf::Transform tf_secondary_map_T_w;
@@ -57,9 +56,9 @@ public:
 
         cslibs_math_2d::Point2d min = primary_map_->getMin();
         cslibs_math_2d::Point2d max = primary_map_->getMax();
-        rng_.reset(new rng_t({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}));
+        rng_.reset(new rng_t({min(0), min(1), -M_PI}, {max(0), max(1), M_PI}));
         if(random_seed_ >= 0) {
-            rng_.reset(new rng_t({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}, random_seed_));
+            rng_.reset(new rng_t({min(0), min(1), -M_PI}, {max(0), max(1), M_PI}, random_seed_));
         }
 
         return true;

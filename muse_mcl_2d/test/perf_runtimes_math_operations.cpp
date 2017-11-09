@@ -9,241 +9,6 @@
 #include <cslibs_time/stamped.hpp>
 #include <cslibs_math/common/angle.hpp>
 
-namespace muse_mcl_2d {
-class Transform2DLegacy {
-public:
-    inline Transform2DLegacy() :
-        translation_(0.0, 0.0),
-        yaw_(0.0),
-        sin_(0.0),
-        cos_(1.0)
-    {
-    }
-
-    inline Transform2DLegacy(const double x,
-                       const double y) :
-        translation_(x, y),
-        yaw_(0.0),
-        sin_(0.0),
-        cos_(1.0)
-    {
-    }
-
-    inline Transform2DLegacy(const cslibs_math_2d::Vector2d &translation) :
-        translation_(translation),
-        yaw_(0.0),
-        sin_(0.0),
-        cos_(1.0)
-    {
-    }
-
-    inline Transform2DLegacy(const double x,
-                       const double y,
-                       const double yaw) :
-        translation_(x, y),
-        yaw_(yaw),
-        sin_(std::sin(yaw_)),
-        cos_(std::cos(yaw_))
-    {
-    }
-
-    inline Transform2DLegacy(const cslibs_math_2d::Vector2d &translation,
-                       const double yaw) :
-        translation_(translation),
-        yaw_(yaw),
-        sin_(std::sin(yaw_)),
-        cos_(std::cos(yaw_))
-    {
-    }
-
-    inline Transform2DLegacy(const Transform2DLegacy &other) :
-        translation_(other.translation_),
-        yaw_(other.yaw_),
-        sin_(other.sin_),
-        cos_(other.cos_)
-    {
-    }
-
-    inline Transform2DLegacy(Transform2DLegacy &&other) :
-        translation_(other.translation_),
-        yaw_(other.yaw_),
-        sin_(other.sin_),
-        cos_(other.cos_)
-    {
-    }
-
-    inline cslibs_math_2d::Vector2d operator * (const cslibs_math_2d::Vector2d &v) const
-    {
-        return cslibs_math_2d::Vector2d(cos_ * v.x() - sin_ * v.y() + translation_.x(),
-                        sin_ * v.x() + cos_ * v.y() + translation_.y());
-
-    }
-
-    inline Transform2DLegacy operator * (const Transform2DLegacy &other) const
-    {
-        Transform2DLegacy t;
-        t.setYaw(cslibs_math::common::angle::normalize(yaw_ + other.yaw_));
-        t.translation_.x() = cos_ * other.translation_.x() - sin_ * other.translation_.y() + translation_.x();
-        t.translation_.y() = sin_ * other.translation_.x() + cos_ * other.translation_.y() + translation_.y();
-        return t;
-    }
-
-
-    inline Transform2DLegacy & operator *= (const Transform2DLegacy &other)
-    {
-        translation_.x() = cos_ * other.translation_.x() - sin_ * other.translation_.y() + translation_.x();
-        translation_.y() = sin_ * other.translation_.x() + cos_ * other.translation_.y() + translation_.y();
-        setYaw(cslibs_math::common::angle::normalize(yaw_ + other.yaw_));
-        return *this;
-    }
-
-    inline Transform2DLegacy& operator = (const Transform2DLegacy &other)
-    {
-        if(&other != this) {
-            yaw_ = other.yaw_;
-            sin_ = other.sin_;
-            cos_ = other.cos_;
-            translation_ = other.translation_;
-        }
-        return *this;
-    }
-
-    inline Transform2DLegacy& operator = (Transform2DLegacy &&other)
-    {
-        if(&other != this) {
-            yaw_ = other.yaw_;
-            sin_ = other.sin_;
-            cos_ = other.cos_;
-            translation_ = other.translation_;
-        }
-        return *this;
-    }
-
-    inline Transform2DLegacy inverse() const
-    {
-        Transform2DLegacy t;
-        t.setYaw(-yaw_);
-        t.translation_ = -(t * translation_);
-        return t;
-    }
-
-    inline Transform2DLegacy operator -() const
-    {
-        return inverse();
-    }
-
-    inline double & tx()
-    {
-        return translation_.x();
-    }
-
-    inline double tx() const
-    {
-        return translation_.x();
-    }
-
-    inline double & ty()
-    {
-        return translation_.y();
-    }
-
-    inline double ty() const
-    {
-        return translation_.y();
-    }
-
-    inline cslibs_math_2d::Vector2d & translation()
-    {
-        return translation_;
-    }
-
-    inline cslibs_math_2d::Vector2d const & translation() const
-    {
-        return translation_;
-    }
-
-    inline void setYaw(const double yaw)
-    {
-        yaw_ = yaw;
-        sin_ = std::sin(yaw_);
-        cos_ = std::cos(yaw_);
-    }
-
-    inline double yaw() const
-    {
-        return yaw_;
-    }
-
-    inline double sin() const
-    {
-        return sin_;
-    }
-
-    inline double cos() const
-    {
-        return cos_;
-    }
-
-    inline Eigen::Vector3d toEigen() const
-    {
-        return Eigen::Vector3d(translation_.x(), translation_.y(), yaw_);
-    }
-
-    inline void setFrom(const Eigen::Vector3d &eigen)
-    {
-        translation_.x() = eigen(0);
-        translation_.y() = eigen(1);
-        yaw_ = eigen(2);
-        sin_ = std::sin(yaw_);
-        cos_ = std::cos(yaw_);
-    }
-
-    inline void setFrom(const double x,
-                        const double y,
-                        const double yaw)
-    {
-        translation_.x() = x;
-        translation_.y() = y;
-        yaw_ = yaw;
-        sin_ = std::sin(yaw_);
-        cos_ = std::cos(yaw_);
-    }
-
-    inline Transform2DLegacy interpolate(const Transform2DLegacy &other,
-                                   const double ratio) const
-    {
-        assert(ratio  >= 0.0);
-        assert(ratio <= 1.0);
-        if(ratio == 0.0) {
-            return *this;
-        }
-        if(ratio == 1.0) {
-            return other;
-        }
-
-        const  double ratio_inverse = 1.0 - ratio;
-        const  cslibs_math_2d::Vector2d translation = translation_ * ratio_inverse + other.translation_ * ratio;
-        const  double   yaw = cslibs_math::common::angle::normalize(yaw_ * ratio_inverse + other.yaw_ * ratio);
-        return Transform2DLegacy(translation, yaw);
-    }
-
-private:
-    cslibs_math_2d::Vector2d translation_;
-    double   yaw_;
-    double   sin_;
-    double   cos_;
-};
-
-inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d::Transform2DLegacy &t)
-{
-    out << "[" << t.tx() << "," << t.ty() << "," << t.yaw() << "]";
-    return out;
-}
-
-using StampedTransform2DLegacy = cslibs_time::Stamped<Transform2DLegacy>;
-}
-
-
 const std::size_t ITERATIONS = 1000000;
 
 void constructors()
@@ -272,7 +37,7 @@ void constructors()
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
         cslibs_math_2d::Transform2d t(v);
         yaw = t.yaw();
-        v.x() += i;
+        v(0) += i;
     }
     std::cout << "v:" << "\n";
     std::cout << "took time: " << (cslibs_time::Time::now() - start).milliseconds() << "ms" << "\n";
@@ -307,7 +72,6 @@ void multiplyVector()
 {
     cslibs_math::random::Uniform<1> rng(-10.0, 10.0);
     double mean_ms_t = 0.0;
-    double mean_ms_tl= 0.0;
     double mean_ms_tf= 0.0;
 
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
@@ -318,14 +82,6 @@ void multiplyVector()
             v = t * v;
         }
         mean_ms_t += (cslibs_time::Time::now() - start).milliseconds();
-
-        start = cslibs_time::Time::now();
-        muse_mcl_2d::Transform2DLegacy tl(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
-        cslibs_math_2d::Vector2d tv(rng.get(), rng.get());
-        for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
-            tv = tl * tv;
-        }
-        mean_ms_tl += (cslibs_time::Time::now() - start).milliseconds();
 
         start = cslibs_time::Time::now();
         tf::Transform tf_t(tf::createQuaternionFromYaw(cslibs_math::common::angle::normalize(rng.get())),
@@ -339,8 +95,6 @@ void multiplyVector()
 
     std::cout << "vector:" << "\n";
     std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_t / ITERATIONS << "ms" << "\n";
-    std::cout << "legacy vector:" << "\n";
-    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tl/ ITERATIONS << "ms" << "\n";
     std::cout << "tf vector:"  << "\n";
     std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tf/ ITERATIONS << "ms" << "\n";
 }
@@ -349,11 +103,9 @@ void multiplyTransform()
 {
     cslibs_math::random::Uniform<1> rng(-10.0, 10.0);
     double mean_ms_t = 0.0;
-    double mean_ms_tl= 0.0;
     double mean_ms_tf= 0.0;
 
     cslibs_math_2d::Transform2d t;
-    muse_mcl_2d::Transform2DLegacy tl;
     tf::Transform tf;
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
         cslibs_time::Time start = cslibs_time::Time::now();
@@ -364,15 +116,6 @@ void multiplyTransform()
         }
         mean_ms_t += (cslibs_time::Time::now() - start).milliseconds();
         t = tb;
-
-        start = cslibs_time::Time::now();
-        muse_mcl_2d::Transform2DLegacy tla(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
-        muse_mcl_2d::Transform2DLegacy tlb(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
-        for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
-            tlb = tla * tlb;
-        }
-        mean_ms_tl += (cslibs_time::Time::now() - start).milliseconds();
-        tl = tlb;
 
         start = cslibs_time::Time::now();
         tf::Transform tf_ta(tf::createQuaternionFromYaw(cslibs_math::common::angle::normalize(rng.get())),
@@ -388,8 +131,6 @@ void multiplyTransform()
 
     std::cout << "transform multiply:" << "\n";
     std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_t / ITERATIONS << "ms" << "\n";
-    std::cout << "legacy transform multiply:" << "\n";
-    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tl/ ITERATIONS << "ms" << "\n";
     std::cout << "tf transform multiply:"  << "\n";
     std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tf/ ITERATIONS << "ms" << "\n";
 }
@@ -398,11 +139,9 @@ void multiplyAssignTransform()
 {
     cslibs_math::random::Uniform<1> rng(-10.0, 10.0);
     double mean_ms_t = 0.0;
-    double mean_ms_tl= 0.0;
     double mean_ms_tf= 0.0;
 
     cslibs_math_2d::Transform2d t;
-    muse_mcl_2d::Transform2DLegacy tl;
     tf::Transform tf;
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
         cslibs_time::Time start = cslibs_time::Time::now();
@@ -413,15 +152,6 @@ void multiplyAssignTransform()
         }
         mean_ms_t += (cslibs_time::Time::now() - start).milliseconds();
         t = tb;
-
-        start = cslibs_time::Time::now();
-        muse_mcl_2d::Transform2DLegacy tla(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
-        muse_mcl_2d::Transform2DLegacy tlb(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
-        for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
-            tlb *= tla;
-        }
-        mean_ms_tl += (cslibs_time::Time::now() - start).milliseconds();
-        tl = tlb;
 
         start = cslibs_time::Time::now();
         tf::Transform tf_ta(tf::createQuaternionFromYaw(cslibs_math::common::angle::normalize(rng.get())),
@@ -437,8 +167,6 @@ void multiplyAssignTransform()
 
     std::cout << "transform multiply assign:" << "\n";
     std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_t / ITERATIONS << "ms" << "\n";
-    std::cout << "legacy transform multiply assign:" << "\n";
-    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tl/ ITERATIONS << "ms" << "\n";
     std::cout << "tf transform multiply assign:"  << "\n";
     std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tf/ ITERATIONS << "ms" << "\n";
 }
@@ -451,7 +179,6 @@ void assign()
     double mean_ms_tf= 0.0;
 
     cslibs_math_2d::Transform2d t;
-    muse_mcl_2d::Transform2DLegacy tl;
     tf::Transform tf;
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
         cslibs_time::Time start = cslibs_time::Time::now();
@@ -462,15 +189,6 @@ void assign()
         }
         mean_ms_t += (cslibs_time::Time::now() - start).milliseconds();
         t = tb;
-
-        start = cslibs_time::Time::now();
-        muse_mcl_2d::Transform2DLegacy tla(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
-        muse_mcl_2d::Transform2DLegacy tlb(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
-        for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
-            tlb = tla;
-        }
-        mean_ms_tl += (cslibs_time::Time::now() - start).milliseconds();
-        tl = tlb;
 
         start = cslibs_time::Time::now();
         tf::Transform tf_ta(tf::createQuaternionFromYaw(cslibs_math::common::angle::normalize(rng.get())),
@@ -486,8 +204,6 @@ void assign()
 
     std::cout << "transform assign:" << "\n";
     std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_t / ITERATIONS << "ms" << "\n";
-    std::cout << "legacy transform assign:" << "\n";
-    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tl/ ITERATIONS << "ms" << "\n";
     std::cout << "tf transform assign:"  << "\n";
     std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tf/ ITERATIONS << "ms" << "\n";
 }
@@ -496,11 +212,9 @@ void inverse()
 {
     cslibs_math::random::Uniform<1> rng(-10.0, 10.0);
     double mean_ms_t = 0.0;
-    double mean_ms_tl= 0.0;
     double mean_ms_tf= 0.0;
 
     cslibs_math_2d::Transform2d t;
-    muse_mcl_2d::Transform2DLegacy tl;
     tf::Transform tf;
     for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
         cslibs_time::Time start = cslibs_time::Time::now();
@@ -509,13 +223,6 @@ void inverse()
             t = ta.inverse() * t;
         }
         mean_ms_t += (cslibs_time::Time::now() - start).milliseconds();
-
-        start = cslibs_time::Time::now();
-        muse_mcl_2d::Transform2DLegacy tla(rng.get(), rng.get(), cslibs_math::common::angle::normalize(rng.get()));
-        for(std::size_t i = 0 ; i < ITERATIONS ; ++i) {
-            tl = tla.inverse() * tl;
-        }
-        mean_ms_tl += (cslibs_time::Time::now() - start).milliseconds();
 
         start = cslibs_time::Time::now();
         tf::Transform tf_ta(tf::createQuaternionFromYaw(cslibs_math::common::angle::normalize(rng.get())),
@@ -528,8 +235,6 @@ void inverse()
 
     std::cout << "transform inverse:" << "\n";
     std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_t / ITERATIONS << "ms" << "\n";
-    std::cout << "legacy transform inverse:" << "\n";
-    std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tl/ ITERATIONS << "ms" << "\n";
     std::cout << "tf transform inverse:"  << "\n";
     std::cout << "took time: " << std::fixed << std::setprecision(10) << mean_ms_tf/ ITERATIONS << "ms" << "\n";
 }

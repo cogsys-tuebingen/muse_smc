@@ -43,8 +43,8 @@ Odometry2D::Odometry2D(const std::string &frame,
 
 double Odometry2D::getDeltaAngularAbs() const
 {
-    return std::atan2(delta_lin_abs_.y(),
-                      delta_lin_abs_.x());
+    return std::atan2(delta_lin_abs_(0),
+                      delta_lin_abs_(1));
 }
 
 const cslibs_math_2d::Pose2d& Odometry2D::getStartPose() const

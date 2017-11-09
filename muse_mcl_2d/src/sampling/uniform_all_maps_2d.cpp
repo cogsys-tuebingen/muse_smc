@@ -31,7 +31,6 @@ public:
             Map2D::ConstPtr map = map_providers_[i]->getStateSpace();
             if(!map) {
                 throw std::runtime_error("[UniformAllMaps2D] : map was null!");
-                continue;
             }
             tf::Transform tf_map_T_w;
             if(tf_->lookupTransform(map->getFrame(), frame, now, tf_map_T_w, tf_timeout_)) {
@@ -47,9 +46,9 @@ public:
             }
         }
 
-        rng_.reset(new rng_t({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}));
+        rng_.reset(new rng_t({min(0), min(1), -M_PI}, {max(0), max(1), M_PI}));
         if(random_seed_ >= 0) {
-            rng_.reset(new rng_t({min.x(), min.y(), -M_PI}, {max.x(), max.y(), M_PI}, 0));
+            rng_.reset(new rng_t({min(0), min(1), -M_PI}, {max(0), max(1), M_PI}, 0));
         }
 
         return true;

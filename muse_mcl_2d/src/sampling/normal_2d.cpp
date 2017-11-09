@@ -53,9 +53,9 @@ public:
     {
         update(sample_set.getFrame());
 
-        rng_t::Ptr rng(new rng_t(pose.toEigen(), covariance.toEigen()));
+        rng_t::Ptr rng(new rng_t(pose.toEigen(), covariance));
         if(random_seed_ >= 0) {
-            rng.reset(new rng_t(pose.toEigen(), covariance.toEigen(), random_seed_));
+            rng.reset(new rng_t(pose.toEigen(), covariance, random_seed_));
         }
 
         if(sample_size_ < sample_set.getMinimumSampleSize() &&

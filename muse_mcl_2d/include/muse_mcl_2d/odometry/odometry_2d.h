@@ -46,7 +46,7 @@ inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d_odometry
 {
     out << "[Odometry]: linear  " << odom.getDeltaLinear()  << "\n";
     out << "            angular " << odom.getDeltaAngular() << "\n";
-    out << "            delta   " << odom.getDelta().x() << " " << odom.getDelta().y();
+    out << "            delta   " << odom.getDelta()(0) << " " << odom.getDelta()(1);
     return out;
 }
 

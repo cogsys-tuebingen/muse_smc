@@ -158,8 +158,8 @@ void OccupancyGridMapperNode::publishOcc()
 
         auto convert_point = [](const cslibs_math_2d::Point2d &p) {
             geometry_msgs::Point gp;
-            gp.x = p.x();
-            gp.y = p.y();
+            gp.x = p(0);
+            gp.y = p(1);
             gp.z = 0.0;
             return gp;
         };

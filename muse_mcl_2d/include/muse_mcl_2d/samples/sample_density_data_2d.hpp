@@ -58,7 +58,7 @@ struct SampleDensityData2D {
     inline SampleDensityData2D(const Sample2D &sample)
     {
         samples.emplace_back(&sample);
-        distribution.add(sample.state.translation().toEigen(), sample.weight);
+        distribution.add(sample.state.translation(), sample.weight);
         angular_mean.add(sample.state.yaw(), sample.weight);
      }
 

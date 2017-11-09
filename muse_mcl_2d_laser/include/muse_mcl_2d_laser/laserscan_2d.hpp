@@ -32,8 +32,8 @@ public:
         }
 
         inline Ray(const point_t &pt) :
-                   angle(std::atan2(pt.y(), pt.x())),
-                   range(std::hypot(pt.y(), pt.x())),
+                   angle(cslibs_math_2d::angle(pt)),
+                   range(pt.length()),
                    point(pt)
         {
         }

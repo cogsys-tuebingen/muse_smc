@@ -145,15 +145,15 @@ void OccupancyGridMapper::process(const Measurement &m)
     }
 
 
-    const dynamic_map_t::index_t      start_index = {{discretize(m.origin.translation().x()),
-                                                      discretize(m.origin.translation().y())}};
+    const dynamic_map_t::index_t      start_index = {{discretize(m.origin.translation()(0)),
+                                                      discretize(m.origin.translation()(1))}};
 
     const double resolution2 = (resolution_ * resolution_ * 0.25);
     for(auto it = m.points->begin() ; it != m.points->end() ; ++it) {
         if(it->isNormal()) {
             const cslibs_math_2d::Point2d end_point = m.origin * *it;
-            const dynamic_map_t::index_t  end_index = {{discretize(end_point.x()),
-                                                        discretize(end_point.y())}};
+            const dynamic_map_t::index_t  end_index = {{discretize(end_point(0)),
+                                                        discretize(end_point(1))}};
             auto b = dynamic_map_->getLineIterator(start_index,
                                                    end_index);
 
