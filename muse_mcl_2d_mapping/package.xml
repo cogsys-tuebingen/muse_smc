@@ -10,9 +10,9 @@
   <license>BSD</license>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <depend>muse_mcl_2d_gridmaps</depend>
   <depend>muse_mcl_2d_ndt</depend>
   <depend>muse_mcl_2d_laser</depend>
+  <depend>cslibs_gridmaps</depend>
   <depend>nav_msgs</depend>
   <depend>muse_smc</depend>
   <depend>roscpp</depend>

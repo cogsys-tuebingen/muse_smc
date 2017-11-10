@@ -8,7 +8,7 @@ project(muse_mcl_2d_mapping)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  muse_mcl_2d_gridmaps
+  cslibs_gridmaps
   muse_mcl_2d_ndt
   muse_mcl_2d_laser
   nav_msgs
