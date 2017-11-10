@@ -3,7 +3,7 @@
 
 #include <muse_smc/data/data.hpp>
 
-#include <cslibs_math_2d/types/point.hpp>
+#include <cslibs_math_2d/linear/point.hpp>
 #include <cslibs_time/time_frame.hpp>
 
 #include <limits>

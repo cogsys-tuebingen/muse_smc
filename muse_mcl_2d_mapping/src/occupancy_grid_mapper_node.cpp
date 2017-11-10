@@ -138,7 +138,7 @@ void OccupancyGridMapperNode::publishOcc()
     if(map.data()) {
         nav_msgs::OccupancyGrid::Ptr msg;
         cslibs_gridmaps::static_maps::conversion::from(map.data(), msg);
-        msg->header.stamp.fromNSec(map.stamp().nanoseconds());
+        msg->header.stamp.fromNSec(static_cast<uint64_t>(map.stamp().nanoseconds()));
         msg->header.frame_id = map_frame_;
         pub_occ_map_.publish(msg);
 

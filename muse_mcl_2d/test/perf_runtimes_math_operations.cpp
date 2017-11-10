@@ -4,8 +4,8 @@
 #include <cslibs_math/random/random.hpp>
 #include <iomanip>
 
-#include <cslibs_math_2d/types/transform.hpp>
-#include <cslibs_math_2d/types/vector.hpp>
+#include <cslibs_math_2d/linear/transform.hpp>
+#include <cslibs_math_2d/linear/vector.hpp>
 #include <cslibs_time/stamped.hpp>
 #include <cslibs_math/common/angle.hpp>
 

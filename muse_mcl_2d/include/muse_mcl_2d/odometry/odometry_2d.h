@@ -3,8 +3,8 @@
 
 #include <muse_smc/data/data.hpp>
 
-#include <cslibs_math_2d/types/pose.hpp>
-#include <cslibs_math_2d/types/transform.hpp>
+#include <cslibs_math_2d/linear/pose.hpp>
+#include <cslibs_math_2d/linear/transform.hpp>
 
 namespace muse_mcl_2d_odometry {
 class Odometry2D : public muse_smc::Data {
