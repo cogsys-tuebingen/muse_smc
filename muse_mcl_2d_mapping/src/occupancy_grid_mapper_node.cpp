@@ -150,7 +150,7 @@ void OccupancyGridMapperNode::publishOcc()
         vis_chunk.scale.x = 0.1;
 
         if(last_chunk_count_ != chunks.size()) {
-#if ROS_VERSION_MINOR >= 11
+#if ROS_VERSION_MINOR >= 12
         vis_chunk.action = visualization_msgs::Marker::DELETEALL;
         vis_chunks->markers.emplace_back(vis_chunk);
 #else
