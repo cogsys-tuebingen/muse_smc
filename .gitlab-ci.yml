@@ -42,6 +42,7 @@ indigo:
   script:
     - source /opt/ros/$(ls /opt/ros/ | sort -r | head -n 1)/setup.bash
     - rosdep install -y -r -i --from-paths src
+    - cat /opt/ros/indigo/include/ros/common.h
     - catkin_make
     - catkin_make tests
     
