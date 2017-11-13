@@ -8,14 +8,15 @@
 
 namespace muse_mcl_2d_mapping {
 OccupancyGridMapperNode::OccupancyGridMapperNode() :
-    nh_("~")
+    nh_("~"),
+    last_chunk_count_(0)
 {
 }
 
 bool OccupancyGridMapperNode::setup()
 {
     ROS_INFO_STREAM("Setting up subscribers");
-    const std::size_t   subscriber_queue_size       = nh_.param<int>("subscriber_queue_size", 1);
+    const int           subscriber_queue_size       = nh_.param<int>("subscriber_queue_size", 1);
     const double        occ_grid_resolution         = nh_.param<double>("occ_grid_resolution", 0.05);
     const double        occ_grid_chunk_resolution   = nh_.param<double>("occ_chunk_resolution", 5.0);
     const std::string   occ_map_topic               = nh_.param<std::string>("occ_map_topic", "/map");
@@ -53,17 +54,12 @@ bool OccupancyGridMapperNode::setup()
                                               occ_grid_chunk_resolution,
                                               map_frame_));
 
-
-    sub_laser_ = nh_.subscribe("/sick/front",
-                               subscriber_queue_size,
-                               &OccupancyGridMapperNode::laserscan,
-                               this);
     for(const auto &l : lasers) {
         ROS_INFO_STREAM("Subscribing to laser '" << l << "'");
-        sub_lasers_.emplace_back(std::move(nh_.subscribe(l,
-                                                         subscriber_queue_size,
-                                                         &OccupancyGridMapperNode::laserscan,
-                                                         this)));
+        sub_lasers_.emplace_back(nh_.subscribe(l,
+                                               static_cast<unsigned int>(subscriber_queue_size),
+                                              &OccupancyGridMapperNode::laserscan,
+                                              this));
     }
     pub_occ_map_        = nh_.advertise<nav_msgs::OccupancyGrid>(occ_map_topic, 1);
     pub_occ_map_chunks_ = nh_.advertise<visualization_msgs::MarkerArray>(occ_map_marker_topic, 1);
@@ -152,10 +148,21 @@ void OccupancyGridMapperNode::publishOcc()
         vis_chunk.color.g = 1.f;
         vis_chunk.color.b = 0.f;
         vis_chunk.scale.x = 0.1;
+
+        if(last_chunk_count_ != chunks.size()) {
+#if ROS_VERSION_MINOR >= 11
         vis_chunk.action = visualization_msgs::Marker::DELETEALL;
         vis_chunks->markers.emplace_back(vis_chunk);
-        vis_chunk.action = visualization_msgs::Marker::ADD;
-
+#else
+        vis_chunk.action = visualization_msgs::Marker::DELETE;
+        for(std::size_t i = 0 ; i < chunks.size(); ++i) {
+            vis_chunks->markers.emplace_back(vis_chunk);
+            ++vis_chunk.id;
+        }
+        vis_chunk.id = 0;
+#endif
+        }
+        vis_chunk.action = visualization_msgs::Marker::MODIFY;
         auto convert_point = [](const cslibs_math_2d::Point2d &p) {
             geometry_msgs::Point gp;
             gp.x = p(0);
@@ -175,6 +182,8 @@ void OccupancyGridMapperNode::publishOcc()
             vis_chunks->markers.emplace_back(vis_chunk);
         }
         pub_occ_map_chunks_.publish(vis_chunks);
+
+        last_chunk_count_ = chunks.size();
     }
 }
 }

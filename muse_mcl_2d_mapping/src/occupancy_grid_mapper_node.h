@@ -21,7 +21,6 @@ private:
     using interval_t = std::array<double, 2>;
 
     ros::NodeHandle                 nh_;
-    ros::Subscriber                 sub_laser_;
     std::vector<ros::Subscriber>    sub_lasers_;
     muse_mcl_2d::TFProvider::Ptr    tf_;
     OccupancyGridMapper::Ptr        occ_mapper_;
@@ -31,6 +30,8 @@ private:
     ros::Publisher                  pub_occ_map_chunks_;
     ros::Duration                   pub_occ_interval_;
     ros::Time                       pub_occ_last_time_;
+
+    std::size_t                     last_chunk_count_;
 
 
     double                          node_rate_;
