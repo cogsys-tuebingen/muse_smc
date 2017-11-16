@@ -57,7 +57,6 @@ void ProbabilityGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr 
             } else {
                 worker_ = std::thread(load);
             }
-            worker_.detach();
         }
     }
 }

@@ -29,7 +29,6 @@ public:
     {
         running_ = true;
         worker_thread_ = std::thread([this]{loop();});
-        worker_thread_.detach();
     }
 
     virtual ~Dotty()

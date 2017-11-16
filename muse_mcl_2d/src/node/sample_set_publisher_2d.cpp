@@ -90,7 +90,6 @@ bool SampleSetPublisher2D::start()
     if(!running_) {
         stop_ = false;
         worker_thread_ = std::thread([this](){loop();});
-        worker_thread_.detach();
         return true;
     }
     return false;

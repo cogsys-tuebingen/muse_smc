@@ -62,7 +62,6 @@ void LikelihoodFieldGridmapProvider::callback(const nav_msgs::OccupancyGridConst
             } else {
                 worker_ = std::thread(load);
             }
-            worker_.detach();
         }
     }
 }

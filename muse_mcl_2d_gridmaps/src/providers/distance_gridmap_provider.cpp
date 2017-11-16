@@ -59,7 +59,6 @@ void DistanceGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr &ms
             } else {
                 worker_ = std::thread(load);
             }
-            worker_.detach();
         }
     }
 }

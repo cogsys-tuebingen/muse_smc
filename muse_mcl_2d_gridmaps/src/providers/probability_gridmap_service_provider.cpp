@@ -50,7 +50,6 @@ ProbabilityGridmapServiceProvider::state_space_t::ConstPtr ProbabilityGridmapSer
                 } else {
                     worker_ = std::thread(load);
                 }
-                worker_.detach();
             }
         }
     }

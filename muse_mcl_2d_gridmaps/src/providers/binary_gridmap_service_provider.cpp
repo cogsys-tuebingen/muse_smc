@@ -53,7 +53,6 @@ BinaryGridmapServiceProvider::state_space_t::ConstPtr BinaryGridmapServiceProvid
                 } else {
                     worker_ = std::thread(load);
                 }
-                worker_.detach();
             }
         }
     }

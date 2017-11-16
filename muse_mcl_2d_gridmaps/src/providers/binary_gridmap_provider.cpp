@@ -58,7 +58,6 @@ void BinaryGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr &msg)
             } else {
                 worker_ = std::thread(load);
             }
-            worker_.detach();
         }
     }
 }

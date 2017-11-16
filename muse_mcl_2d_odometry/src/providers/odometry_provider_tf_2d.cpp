@@ -36,7 +36,6 @@ void OdometryProviderTF2D::doSetup(ros::NodeHandle &nh)
     if(!running_) {
         /// fire up the thread
         worker_thread_ = std::thread([this](){loop();});
-        worker_thread_.detach();
     }
 }
 

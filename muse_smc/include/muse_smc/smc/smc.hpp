@@ -114,7 +114,6 @@ public:
             lock_t l(worker_thread_mutex_);
             worker_thread_exit_ = false;
             worker_thread_      = thread_t([this](){loop();});
-            worker_thread_.detach();
             return true;
         }
         return false;

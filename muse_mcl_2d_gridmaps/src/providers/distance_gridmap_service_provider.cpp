@@ -53,7 +53,6 @@ DistanceGridmapServiceProvider::state_space_t::ConstPtr DistanceGridmapServicePr
                 } else {
                     worker_ = std::thread(load);
                 }
-                worker_.detach();
             } else if(blocking_) {
                 map_loaded_.notify_one();
             }

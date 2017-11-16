@@ -17,7 +17,6 @@ OccupancyGridMapper::OccupancyGridMapper(const cslibs_gridmaps::utility::Inverse
 
 {
     thread_ = std::thread([this](){loop();});
-    thread_.detach();
 
 }
 

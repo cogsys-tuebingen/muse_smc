@@ -33,7 +33,6 @@ private:
 
     std::size_t                     last_chunk_count_;
 
-
     double                          node_rate_;
 
     bool                            undistortion_;              /// check if undistortion shall be applied

@@ -67,7 +67,6 @@ public:
             return;
 
         worker_thread_ = std::thread([this]{loop();});
-        worker_thread_.detach();
     }
 
     inline void end()
