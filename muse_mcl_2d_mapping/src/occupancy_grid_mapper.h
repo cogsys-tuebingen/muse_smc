@@ -15,6 +15,7 @@
 #include <cslibs_time/stamped.hpp>
 
 #include <cslibs_math_2d/linear/pointcloud.hpp>
+#include <cslibs_math_2d/linear/box.hpp>
 
 namespace muse_mcl_2d_mapping {
 class OccupancyGridMapper

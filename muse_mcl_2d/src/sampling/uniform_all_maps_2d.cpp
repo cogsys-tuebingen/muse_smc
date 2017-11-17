@@ -39,8 +39,8 @@ public:
                 maps_T_w_[i] =map_T_w;
 
                 cslibs_math_2d::Transform2d w_T_map = map_T_w.inverse();
-                min = min.min(w_T_map * map->getMin());
-                max = max.max(w_T_map * map->getMax());
+                min = cslibs_math::linear::min(w_T_map * map->getMin(), min);
+                max = cslibs_math::linear::max(w_T_map * map->getMax(), max);
             } else {
                 return false;
             }

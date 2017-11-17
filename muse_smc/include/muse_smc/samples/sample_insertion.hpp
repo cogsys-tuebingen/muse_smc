@@ -75,11 +75,11 @@ public:
     }
 
 private:
-    std::buffered_vector<sample_t> &data_;       /// the data container
+    std::buffered_vector<sample_t, typename sample_t::allocator_t> &data_;       /// the data container
 
-    bool                            open_;       /// indicator if insertion is still open
-    notify_update                   update_;     /// on update callback
-    notify_closed                   close_;      /// on close / finish callback
+    bool                                                            open_;       /// indicator if insertion is still open
+    notify_update                                                   update_;     /// on update callback
+    notify_closed                                                   close_;      /// on close / finish callback
 
 };
 }

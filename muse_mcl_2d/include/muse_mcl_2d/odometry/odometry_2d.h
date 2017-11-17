@@ -9,10 +9,10 @@
 namespace muse_mcl_2d_odometry {
 class Odometry2D : public muse_smc::Data {
 public:
-    using Ptr = std::shared_ptr<Odometry2D>;
-    using ConstPtr = std::shared_ptr<const Odometry2D>;
+    using Ptr          = std::shared_ptr<Odometry2D>;
+    using ConstPtr     = std::shared_ptr<const Odometry2D>;
     using time_frame_t = cslibs_time::TimeFrame;
-    using time_t = cslibs_time::Time;
+    using time_t       = cslibs_time::Time;
 
     Odometry2D(const std::string &frame);
 
@@ -39,7 +39,7 @@ private:
     cslibs_math_2d::Vector2d  delta_lin_abs_;
     double                    delta_linear_;
     double                    delta_angular_;
-};
+}__attribute__ ((aligned (256)));
 }
 
 inline std::ostream & operator << (std::ostream &out, const muse_mcl_2d_odometry::Odometry2D &odom)

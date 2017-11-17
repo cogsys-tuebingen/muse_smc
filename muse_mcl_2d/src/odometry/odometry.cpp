@@ -43,8 +43,8 @@ Odometry2D::Odometry2D(const std::string &frame,
 
 double Odometry2D::getDeltaAngularAbs() const
 {
-    return std::atan2(delta_lin_abs_(0),
-                      delta_lin_abs_(1));
+    return std::atan2(delta_lin_abs_(1),
+                      delta_lin_abs_(0));
 }
 
 const cslibs_math_2d::Pose2d& Odometry2D::getStartPose() const
@@ -77,12 +77,12 @@ bool Odometry2D::split(const time_t &split_time, Odometry2D::ConstPtr &a, Odomet
     if(!time_frame_.within(split_time))
         return false;
 
-    const double ratio = (split_time - time_frame_.start).seconds() /
-            time_frame_.duration().seconds();
+    const double ratio = (split_time - time_frame_.start).seconds() / time_frame_.duration().seconds();
 
     cslibs_math_2d::Pose2d split_pose = start_pose_.interpolate(end_pose_, ratio);
     a.reset(new Odometry2D(frame_, time_frame_t(time_frame_.start, split_time), start_pose_, split_pose));
     b.reset(new Odometry2D(frame_, time_frame_t(split_time, time_frame_.end), split_pose, end_pose_));
+
     return true;
 }
 }
