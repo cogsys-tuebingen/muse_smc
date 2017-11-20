@@ -99,7 +99,7 @@ target_link_libraries(${PROJECT_NAME}_node
 
 set(MUSE_MCL_2D_PERF_TESTS True)
 if(${MUSE_MCL_2D_PERF_TESTS})
-    message("[MuseMCL2D]: Building with performance tests!")
+    message("[muse_mcl_2d]: Building with performance tests!")
     add_executable(${PROJECT_NAME}_perf_runtimes_particle_iteration
         test/perf_runtimes_particle_iteration.cpp
     )
