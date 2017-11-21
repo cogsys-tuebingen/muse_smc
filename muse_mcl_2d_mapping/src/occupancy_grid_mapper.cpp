@@ -126,8 +126,7 @@ void OccupancyGridMapper::mapRequest()
 void OccupancyGridMapper::process(const Measurement2d &m)
 {
     if(!dynamic_map_) {
-        dynamic_map_pose_ = m.origin;
-        dynamic_map_.reset(new dynamic_map_t(cslibs_math_2d::Transform2d::identity(),
+        dynamic_map_.reset(new dynamic_map_t(m.origin,
                                              resolution_,
                                              chunk_resolution_,
                                              inverse_model_.getLogOddsPrior()));
@@ -148,9 +147,9 @@ void OccupancyGridMapper::process(const Measurement2d &m)
                                                       discretize(m.origin.translation()(1))}};
 
     const double resolution2 = (resolution_ * resolution_ * 0.25);
-    for(auto it = m.points->begin() ; it != m.points->end() ; ++it) {
-        if(it->isNormal()) {
-            const cslibs_math_2d::Point2d end_point = m.origin * *it;
+    for(const auto &p : *(m.points)) {
+        if(p.isNormal()) {
+            const cslibs_math_2d::Point2d end_point = m.origin * p;
             const dynamic_map_t::index_t  end_index = {{discretize(end_point(0)),
                                                         discretize(end_point(1))}};
             auto b = dynamic_map_->getLineIterator(start_index,
@@ -163,6 +162,7 @@ void OccupancyGridMapper::process(const Measurement2d &m)
             }
             *b = inverse_model_.updateOccupied(*b);
         }
+
     }
 }
 }

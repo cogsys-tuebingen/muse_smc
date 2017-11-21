@@ -57,7 +57,6 @@ protected:
 
     cslibs_time::Time                                           latest_time_;
     dynamic_map_t::Ptr                                          dynamic_map_;
-    cslibs_math_2d::Pose2d                                      dynamic_map_pose_;  /// for saving the map
     double                                                      resolution_;
     double                                                      sampling_resolution_;
     std::string                                                 frame_id_;

@@ -45,7 +45,7 @@ public:
 
 protected:
     /// todo - maybe build an base class
-    muse_smc::synchronized::queue<Measurement2d>                  q_;
+    muse_smc::synchronized::queue<Measurement2d>                q_;
 
     std::thread                                                 thread_;
     std::condition_variable                                     notify_event_;
@@ -61,7 +61,6 @@ protected:
 
     cslibs_time::Time                                           latest_time_;
     dynamic_map_t::Ptr                                          dynamic_map_;
-    cslibs_math_2d::Pose2d                                      dynamic_map_pose_;  /// for saving the map
     cslibs_gridmaps::utility::InverseModel                      inverse_model_;
     double                                                      resolution_;
     double                                                      chunk_resolution_;

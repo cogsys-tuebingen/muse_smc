@@ -5,6 +5,7 @@
 #include <sensor_msgs/LaserScan.h>
 
 #include "occupancy_grid_mapper.h"
+#include "ndt_grid_mapper.h"
 
 #include <muse_mcl_2d/tf/tf_provider.hpp>
 
@@ -24,6 +25,7 @@ private:
     std::vector<ros::Subscriber>    sub_lasers_;
     muse_mcl_2d::TFProvider::Ptr    tf_;
     OccupancyGridMapper::Ptr        occ_mapper_;
+    NDTGridMapper::Ptr              ndt_mapper_;
     std::string                     map_frame_;
 
     ros::Publisher                  pub_occ_map_;
@@ -31,7 +33,13 @@ private:
     ros::Duration                   pub_occ_interval_;
     ros::Time                       pub_occ_last_time_;
 
-    std::size_t                     last_chunk_count_;
+    ros::Publisher                  pub_ndt_map_;
+    ros::Publisher                  pub_ndt_distributions_;
+    ros::Duration                   pub_ndt_interval_;
+    ros::Time                       pub_ndt_last_time_;
+
+    std::size_t                     last_occ_chunk_count_;
+    std::size_t                     last_ndt_distribution_count_    ;
 
     double                          node_rate_;
 
@@ -44,8 +52,8 @@ private:
 
 
     void laserscan(const sensor_msgs::LaserScanConstPtr &msg);
-    void publish();
     void publishOcc();
+    void publishNDT();
 
 };
 }
