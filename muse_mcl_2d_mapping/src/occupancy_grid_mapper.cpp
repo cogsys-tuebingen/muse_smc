@@ -126,7 +126,7 @@ void OccupancyGridMapper::mapRequest()
 void OccupancyGridMapper::process(const Measurement2d &m)
 {
     if(!dynamic_map_) {
-        dynamic_map_.reset(new dynamic_map_t(m.origin,
+        dynamic_map_.reset(new dynamic_map_t(cslibs_math_2d::Transform2d::identity(),
                                              resolution_,
                                              chunk_resolution_,
                                              inverse_model_.getLogOddsPrior()));

@@ -96,7 +96,7 @@ void OccupancyGridMapperNode::run()
                 pub_occ_last_time_ = now;
             }
             if(pub_ndt_interval_.isZero() || (pub_ndt_last_time_ + pub_ndt_interval_ < now)) {
-//                publishNDT();
+                publishNDT();
                 pub_ndt_last_time_ = now;
             }
             ros::spinOnce();
@@ -110,7 +110,7 @@ void OccupancyGridMapperNode::run()
                 pub_occ_last_time_ = now;
             }
             if(pub_ndt_interval_.isZero() || (pub_ndt_last_time_ + pub_ndt_interval_ < now)) {
-//                publishNDT();
+                publishNDT();
                 pub_ndt_last_time_ = now;
             }
             r.sleep();
