@@ -29,7 +29,7 @@ OccupancyGridMapper::~OccupancyGridMapper()
 }
 
 
-void OccupancyGridMapper::insert(const Measurement &measurement)
+void OccupancyGridMapper::insert(const Measurement2d &measurement)
 {
     q_.emplace(measurement);
     notify_event_.notify_one();
@@ -123,7 +123,7 @@ void OccupancyGridMapper::mapRequest()
     notify_static_map_.notify_one();
 }
 
-void OccupancyGridMapper::process(const Measurement &m)
+void OccupancyGridMapper::process(const Measurement2d &m)
 {
     if(!dynamic_map_) {
         dynamic_map_pose_ = m.origin;

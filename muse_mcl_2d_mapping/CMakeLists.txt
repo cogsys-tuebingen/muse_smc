@@ -9,6 +9,7 @@ project(muse_mcl_2d_mapping)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   cslibs_gridmaps
+  cslibs_ndt
   muse_mcl_2d_ndt
   muse_mcl_2d_laser
   nav_msgs
@@ -31,7 +32,7 @@ include_directories(
 
 add_executable(${PROJECT_NAME}_ocm_node
     src/occupancy_grid_mapper.cpp
-    src/ndt_mapper.cpp
+    src/ndt_grid_mapper.cpp
     src/occupancy_grid_mapper_node.cpp
 )
 
