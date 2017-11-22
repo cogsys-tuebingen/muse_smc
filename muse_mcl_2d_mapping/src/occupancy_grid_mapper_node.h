@@ -52,8 +52,13 @@ private:
 
 
     void laserscan(const sensor_msgs::LaserScanConstPtr &msg);
-    void publishOcc();
     void publishNDT();
+
+    void publishOcc(const OccupancyGridMapper::static_map_stamped_t &map,
+                    const OccupancyGridMapper::allocated_chunks_t &chunks);
+
+
+
 
 };
 }

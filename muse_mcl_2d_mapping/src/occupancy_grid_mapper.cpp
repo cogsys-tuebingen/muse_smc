@@ -10,6 +10,7 @@ OccupancyGridMapper::OccupancyGridMapper(const cslibs_gridmaps::utility::Inverse
                                          const std::string                            &frame_id) :
     stop_(false),
     request_map_(false),
+    callback_([](const static_map_t::Ptr &, const allocated_chunks_t &){}),
     inverse_model_(inverse_model),
     resolution_(resolution),
     chunk_resolution_(chunk_resolution),
@@ -41,11 +42,7 @@ void OccupancyGridMapper::get(static_map_stamped_t &map)
     lock_t static_map_lock(static_map_mutex_);
     notify_event_.notify_one();
     notify_static_map_.wait(static_map_lock);
-
-    if(static_map_) {
-        map = static_map_stamped_t(static_map_t::Ptr(new static_map_t(*static_map_)),
-                                   static_map_time_);
-    }
+    map = static_map_;
 }
 
 
@@ -56,14 +53,22 @@ void OccupancyGridMapper::get(static_map_stamped_t &map,
     lock_t static_map_lock(static_map_mutex_);
     notify_event_.notify_one();
     notify_static_map_.wait(static_map_lock);
-
-    if(static_map_) {
-        map = static_map_stamped_t(static_map_t::Ptr(new static_map_t(*static_map_)),
-                                   static_map_time_);
-        chunks = allocated_chunks_;
-    }
+    map = static_map_;
+    chunks = allocated_chunks_;
 }
 
+void OccupancyGridMapper::requestMap()
+{
+    std::cerr << "%%%" << std::endl;
+    request_map_ = true;
+}
+
+void OccupancyGridMapper::setCallback(const callback_t &cb)
+{
+    if(!request_map_) {
+        callback_ = cb;
+    }
+}
 
 void OccupancyGridMapper::loop()
 {
@@ -87,12 +92,12 @@ void OccupancyGridMapper::mapRequest()
 {
     if(request_map_ && dynamic_map_) {
         cslibs_math_2d::Transform2d origin = dynamic_map_->getOrigin();
-        static_map_.reset(new static_map_t(origin,
-                                           dynamic_map_->getResolution(),
-                                           dynamic_map_->getHeight(),
-                                           dynamic_map_->getWidth()));
+        static_map_.data().reset(new static_map_t(origin,
+                                                  dynamic_map_->getResolution(),
+                                                  dynamic_map_->getHeight(),
+                                                  dynamic_map_->getWidth()));
         allocated_chunks_.clear();
-        static_map_time_ = latest_time_;
+        static_map_.stamp() = latest_time_;
 
         const std::size_t chunk_step = dynamic_map_->getChunkSize();
         const dynamic_map_t::index_t min_chunk_index = dynamic_map_->getMinChunkIndex();
@@ -110,7 +115,7 @@ void OccupancyGridMapper::mapRequest()
 
                     for(std::size_t k = 0 ; k < chunk_step ; ++k) {
                         for(std::size_t l = 0 ; l < chunk_step ; ++l) {
-                            static_map_->at(cx + l, cy + k) = chunk->at(l,k);
+                            static_map_.data()->at(cx + l, cy + k) = chunk->at(l,k);
                         }
                     }
                 }
@@ -118,7 +123,9 @@ void OccupancyGridMapper::mapRequest()
         }
 
         cslibs_gridmaps::static_maps::conversion::LogOdds::from(static_map_, static_map_);
+        callback_(static_map_, allocated_chunks_);
     }
+
     request_map_ = false;
     notify_static_map_.notify_one();
 }

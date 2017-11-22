@@ -25,7 +25,7 @@
     </group>
     <!-- ,"/sick/rear" -->
 
-    <!-- <node name="muse_mcl_2d_mapping_ocm_node" pkg="muse_mcl_2d_mapping" type="muse_mcl_2d_mapping_ocm_node" output="screen" /> -->
+    <node name="muse_mcl_2d_mapping_ocm_node" pkg="muse_mcl_2d_mapping" type="muse_mcl_2d_mapping_ocm_node" output="screen" />
     <!--    <rosparam param="lasers">
             ["/sick/front","/sick/rear"]
         </rosparam>

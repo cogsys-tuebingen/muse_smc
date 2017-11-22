@@ -60,6 +60,7 @@ bool OccupancyGridMapperNode::setup()
                                               occ_grid_resolution,
                                               occ_grid_chunk_resolution,
                                               map_frame_));
+    occ_mapper_->setCallback(OccupancyGridMapper::callback_t::from<OccupancyGridMapperNode, &OccupancyGridMapperNode::publishOcc>(this));
 
     ndt_mapper_.reset(new NDTGridMapper(ndt_grid_resolution, ndt_sampling_resolution, map_frame_));
 
@@ -92,11 +93,10 @@ void OccupancyGridMapperNode::run()
         while(ros::ok()) {
             const ros::Time now = ros::Time::now();
             if(pub_occ_interval_.isZero() || (pub_occ_last_time_ + pub_occ_interval_ < now)) {
-                publishOcc();
-                pub_occ_last_time_ = now;
+                occ_mapper_->requestMap();
             }
             if(pub_ndt_interval_.isZero() || (pub_ndt_last_time_ + pub_ndt_interval_ < now)) {
-                publishNDT();
+//                publishNDT();
                 pub_ndt_last_time_ = now;
             }
             ros::spinOnce();
@@ -106,8 +106,7 @@ void OccupancyGridMapperNode::run()
         while(ros::ok()) {
             const ros::Time now = ros::Time::now();
             if(pub_occ_interval_.isZero() || pub_occ_last_time_ + pub_occ_interval_ < now) {
-                publishOcc();
-                pub_occ_last_time_ = now;
+                occ_mapper_->requestMap();
             }
             if(pub_ndt_interval_.isZero() || (pub_ndt_last_time_ + pub_ndt_interval_ < now)) {
                 publishNDT();
@@ -146,67 +145,6 @@ void OccupancyGridMapperNode::laserscan(const sensor_msgs::LaserScanConstPtr &ms
         }
         occ_mapper_->insert(m);
         ndt_mapper_->insert(m);
-    }
-}
-
-void OccupancyGridMapperNode::publishOcc()
-{
-    OccupancyGridMapper::static_map_stamped_t map;
-    OccupancyGridMapper::allocated_chunks_t chunks;
-    occ_mapper_->get(map, chunks);
-    if(map.data()) {
-        nav_msgs::OccupancyGrid::Ptr msg;
-        cslibs_gridmaps::static_maps::conversion::from(map.data(), msg);
-        msg->header.stamp.fromNSec(static_cast<uint64_t>(map.stamp().nanoseconds()));
-        msg->header.frame_id = map_frame_;
-        pub_occ_map_.publish(msg);
-
-        visualization_msgs::MarkerArray::Ptr vis_chunks(new visualization_msgs::MarkerArray);
-        visualization_msgs::Marker vis_chunk;
-        vis_chunk.header = msg->header;
-        vis_chunk.ns     = "muse_mcl_2d_mapping_ocm_node";
-        vis_chunk.type   = visualization_msgs::Marker::LINE_STRIP;
-        vis_chunk.color.a = 1.f;
-        vis_chunk.color.r = 0.f;
-        vis_chunk.color.g = 1.f;
-        vis_chunk.color.b = 0.f;
-        vis_chunk.scale.x = 0.1;
-
-        if(last_occ_chunk_count_ != chunks.size()) {
-#if ROS_VERSION_MINOR >= 12
-            vis_chunk.action = visualization_msgs::Marker::DELETEALL;
-            vis_chunks->markers.emplace_back(vis_chunk);
-#else
-            vis_chunk.action = visualization_msgs::Marker::DELETE;
-            for(std::size_t i = 0 ; i < chunks.size(); ++i) {
-                vis_chunks->markers.emplace_back(vis_chunk);
-                ++vis_chunk.id;
-            }
-            vis_chunk.id = 0;
-#endif
-        }
-        vis_chunk.action = visualization_msgs::Marker::MODIFY;
-        auto convert_point = [](const cslibs_math_2d::Point2d &p) {
-            geometry_msgs::Point gp;
-            gp.x = p(0);
-            gp.y = p(1);
-            gp.z = 0.0;
-            return gp;
-        };
-
-        for(const cslibs_math_2d::Box2d &b : chunks) {
-            ++vis_chunk.id;
-            vis_chunk.points.clear();
-            vis_chunk.points.emplace_back(convert_point(b.ll()));
-            vis_chunk.points.emplace_back(convert_point(b.rl()));
-            vis_chunk.points.emplace_back(convert_point(b.ru()));
-            vis_chunk.points.emplace_back(convert_point(b.lu()));
-            vis_chunk.points.emplace_back(convert_point(b.ll()));
-            vis_chunks->markers.emplace_back(vis_chunk);
-        }
-        pub_occ_map_chunks_.publish(vis_chunks);
-
-        last_occ_chunk_count_ = chunks.size();
     }
 }
 
@@ -270,6 +208,69 @@ void OccupancyGridMapperNode::publishNDT()
         last_ndt_distribution_count_ = distributions.size();
     }
 }
+
+void OccupancyGridMapperNode::publishOcc(const OccupancyGridMapper::static_map_stamped_t &map,
+                                         const OccupancyGridMapper::allocated_chunks_t &chunks)
+{
+    std::cout << "+++" << std::endl;
+
+    if(map.data()) {
+        nav_msgs::OccupancyGrid::Ptr msg;
+        cslibs_gridmaps::static_maps::conversion::from(map.data(), msg);
+        msg->header.stamp.fromNSec(static_cast<uint64_t>(map.stamp().nanoseconds()));
+        msg->header.frame_id = map_frame_;
+        pub_occ_map_.publish(msg);
+
+        visualization_msgs::MarkerArray::Ptr vis_chunks(new visualization_msgs::MarkerArray);
+        visualization_msgs::Marker vis_chunk;
+        vis_chunk.header = msg->header;
+        vis_chunk.ns     = "muse_mcl_2d_mapping_ocm_node";
+        vis_chunk.type   = visualization_msgs::Marker::LINE_STRIP;
+        vis_chunk.color.a = 1.f;
+        vis_chunk.color.r = 0.f;
+        vis_chunk.color.g = 1.f;
+        vis_chunk.color.b = 0.f;
+        vis_chunk.scale.x = 0.1;
+
+        if(last_occ_chunk_count_ != chunks.size()) {
+    #if ROS_VERSION_MINOR >= 12
+            vis_chunk.action = visualization_msgs::Marker::DELETEALL;
+            vis_chunks->markers.emplace_back(vis_chunk);
+    #else
+            vis_chunk.action = visualization_msgs::Marker::DELETE;
+            for(std::size_t i = 0 ; i < chunks.size(); ++i) {
+                vis_chunks->markers.emplace_back(vis_chunk);
+                ++vis_chunk.id;
+            }
+            vis_chunk.id = 0;
+    #endif
+        }
+        vis_chunk.action = visualization_msgs::Marker::MODIFY;
+        auto convert_point = [](const cslibs_math_2d::Point2d &p) {
+            geometry_msgs::Point gp;
+            gp.x = p(0);
+            gp.y = p(1);
+            gp.z = 0.0;
+            return gp;
+        };
+
+        for(const cslibs_math_2d::Box2d &b : chunks) {
+            ++vis_chunk.id;
+            vis_chunk.points.clear();
+            vis_chunk.points.emplace_back(convert_point(b.ll()));
+            vis_chunk.points.emplace_back(convert_point(b.rl()));
+            vis_chunk.points.emplace_back(convert_point(b.ru()));
+            vis_chunk.points.emplace_back(convert_point(b.lu()));
+            vis_chunk.points.emplace_back(convert_point(b.ll()));
+            vis_chunks->markers.emplace_back(vis_chunk);
+        }
+        pub_occ_map_chunks_.publish(vis_chunks);
+
+        last_occ_chunk_count_ = chunks.size();
+        pub_occ_last_time_ = ros::Time::now();
+    }
+}
+
 }
 
 int main(int argc, char *argv[])
