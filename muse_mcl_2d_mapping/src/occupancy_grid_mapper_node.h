@@ -55,7 +55,9 @@ private:
     void publishNDT();
 
     void publishOcc(const OccupancyGridMapper::static_map_stamped_t &map,
-                    const OccupancyGridMapper::allocated_chunks_t &chunks);
+                    const OccupancyGridMapper::chunks_t             &allocated_chunks,
+                    const OccupancyGridMapper::chunks_t             &touched_chunks,
+                    const OccupancyGridMapper::chunks_t             &untouched_chunks);
 
 
 

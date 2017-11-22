@@ -22,7 +22,7 @@ bool OccupancyGridMapperNode::setup()
     const double        occ_grid_chunk_resolution   = nh_.param<double>("occ_chunk_resolution", 5.0);
     const std::string   occ_map_topic               = nh_.param<std::string>("occ_map_topic", "/map/occ");
     const std::string   occ_map_marker_topic        = nh_.param<std::string>("occ_map_marker_topic", occ_map_topic + "/chunks");
-    const double        occ_map_pub_rate            = nh_.param<double>("occ_map_pub_rate", 10.0);
+    const double        occ_map_pub_rate            = nh_.param<double>("occ_map_pub_rate", 5.0);
     const double        occ_map_prob_free           = nh_.param<double>("occ_map_prob_free", 0.45);
     const double        occ_map_prob_occ            = nh_.param<double>("occ_map_prob_occ", 0.55);
     const double        occ_map_prob_prior          = nh_.param<double>("occ_map_prob_prior", 0.5);
@@ -31,7 +31,7 @@ bool OccupancyGridMapperNode::setup()
     const std::string   ndt_map_marker_topic        = nh_.param<std::string>("ndt_map_marker_topic", ndt_map_topic + "/distributions");
     const double        ndt_map_pub_rate            = nh_.param<double>("ndt_map_pub_rate", 10.0);
     const double        ndt_grid_resolution         = nh_.param<double>("ndt_grid_resolution", 0.5);
-    const double        ndt_sampling_resolution   = nh_.param<double>("ndt_sampling_resolution", 0.05);
+    const double        ndt_sampling_resolution     = nh_.param<double>("ndt_sampling_resolution", 0.05);
 
     std::vector<std::string> lasers;
     if(!nh_.getParam("lasers", lasers)) {
@@ -96,7 +96,7 @@ void OccupancyGridMapperNode::run()
                 occ_mapper_->requestMap();
             }
             if(pub_ndt_interval_.isZero() || (pub_ndt_last_time_ + pub_ndt_interval_ < now)) {
-//                publishNDT();
+                //                publishNDT();
                 pub_ndt_last_time_ = now;
             }
             ros::spinOnce();
@@ -105,6 +105,9 @@ void OccupancyGridMapperNode::run()
         ros::Rate r(node_rate_);
         while(ros::ok()) {
             const ros::Time now = ros::Time::now();
+            if(pub_occ_last_time_.isZero())
+                pub_occ_last_time_ = now;
+
             if(pub_occ_interval_.isZero() || pub_occ_last_time_ + pub_occ_interval_ < now) {
                 occ_mapper_->requestMap();
             }
@@ -210,11 +213,13 @@ void OccupancyGridMapperNode::publishNDT()
 }
 
 void OccupancyGridMapperNode::publishOcc(const OccupancyGridMapper::static_map_stamped_t &map,
-                                         const OccupancyGridMapper::allocated_chunks_t &chunks)
+                                         const OccupancyGridMapper::chunks_t &allocated_chunks,
+                                         const OccupancyGridMapper::chunks_t &touched_chunks,
+                                         const OccupancyGridMapper::chunks_t &untouched_chunks)
 {
-    std::cout << "+++" << std::endl;
-
     if(map.data()) {
+        const std::size_t marker_count = allocated_chunks.size() + touched_chunks.size() + untouched_chunks.size();
+
         nav_msgs::OccupancyGrid::Ptr msg;
         cslibs_gridmaps::static_maps::conversion::from(map.data(), msg);
         msg->header.stamp.fromNSec(static_cast<uint64_t>(map.stamp().nanoseconds()));
@@ -232,18 +237,18 @@ void OccupancyGridMapperNode::publishOcc(const OccupancyGridMapper::static_map_s
         vis_chunk.color.b = 0.f;
         vis_chunk.scale.x = 0.1;
 
-        if(last_occ_chunk_count_ != chunks.size()) {
-    #if ROS_VERSION_MINOR >= 12
+        if(last_occ_chunk_count_ != allocated_chunks.size()) {
+#if ROS_VERSION_MINOR >= 12
             vis_chunk.action = visualization_msgs::Marker::DELETEALL;
             vis_chunks->markers.emplace_back(vis_chunk);
-    #else
+#else
             vis_chunk.action = visualization_msgs::Marker::DELETE;
-            for(std::size_t i = 0 ; i < chunks.size(); ++i) {
+            for(std::size_t i = 0 ; i < marker_count; ++i) {
                 vis_chunks->markers.emplace_back(vis_chunk);
                 ++vis_chunk.id;
             }
             vis_chunk.id = 0;
-    #endif
+#endif
         }
         vis_chunk.action = visualization_msgs::Marker::MODIFY;
         auto convert_point = [](const cslibs_math_2d::Point2d &p) {
@@ -254,7 +259,33 @@ void OccupancyGridMapperNode::publishOcc(const OccupancyGridMapper::static_map_s
             return gp;
         };
 
-        for(const cslibs_math_2d::Box2d &b : chunks) {
+        for(const cslibs_math_2d::Box2d &b : allocated_chunks) {
+            ++vis_chunk.id;
+            vis_chunk.points.clear();
+            vis_chunk.points.emplace_back(convert_point(b.ll()));
+            vis_chunk.points.emplace_back(convert_point(b.rl()));
+            vis_chunk.points.emplace_back(convert_point(b.ru()));
+            vis_chunk.points.emplace_back(convert_point(b.lu()));
+            vis_chunk.points.emplace_back(convert_point(b.ll()));
+            vis_chunks->markers.emplace_back(vis_chunk);
+        }
+        vis_chunk.color.r = 1.f;
+        vis_chunk.color.g = 1.f;
+        vis_chunk.color.b = 0.f;
+        for(const cslibs_math_2d::Box2d &b : touched_chunks) {
+            ++vis_chunk.id;
+            vis_chunk.points.clear();
+            vis_chunk.points.emplace_back(convert_point(b.ll()));
+            vis_chunk.points.emplace_back(convert_point(b.rl()));
+            vis_chunk.points.emplace_back(convert_point(b.ru()));
+            vis_chunk.points.emplace_back(convert_point(b.lu()));
+            vis_chunk.points.emplace_back(convert_point(b.ll()));
+            vis_chunks->markers.emplace_back(vis_chunk);
+        }
+        vis_chunk.color.r = 0.5f;
+        vis_chunk.color.g = 0.5f;
+        vis_chunk.color.b = 0.5f;
+        for(const cslibs_math_2d::Box2d &b : untouched_chunks) {
             ++vis_chunk.id;
             vis_chunk.points.clear();
             vis_chunk.points.emplace_back(convert_point(b.ll()));
@@ -266,7 +297,7 @@ void OccupancyGridMapperNode::publishOcc(const OccupancyGridMapper::static_map_s
         }
         pub_occ_map_chunks_.publish(vis_chunks);
 
-        last_occ_chunk_count_ = chunks.size();
+        last_occ_chunk_count_ = marker_count;
         pub_occ_last_time_ = ros::Time::now();
     }
 }
