@@ -91,7 +91,7 @@ void NDTGridMapper::mapRequest()
         const std::size_t width  = static_cast<std::size_t>(dynamic_map_->getWidth()  / sampling_resolution_);
 
         static_map_.data().reset(new static_map_t(origin,
-                                                  resolution_,
+                                                  sampling_resolution_,
                                                   height,
                                                   width));
         allocated_chunks_.clear();
@@ -102,15 +102,15 @@ void NDTGridMapper::mapRequest()
         const int chunk_step = static_cast<int>(dynamic_map_->getResolution() / sampling_resolution_);
         const dynamic_map_t::index_t min_index = dynamic_map_->getMinIndex();
         const dynamic_map_t::index_t max_index = dynamic_map_->getMaxIndex();
-        const int offset_x = chunk_step * (min_index[0] - 1);
-        const int offset_y = chunk_step * (min_index[1] - 1);
+        const int offset_x = chunk_step * min_index[0];
+        const int offset_y = chunk_step * min_index[1];
 
         for(int i = min_index[1] ; i <= min_index[1] ; ++i) {
             for(int j = min_index[0] ; j <= max_index[0] ; ++j) {
                 const dynamic_map_t::distribution_t *distribution = dynamic_map_->getDistribution({{j,i}});
                 if(distribution != nullptr) {
-                    const std::size_t cx = static_cast<std::size_t>((j - offset_x) * chunk_step);
-                    const std::size_t cy = static_cast<std::size_t>((i - offset_y ) * chunk_step);
+                    const std::size_t cx = static_cast<std::size_t>(j * chunk_step - offset_x);
+                    const std::size_t cy = static_cast<std::size_t>(i * chunk_step - offset_y);
 
                     cslibs_math_2d::Point2d ll(cx * resolution_, cy * resolution_);
                     cslibs_math_2d::Point2d ru = ll + cslibs_math_2d::Point2d(chunk_step * resolution_);

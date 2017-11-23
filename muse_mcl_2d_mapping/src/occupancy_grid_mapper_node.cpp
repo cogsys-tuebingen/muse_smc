@@ -98,7 +98,6 @@ void OccupancyGridMapperNode::run()
             }
             if(pub_ndt_interval_.isZero() || (pub_ndt_last_time_ + pub_ndt_interval_ < now)) {
                 ndt_mapper_->requestMap();
-                pub_ndt_last_time_ = now;
             }
             ros::spinOnce();
         }
@@ -114,7 +113,6 @@ void OccupancyGridMapperNode::run()
             }
             if(pub_ndt_interval_.isZero() || (pub_ndt_last_time_ + pub_ndt_interval_ < now)) {
                 ndt_mapper_->requestMap();
-                pub_ndt_last_time_ = now;
             }
             r.sleep();
             ros::spinOnce();
@@ -157,6 +155,8 @@ void OccupancyGridMapperNode::publishNDT(const OccupancyGridMapper::static_map_s
                                          const OccupancyGridMapper::chunks_t &touched_chunks,
                                          const OccupancyGridMapper::chunks_t &untouched_chunks)
 {
+    std::cout << "was here" << std::endl;
+
     if(map.data()) {
         const std::size_t marker_count = allocated_chunks.size() + touched_chunks.size() + untouched_chunks.size();
 
