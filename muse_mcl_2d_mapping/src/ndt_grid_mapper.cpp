@@ -4,9 +4,13 @@ namespace muse_mcl_2d_mapping {
 NDTGridMapper::NDTGridMapper(const double resolution,
                              const double sampling_resolution,
                              const std::string &frame_id) :
+    stop_(false),
+    request_map_(false),
+    callback_([](const static_map_t::Ptr &, const chunks_t &, const chunks_t &, const chunks_t &){}),
     resolution_(resolution),
     sampling_resolution_(sampling_resolution),
     frame_id_(frame_id)
+
 {
     thread_ = std::thread([this](){loop();});
 }
@@ -32,29 +36,34 @@ void NDTGridMapper::get(static_map_stamped_t &map)
     lock_t static_map_lock(static_map_mutex_);
     notify_event_.notify_one();
     notify_static_map_.wait(static_map_lock);
-
-    if(static_map_) {
-        map = static_map_stamped_t(static_map_t::Ptr(new static_map_t(*static_map_)),
-                                   static_map_time_);
-    }
+    map = static_map_;
 }
 
 
 void NDTGridMapper::get(static_map_stamped_t &map,
-                        allocated_chunks_t &chunks)
+                        chunks_t &chunks)
 {
     request_map_ = true;
     lock_t static_map_lock(static_map_mutex_);
     notify_event_.notify_one();
     notify_static_map_.wait(static_map_lock);
-
-    if(static_map_) {
-        map = static_map_stamped_t(static_map_t::Ptr(new static_map_t(*static_map_)),
-                                   static_map_time_);
-        chunks = allocated_chunks_;
-    }
+    map = static_map_;
+    chunks = allocated_chunks_;
+    chunks.insert(chunks.end(), touched_chunks_.begin(), touched_chunks_.end());
+    chunks.insert(chunks.end(), untouched_chunks_.begin(), untouched_chunks_.end());
 }
 
+void NDTGridMapper::requestMap()
+{
+    request_map_ = true;
+}
+
+void NDTGridMapper::setCallback(const callback_t &cb)
+{
+    if(!request_map_) {
+        callback_ = cb;
+    }
+}
 
 void NDTGridMapper::loop()
 {
@@ -81,22 +90,27 @@ void NDTGridMapper::mapRequest()
         const std::size_t height = static_cast<std::size_t>(dynamic_map_->getHeight() / sampling_resolution_);
         const std::size_t width  = static_cast<std::size_t>(dynamic_map_->getWidth()  / sampling_resolution_);
 
-        static_map_.reset(new static_map_t(origin,
-                                           sampling_resolution_,
-                                           height,
-                                           width));
+        static_map_.data().reset(new static_map_t(origin,
+                                                  resolution_,
+                                                  height,
+                                                  width));
         allocated_chunks_.clear();
-        static_map_time_ = latest_time_;
+        touched_chunks_.clear();
+        untouched_chunks_.clear();
+        static_map_.stamp() = latest_time_;
 
         const int chunk_step = static_cast<int>(dynamic_map_->getResolution() / sampling_resolution_);
         const dynamic_map_t::index_t min_index = dynamic_map_->getMinIndex();
         const dynamic_map_t::index_t max_index = dynamic_map_->getMaxIndex();
+        const int offset_x = chunk_step * (min_index[0] - 1);
+        const int offset_y = chunk_step * (min_index[1] - 1);
+
         for(int i = min_index[1] ; i <= min_index[1] ; ++i) {
             for(int j = min_index[0] ; j <= max_index[0] ; ++j) {
                 const dynamic_map_t::distribution_t *distribution = dynamic_map_->getDistribution({{j,i}});
                 if(distribution != nullptr) {
-                    const std::size_t cx = static_cast<std::size_t>((j - min_index[0]) * chunk_step);
-                    const std::size_t cy = static_cast<std::size_t>((i - min_index[1]) * chunk_step);
+                    const std::size_t cx = static_cast<std::size_t>((j - offset_x) * chunk_step);
+                    const std::size_t cy = static_cast<std::size_t>((i - offset_y ) * chunk_step);
 
                     cslibs_math_2d::Point2d ll(cx * resolution_, cy * resolution_);
                     cslibs_math_2d::Point2d ru = ll + cslibs_math_2d::Point2d(chunk_step * resolution_);
@@ -106,13 +120,13 @@ void NDTGridMapper::mapRequest()
                         for(int l = 0 ; l < chunk_step ; ++l) {
                             const cslibs_math_2d::Point2d p(j * resolution_ + l * sampling_resolution_,
                                                             i * resolution_ + k * sampling_resolution_);
-                            static_map_->at(cx + l, cy + k) = distribution->sample(p);
+                            static_map_.data()->at(cx + l, cy + k) = distribution->sample(p);
                         }
                     }
                 }
             }
         }
-        cslibs_gridmaps::static_maps::algorithms::normalize<double>(*static_map_);
+        cslibs_gridmaps::static_maps::algorithms::normalize<double>(*static_map_.data());
     }
     request_map_ = false;
     notify_static_map_.notify_one();
@@ -131,8 +145,8 @@ void NDTGridMapper::process(const Measurement2d &m)
     }
 
     for(const auto &p : *(m.points)) {
-        const cslibs_math_2d::Point2d i = m.origin * p;
-        dynamic_map_->insert(i);
+        const cslibs_math_2d::Point2d pm = m.origin * p;
+        dynamic_map_->add(pm);
     }
 }
 }

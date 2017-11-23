@@ -49,10 +49,7 @@ public:
     void requestMap();
     void setCallback (const callback_t &cb);
 
-
-
 protected:
-    /// todo - maybe build an base class
     muse_smc::synchronized::queue<Measurement2d> q_;
 
     std::thread                                  thread_;
@@ -67,7 +64,6 @@ protected:
     chunks_t                                     allocated_chunks_;
     chunks_t                                     touched_chunks_;
     chunks_t                                     untouched_chunks_;
-
 
     callback_t                                   callback_;
 

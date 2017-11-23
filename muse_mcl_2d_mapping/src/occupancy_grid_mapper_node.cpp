@@ -63,6 +63,7 @@ bool OccupancyGridMapperNode::setup()
     occ_mapper_->setCallback(OccupancyGridMapper::callback_t::from<OccupancyGridMapperNode, &OccupancyGridMapperNode::publishOcc>(this));
 
     ndt_mapper_.reset(new NDTGridMapper(ndt_grid_resolution, ndt_sampling_resolution, map_frame_));
+    ndt_mapper_->setCallback(OccupancyGridMapper::callback_t::from<OccupancyGridMapperNode, &OccupancyGridMapperNode::publishNDT>(this));
 
     for(const auto &l : lasers) {
         ROS_INFO_STREAM("Subscribing to laser '" << l << "'");
@@ -96,7 +97,7 @@ void OccupancyGridMapperNode::run()
                 occ_mapper_->requestMap();
             }
             if(pub_ndt_interval_.isZero() || (pub_ndt_last_time_ + pub_ndt_interval_ < now)) {
-                //                publishNDT();
+                ndt_mapper_->requestMap();
                 pub_ndt_last_time_ = now;
             }
             ros::spinOnce();
@@ -112,7 +113,7 @@ void OccupancyGridMapperNode::run()
                 occ_mapper_->requestMap();
             }
             if(pub_ndt_interval_.isZero() || (pub_ndt_last_time_ + pub_ndt_interval_ < now)) {
-                publishNDT();
+                ndt_mapper_->requestMap();
                 pub_ndt_last_time_ = now;
             }
             r.sleep();
@@ -151,12 +152,14 @@ void OccupancyGridMapperNode::laserscan(const sensor_msgs::LaserScanConstPtr &ms
     }
 }
 
-void OccupancyGridMapperNode::publishNDT()
+void OccupancyGridMapperNode::publishNDT(const OccupancyGridMapper::static_map_stamped_t &map,
+                                         const OccupancyGridMapper::chunks_t &allocated_chunks,
+                                         const OccupancyGridMapper::chunks_t &touched_chunks,
+                                         const OccupancyGridMapper::chunks_t &untouched_chunks)
 {
-    NDTGridMapper::static_map_stamped_t map;
-    NDTGridMapper::allocated_chunks_t   distributions;
-    ndt_mapper_->get(map, distributions);
     if(map.data()) {
+        const std::size_t marker_count = allocated_chunks.size() + touched_chunks.size() + untouched_chunks.size();
+
         nav_msgs::OccupancyGrid::Ptr msg;
         cslibs_gridmaps::static_maps::conversion::from(map.data(), msg);
         msg->header.stamp.fromNSec(static_cast<uint64_t>(map.stamp().nanoseconds()));
@@ -174,7 +177,7 @@ void OccupancyGridMapperNode::publishNDT()
         vis_distribution.color.b = 1.f;
         vis_distribution.scale.x = 0.1;
 
-        if(last_ndt_distribution_count_ != distributions.size()) {
+        if(last_ndt_distribution_count_ != marker_count) {
 #if ROS_VERSION_MINOR >= 12
             vis_distribution.action = visualization_msgs::Marker::DELETEALL;
             vis_distributions->markers.emplace_back(vis_distribution);
@@ -196,7 +199,7 @@ void OccupancyGridMapperNode::publishNDT()
             return gp;
         };
 
-        for(const cslibs_math_2d::Box2d &b : distributions) {
+        for(const cslibs_math_2d::Box2d &b : allocated_chunks) {
             ++vis_distribution.id;
             vis_distribution.points.clear();
             vis_distribution.points.emplace_back(convert_point(b.ll()));
@@ -206,9 +209,36 @@ void OccupancyGridMapperNode::publishNDT()
             vis_distribution.points.emplace_back(convert_point(b.ll()));
             vis_distributions->markers.emplace_back(vis_distribution);
         }
-        pub_ndt_distributions_.publish(vis_distributions);
+        vis_distribution.color.r = 1.f;
+        vis_distribution.color.g = 1.f;
+        vis_distribution.color.b = 0.f;
+        for(const cslibs_math_2d::Box2d &b : touched_chunks) {
+            ++vis_distribution.id;
+            vis_distribution.points.clear();
+            vis_distribution.points.emplace_back(convert_point(b.ll()));
+            vis_distribution.points.emplace_back(convert_point(b.rl()));
+            vis_distribution.points.emplace_back(convert_point(b.ru()));
+            vis_distribution.points.emplace_back(convert_point(b.lu()));
+            vis_distribution.points.emplace_back(convert_point(b.ll()));
+            vis_distributions->markers.emplace_back(vis_distribution);
+        }
+        vis_distribution.color.r = 0.5f;
+        vis_distribution.color.g = 0.5f;
+        vis_distribution.color.b = 0.5f;
+        for(const cslibs_math_2d::Box2d &b : untouched_chunks) {
+            ++vis_distribution.id;
+            vis_distribution.points.clear();
+            vis_distribution.points.emplace_back(convert_point(b.ll()));
+            vis_distribution.points.emplace_back(convert_point(b.rl()));
+            vis_distribution.points.emplace_back(convert_point(b.ru()));
+            vis_distribution.points.emplace_back(convert_point(b.lu()));
+            vis_distribution.points.emplace_back(convert_point(b.ll()));
+            vis_distributions->markers.emplace_back(vis_distribution);
+        }
 
-        last_ndt_distribution_count_ = distributions.size();
+        pub_ndt_distributions_.publish(vis_distributions);
+        last_ndt_distribution_count_ = marker_count;
+        pub_occ_last_time_ = ros::Time::now();
     }
 }
 
@@ -237,7 +267,7 @@ void OccupancyGridMapperNode::publishOcc(const OccupancyGridMapper::static_map_s
         vis_chunk.color.b = 0.f;
         vis_chunk.scale.x = 0.1;
 
-        if(last_occ_chunk_count_ != allocated_chunks.size()) {
+        if(last_occ_chunk_count_ != marker_count) {
 #if ROS_VERSION_MINOR >= 12
             vis_chunk.action = visualization_msgs::Marker::DELETEALL;
             vis_chunks->markers.emplace_back(vis_chunk);
@@ -295,6 +325,7 @@ void OccupancyGridMapperNode::publishOcc(const OccupancyGridMapper::static_map_s
             vis_chunk.points.emplace_back(convert_point(b.ll()));
             vis_chunks->markers.emplace_back(vis_chunk);
         }
+
         pub_occ_map_chunks_.publish(vis_chunks);
 
         last_occ_chunk_count_ = marker_count;

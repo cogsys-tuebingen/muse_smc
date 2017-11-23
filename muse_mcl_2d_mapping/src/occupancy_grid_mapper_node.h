@@ -39,7 +39,7 @@ private:
     ros::Time                       pub_ndt_last_time_;
 
     std::size_t                     last_occ_chunk_count_;
-    std::size_t                     last_ndt_distribution_count_    ;
+    std::size_t                     last_ndt_distribution_count_;
 
     double                          node_rate_;
 
@@ -52,7 +52,11 @@ private:
 
 
     void laserscan(const sensor_msgs::LaserScanConstPtr &msg);
-    void publishNDT();
+
+    void publishNDT(const OccupancyGridMapper::static_map_stamped_t &map,
+                    const OccupancyGridMapper::chunks_t &allocated_chunks,
+                    const OccupancyGridMapper::chunks_t &touched_chunks,
+                    const OccupancyGridMapper::chunks_t &untouched_chunks);
 
     void publishOcc(const OccupancyGridMapper::static_map_stamped_t &map,
                     const OccupancyGridMapper::chunks_t             &allocated_chunks,
