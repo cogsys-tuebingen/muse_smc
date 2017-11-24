@@ -138,7 +138,6 @@ void OccupancyGridMapper::mapRequest()
         cslibs_gridmaps::static_maps::conversion::LogOdds::from(static_map_, static_map_);
         callback_(static_map_, allocated_chunks_, touched_chunks_, untouched_chunks_);
     }
-
     request_map_ = false;
     notify_static_map_.notify_one();
 }
@@ -153,27 +152,16 @@ void OccupancyGridMapper::process(const Measurement2d &m)
         latest_time_ = m.stamp;
     }
 
-    auto discretize = [this](const double x)
-    {
-        return static_cast<int>(std::floor(x / resolution_));
-    };
-
     if(m.stamp > latest_time_) {
         latest_time_ = m.stamp;
     }
-
-
-    const dynamic_map_t::index_t      start_index = {{discretize(m.origin.translation()(0)),
-                                                      discretize(m.origin.translation()(1))}};
 
     const double resolution2 = (resolution_ * resolution_ * 0.25);
     for(const auto &p : *(m.points)) {
         if(p.isNormal()) {
             const cslibs_math_2d::Point2d end_point = m.origin * p;
-            const dynamic_map_t::index_t  end_index = {{discretize(end_point(0)),
-                                                        discretize(end_point(1))}};
-            auto b = dynamic_map_->getLineIterator(start_index,
-                                                   end_index);
+            auto b = dynamic_map_->getLineIterator(m.origin.translation(),
+                                                   end_point);
 
             while(!b.done()) {
                 double l = b.length2() > resolution2 ? inverse_model_.updateFree(*b) : inverse_model_.updateOccupied(*b);

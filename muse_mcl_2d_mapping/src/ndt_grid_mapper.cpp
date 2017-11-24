@@ -48,9 +48,9 @@ void NDTGridMapper::get(static_map_stamped_t &map,
     notify_event_.notify_one();
     notify_static_map_.wait(static_map_lock);
     map = static_map_;
-    chunks = allocated_chunks_;
-    chunks.insert(chunks.end(), touched_chunks_.begin(), touched_chunks_.end());
-    chunks.insert(chunks.end(), untouched_chunks_.begin(), untouched_chunks_.end());
+    chunks = allocated_distributions_;
+    chunks.insert(chunks.end(), touched_distributions_.begin(), touched_distributions_.end());
+    chunks.insert(chunks.end(), untouched_distributions_.begin(), untouched_distributions_.end());
 }
 
 void NDTGridMapper::requestMap()
@@ -94,39 +94,49 @@ void NDTGridMapper::mapRequest()
                                                   sampling_resolution_,
                                                   height,
                                                   width));
-        allocated_chunks_.clear();
-        touched_chunks_.clear();
-        untouched_chunks_.clear();
+        allocated_distributions_.clear();
+        touched_distributions_.clear();
+        untouched_distributions_.clear();
         static_map_.stamp() = latest_time_;
 
         const int chunk_step = static_cast<int>(dynamic_map_->getResolution() / sampling_resolution_);
-        const dynamic_map_t::index_t min_index = dynamic_map_->getMinIndex();
-        const dynamic_map_t::index_t max_index = dynamic_map_->getMaxIndex();
-        const int offset_x = chunk_step * min_index[0];
-        const int offset_y = chunk_step * min_index[1];
+        const dynamic_map_t::index_t min_distribution_index = dynamic_map_->getMinDistributionIndex();
+        const dynamic_map_t::index_t max_distribution_index = dynamic_map_->getMaxDistributionIndex();
 
-        for(int i = min_index[1] ; i <= min_index[1] ; ++i) {
-            for(int j = min_index[0] ; j <= max_index[0] ; ++j) {
-                const dynamic_map_t::distribution_t *distribution = dynamic_map_->getDistribution({{j,i}});
+        for(int i = min_distribution_index[1] ; i <= max_distribution_index[1] ; ++i) {
+            for(int j = min_distribution_index[0] ; j <= max_distribution_index[0] ; ++j) {
+                dynamic_map_t::distribution_t *distribution = dynamic_map_->getDistribution({{j,i}});
                 if(distribution != nullptr) {
-                    const std::size_t cx = static_cast<std::size_t>(j * chunk_step - offset_x);
-                    const std::size_t cy = static_cast<std::size_t>(i * chunk_step - offset_y);
+                    const std::size_t cx = static_cast<std::size_t>((j - min_distribution_index[0]) * static_cast<int>(chunk_step));
+                    const std::size_t cy = static_cast<std::size_t>((i - min_distribution_index[1]) * static_cast<int>(chunk_step));
 
-                    cslibs_math_2d::Point2d ll(cx * resolution_, cy * resolution_);
-                    cslibs_math_2d::Point2d ru = ll + cslibs_math_2d::Point2d(chunk_step * resolution_);
-                    allocated_chunks_.emplace_back(cslibs_math_2d::Box2d(origin * ll, origin * ru));
+
+                    cslibs_math_2d::Point2d ll(cx * sampling_resolution_, cy * sampling_resolution_);
+                    cslibs_math_2d::Point2d ru = ll + cslibs_math_2d::Point2d(chunk_step * sampling_resolution_);
+                    switch(distribution->getAction()) {
+                    case dynamic_map_t::distribution_t::ALLOCATED:
+                        allocated_distributions_.emplace_back(cslibs_math_2d::Box2d(origin * ll, origin * ru));
+                        break;
+                    case dynamic_map_t::distribution_t::TOUCHED:
+                        touched_distributions_.emplace_back(cslibs_math_2d::Box2d(origin * ll, origin * ru));
+                        break;
+                    default:
+                        untouched_distributions_.emplace_back(cslibs_math_2d::Box2d(origin * ll, origin * ru));
+                    }
 
                     for(int k = 0 ; k < chunk_step ; ++k) {
                         for(int l = 0 ; l < chunk_step ; ++l) {
                             const cslibs_math_2d::Point2d p(j * resolution_ + l * sampling_resolution_,
                                                             i * resolution_ + k * sampling_resolution_);
-                            static_map_.data()->at(cx + l, cy + k) = distribution->sample(p);
+                            static_map_.data()->at(cx + l, cy + k) = distribution->sampleNonNormalized(p);
                         }
                     }
+                    distribution->setNone();
                 }
             }
         }
         cslibs_gridmaps::static_maps::algorithms::normalize<double>(*static_map_.data());
+        callback_(static_map_, allocated_distributions_, touched_distributions_, untouched_distributions_);
     }
     request_map_ = false;
     notify_static_map_.notify_one();

@@ -24,7 +24,7 @@ class NDTGridMapper
 public:
     using Ptr                       = std::shared_ptr<NDTGridMapper>;
     using lock_t                    = std::unique_lock<std::mutex>;
-    using dynamic_map_t             = cslibs_ndt::dynamic_maps::Gridmap<false>;
+    using dynamic_map_t             = cslibs_ndt::dynamic_maps::Gridmap;
     using static_map_t              = cslibs_gridmaps::static_maps::ProbabilityGridmap;
     using static_map_stamped_t      = cslibs_time::Stamped<static_map_t::Ptr>;
     using chunks_t                  = std::vector<cslibs_math_2d::Box2d>;
@@ -58,9 +58,9 @@ protected:
     std::mutex                                   static_map_mutex_;
 
     static_map_stamped_t                         static_map_;
-    chunks_t                                     allocated_chunks_;
-    chunks_t                                     touched_chunks_;
-    chunks_t                                     untouched_chunks_;
+    chunks_t                                     allocated_distributions_;
+    chunks_t                                     touched_distributions_;
+    chunks_t                                     untouched_distributions_;
 
     callback_t                                   callback_;
 

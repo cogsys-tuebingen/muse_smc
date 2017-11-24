@@ -22,15 +22,15 @@ bool OccupancyGridMapperNode::setup()
     const double        occ_grid_chunk_resolution   = nh_.param<double>("occ_chunk_resolution", 5.0);
     const std::string   occ_map_topic               = nh_.param<std::string>("occ_map_topic", "/map/occ");
     const std::string   occ_map_marker_topic        = nh_.param<std::string>("occ_map_marker_topic", occ_map_topic + "/chunks");
-    const double        occ_map_pub_rate            = nh_.param<double>("occ_map_pub_rate", 5.0);
+    const double        occ_map_pub_rate            = nh_.param<double>("occ_map_pub_rate",  10.0);
     const double        occ_map_prob_free           = nh_.param<double>("occ_map_prob_free", 0.45);
-    const double        occ_map_prob_occ            = nh_.param<double>("occ_map_prob_occ", 0.55);
+    const double        occ_map_prob_occ            = nh_.param<double>("occ_map_prob_occ",  0.55);
     const double        occ_map_prob_prior          = nh_.param<double>("occ_map_prob_prior", 0.5);
 
     const std::string   ndt_map_topic               = nh_.param<std::string>("ndt_map_topic", "/map/ndt");
     const std::string   ndt_map_marker_topic        = nh_.param<std::string>("ndt_map_marker_topic", ndt_map_topic + "/distributions");
     const double        ndt_map_pub_rate            = nh_.param<double>("ndt_map_pub_rate", 10.0);
-    const double        ndt_grid_resolution         = nh_.param<double>("ndt_grid_resolution", 0.5);
+    const double        ndt_grid_resolution         = nh_.param<double>("ndt_grid_resolution", 1.0);
     const double        ndt_sampling_resolution     = nh_.param<double>("ndt_sampling_resolution", 0.05);
 
     std::vector<std::string> lasers;
@@ -155,8 +155,6 @@ void OccupancyGridMapperNode::publishNDT(const OccupancyGridMapper::static_map_s
                                          const OccupancyGridMapper::chunks_t &touched_chunks,
                                          const OccupancyGridMapper::chunks_t &untouched_chunks)
 {
-    std::cout << "was here" << std::endl;
-
     if(map.data()) {
         const std::size_t marker_count = allocated_chunks.size() + touched_chunks.size() + untouched_chunks.size();
 
