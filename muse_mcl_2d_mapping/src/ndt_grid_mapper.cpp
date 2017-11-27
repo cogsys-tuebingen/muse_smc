@@ -105,7 +105,7 @@ void NDTGridMapper::mapRequest()
 
         for(int i = min_distribution_index[1] ; i <= max_distribution_index[1] ; ++i) {
             for(int j = min_distribution_index[0] ; j <= max_distribution_index[0] ; ++j) {
-                dynamic_map_t::distribution_container_t::handle_t distribution = dynamic_map_->getDistribution({{j,i}});
+                dynamic_map_t::container_handle_t distribution = dynamic_map_->getDistribution({{j,i}});
                 if(!distribution.empty()) {
                     const int cx = (j - min_distribution_index[0]) * static_cast<int>(chunk_step);
                     const int cy = (i - min_distribution_index[1]) * static_cast<int>(chunk_step);
