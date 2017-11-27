@@ -1,8 +1,8 @@
 #ifndef SAMPLE_INSERTION_HPP
 #define SAMPLE_INSERTION_HPP
 
-#include <muse_smc/utility/buffered_vector.hpp>
-#include <muse_smc/utility/delegate.hpp>
+#include <cslibs_utility/buffered/buffered_vector.hpp>
+#include <cslibs_utility/common/delegate.hpp>
 
 namespace muse_smc {
 /**
@@ -12,9 +12,9 @@ namespace muse_smc {
 template<typename sample_t>
 class SampleInsertion {
 public:
-    using notify_closed   = delegate<void()>;
-    using notify_update   = delegate<void(const sample_t &)>;
-    using sample_vector_t = std::buffered_vector<sample_t, typename sample_t::allocator_t>;
+    using notify_closed   = cslibs_utility::common::delegate<void()>;
+    using notify_update   = cslibs_utility::common::delegate<void(const sample_t &)>;
+    using sample_vector_t = cslibs_utility::buffered::buffered_vector<sample_t, typename sample_t::allocator_t>;
 
     /**
      * @brief Insertion constructor.
@@ -75,11 +75,11 @@ public:
     }
 
 private:
-    std::buffered_vector<sample_t, typename sample_t::allocator_t> &data_;       /// the data container
+    sample_vector_t &data_;       /// the data container
 
-    bool                                                            open_;       /// indicator if insertion is still open
-    notify_update                                                   update_;     /// on update callback
-    notify_closed                                                   close_;      /// on close / finish callback
+    bool             open_;       /// indicator if insertion is still open
+    notify_update    update_;     /// on update callback
+    notify_closed    close_;      /// on close / finish callback
 
 };
 }

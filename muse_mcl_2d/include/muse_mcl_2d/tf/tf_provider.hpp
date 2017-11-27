@@ -1,7 +1,7 @@
 #ifndef TF_PROVIDER_HPP
 #define TF_PROVIDER_HPP
 
-#include <muse_smc/utility/delegate.hpp>
+#include <cslibs_utility/common/delegate.hpp>
 #include <cslibs_time/stamped.hpp>
 
 #include <cslibs_math_2d/linear/transform.hpp>

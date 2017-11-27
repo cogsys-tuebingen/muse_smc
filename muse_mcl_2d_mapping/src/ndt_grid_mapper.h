@@ -6,7 +6,7 @@
 #include <condition_variable>
 #include <mutex>
 
-#include <muse_smc/utility/synchronized_queue.hpp>
+#include <cslibs_utility/synchronized/synchronized_queue.hpp>
 
 #include "measurement_2d.hpp"
 
@@ -47,7 +47,7 @@ public:
     void setCallback(const callback_t &cb);
 
 protected:
-    muse_smc::synchronized::queue<Measurement2d> q_;
+    cslibs_utility::synchronized::queue<Measurement2d> q_;
 
     std::thread                                  thread_;
     std::condition_variable                      notify_event_;

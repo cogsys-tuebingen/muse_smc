@@ -12,4 +12,5 @@
   <depend>pluginlib</depend>
   <depend>cslibs_math</depend>
   <depend>cslibs_time</depend>
+  <depend>cslibs_utility</depend>
 </package>

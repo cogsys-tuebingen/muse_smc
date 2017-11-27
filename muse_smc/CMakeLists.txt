@@ -16,11 +16,12 @@ find_package(catkin REQUIRED COMPONENTS
   pluginlib
   cslibs_math
   cslibs_time
+  cslibs_utility
 )
 
 catkin_package(
     INCLUDE_DIRS    include
-    CATKIN_DEPENDS  cslibs_time cslibs_math
+    CATKIN_DEPENDS  cslibs_time cslibs_math cslibs_utility
     DEPENDS         TinyXML Eigen3
     CFG_EXTRAS      muse_smc_extras.cmake
                     muse_smc_enable_c++11.cmake

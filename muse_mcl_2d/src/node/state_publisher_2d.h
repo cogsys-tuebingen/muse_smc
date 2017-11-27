@@ -2,7 +2,7 @@
 #define STATE_PUBLISHER_H
 
 #include <muse_smc/smc/smc_state.hpp>
-#include <muse_smc/utility/csv_logger.hpp>
+#include <cslibs_utility/logger/csv_logger.hpp>
 
 #include <muse_mcl_2d/samples/sample_2d.hpp>
 #include <muse_mcl_2d/tf/tf_publisher.hpp>

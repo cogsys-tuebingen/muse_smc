@@ -4,7 +4,7 @@
 #include <string>
 #include <limits>
 
-#include <muse_smc/utility/buffered_vector.hpp>
+#include <cslibs_utility/buffered/buffered_vector.hpp>
 
 #include <cslibs_time/time.hpp>
 
@@ -20,7 +20,7 @@ class SampleSet
 public:
     using sample_t           = typename state_space_description_t::sample_t;
     using sample_set_t       = SampleSet<state_space_description_t>;
-    using sample_vector_t    = std::buffered_vector<sample_t, typename sample_t::allocator_t>;
+    using sample_vector_t    = cslibs_utility::buffered::buffered_vector<sample_t, typename sample_t::allocator_t>;
     using sample_density_t   = SampleDensity<sample_t>;
     using sample_insertion_t = SampleInsertion<sample_t>;
     using state_iterator_t   = StateIteration<state_space_description_t>;

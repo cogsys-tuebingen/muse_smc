@@ -105,19 +105,19 @@ void NDTGridMapper::mapRequest()
 
         for(int i = min_distribution_index[1] ; i <= max_distribution_index[1] ; ++i) {
             for(int j = min_distribution_index[0] ; j <= max_distribution_index[0] ; ++j) {
-                dynamic_map_t::distribution_t *distribution = dynamic_map_->getDistribution({{j,i}});
-                if(distribution != nullptr) {
-                    const std::size_t cx = static_cast<std::size_t>((j - min_distribution_index[0]) * static_cast<int>(chunk_step));
-                    const std::size_t cy = static_cast<std::size_t>((i - min_distribution_index[1]) * static_cast<int>(chunk_step));
+                dynamic_map_t::distribution_container_t::handle_t distribution = dynamic_map_->getDistribution({{j,i}});
+                if(!distribution.empty()) {
+                    const int cx = (j - min_distribution_index[0]) * static_cast<int>(chunk_step);
+                    const int cy = (i - min_distribution_index[1]) * static_cast<int>(chunk_step);
 
 
                     cslibs_math_2d::Point2d ll(cx * sampling_resolution_, cy * sampling_resolution_);
                     cslibs_math_2d::Point2d ru = ll + cslibs_math_2d::Point2d(chunk_step * sampling_resolution_);
                     switch(distribution->getAction()) {
-                    case dynamic_map_t::distribution_t::ALLOCATED:
+                    case dynamic_map_t::distribution_container_t::ALLOCATED:
                         allocated_distributions_.emplace_back(cslibs_math_2d::Box2d(origin * ll, origin * ru));
                         break;
-                    case dynamic_map_t::distribution_t::TOUCHED:
+                    case dynamic_map_t::distribution_container_t::TOUCHED:
                         touched_distributions_.emplace_back(cslibs_math_2d::Box2d(origin * ll, origin * ru));
                         break;
                     default:
@@ -128,7 +128,8 @@ void NDTGridMapper::mapRequest()
                         for(int l = 0 ; l < chunk_step ; ++l) {
                             const cslibs_math_2d::Point2d p(j * resolution_ + l * sampling_resolution_,
                                                             i * resolution_ + k * sampling_resolution_);
-                            static_map_.data()->at(cx + l, cy + k) = distribution->sampleNonNormalized(p);
+                            static_map_.data()->at(static_cast<std::size_t>(cx + l),
+                                                   static_cast<std::size_t>(cy + k)) = distribution->data().sampleNonNormalized(p);
                         }
                     }
                     distribution->setNone();

@@ -24,13 +24,13 @@ before_script:
   - ln -s $CI_PROJECT_DIR src/$CI_PROJECT_NAME
   # clone dependencies here:
   - cd src
-  - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_indexed_storage.git cslibs_indexed_storage
-  - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_boost_geometry.git cslibs_boost_geometry
-  - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_vectormaps.git cslibs_vectormaps
-  - git clone gitlab@gitlab.cs.uni-tuebingen.de:hanten/cslibs_time.git cslibs_time
-  - git clone gitlab@gitlab.cs.uni-tuebingen.de:hanten/cslibs_gridmaps.git cslibs_gridmaps
-  - git clone gitlab@gitlab.cs.uni-tuebingen.de:hanten/cslibs_math.git cslibs_math
-  - for d in cslibs* ; do cd $d; git checkout devel; cd .. ; done
+  - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_indexed_storage.git -b devel cslibs_indexed_storage
+  - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_boost_geometry.git -b devel cslibs_boost_geometry
+  - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_vectormaps.git -b devel cslibs_vectormaps
+  - git clone gitlab@gitlab.cs.uni-tuebingen.de:hanten/cslibs_time.git -b devel cslibs_time
+  - git clone gitlab@gitlab.cs.uni-tuebingen.de:hanten/cslibs_gridmaps.git -b devel cslibs_gridmaps
+  - git clone gitlab@gitlab.cs.uni-tuebingen.de:hanten/cslibs_math.git -b devel cslibs_math
+  - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_utility.git -b devel cslibs_utility
   - cd /build/ws/
 
 stages:

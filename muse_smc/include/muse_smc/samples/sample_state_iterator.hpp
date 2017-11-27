@@ -1,7 +1,7 @@
 #ifndef SAMPLE_STATE_ITERATOR_HPP
 #define SAMPLE_STATE_ITERATOR_HPP
 
-#include <muse_smc/utility/buffered_vector.hpp>
+#include <cslibs_utility/buffered/buffered_vector.hpp>
 
 namespace muse_smc {
 template<typename state_space_description_t>
@@ -53,7 +53,7 @@ class StateIteration
 {
 public:
     using sample_t          = typename state_space_description_t::sample_t;
-    using sample_vector_t   = std::buffered_vector<sample_t, typename sample_t::allocator_t>;
+    using sample_vector_t   = cslibs_utility::buffered::buffered_vector<sample_t, typename sample_t::allocator_t>;
     using iterator_t        = StateIterator<state_space_description_t>;
 
     inline StateIteration(sample_vector_t &data) :

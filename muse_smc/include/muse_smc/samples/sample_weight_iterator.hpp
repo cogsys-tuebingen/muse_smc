@@ -1,8 +1,8 @@
 #ifndef SAMPLE_WEIGHT_ITERATOR_HPP
 #define SAMPLE_WEIGHT_ITERATOR_HPP
 
-#include <muse_smc/utility/buffered_vector.hpp>
-#include <muse_smc/utility/delegate.hpp>
+#include <cslibs_utility/buffered/buffered_vector.hpp>
+#include <cslibs_utility/common/delegate.hpp>
 
 namespace muse_smc {
 template<typename state_space_description_t>
@@ -15,7 +15,7 @@ public:
     using iterator  = typename parent::iterator;
     using reference = typename parent::reference;
 
-    using notify_update = delegate<void(const double &)>;
+    using notify_update = cslibs_utility::common::delegate<void(const double &)>;
 
 
     inline explicit WeightIterator(sample_t        *begin,
@@ -63,10 +63,10 @@ class WeightIteration
 {
 public:
     using sample_t          = typename state_space_description_t::sample_t;
-    using sample_vector_t   = std::buffered_vector<sample_t, typename sample_t::allocator_t>;
-    using notify_update     = delegate<void(const double)>;
-    using notify_touch      = delegate<void()>;
-    using notify_finished   = delegate<void()>;
+    using sample_vector_t   = cslibs_utility::buffered::buffered_vector<sample_t, typename sample_t::allocator_t>;
+    using notify_update     = cslibs_utility::common::delegate<void(const double)>;
+    using notify_touch      = cslibs_utility::common::delegate<void()>;
+    using notify_finished   = cslibs_utility::common::delegate<void()>;
     using iterator_t        = WeightIterator<state_space_description_t>;
     using const_iterator_t  = typename sample_vector_t::const_iterator;
 

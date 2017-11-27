@@ -10,7 +10,7 @@
 #include <functional>
 #include <typeindex>
 
-#include <muse_smc/utility/delegate.hpp>
+#include <cslibs_utility/common/delegate.hpp>
 
 namespace muse_smc {
 template <class M>
@@ -20,8 +20,8 @@ class PluginManagerImp
     friend class PluginManager;
 
 protected:
-    typedef delegate<std::shared_ptr<M>()> PluginConstructorM;
-    typedef std::map<std::string, PluginConstructorM> Constructors;
+    using PluginConstructorM = cslibs_utility::common::delegate<std::shared_ptr<M>()>;
+    using Constructors = std::map<std::string, PluginConstructorM>;
 
 protected:
     PluginManagerImp(const std::string& full_name,

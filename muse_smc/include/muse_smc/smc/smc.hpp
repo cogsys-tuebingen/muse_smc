@@ -9,8 +9,8 @@
 #include <muse_smc/samples/sample_set.hpp>
 #include <muse_smc/resampling/resampling.hpp>
 #include <muse_smc/smc/smc_state.hpp>
-#include <muse_smc/utility/synchronized_priority_queue.hpp>
 #include <cslibs_time/rate.hpp>
+#include <cslibs_utility/synchronized/synchronized_priority_queue.hpp>
 
 
 #ifdef MUSE_SMC_USE_DOTTY
@@ -62,10 +62,10 @@ public:
     using uniform_sampling_t    = UniformSampling<state_space_description_t>;
     using resampling_t          = Resampling<state_space_description_t>;
     using filter_state_t        = SMCState<state_space_description_t>;
-    using update_queue_t        = synchronized::priority_queue<typename update_t::Ptr,
-                                                               typename update_t::Greater>;
-    using prediction_queue_t    = synchronized::priority_queue<typename prediction_t::Ptr,
-                                                               typename prediction_t::Greater>;
+    using update_queue_t        = cslibs_utility::synchronized::priority_queue<typename update_t::Ptr,
+                                                                               typename update_t::Greater>;
+    using prediction_queue_t    = cslibs_utility::synchronized::priority_queue<typename prediction_t::Ptr,
+                                                                               typename prediction_t::Greater>;
 
     inline SMC() :
         updates_applied_after_resampling_(0ul),
