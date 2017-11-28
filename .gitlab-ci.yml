@@ -29,6 +29,7 @@ before_script:
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_vectormaps.git -b devel cslibs_vectormaps
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_time.git -b devel cslibs_time
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_gridmaps.git -b devel cslibs_gridmaps
+  - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_gridmaps.git -b devel cslibs_gridmaps
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_math.git -b devel cslibs_math
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_utility.git -b devel cslibs_utility
   - cd /build/ws/
