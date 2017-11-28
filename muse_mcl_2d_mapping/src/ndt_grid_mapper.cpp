@@ -99,40 +99,38 @@ void NDTGridMapper::mapRequest()
         untouched_distributions_.clear();
         static_map_.stamp() = latest_time_;
 
-        const int chunk_step = static_cast<int>(dynamic_map_->getResolution() / sampling_resolution_);
+        const double bundle_resolution = dynamic_map_->getBundleResolution();
+        const int chunk_step = static_cast<int>(bundle_resolution / sampling_resolution_);
         const dynamic_map_t::index_t min_distribution_index = dynamic_map_->getMinDistributionIndex();
         const dynamic_map_t::index_t max_distribution_index = dynamic_map_->getMaxDistributionIndex();
 
+        auto sample = [](const dynamic_map_t::distribution_t *d,
+                         const cslibs_math_2d::Point2d &p) {
+            return d ? d->data().sampleNonNormalized(p) : 0.0;
+        };
+        auto sample_bundle = [&sample] (const dynamic_map_t::distribution_bundle_t* b,
+                                        const cslibs_math_2d::Point2d &p)
+        {
+            return 0.25 * (sample(b->at(0), p) +
+                           sample(b->at(1), p) +
+                           sample(b->at(2), p) +
+                           sample(b->at(3), p));
+        };
+
         for(int i = min_distribution_index[1] ; i <= max_distribution_index[1] ; ++i) {
             for(int j = min_distribution_index[0] ; j <= max_distribution_index[0] ; ++j) {
-                dynamic_map_t::distribution_container_t::handle_t distribution = dynamic_map_->getDistribution({{j,i}});
-                if(!distribution.empty()) {
+                dynamic_map_t::distribution_bundle_t* bundle = dynamic_map_->getDistributionBundle({{j,i}});
+                if(bundle) {
                     const int cx = (j - min_distribution_index[0]) * static_cast<int>(chunk_step);
                     const int cy = (i - min_distribution_index[1]) * static_cast<int>(chunk_step);
-
-
-                    cslibs_math_2d::Point2d ll(cx * sampling_resolution_, cy * sampling_resolution_);
-                    cslibs_math_2d::Point2d ru = ll + cslibs_math_2d::Point2d(chunk_step * sampling_resolution_);
-                    switch(distribution->getAction()) {
-                    case dynamic_map_t::distribution_container_t::ALLOCATED:
-                        allocated_distributions_.emplace_back(cslibs_math_2d::Box2d(origin * ll, origin * ru));
-                        break;
-                    case dynamic_map_t::distribution_container_t::TOUCHED:
-                        touched_distributions_.emplace_back(cslibs_math_2d::Box2d(origin * ll, origin * ru));
-                        break;
-                    default:
-                        untouched_distributions_.emplace_back(cslibs_math_2d::Box2d(origin * ll, origin * ru));
-                    }
-
                     for(int k = 0 ; k < chunk_step ; ++k) {
                         for(int l = 0 ; l < chunk_step ; ++l) {
-                            const cslibs_math_2d::Point2d p(j * resolution_ + l * sampling_resolution_,
-                                                            i * resolution_ + k * sampling_resolution_);
+                            const cslibs_math_2d::Point2d p(j * bundle_resolution + l * sampling_resolution_,
+                                                            i * bundle_resolution + k * sampling_resolution_);
                             static_map_.data()->at(static_cast<std::size_t>(cx + l),
-                                                   static_cast<std::size_t>(cy + k)) = distribution->data().sampleNonNormalized(p);
+                                                   static_cast<std::size_t>(cy + k)) = sample_bundle(bundle, p);
                         }
                     }
-                    distribution->setNone();
                 }
             }
         }
