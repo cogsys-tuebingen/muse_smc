@@ -29,17 +29,12 @@ private:
     std::string                     map_frame_;
 
     ros::Publisher                  pub_occ_map_;
-    ros::Publisher                  pub_occ_map_chunks_;
     ros::Duration                   pub_occ_interval_;
     ros::Time                       pub_occ_last_time_;
 
     ros::Publisher                  pub_ndt_map_;
-    ros::Publisher                  pub_ndt_distributions_;
     ros::Duration                   pub_ndt_interval_;
     ros::Time                       pub_ndt_last_time_;
-
-    std::size_t                     last_occ_chunk_count_;
-    std::size_t                     last_ndt_distribution_count_;
 
     double                          node_rate_;
 
@@ -53,15 +48,9 @@ private:
 
     void laserscan(const sensor_msgs::LaserScanConstPtr &msg);
 
-    void publishNDT(const OccupancyGridMapper::static_map_stamped_t &map,
-                    const OccupancyGridMapper::chunks_t &allocated_chunks,
-                    const OccupancyGridMapper::chunks_t &touched_chunks,
-                    const OccupancyGridMapper::chunks_t &untouched_chunks);
+    void publishNDT(const OccupancyGridMapper::static_map_stamped_t &map);
 
-    void publishOcc(const OccupancyGridMapper::static_map_stamped_t &map,
-                    const OccupancyGridMapper::chunks_t             &allocated_chunks,
-                    const OccupancyGridMapper::chunks_t             &touched_chunks,
-                    const OccupancyGridMapper::chunks_t             &untouched_chunks);
+    void publishOcc(const OccupancyGridMapper::static_map_stamped_t &map);
 
 
 

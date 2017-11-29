@@ -27,11 +27,8 @@ public:
     using dynamic_map_t             = cslibs_ndt::dynamic_maps::Gridmap;
     using static_map_t              = cslibs_gridmaps::static_maps::ProbabilityGridmap;
     using static_map_stamped_t      = cslibs_time::Stamped<static_map_t::Ptr>;
-    using chunks_t                  = std::vector<cslibs_math_2d::Box2d>;
-    using callback_t                    = delegate<void(const static_map_stamped_t &,
-                                                        const chunks_t &,
-                                                        const chunks_t &,
-                                                        const chunks_t &)>;
+    using callback_t                    = delegate<void(const static_map_stamped_t &)>;
+
     NDTGridMapper(const double resolution,
                   const double sampling_resolution,
                   const std::string &frame_id);
@@ -41,7 +38,6 @@ public:
     void insert(const Measurement2d &measurement);
 
     void get(static_map_stamped_t &map);
-    void get(static_map_stamped_t &map, chunks_t &chunks);
 
     void requestMap();
     void setCallback(const callback_t &cb);
@@ -58,9 +54,6 @@ protected:
     std::mutex                                   static_map_mutex_;
 
     static_map_stamped_t                         static_map_;
-    chunks_t                                     allocated_distributions_;
-    chunks_t                                     touched_distributions_;
-    chunks_t                                     untouched_distributions_;
 
     callback_t                                   callback_;
 

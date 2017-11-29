@@ -28,11 +28,7 @@ public:
     using static_map_t                  = cslibs_gridmaps::static_maps::ProbabilityGridmap;
     using static_map_stamped_t          = cslibs_time::Stamped<static_map_t::Ptr>;
     using model_t                       = cslibs_gridmaps::utility::InverseModel;
-    using chunks_t                      = std::vector<cslibs_math_2d::Box2d>;
-    using callback_t                    = delegate<void(const static_map_stamped_t &,
-                                                        const chunks_t &,
-                                                        const chunks_t &,
-                                                        const chunks_t &)>;
+    using callback_t                    = delegate<void(const static_map_stamped_t &)>;
 
     OccupancyGridMapper(const cslibs_gridmaps::utility::InverseModel &inverse_model,
                         const double resolution,
@@ -44,7 +40,6 @@ public:
     void insert(const Measurement2d &measurement);
 
     void get(static_map_stamped_t &map);
-    void get(static_map_stamped_t &map, chunks_t &chunks);
 
     void requestMap();
     void setCallback (const callback_t &cb);
@@ -61,9 +56,6 @@ protected:
     std::mutex                                   static_map_mutex_;
 
     static_map_stamped_t                         static_map_;
-    chunks_t                                     allocated_chunks_;
-    chunks_t                                     touched_chunks_;
-    chunks_t                                     untouched_chunks_;
 
     callback_t                                   callback_;
 

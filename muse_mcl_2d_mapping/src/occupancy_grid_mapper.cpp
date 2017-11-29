@@ -10,7 +10,7 @@ OccupancyGridMapper::OccupancyGridMapper(const cslibs_gridmaps::utility::Inverse
                                          const std::string                            &frame_id) :
     stop_(false),
     request_map_(false),
-    callback_([](const static_map_t::Ptr &, const chunks_t &, const chunks_t &, const chunks_t &){}),
+    callback_([](const static_map_t::Ptr &){}),
     inverse_model_(inverse_model),
     resolution_(resolution),
     chunk_resolution_(chunk_resolution),
@@ -43,20 +43,6 @@ void OccupancyGridMapper::get(static_map_stamped_t &map)
     notify_event_.notify_one();
     notify_static_map_.wait(static_map_lock);
     map = static_map_;
-}
-
-
-void OccupancyGridMapper::get(static_map_stamped_t &map,
-                              chunks_t             &chunks)
-{
-    request_map_ = true;
-    lock_t static_map_lock(static_map_mutex_);
-    notify_event_.notify_one();
-    notify_static_map_.wait(static_map_lock);
-    map = static_map_;
-    chunks = allocated_chunks_;
-    chunks.insert(chunks.end(), touched_chunks_.begin(), touched_chunks_.end());
-    chunks.insert(chunks.end(), untouched_chunks_.begin(), untouched_chunks_.end());
 }
 
 void OccupancyGridMapper::requestMap()
@@ -97,9 +83,7 @@ void OccupancyGridMapper::mapRequest()
                                                   dynamic_map_->getResolution(),
                                                   dynamic_map_->getHeight(),
                                                   dynamic_map_->getWidth()));
-        allocated_chunks_.clear();
-        touched_chunks_.clear();
-        untouched_chunks_.clear();
+
         static_map_.stamp() = latest_time_;
 
         const std::size_t chunk_step = dynamic_map_->getChunkSize();
@@ -111,32 +95,18 @@ void OccupancyGridMapper::mapRequest()
                 if(chunk != nullptr) {
                     const std::size_t cx = static_cast<std::size_t>((j - min_chunk_index[0]) * static_cast<int>(chunk_step));
                     const std::size_t cy = static_cast<std::size_t>((i - min_chunk_index[1]) * static_cast<int>(chunk_step));
-
-                    cslibs_math_2d::Point2d ll(cx * resolution_, cy * resolution_);
-                    cslibs_math_2d::Point2d ru = ll + cslibs_math_2d::Point2d(chunk_step * resolution_);
-                    switch(chunk->getAction()) {
-                    case dynamic_map_t::chunk_t::ALLOCATED:
-                        allocated_chunks_.emplace_back(cslibs_math_2d::Box2d(origin * ll, origin * ru));
-                        break;
-                    case dynamic_map_t::chunk_t::TOUCHED:
-                        touched_chunks_.emplace_back(cslibs_math_2d::Box2d(origin * ll, origin * ru));
-                        break;
-                    default:
-                        untouched_chunks_.emplace_back(cslibs_math_2d::Box2d(origin * ll, origin * ru));
-                    }
                     for(std::size_t k = 0 ; k < chunk_step ; ++k) {
                         for(std::size_t l = 0 ; l < chunk_step ; ++l) {
                             static_map_.data()->at(cx + l, cy + k) = chunk->at(l,k);
                         }
                     }
-                    chunk->setNone();
                 }
             }
         }
 
 
         cslibs_gridmaps::static_maps::conversion::LogOdds::from(static_map_, static_map_);
-        callback_(static_map_, allocated_chunks_, touched_chunks_, untouched_chunks_);
+        callback_(static_map_);
     }
     request_map_ = false;
     notify_static_map_.notify_one();
@@ -170,7 +140,6 @@ void OccupancyGridMapper::process(const Measurement2d &m)
             }
             *b = inverse_model_.updateOccupied(*b);
         }
-
     }
 }
 }

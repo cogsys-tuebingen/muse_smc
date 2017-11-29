@@ -6,7 +6,7 @@ NDTGridMapper::NDTGridMapper(const double resolution,
                              const std::string &frame_id) :
     stop_(false),
     request_map_(false),
-    callback_([](const static_map_t::Ptr &, const chunks_t &, const chunks_t &, const chunks_t &){}),
+    callback_([](const static_map_t::Ptr &){}),
     resolution_(resolution),
     sampling_resolution_(sampling_resolution),
     frame_id_(frame_id)
@@ -37,20 +37,6 @@ void NDTGridMapper::get(static_map_stamped_t &map)
     notify_event_.notify_one();
     notify_static_map_.wait(static_map_lock);
     map = static_map_;
-}
-
-
-void NDTGridMapper::get(static_map_stamped_t &map,
-                        chunks_t &chunks)
-{
-    request_map_ = true;
-    lock_t static_map_lock(static_map_mutex_);
-    notify_event_.notify_one();
-    notify_static_map_.wait(static_map_lock);
-    map = static_map_;
-    chunks = allocated_distributions_;
-    chunks.insert(chunks.end(), touched_distributions_.begin(), touched_distributions_.end());
-    chunks.insert(chunks.end(), untouched_distributions_.begin(), untouched_distributions_.end());
 }
 
 void NDTGridMapper::requestMap()
@@ -94,9 +80,6 @@ void NDTGridMapper::mapRequest()
                                                   sampling_resolution_,
                                                   height,
                                                   width));
-        allocated_distributions_.clear();
-        touched_distributions_.clear();
-        untouched_distributions_.clear();
         static_map_.stamp() = latest_time_;
 
         const double bundle_resolution = dynamic_map_->getBundleResolution();
@@ -135,7 +118,7 @@ void NDTGridMapper::mapRequest()
             }
         }
         cslibs_gridmaps::static_maps::algorithms::normalize<double>(*static_map_.data());
-        callback_(static_map_, allocated_distributions_, touched_distributions_, untouched_distributions_);
+        callback_(static_map_);
     }
     request_map_ = false;
     notify_static_map_.notify_one();
