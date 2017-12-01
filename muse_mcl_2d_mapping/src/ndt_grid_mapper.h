@@ -13,7 +13,7 @@
 #include <cslibs_gridmaps/static_maps/algorithms/normalize.hpp>
 #include <cslibs_gridmaps/static_maps/probability_gridmap.h>
 #include <cslibs_gridmaps/utility/delegate.hpp>
-#include <cslibs_ndt/dynamic_maps/gridmap.hpp>
+#include <cslibs_ndt_2d/dynamic_maps/gridmap.hpp>
 #include <cslibs_time/stamped.hpp>
 #include <cslibs_math_2d/linear/pointcloud.hpp>
 #include <cslibs_math_2d/linear/box.hpp>
@@ -24,7 +24,7 @@ class NDTGridMapper
 public:
     using Ptr                       = std::shared_ptr<NDTGridMapper>;
     using lock_t                    = std::unique_lock<std::mutex>;
-    using dynamic_map_t             = cslibs_ndt::dynamic_maps::Gridmap;
+    using dynamic_map_t             = cslibs_ndt_2d::dynamic_maps::Gridmap;
     using static_map_t              = cslibs_gridmaps::static_maps::ProbabilityGridmap;
     using static_map_stamped_t      = cslibs_time::Stamped<static_map_t::Ptr>;
     using callback_t                    = delegate<void(const static_map_stamped_t &)>;

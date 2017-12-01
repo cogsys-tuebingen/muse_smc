@@ -134,7 +134,7 @@ void OccupancyGridMapper::process(const Measurement2d &m)
                                                    end_point);
 
             while(!b.done()) {
-                double l = b.length2() > resolution2 ? inverse_model_.updateFree(*b) : inverse_model_.updateOccupied(*b);
+                double l = b.distance2() > resolution2 ? inverse_model_.updateFree(*b) : inverse_model_.updateOccupied(*b);
                 *b = l;
                 ++b;
             }

@@ -9,7 +9,7 @@ project(muse_mcl_2d_mapping)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   cslibs_gridmaps
-  cslibs_ndt
+  cslibs_ndt_2d
   cslibs_utility
   muse_mcl_2d_ndt
   muse_mcl_2d_laser
