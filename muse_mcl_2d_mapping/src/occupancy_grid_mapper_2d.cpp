@@ -1,10 +1,10 @@
-#include "occupancy_grid_mapper.h"
+#include "occupancy_grid_mapper_2d.h"
 
 #include <cslibs_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
 #include <cslibs_math/common/array.hpp>
 
 namespace muse_mcl_2d_mapping {
-OccupancyGridMapper::OccupancyGridMapper(const cslibs_gridmaps::utility::InverseModel &inverse_model,
+OccupancyGridMapper2d::OccupancyGridMapper2d(const cslibs_gridmaps::utility::InverseModel &inverse_model,
                                          const double                                  resolution,
                                          const double                                  chunk_resolution,
                                          const std::string                            &frame_id) :
@@ -21,7 +21,7 @@ OccupancyGridMapper::OccupancyGridMapper(const cslibs_gridmaps::utility::Inverse
 
 }
 
-OccupancyGridMapper::~OccupancyGridMapper()
+OccupancyGridMapper2d::~OccupancyGridMapper2d()
 {
     stop_ = true;
     notify_event_.notify_one();
@@ -30,13 +30,13 @@ OccupancyGridMapper::~OccupancyGridMapper()
 }
 
 
-void OccupancyGridMapper::insert(const Measurement2d &measurement)
+void OccupancyGridMapper2d::insert(const Measurement2d &measurement)
 {
     q_.emplace(measurement);
     notify_event_.notify_one();
 }
 
-void OccupancyGridMapper::get(static_map_stamped_t &map)
+void OccupancyGridMapper2d::get(static_map_stamped_t &map)
 {
     request_map_ = true;
     lock_t static_map_lock(static_map_mutex_);
@@ -45,19 +45,19 @@ void OccupancyGridMapper::get(static_map_stamped_t &map)
     map = static_map_;
 }
 
-void OccupancyGridMapper::requestMap()
+void OccupancyGridMapper2d::requestMap()
 {
     request_map_ = true;
 }
 
-void OccupancyGridMapper::setCallback(const callback_t &cb)
+void OccupancyGridMapper2d::setCallback(const callback_t &cb)
 {
     if(!request_map_) {
         callback_ = cb;
     }
 }
 
-void OccupancyGridMapper::loop()
+void OccupancyGridMapper2d::loop()
 {
     lock_t notify_event_mutex_lock(notify_event_mutex_);
     while(!stop_) {
@@ -75,7 +75,7 @@ void OccupancyGridMapper::loop()
     }
 }
 
-void OccupancyGridMapper::mapRequest()
+void OccupancyGridMapper2d::mapRequest()
 {
     if(request_map_ && dynamic_map_) {
         cslibs_math_2d::Transform2d origin = dynamic_map_->getOrigin();
@@ -112,7 +112,7 @@ void OccupancyGridMapper::mapRequest()
     notify_static_map_.notify_one();
 }
 
-void OccupancyGridMapper::process(const Measurement2d &m)
+void OccupancyGridMapper2d::process(const Measurement2d &m)
 {
     if(!dynamic_map_) {
         dynamic_map_.reset(new dynamic_map_t(cslibs_math_2d::Transform2d::identity(),

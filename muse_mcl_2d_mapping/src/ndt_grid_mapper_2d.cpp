@@ -1,7 +1,7 @@
-#include "ndt_grid_mapper.h"
+#include "ndt_grid_mapper_2d.h"
 
 namespace muse_mcl_2d_mapping {
-NDTGridMapper::NDTGridMapper(const double resolution,
+NDTGridMapper2d::NDTGridMapper2d(const double resolution,
                              const double sampling_resolution,
                              const std::string &frame_id) :
     stop_(false),
@@ -15,7 +15,7 @@ NDTGridMapper::NDTGridMapper(const double resolution,
     thread_ = std::thread([this](){loop();});
 }
 
-NDTGridMapper::~NDTGridMapper()
+NDTGridMapper2d::~NDTGridMapper2d()
 {
     stop_ = true;
     notify_event_.notify_one();
@@ -24,13 +24,13 @@ NDTGridMapper::~NDTGridMapper()
 }
 
 
-void NDTGridMapper::insert(const Measurement2d &measurement)
+void NDTGridMapper2d::insert(const Measurement2d &measurement)
 {
     q_.emplace(measurement);
     notify_event_.notify_one();
 }
 
-void NDTGridMapper::get(static_map_stamped_t &map)
+void NDTGridMapper2d::get(static_map_stamped_t &map)
 {
     request_map_ = true;
     lock_t static_map_lock(static_map_mutex_);
@@ -39,19 +39,19 @@ void NDTGridMapper::get(static_map_stamped_t &map)
     map = static_map_;
 }
 
-void NDTGridMapper::requestMap()
+void NDTGridMapper2d::requestMap()
 {
     request_map_ = true;
 }
 
-void NDTGridMapper::setCallback(const callback_t &cb)
+void NDTGridMapper2d::setCallback(const callback_t &cb)
 {
     if(!request_map_) {
         callback_ = cb;
     }
 }
 
-void NDTGridMapper::loop()
+void NDTGridMapper2d::loop()
 {
     lock_t notify_event_mutex_lock(notify_event_mutex_);
     while(!stop_) {
@@ -69,7 +69,7 @@ void NDTGridMapper::loop()
     }
 }
 
-void NDTGridMapper::mapRequest()
+void NDTGridMapper2d::mapRequest()
 {
     if(request_map_ && dynamic_map_) {
         cslibs_math_2d::Transform2d origin = dynamic_map_->getOrigin();
@@ -124,7 +124,7 @@ void NDTGridMapper::mapRequest()
     notify_static_map_.notify_one();
 }
 
-void NDTGridMapper::process(const Measurement2d &m)
+void NDTGridMapper2d::process(const Measurement2d &m)
 {
     if(!dynamic_map_) {
         dynamic_map_.reset(new dynamic_map_t(cslibs_math_2d::Transform2d::identity(),

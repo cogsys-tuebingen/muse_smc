@@ -3,6 +3,8 @@ project(muse_mcl_2d_mapping)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
+set(CMAKE_BUILD_TYPE Release)
+add_compile_options(-Ofast)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -10,34 +12,60 @@ project(muse_mcl_2d_mapping)
 find_package(catkin REQUIRED COMPONENTS
   cslibs_gridmaps
   cslibs_ndt_2d
+  cslibs_ndt_3d
   cslibs_utility
   muse_mcl_2d_ndt
   muse_mcl_2d_laser
   nav_msgs
   muse_smc
   roscpp
+  pcl_ros
 )
 find_package(OpenCV REQUIRED)
+find_package(pcl_ros REQUIRED)
+find_package(PCL REQUIRED COMPONENTS common filters segmentation io)
 
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES muse_mcl_2d_mapping
-#  CATKIN_DEPENDS muse_mcl_2d_gridmaps muse_mcl_2d_ndt
-#  DEPENDS system_lib
+  #INCLUDE_DIRS include
+  #LIBRARIES muse_mcl_2d_mapping
+  #CATKIN_DEPENDS cslibs_ndt_3d muse_mcl_2d_gridmaps muse_mcl_2d_ndt
+  #DEPENDS system_lib
 )
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
+  ${pcl_ros_INCLUDE_DIRS}
 )
 
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions (${PCL_DEFINITIONS})
+
 add_executable(${PROJECT_NAME}_ocm_node
-    src/occupancy_grid_mapper.cpp
-    src/ndt_grid_mapper.cpp
-    src/occupancy_grid_mapper_node.cpp
+    src/occupancy_grid_mapper_2d.cpp
+    src/ndt_grid_mapper_2d.cpp
+    src/grid_mapper_node_2d.cpp
+)
+
+add_executable(${PROJECT_NAME}_3d_ocm_node
+    src/ndt_grid_mapper_3d.cpp
+    src/ndt_grid_mapper_2d.cpp
+    src/occupancy_grid_mapper_2d.cpp
+    src/grid_mapper_node.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}_ocm_node
     ${catkin_LIBRARIES}
     ${OpenCV_LIBRARIES}
+)
+
+target_link_libraries(${PROJECT_NAME}_3d_ocm_node
+    ${catkin_LIBRARIES}
+    ${OpenCV_LIBRARIES}
+    ${PCL_LIBRARIES}
+    ${PCL_COMMON_LIBRARIES}
+    ${PCL_FILTERS_LIBRARIES}
+    ${PCL_SEGMENTATION_LIBRARIES}
+    ${PCL_IO_LIBRARIES}
 )

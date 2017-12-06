@@ -1,5 +1,5 @@
-#ifndef NDT_MAPPER_H
-#define NDT_MAPPER_H
+#ifndef OCCUPANCY_GRID_MAPPER_2D_H
+#define OCCUPANCY_GRID_MAPPER_2D_H
 
 #include <atomic>
 #include <thread>
@@ -10,37 +10,39 @@
 
 #include "measurement_2d.hpp"
 
-#include <cslibs_gridmaps/static_maps/algorithms/normalize.hpp>
 #include <cslibs_gridmaps/static_maps/probability_gridmap.h>
+#include <cslibs_gridmaps/dynamic_maps/probability_gridmap.h>
+#include <cslibs_gridmaps/utility/inverse_model.hpp>
 #include <cslibs_gridmaps/utility/delegate.hpp>
-#include <cslibs_ndt_2d/dynamic_maps/gridmap.hpp>
 #include <cslibs_time/stamped.hpp>
 #include <cslibs_math_2d/linear/pointcloud.hpp>
 #include <cslibs_math_2d/linear/box.hpp>
 
 namespace muse_mcl_2d_mapping {
-class NDTGridMapper
+class OccupancyGridMapper2d
 {
 public:
-    using Ptr                       = std::shared_ptr<NDTGridMapper>;
-    using lock_t                    = std::unique_lock<std::mutex>;
-    using dynamic_map_t             = cslibs_ndt_2d::dynamic_maps::Gridmap;
-    using static_map_t              = cslibs_gridmaps::static_maps::ProbabilityGridmap;
-    using static_map_stamped_t      = cslibs_time::Stamped<static_map_t::Ptr>;
+    using Ptr                           = std::shared_ptr<OccupancyGridMapper2d>;
+    using lock_t                        = std::unique_lock<std::mutex>;
+    using dynamic_map_t                 = cslibs_gridmaps::dynamic_maps::ProbabilityGridmap;
+    using static_map_t                  = cslibs_gridmaps::static_maps::ProbabilityGridmap;
+    using static_map_stamped_t          = cslibs_time::Stamped<static_map_t::Ptr>;
+    using model_t                       = cslibs_gridmaps::utility::InverseModel;
     using callback_t                    = delegate<void(const static_map_stamped_t &)>;
 
-    NDTGridMapper(const double resolution,
-                  const double sampling_resolution,
-                  const std::string &frame_id);
+    OccupancyGridMapper2d(const cslibs_gridmaps::utility::InverseModel &inverse_model,
+                        const double resolution,
+                        const double chunk_resolution,
+                        const std::string &frame_id);
 
-    virtual ~NDTGridMapper();
+    virtual ~OccupancyGridMapper2d();
 
     void insert(const Measurement2d &measurement);
 
     void get(static_map_stamped_t &map);
 
     void requestMap();
-    void setCallback(const callback_t &cb);
+    void setCallback (const callback_t &cb);
 
 protected:
     cslibs_utility::synchronized::queue<Measurement2d> q_;
@@ -59,16 +61,16 @@ protected:
 
     cslibs_time::Time                            latest_time_;
     dynamic_map_t::Ptr                           dynamic_map_;
+    cslibs_gridmaps::utility::InverseModel       inverse_model_;
     double                                       resolution_;
-    double                                       sampling_resolution_;
+    double                                       chunk_resolution_;
     std::string                                  frame_id_;
 
     void loop();
     void mapRequest();
     void process(const Measurement2d &points);
 
-
 };
 }
 
-#endif // NDT_MAPPER_H
+#endif // OCCUPANCY_GRID_MAPPER_2D_H

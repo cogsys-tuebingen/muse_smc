@@ -1,4 +1,4 @@
-#include "occupancy_grid_mapper_node.h"
+#include "grid_mapper_node_2d.h"
 
 #include <cslibs_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
 #include <muse_mcl_2d_laser/convert.hpp>
@@ -7,12 +7,12 @@
 #include <visualization_msgs/MarkerArray.h>
 
 namespace muse_mcl_2d_mapping {
-OccupancyGridMapperNode::OccupancyGridMapperNode() :
+GridMapperNode2d::GridMapperNode2d() :
     nh_("~")
 {
 }
 
-bool OccupancyGridMapperNode::setup()
+bool GridMapperNode2d::setup()
 {
     ROS_INFO_STREAM("Setting up subscribers");
     const int           subscriber_queue_size       = nh_.param<int>("subscriber_queue_size", 1);
@@ -52,20 +52,20 @@ bool OccupancyGridMapperNode::setup()
 
 
     cslibs_gridmaps::utility::InverseModel inverse_model(occ_map_prob_prior, occ_map_prob_free, occ_map_prob_occ);
-    occ_mapper_.reset(new OccupancyGridMapper(inverse_model,
+    occ_mapper_.reset(new OccupancyGridMapper2d(inverse_model,
                                               occ_grid_resolution,
                                               occ_grid_chunk_resolution,
                                               map_frame_));
-    occ_mapper_->setCallback(OccupancyGridMapper::callback_t::from<OccupancyGridMapperNode, &OccupancyGridMapperNode::publishOcc>(this));
+    occ_mapper_->setCallback(OccupancyGridMapper2d::callback_t::from<GridMapperNode2d, &GridMapperNode2d::publishOcc>(this));
 
-    ndt_mapper_.reset(new NDTGridMapper(ndt_grid_resolution, ndt_sampling_resolution, map_frame_));
-    ndt_mapper_->setCallback(OccupancyGridMapper::callback_t::from<OccupancyGridMapperNode, &OccupancyGridMapperNode::publishNDT>(this));
+    ndt_mapper_.reset(new NDTGridMapper2d(ndt_grid_resolution, ndt_sampling_resolution, map_frame_));
+    ndt_mapper_->setCallback(OccupancyGridMapper2d::callback_t::from<GridMapperNode2d, &GridMapperNode2d::publishNDT>(this));
 
     for(const auto &l : lasers) {
         ROS_INFO_STREAM("Subscribing to laser '" << l << "'");
         sub_lasers_.emplace_back(nh_.subscribe(l,
                                                static_cast<unsigned int>(subscriber_queue_size),
-                                               &OccupancyGridMapperNode::laserscan,
+                                               &GridMapperNode2d::laserscan,
                                                this));
     }
     pub_occ_map_            = nh_.advertise<nav_msgs::OccupancyGrid>(occ_map_topic, 1);
@@ -82,7 +82,7 @@ bool OccupancyGridMapperNode::setup()
     return true;
 }
 
-void OccupancyGridMapperNode::run()
+void GridMapperNode2d::run()
 {
     if(node_rate_ == 0.0) {
         while(ros::ok()) {
@@ -115,7 +115,7 @@ void OccupancyGridMapperNode::run()
 
 }
 
-void OccupancyGridMapperNode::laserscan(const sensor_msgs::LaserScanConstPtr &msg)
+void GridMapperNode2d::laserscan(const sensor_msgs::LaserScanConstPtr &msg)
 {
     muse_mcl_2d_laser::LaserScan2D::Ptr laserscan;
     if(undistortion_ &&
@@ -144,7 +144,7 @@ void OccupancyGridMapperNode::laserscan(const sensor_msgs::LaserScanConstPtr &ms
     }
 }
 
-void OccupancyGridMapperNode::publishNDT(const OccupancyGridMapper::static_map_stamped_t &map)
+void GridMapperNode2d::publishNDT(const OccupancyGridMapper2d::static_map_stamped_t &map)
 {
     if(map.data()) {
         nav_msgs::OccupancyGrid::Ptr msg;
@@ -156,7 +156,7 @@ void OccupancyGridMapperNode::publishNDT(const OccupancyGridMapper::static_map_s
     }
 }
 
-void OccupancyGridMapperNode::publishOcc(const OccupancyGridMapper::static_map_stamped_t &map)
+void GridMapperNode2d::publishOcc(const OccupancyGridMapper2d::static_map_stamped_t &map)
 {
     if(map.data()) {
         nav_msgs::OccupancyGrid::Ptr msg;
@@ -173,7 +173,7 @@ void OccupancyGridMapperNode::publishOcc(const OccupancyGridMapper::static_map_s
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "muse_mcl_2d_mapping_ocm_node");
-    muse_mcl_2d_mapping::OccupancyGridMapperNode instance;
+    muse_mcl_2d_mapping::GridMapperNode2d instance;
     instance.setup();
     instance.run();
 

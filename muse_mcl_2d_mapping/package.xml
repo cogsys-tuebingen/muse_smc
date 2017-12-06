@@ -14,10 +14,12 @@
   <depend>muse_mcl_2d_laser</depend>
   <depend>cslibs_gridmaps</depend>
   <depend>cslibs_ndt_2d</depend>
+  <depend>cslibs_ndt_3d</depend>
   <depend>cslibs_utility</depend>
   <depend>nav_msgs</depend>
   <depend>muse_smc</depend>
   <depend>roscpp</depend>
+  <depend>pcl_ros</depend>
 
 <export>
   </export>

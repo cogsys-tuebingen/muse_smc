@@ -1,19 +1,19 @@
-#ifndef OCCUPANCY_GRID_MAPPER_NODE_H
-#define OCCUPANCY_GRID_MAPPER_NODE_H
+#ifndef GRID_MAPPER_NODE_H
+#define GRID_MAPPER_NODE_H
 
 #include <ros/ros.h>
 #include <sensor_msgs/LaserScan.h>
 
-#include "occupancy_grid_mapper.h"
-#include "ndt_grid_mapper.h"
+#include "occupancy_grid_mapper_2d.h"
+#include "ndt_grid_mapper_2d.h"
 
 #include <muse_mcl_2d/tf/tf_provider.hpp>
 
 namespace muse_mcl_2d_mapping {
-class OccupancyGridMapperNode
+class GridMapperNode2d
 {
 public:
-    OccupancyGridMapperNode();
+    GridMapperNode2d();
 
     bool setup();
     void run();
@@ -24,8 +24,8 @@ private:
     ros::NodeHandle                 nh_;
     std::vector<ros::Subscriber>    sub_lasers_;
     muse_mcl_2d::TFProvider::Ptr    tf_;
-    OccupancyGridMapper::Ptr        occ_mapper_;
-    NDTGridMapper::Ptr              ndt_mapper_;
+    OccupancyGridMapper2d::Ptr      occ_mapper_;
+    NDTGridMapper2d::Ptr            ndt_mapper_;
     std::string                     map_frame_;
 
     ros::Publisher                  pub_occ_map_;
@@ -48,9 +48,9 @@ private:
 
     void laserscan(const sensor_msgs::LaserScanConstPtr &msg);
 
-    void publishNDT(const OccupancyGridMapper::static_map_stamped_t &map);
+    void publishNDT(const OccupancyGridMapper2d::static_map_stamped_t &map);
 
-    void publishOcc(const OccupancyGridMapper::static_map_stamped_t &map);
+    void publishOcc(const OccupancyGridMapper2d::static_map_stamped_t &map);
 
 
 
@@ -58,4 +58,4 @@ private:
 };
 }
 
-#endif // OCCUPANCY_GRID_MAPPER_NODE_H
+#endif // GRID_MAPPER_NODE_H
