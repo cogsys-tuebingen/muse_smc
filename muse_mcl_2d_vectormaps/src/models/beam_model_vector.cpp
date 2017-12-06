@@ -97,7 +97,7 @@ void BeamModelVector::apply(const data_t::ConstPtr          &data,
         cslibs_vectormaps::VectorMap::Vector vectormap_ray;
         vectormap_ray.first.x(m_T_l.tx());
         vectormap_ray.first.y(m_T_l.ty());
-        oriented_grid_vector_map.cellIndeces(vectormap_ray.first, vrow, vcol);
+        oriented_grid_vector_map.cellIndices(vectormap_ray.first, vrow, vcol);
         /// <--- vectormap specific
 
         for(std::size_t i = 0; i < rays_size; i += ray_step) {

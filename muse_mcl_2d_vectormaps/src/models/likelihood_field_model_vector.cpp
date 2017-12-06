@@ -63,7 +63,7 @@ void LikelihoodFieldModelVector::apply(const data_t::ConstPtr          &data,
 
         /// <--- vectormap specific
         unsigned int vrow, vcol;
-        oriented_grid_vector_map.cellIndeces(m_T_l.tx(), m_T_l.ty(), vrow, vcol);
+        oriented_grid_vector_map.cellIndices(m_T_l.tx(), m_T_l.ty(), vrow, vcol);
         /// <--- vectormap specific
 
         for(std::size_t i = 0; i < rays_size; i += ray_step) {
