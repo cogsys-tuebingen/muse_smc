@@ -11,9 +11,9 @@ struct Measurement {
     const transform_t                                             origin;
     const cslibs_time::Time                                       stamp;
 
-    explicit Measurement(const typename cslibs_math::linear::Pointcloud<point_t>::Ptr &points,
-                         const transform_t       &origin,
-                         const cslibs_time::Time &stamp) :
+    inline explicit Measurement(const typename cslibs_math::linear::Pointcloud<point_t>::Ptr &points,
+                                const transform_t       &origin,
+                                const cslibs_time::Time &stamp) :
         points(points),
         origin(origin),
         stamp(stamp)
