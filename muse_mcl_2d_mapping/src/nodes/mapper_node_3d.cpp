@@ -1,14 +1,14 @@
-#include "grid_mapper_node.h"
+#include "mapper_node_3d.h"
 
 #include <pcl/filters/filter.h>
 #include <cslibs_time/time.hpp>
 
 namespace muse_mcl_mapping {
-GridMapperNode::GridMapperNode() :
+MapperNode3d::MapperNode3d() :
     nh_("~")
 { }
 
-bool GridMapperNode::setup()
+bool MapperNode3d::setup()
 {
     ROS_INFO_STREAM("Setting up subscribers");
     const int           subscriber_queue_size       = nh_.param<int>("subscriber_queue_size", 1);
@@ -76,7 +76,7 @@ bool GridMapperNode::setup()
         ROS_INFO_STREAM("Subscribing to 2d laser '" << l << "'");
         sub_lasers_.emplace_back(nh_.subscribe(l,
                                                static_cast<unsigned int>(subscriber_queue_size),
-                                               &GridMapperNode::laserscan2d,
+                                               &MapperNode3d::laserscan2d,
                                                this));
     }
 
@@ -84,7 +84,7 @@ bool GridMapperNode::setup()
         ROS_INFO_STREAM("Subscribing to 3d laser '" << l << "'");
         sub_lasers_.emplace_back(nh_.subscribe(l,
                                                static_cast<unsigned int>(subscriber_queue_size),
-                                               &GridMapperNode::laserscan3d,
+                                               &MapperNode3d::laserscan3d,
                                                this));
     }
 
@@ -99,7 +99,7 @@ bool GridMapperNode::setup()
     return true;
 }
 
-void GridMapperNode::run()
+void MapperNode3d::run()
 {
     if(node_rate_ == 0.0) {
         while(ros::ok()) {
@@ -122,7 +122,7 @@ void GridMapperNode::run()
     }
 }
 
-void GridMapperNode::laserscan2d(
+void MapperNode3d::laserscan2d(
         const sensor_msgs::LaserScanConstPtr & msg)
 {
     muse_mcl_2d_laser::LaserScan2D::Ptr laserscan;
@@ -137,7 +137,7 @@ void GridMapperNode::laserscan2d(
     insert(ndt_2d_mapper_, laserscan);
 }
 
-void GridMapperNode::laserscan3d(
+void MapperNode3d::laserscan3d(
         const sensor_msgs::PointCloud2ConstPtr & msg)
 {
     cslibs_time::Time now = cslibs_time::Time::now();
@@ -156,7 +156,7 @@ void GridMapperNode::laserscan3d(
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "muse_mcl_2d_mapping_3d_ocm_node");
-    muse_mcl_mapping::GridMapperNode instance;
+    muse_mcl_mapping::MapperNode3d instance;
     instance.setup();
     instance.run();
 

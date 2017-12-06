@@ -1,4 +1,4 @@
-#include "grid_mapper_node_2d.h"
+#include "mapper_node_2d.h"
 
 #include <cslibs_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
 #include <muse_mcl_2d_laser/convert.hpp>
@@ -7,12 +7,12 @@
 #include <visualization_msgs/MarkerArray.h>
 
 namespace muse_mcl_2d_mapping {
-GridMapperNode2d::GridMapperNode2d() :
+MapperNode2d::MapperNode2d() :
     nh_("~")
 {
 }
 
-bool GridMapperNode2d::setup()
+bool MapperNode2d::setup()
 {
     ROS_INFO_STREAM("Setting up subscribers");
     const int           subscriber_queue_size       = nh_.param<int>("subscriber_queue_size", 1);
@@ -56,16 +56,16 @@ bool GridMapperNode2d::setup()
                                               occ_grid_resolution,
                                               occ_grid_chunk_resolution,
                                               map_frame_));
-    occ_mapper_->setCallback(OccupancyGridMapper2d::callback_t::from<GridMapperNode2d, &GridMapperNode2d::publishOcc>(this));
+    occ_mapper_->setCallback(OccupancyGridMapper2d::callback_t::from<MapperNode2d, &MapperNode2d::publishOcc>(this));
 
     ndt_mapper_.reset(new NDTGridMapper2d(ndt_grid_resolution, ndt_sampling_resolution, map_frame_));
-    ndt_mapper_->setCallback(OccupancyGridMapper2d::callback_t::from<GridMapperNode2d, &GridMapperNode2d::publishNDT>(this));
+    ndt_mapper_->setCallback(OccupancyGridMapper2d::callback_t::from<MapperNode2d, &MapperNode2d::publishNDT>(this));
 
     for(const auto &l : lasers) {
         ROS_INFO_STREAM("Subscribing to laser '" << l << "'");
         sub_lasers_.emplace_back(nh_.subscribe(l,
                                                static_cast<unsigned int>(subscriber_queue_size),
-                                               &GridMapperNode2d::laserscan,
+                                               &MapperNode2d::laserscan,
                                                this));
     }
     pub_occ_map_            = nh_.advertise<nav_msgs::OccupancyGrid>(occ_map_topic, 1);
@@ -82,7 +82,7 @@ bool GridMapperNode2d::setup()
     return true;
 }
 
-void GridMapperNode2d::run()
+void MapperNode2d::run()
 {
     if(node_rate_ == 0.0) {
         while(ros::ok()) {
@@ -115,7 +115,7 @@ void GridMapperNode2d::run()
 
 }
 
-void GridMapperNode2d::laserscan(const sensor_msgs::LaserScanConstPtr &msg)
+void MapperNode2d::laserscan(const sensor_msgs::LaserScanConstPtr &msg)
 {
     muse_mcl_2d_laser::LaserScan2D::Ptr laserscan;
     if(undistortion_ &&
@@ -134,7 +134,7 @@ void GridMapperNode2d::laserscan(const sensor_msgs::LaserScanConstPtr &msg)
                             tf_timeout_)) {
 
         cslibs_math_2d::Pointcloud2d::Ptr points(new cslibs_math_2d::Pointcloud2d);
-        Measurement2d  m(points, o_T_l, cslibs_time::Time(laserscan->getTimeFrame().end));
+        measurement_t  m(points, o_T_l, cslibs_time::Time(laserscan->getTimeFrame().end));
         for(auto it = laserscan->begin() ; it != laserscan->end() ; ++it) {
             if(it->valid())
                 points->insert(it->point);
@@ -144,7 +144,7 @@ void GridMapperNode2d::laserscan(const sensor_msgs::LaserScanConstPtr &msg)
     }
 }
 
-void GridMapperNode2d::publishNDT(const OccupancyGridMapper2d::static_map_stamped_t &map)
+void MapperNode2d::publishNDT(const OccupancyGridMapper2d::static_map_stamped_t &map)
 {
     if(map.data()) {
         nav_msgs::OccupancyGrid::Ptr msg;
@@ -156,7 +156,7 @@ void GridMapperNode2d::publishNDT(const OccupancyGridMapper2d::static_map_stampe
     }
 }
 
-void GridMapperNode2d::publishOcc(const OccupancyGridMapper2d::static_map_stamped_t &map)
+void MapperNode2d::publishOcc(const OccupancyGridMapper2d::static_map_stamped_t &map)
 {
     if(map.data()) {
         nav_msgs::OccupancyGrid::Ptr msg;
@@ -173,7 +173,7 @@ void GridMapperNode2d::publishOcc(const OccupancyGridMapper2d::static_map_stampe
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "muse_mcl_2d_mapping_ocm_node");
-    muse_mcl_2d_mapping::GridMapperNode2d instance;
+    muse_mcl_2d_mapping::MapperNode2d instance;
     instance.setup();
     instance.run();
 

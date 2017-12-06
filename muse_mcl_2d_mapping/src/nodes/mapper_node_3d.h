@@ -6,9 +6,9 @@
 #include <nav_msgs/OccupancyGrid.h>
 #include <pcl_conversions/pcl_conversions.h>
 
-#include "occupancy_grid_mapper_2d.h"
-#include "ndt_grid_mapper_2d.h"
-#include "ndt_grid_mapper_3d.h"
+#include <muse_mcl_2d_mapping/mapper/ndt_grid_mapper_2d.h>
+#include <muse_mcl_2d_mapping/mapper/ndt_grid_mapper_3d.h>
+#include <muse_mcl_2d_mapping/mapper/occupancy_grid_mapper_2d.h>
 
 #include <cslibs_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
 #include <muse_mcl_2d/tf/tf_provider.hpp>
@@ -16,15 +16,22 @@
 #include <cslibs_math_3d/conversion/tf.hpp>
 
 namespace muse_mcl_mapping {
-class GridMapperNode
+class MapperNode3d
 {    
 private:
-    using interval_t   = std::array<double, 2>;
-    using occ_map_2d_t = muse_mcl_2d_mapping::OccupancyGridMapper2d;
-    using ndt_map_2d_t = muse_mcl_2d_mapping::NDTGridMapper2d;
-    using ndt_map_3d_t = muse_mcl_3d_mapping::NDTGridMapper3d;
-    using msg_2d_t     = nav_msgs::OccupancyGrid;
-    using msg_3d_t     = sensor_msgs::PointCloud2;
+    using interval_t        = std::array<double, 2>;
+    using occ_map_2d_t      = muse_mcl_2d_mapping::OccupancyGridMapper2d;
+    using ndt_map_2d_t      = muse_mcl_2d_mapping::NDTGridMapper2d;
+    using ndt_map_3d_t      = muse_mcl_3d_mapping::NDTGridMapper3d;
+    using msg_2d_t          = nav_msgs::OccupancyGrid;
+    using msg_3d_t          = sensor_msgs::PointCloud2;
+    using point_2d_t        = cslibs_math_2d::Point2d;
+    using transform_2d_t    = cslibs_math_2d::Transform2d;
+    using measurement_2d_t  = muse_mcl_2d_mapping::Measurement<point_2d_t, transform_2d_t>;
+    using point_3d_t        = cslibs_math_3d::Point3d;
+    using transform_3d_t    = cslibs_math_3d::Transform3d;
+    using measurement_3d_t  = muse_mcl_2d_mapping::Measurement<point_3d_t, transform_3d_t>;
+
 
     template <typename map_t, typename msg_t>
     struct MapperWorker {
@@ -94,7 +101,7 @@ private:
     };
 
 public:
-    GridMapperNode();
+    MapperNode3d();
     bool setup();
     void run();
 
@@ -136,7 +143,7 @@ private:
                                 tf_timeout_)) {
 
             cslibs_math_2d::Pointcloud2d::Ptr points(new cslibs_math_2d::Pointcloud2d);
-            muse_mcl_2d_mapping::Measurement2d m(points, o_T_l, cslibs_time::Time(laserscan->getTimeFrame().end));
+            measurement_2d_t m(points, o_T_l, cslibs_time::Time(laserscan->getTimeFrame().end));
             for(auto it = laserscan->begin() ; it != laserscan->end() ; ++ it)
                 if(it->valid())
                     points->insert(it->point);
@@ -158,11 +165,11 @@ private:
                                  o_T_l,
                                  tf_timeout_)) {
 
-            cslibs_math_3d::Transform3d origin = cslibs_math_3d::conversion::from(o_T_l);
+            transform_3d_t origin = cslibs_math_3d::conversion::from(o_T_l);
             cslibs_math_3d::Pointcloud3d::Ptr points(new cslibs_math_3d::Pointcloud3d);
-            muse_mcl_3d_mapping::Measurement3d m(points,
-                                                 origin,
-                                                 cslibs_time::Time(nanoseconds));
+            measurement_3d_t m(points,
+                               origin,
+                               cslibs_time::Time(nanoseconds));
 
             cslibs_time::Time now = cslibs_time::Time::now();
             for(auto it = laserscan->begin() ; it != laserscan->end() ; ++ it) {

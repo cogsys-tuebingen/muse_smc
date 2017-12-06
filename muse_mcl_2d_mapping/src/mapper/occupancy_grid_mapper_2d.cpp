@@ -1,4 +1,4 @@
-#include "occupancy_grid_mapper_2d.h"
+#include <muse_mcl_2d_mapping/mapper/occupancy_grid_mapper_2d.h>
 
 #include <cslibs_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
 #include <cslibs_math/common/array.hpp>
@@ -30,7 +30,7 @@ OccupancyGridMapper2d::~OccupancyGridMapper2d()
 }
 
 
-void OccupancyGridMapper2d::insert(const Measurement2d &measurement)
+void OccupancyGridMapper2d::insert(const measurement_t &measurement)
 {
     q_.emplace(measurement);
     notify_event_.notify_one();
@@ -112,7 +112,7 @@ void OccupancyGridMapper2d::mapRequest()
     notify_static_map_.notify_one();
 }
 
-void OccupancyGridMapper2d::process(const Measurement2d &m)
+void OccupancyGridMapper2d::process(const measurement_t &m)
 {
     if(!dynamic_map_) {
         dynamic_map_.reset(new dynamic_map_t(cslibs_math_2d::Transform2d::identity(),

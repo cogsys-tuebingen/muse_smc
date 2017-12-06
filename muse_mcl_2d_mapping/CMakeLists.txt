@@ -33,6 +33,7 @@ catkin_package(
 )
 
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
@@ -42,27 +43,35 @@ include_directories(
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions (${PCL_DEFINITIONS})
 
-add_executable(${PROJECT_NAME}_ocm_node
-    src/occupancy_grid_mapper_2d.cpp
-    src/ndt_grid_mapper_2d.cpp
-    src/grid_mapper_node_2d.cpp
+add_library(${PROJECT_NAME}_mapping_2d
+    src/mapper/occupancy_grid_mapper_2d.cpp
+    src/mapper/ndt_grid_mapper_2d.cpp
 )
-
-add_executable(${PROJECT_NAME}_3d_ocm_node
-    src/ndt_grid_mapper_3d.cpp
-    src/ndt_grid_mapper_2d.cpp
-    src/occupancy_grid_mapper_2d.cpp
-    src/grid_mapper_node.cpp
-)
-
-target_link_libraries(${PROJECT_NAME}_ocm_node
+target_link_libraries(${PROJECT_NAME}_mapping_2d
     ${catkin_LIBRARIES}
-    ${OpenCV_LIBRARIES}
+)
+add_library(${PROJECT_NAME}_mapping_3d
+    src/mapper/ndt_grid_mapper_3d.cpp
+)
+target_link_libraries(${PROJECT_NAME}_mapping_3d
+    ${catkin_LIBRARIES}
 )
 
-target_link_libraries(${PROJECT_NAME}_3d_ocm_node
+add_executable(${PROJECT_NAME}_node_2d
+    src/nodes/mapper_node_2d.cpp
+)
+target_link_libraries(${PROJECT_NAME}_node_2d
+    ${PROJECT_NAME}_mapping_2d
     ${catkin_LIBRARIES}
-    ${OpenCV_LIBRARIES}
+)
+
+add_executable(${PROJECT_NAME}_node_3d
+    src/nodes/mapper_node_3d.cpp
+)
+target_link_libraries(${PROJECT_NAME}_node_3d
+    ${PROJECT_NAME}_mapping_2d
+    ${PROJECT_NAME}_mapping_3d
+    ${catkin_LIBRARIES}
     ${PCL_LIBRARIES}
     ${PCL_COMMON_LIBRARIES}
     ${PCL_FILTERS_LIBRARIES}

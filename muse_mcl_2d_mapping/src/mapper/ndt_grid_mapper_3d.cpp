@@ -1,4 +1,4 @@
-#include "ndt_grid_mapper_3d.h"
+#include <muse_mcl_2d_mapping/mapper/ndt_grid_mapper_3d.h>
 
 namespace muse_mcl_3d_mapping {
 NDTGridMapper3d::NDTGridMapper3d(
@@ -24,8 +24,7 @@ NDTGridMapper3d::~NDTGridMapper3d()
         thread_.join();
 }
 
-void NDTGridMapper3d::insert(
-        const Measurement3d & measurement)
+void NDTGridMapper3d::insert(const measurement_t &measurement)
 {
     q_.emplace(measurement);
     notify_event_.notify_one();
@@ -150,8 +149,7 @@ void NDTGridMapper3d::mapRequest()
     notify_static_map_.notify_one();
 }
 
-void NDTGridMapper3d::process(
-        const Measurement3d & m)
+void NDTGridMapper3d::process(const measurement_t &m)
 {
     if (!dynamic_map_) {
         dynamic_map_.reset(new dynamic_map_t(dynamic_map_t::transform_t::identity(),

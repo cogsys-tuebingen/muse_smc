@@ -4,22 +4,26 @@
 #include <ros/ros.h>
 #include <sensor_msgs/LaserScan.h>
 
-#include "occupancy_grid_mapper_2d.h"
-#include "ndt_grid_mapper_2d.h"
+#include <muse_mcl_2d_mapping/mapper/occupancy_grid_mapper_2d.h>
+#include <muse_mcl_2d_mapping/mapper/ndt_grid_mapper_2d.h>
 
 #include <muse_mcl_2d/tf/tf_provider.hpp>
 
 namespace muse_mcl_2d_mapping {
-class GridMapperNode2d
+class MapperNode2d
 {
 public:
-    GridMapperNode2d();
+    MapperNode2d();
 
     bool setup();
     void run();
 
 private:
     using interval_t = std::array<double, 2>;
+    using point_t       = cslibs_math_2d::Point2d;
+    using transform_t   = cslibs_math_2d::Transform2d;
+    using measurement_t = Measurement<point_t, transform_t>;
+
 
     ros::NodeHandle                 nh_;
     std::vector<ros::Subscriber>    sub_lasers_;

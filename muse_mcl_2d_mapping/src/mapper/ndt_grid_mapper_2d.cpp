@@ -1,4 +1,4 @@
-#include "ndt_grid_mapper_2d.h"
+#include <muse_mcl_2d_mapping/mapper/ndt_grid_mapper_2d.h>
 
 namespace muse_mcl_2d_mapping {
 NDTGridMapper2d::NDTGridMapper2d(const double resolution,
@@ -24,7 +24,7 @@ NDTGridMapper2d::~NDTGridMapper2d()
 }
 
 
-void NDTGridMapper2d::insert(const Measurement2d &measurement)
+void NDTGridMapper2d::insert(const measurement_t &measurement)
 {
     q_.emplace(measurement);
     notify_event_.notify_one();
@@ -124,7 +124,7 @@ void NDTGridMapper2d::mapRequest()
     notify_static_map_.notify_one();
 }
 
-void NDTGridMapper2d::process(const Measurement2d &m)
+void NDTGridMapper2d::process(const measurement_t &m)
 {
     if(!dynamic_map_) {
         dynamic_map_.reset(new dynamic_map_t(cslibs_math_2d::Transform2d::identity(),
