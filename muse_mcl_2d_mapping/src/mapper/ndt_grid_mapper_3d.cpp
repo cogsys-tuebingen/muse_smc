@@ -84,14 +84,11 @@ void NDTGridMapper3d::mapRequest()
     if(request_map_ && dynamic_map_) {
         if(!static_map_.data())
             static_map_.data().reset(new static_map_t());
-        if (!marker_map_) {
+        if (!marker_map_)
             marker_map_.reset(new visualization_msgs::MarkerArray());
-            marker_indices_.clear();
-        }
 
+        marker_map_->markers.clear();
         static_map_.stamp() = latest_time_;
-
-        const double bundle_resolution = dynamic_map_->getBundleResolution();
 
         auto sample = [](const dynamic_map_t::distribution_t * d,
                          const point_t &p) {
@@ -115,31 +112,25 @@ void NDTGridMapper3d::mapRequest()
             const dynamic_map_t::distribution_bundle_t *b = dynamic_map_->getDistributionBundle(bi);
             dur += (cslibs_time::Time::now() - start_retrieve);
             if(b) {
-                const dynamic_map_t::point_t p(bi[0] * bundle_resolution,
-                                               bi[1] * bundle_resolution,
-                                               bi[2] * bundle_resolution);
+                dynamic_map_t::distribution_t::distribution_t d;
+                for (int i = 0; i < 8; ++ i)
+                    d += b->at(i)->getHandle()->data();
+
+                point_t p(d.getMean());
                 pcl::PointXYZI prob;
-                prob.x = static_cast<float>(p(0));
-                prob.y = static_cast<float>(p(1));
-                prob.z = static_cast<float>(p(2));
+                prob.x = p(0);
+                prob.y = p(1);
+                prob.z = p(2);
 
                 cslibs_time::Time start_sampling = cslibs_time::Time::now();
-                prob.intensity = static_cast<float>(sample_bundle(b, p + point_t(0.5 * bundle_resolution)));
+                prob.intensity = static_cast<float>(sample_bundle(b, p));
                 dur_sampling += (cslibs_time::Time::now() - start_sampling);
-                static_map_.data()->points.emplace_back(prob);
+                if (static_cast<int>(static_map_.data()->size()) <= b->id())
+                    static_map_.data()->resize(b->id() + 1);
+                static_map_.data()->points[b->id()] = prob;
 
+                drawMarker(b->id(), d, prob.intensity);
             }
-
-            std::map<dynamic_map_t::index_t, int>::iterator it = marker_indices_.find(bi);
-            if (it == marker_indices_.end()) {
-                std::pair<std::map<dynamic_map_t::index_t, int>::iterator, bool> ret =
-                        marker_indices_.insert(std::pair<dynamic_map_t::index_t, int>(
-                                                   bi, static_cast<int>(marker_indices_.size())));
-                it = ret.first;
-                marker_map_->markers.resize(marker_indices_.size());
-            }
-
-            drawMarker(it->second, b);
         }
         updated_indices_.clear();
 
@@ -155,20 +146,14 @@ void NDTGridMapper3d::mapRequest()
 }
 
 void NDTGridMapper3d::drawMarker(
-        const int                                  & id,
-        const dynamic_map_t::distribution_bundle_t * b)
+        const int                                           & id,
+        const dynamic_map_t::distribution_t::distribution_t & d,
+        const float                                         & prob)
 {
-    if (!b)
-        return;
-
-    dynamic_map_t::distribution_t::distribution_t d;
-    for (int i = 0; i < 8; ++ i)
-        d += b->at(i)->getHandle()->data();
-
     if (d.getN() < 3)
         return;
 
-    visualization_msgs::Marker & marker = marker_map_->markers[id];
+    visualization_msgs::Marker marker;
     marker.ns = "ndt";
     marker.id = id;
     marker.type = visualization_msgs::Marker::SPHERE;
@@ -192,13 +177,13 @@ void NDTGridMapper3d::drawMarker(
     marker.scale.y = d.getEigenValues()(1) + 1e-3;
     marker.scale.z = d.getEigenValues()(2) + 1e-3;
 
-    marker.color.a = 1.0; // Don't forget to set the alpha!
+    marker.color.a = 1.0;
 
     // TODO
-    const double value = d.sampleMean();
-    marker.color.r = 0;
-    marker.color.g = 0;
-    marker.color.b = 0;
+    marker.color.r = prob;
+    marker.color.g = prob;
+    marker.color.b = prob;
+    marker_map_->markers.push_back(marker);
 }
 
 void NDTGridMapper3d::process(const measurement_t &m)

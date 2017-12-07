@@ -10,9 +10,9 @@
     <!-- bagfile -->
     <arg name="bag_root" value="/data/0/bag/maize" />
     <arg name="bag_file" value="2017-09-11-13-42-55.bag" />
-    <node pkg="rosbag" type="play" name="player" output="screen" args="--pause --clock --rate 2.0 -d 5$(arg bag_root)/$(arg bag_file)" required="true" />
+    <node pkg="rosbag" type="play" name="player" output="screen" args="--pause --clock --rate 2.0 -d 5 $(arg bag_root)/$(arg bag_file)" required="true" />
 
-     <group ns="muse_mcl_2d_mapping_3d_ocm_node">
+     <group ns="muse_mcl_2d_mapping_node_3d">
      <rosparam param="lasers2d">
      </rosparam>
      <rosparam param="lasers3d">
@@ -24,10 +24,10 @@
      <param name="map_frame" value="/odom" />
      <param name="ndt_map_pub_rate" value="10.0" />
      <param name="occ_map_pub_rate" value="10.0" />
-     <param name="ndt_sampling_resolution" value="0.025" /> 
-     <param name="ndt_grid_resolution" value="0.5" />
+     <param name="ndt_sampling_resolution" value="0.25" /> 
+     <param name="ndt_grid_resolution" value="2.0" />
     </group>
 
-    <node name="muse_mcl_2d_mapping_3d_ocm_node" pkg="muse_mcl_2d_mapping" type="muse_mcl_2d_mapping_3d_ocm_node" output="screen" />
+    <node name="muse_mcl_2d_mapping_node_3d" pkg="muse_mcl_2d_mapping" type="muse_mcl_2d_mapping_node_3d" output="screen" />
 
 </launch>

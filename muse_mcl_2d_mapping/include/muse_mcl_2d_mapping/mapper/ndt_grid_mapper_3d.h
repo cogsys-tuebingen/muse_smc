@@ -73,7 +73,6 @@ protected:
     std::condition_variable                             notify_static_map_;
     std::mutex                                          static_map_mutex_;
 
-    std::map<dynamic_map_t::index_t, int>               marker_indices_;
     visualization_msgs::MarkerArray::Ptr                marker_map_;
     static_map_stamped_t                                static_map_;
     std::unordered_set<dynamic_map_t::index_t>          updated_indices_;
@@ -92,8 +91,9 @@ protected:
     void mapRequest();
 
     void drawMarker(
-            const int                                  & id,
-            const dynamic_map_t::distribution_bundle_t * b);
+            const int                                           & id,
+            const dynamic_map_t::distribution_t::distribution_t & b,
+            const float                                         & prob);
 
     void process(
             const measurement_t & points);
