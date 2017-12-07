@@ -1,7 +1,9 @@
 #include "mapper_node_2d.h"
 
 #include <cslibs_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
-#include <muse_mcl_2d_laser/convert.hpp>
+
+#include <cslibs_math_2d/linear/polar_pointcloud.hpp>
+#include <cslibs_math_ros/sensor_msgs/conversion_2d.hpp>
 
 #include <nav_msgs/OccupancyGrid.h>
 #include <visualization_msgs/MarkerArray.h>
@@ -76,7 +78,7 @@ bool MapperNode2d::setup()
     pub_ndt_interval_       = ros::Duration(occ_map_pub_rate > 0.0 ? 1.0 / ndt_map_pub_rate : 0.0);
     pub_ndt_last_time_      = ros::Time::now();
 
-    tf_.reset(new muse_mcl_2d::TFProvider);
+    tf_.reset(new cslibs_math_ros::tf::TFListener2d);
 
     ROS_INFO_STREAM("Setup succesful!");
     return true;
@@ -117,27 +119,31 @@ void MapperNode2d::run()
 
 void MapperNode2d::laserscan(const sensor_msgs::LaserScanConstPtr &msg)
 {
-    muse_mcl_2d_laser::LaserScan2D::Ptr laserscan;
-    if(undistortion_ &&
-            !convertUndistorted(msg, linear_interval_, angular_interval_, tf_, undistortion_fixed_frame_, tf_timeout_, laserscan)) {
-        if(!convert(msg, linear_interval_, angular_interval_, laserscan)) {
-            return;
-        }
-    } else if(!convert(msg, linear_interval_, angular_interval_, laserscan)) {
-        return;
+    cslibs_math_2d::PolarPointlcoud2d::Ptr laserscan;
+    if(undistortion_) {
+        cslibs_math_ros::sensor_msgs::conversion_2d::from(msg,
+                                                          linear_interval_, angular_interval_,
+                                                          undistortion_fixed_frame_, tf_timeout_, *tf_,
+                                                          laserscan);
     }
+    if(!laserscan) {
+        cslibs_math_ros::sensor_msgs::conversion_2d::from(msg, linear_interval_, angular_interval_, laserscan);
+    }
+    if(!laserscan)
+        return;
 
     cslibs_math_2d::Transform2d o_T_l;
-    if(tf_->lookupTransform(map_frame_, laserscan->getFrame(),
-                            ros::Time(laserscan->getTimeFrame().end.seconds()),
+    cslibs_time::TimeFrame time_frame = cslibs_math_ros::sensor_msgs::conversion_2d::from(msg);
+    if(tf_->lookupTransform(map_frame_, msg->header.frame_id,
+                            ros::Time(time_frame.end.seconds()),
                             o_T_l,
                             tf_timeout_)) {
 
         cslibs_math_2d::Pointcloud2d::Ptr points(new cslibs_math_2d::Pointcloud2d);
-        measurement_t  m(points, o_T_l, cslibs_time::Time(laserscan->getTimeFrame().end));
+        measurement_t  m(points, o_T_l, time_frame.end);
         for(auto it = laserscan->begin() ; it != laserscan->end() ; ++it) {
-            if(it->valid())
-                points->insert(it->point);
+            if(it->isNormal())
+                points->insert(it->getCartesian());
         }
         occ_mapper_->insert(m);
         ndt_mapper_->insert(m);

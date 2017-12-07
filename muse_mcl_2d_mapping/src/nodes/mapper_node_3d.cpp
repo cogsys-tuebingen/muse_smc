@@ -2,6 +2,7 @@
 
 #include <pcl/filters/filter.h>
 #include <cslibs_time/time.hpp>
+#include <cslibs_math_ros/sensor_msgs/conversion_2d.hpp>
 
 namespace muse_mcl_mapping {
 MapperNode3d::MapperNode3d() :
@@ -93,7 +94,7 @@ bool MapperNode3d::setup()
     ndt_2d_mapper_.setup(nh_, ndt_2d_map_topic, ndt_map_pub_rate, now);
     ndt_3d_mapper_.setup(nh_, ndt_3d_map_topic, ndt_map_pub_rate, now);
 
-    tf_.reset(new muse_mcl_2d::TFProvider);
+    tf_.reset(new cslibs_math_ros::tf::TFListener2d);
 
     ROS_INFO_STREAM("Setup succesful!");
     return true;
@@ -125,16 +126,21 @@ void MapperNode3d::run()
 void MapperNode3d::laserscan2d(
         const sensor_msgs::LaserScanConstPtr & msg)
 {
-    muse_mcl_2d_laser::LaserScan2D::Ptr laserscan;
-    if (undistortion_ &&
-            !convertUndistorted(msg, linear_interval_, angular_interval_, tf_, undistortion_fixed_frame_, tf_timeout_, laserscan)) {
-        if (!convert(msg, linear_interval_, angular_interval_, laserscan))
-            return;
-    } else if (!convert(msg, linear_interval_, angular_interval_, laserscan))
+    cslibs_math_2d::PolarPointlcoud2d::Ptr laserscan;
+    if(undistortion_) {
+        cslibs_math_ros::sensor_msgs::conversion_2d::from(msg,
+                                                          linear_interval_, angular_interval_,
+                                                          undistortion_fixed_frame_, tf_timeout_, *tf_,
+                                                          laserscan);
+    }
+    if(!laserscan) {
+        cslibs_math_ros::sensor_msgs::conversion_2d::from(msg, linear_interval_, angular_interval_, laserscan);
+    }
+    if(!laserscan)
         return;
 
-    insert(occ_2d_mapper_, laserscan);
-    insert(ndt_2d_mapper_, laserscan);
+    insert(occ_2d_mapper_, msg->header.frame_id, msg->header.stamp, laserscan);
+    insert(ndt_2d_mapper_, msg->header.frame_id, msg->header.stamp, laserscan);
 }
 
 void MapperNode3d::laserscan3d(
@@ -145,7 +151,7 @@ void MapperNode3d::laserscan3d(
     pcl::fromROSMsg(*msg, laserscan);
     pcl::removeNaNFromPointCloud(laserscan, laserscan, indices);
 
-    insert<ndt_map_3d_t, pcl::PointXYZI>(ndt_3d_mapper_, laserscan.makeShared());
+    insert<ndt_map_3d_t, pcl::PointXYZI>(ndt_3d_mapper_, msg->header.frame_id, msg->header.stamp,  laserscan.makeShared());
 }
 }
 

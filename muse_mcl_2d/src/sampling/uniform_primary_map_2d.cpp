@@ -6,7 +6,7 @@
 
 
 #include <cslibs_math/sampling/uniform.hpp>
-#include <cslibs_math_2d/conversion/tf.hpp>
+#include <cslibs_math_ros/tf/conversion_2d.hpp>
 
 namespace muse_mcl_2d {
 using Metric              = muse_smc::state_space_samplers::Metric;
@@ -33,7 +33,7 @@ public:
             return false;
         }
 
-        w_T_primary_ = cslibs_math_2d::conversion::from(tf_w_T_primary);
+        w_T_primary_ = cslibs_math_ros::tf::conversion_2d::from(tf_w_T_primary);
 
         const std::size_t map_provider_count = map_providers_.size();
         for(std::size_t i = 0 ; i < map_provider_count ; ++i) {
@@ -44,7 +44,7 @@ public:
 
             tf::Transform tf_secondary_map_T_w;
             if(tf_->lookupTransform(map->getFrame(), frame, now, tf_secondary_map_T_w, tf_timeout_)) {
-                secondary_maps_T_w_[i] = cslibs_math_2d::conversion::from(tf_secondary_map_T_w);
+                secondary_maps_T_w_[i] = cslibs_math_ros::tf::conversion_2d::from(tf_secondary_map_T_w);
                 secondary_maps_[i] = map;
             } else {
                 return false;
@@ -127,8 +127,8 @@ protected:
     std::vector<MapProvider2D::Ptr> map_providers_;
     int                             random_seed_;
 
-    rng_t::Ptr        rng_;
-    cslibs_math_2d::Transform2d               w_T_primary_;
+    rng_t::Ptr                      rng_;
+    cslibs_math_2d::Transform2d     w_T_primary_;
     Map2D::ConstPtr                 primary_map_;
     MapProvider2D::Ptr              primary_map_provider_;
     std::vector<Map2D::ConstPtr>    secondary_maps_;

@@ -9,12 +9,15 @@
 #include <condition_variable>
 
 #include <cslibs_math_2d/linear/transform.hpp>
-#include <muse_mcl_2d/tf/tf_provider.hpp>
-#include <cslibs_math_2d/conversion/tf.hpp>
+#include <cslibs_math_ros/tf/tf_listener_2d.hpp>
+#include <cslibs_math_ros/tf/conversion_2d.hpp>
 
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
+
+#include <cslibs_math_ros/tf/tf_listener_2d.hpp>
+
 #include <ros/time.h>
 
 namespace muse_mcl_2d {
@@ -87,7 +90,7 @@ public:
         cslibs_math_2d::Transform2d b_T_o = cslibs_math_2d::Transform2d::identity();
         if(tf_listener_.lookupTransform(base_frame_, odom_frame_, ros::Time(w_T_b_.stamp().seconds()), b_T_o, timeout_)) {
             cslibs_math_2d::Transform2d w_T_o = w_T_b_.data() * b_T_o;
-            w_T_o_ = tf::StampedTransform(cslibs_math_2d::conversion::from(w_T_o), ros::Time(w_T_b_.stamp().seconds()), world_frame_, odom_frame_);
+            w_T_o_ = tf::StampedTransform( cslibs_math_ros::tf::conversion_2d::from(w_T_o), ros::Time(w_T_b_.stamp().seconds()), world_frame_, odom_frame_);
 
             tf_time_of_transform_ = w_T_o_.stamp_;
         }
@@ -113,7 +116,7 @@ private:
     std::mutex               tf_mutex_;
 
     tf::TransformBroadcaster tf_broadcaster_;
-    TFProvider               tf_listener_;
+    cslibs_math_ros::tf::TFListener2d tf_listener_;
 
     tf::StampedTransform     w_T_o_;
     stamped_t                w_T_b_;
