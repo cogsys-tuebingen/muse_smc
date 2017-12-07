@@ -4,6 +4,7 @@
 #include <sensor_msgs/LaserScan.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <nav_msgs/OccupancyGrid.h>
+#include <visualization_msgs/MarkerArray.h>
 #include <pcl_conversions/pcl_conversions.h>
 
 #include <muse_mcl_2d_mapping/mapper/ndt_grid_mapper_2d.h>
@@ -32,7 +33,6 @@ private:
     using transform_3d_t    = cslibs_math_3d::Transform3d;
     using measurement_3d_t  = muse_mcl_2d_mapping::Measurement<point_3d_t, transform_3d_t>;
 
-
     template <typename map_t, typename msg_t>
     struct MapperWorker {
         typename map_t::Ptr mapper_;
@@ -41,10 +41,27 @@ private:
         ros::Duration       pub_interval_;
         ros::Time           pub_last_time_;
 
-        void setCallback()
+        ros::Publisher      pub_marker_;
+
+        template <typename t = msg_t>
+        typename std::enable_if<std::is_same<t, msg_2d_t>::value, void>::type
+        setCallback()
         {
             mapper_->setCallback(
                         map_t::callback_t::template from<MapperWorker<map_t, msg_t>,
+                        &MapperWorker<map_t, msg_t>::publish>(this));
+        }
+
+        template <typename t = msg_t>
+        typename std::enable_if<std::is_same<t, msg_3d_t>::value, void>::type
+        setCallback()
+        {
+            mapper_->setCallback(
+                        map_t::callback_t::template from<MapperWorker<map_t, msg_t>,
+                        &MapperWorker<map_t, msg_t>::publish>(this));
+
+            mapper_->setMarkerCallback(
+                        map_t::marker_callback_t::template from<MapperWorker<map_t, msg_t>,
                         &MapperWorker<map_t, msg_t>::publish>(this));
         }
 
@@ -56,7 +73,9 @@ private:
         {
             pub_map_       = nh.advertise<msg_t>(topic, 1);
             pub_interval_  = ros::Duration(rate > 0.0 ? 1.0 / rate : 0.0);
-            pub_last_time_ = now;
+            pub_last_time_ = now;            
+
+            setupMarkerPublisher(nh);
         }
 
         void requestMap(
@@ -67,6 +86,20 @@ private:
 
             if (pub_interval_.isZero() || (pub_last_time_ + pub_interval_ < now))
                 mapper_->requestMap();
+        }
+
+        template <typename t = msg_t>
+        typename std::enable_if<std::is_same<t, msg_2d_t>::value, void>::type
+        setupMarkerPublisher(
+                ros::NodeHandle & nh)
+        { }
+
+        template <typename t = msg_t>
+        typename std::enable_if<std::is_same<t, msg_3d_t>::value, void>::type
+        setupMarkerPublisher(
+                ros::NodeHandle & nh)
+        {
+            pub_marker_ = nh.advertise<visualization_msgs::MarkerArray>("/map/ndt_3d_marker", 1);
         }
 
         template <typename t = msg_t>
@@ -88,7 +121,7 @@ private:
         typename std::enable_if<std::is_same<t, msg_3d_t>::value, void>::type
         publish(
                 const typename map_t::static_map_stamped_t & map)
-        {std::cout << "here " << map.data() << std::endl;
+        {
             if (map.data()) {
                 typename msg_t::Ptr msg(new msg_t());
                 pcl::toROSMsg(*(map.data()), *msg);
@@ -96,6 +129,20 @@ private:
                 msg->header.frame_id = map_frame_;
                 pub_map_.publish(msg);
                 pub_last_time_ = ros::Time::now();
+            }
+        }        
+
+        template <typename t = msg_t>
+        typename std::enable_if<std::is_same<t, msg_3d_t>::value, void>::type
+        publish(
+                const visualization_msgs::MarkerArrayPtr & msg)
+        {
+            if (msg) {
+                for (auto & marker : msg->markers) {
+                    marker.header.stamp    = pub_last_time_;//ros::Time::now(); // TODO
+                    marker.header.frame_id = map_frame_;
+                }
+                pub_marker_.publish(msg);
             }
         }
     };

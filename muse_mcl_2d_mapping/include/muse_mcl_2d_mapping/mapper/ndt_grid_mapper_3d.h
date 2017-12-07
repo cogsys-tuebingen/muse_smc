@@ -20,6 +20,7 @@
 
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
+#include <visualization_msgs/MarkerArray.h>
 
 #include <set>
 
@@ -33,6 +34,7 @@ public:
     using static_map_t          = pcl::PointCloud<pcl::PointXYZI>;//cslibs_gridmaps::static_maps::ProbabilityGridmap;
     using static_map_stamped_t  = cslibs_time::Stamped<static_map_t::Ptr>;
     using callback_t            = delegate<void(const static_map_stamped_t &)>;
+    using marker_callback_t     = delegate<void(const visualization_msgs::MarkerArrayPtr &)>;
     using point_t               = cslibs_math_3d::Point3d;
     using transform_t           = cslibs_math_3d::Transform3d;
     using measurement_t         = muse_mcl_2d_mapping::Measurement<point_t, transform_t>;
@@ -51,10 +53,14 @@ public:
 
     void get(
             static_map_stamped_t & map);
+
     void requestMap();
 
     void setCallback(
             const callback_t & cb);
+
+    void setMarkerCallback(
+            const marker_callback_t & cb);
 
 protected:
     cslibs_utility::synchronized::queue<measurement_t>  q_;
@@ -67,9 +73,12 @@ protected:
     std::condition_variable                             notify_static_map_;
     std::mutex                                          static_map_mutex_;
 
+    std::map<dynamic_map_t::index_t, int>               marker_indices_;
+    visualization_msgs::MarkerArray::Ptr                marker_map_;
     static_map_stamped_t                                static_map_;
     std::unordered_set<dynamic_map_t::index_t>          updated_indices_;
 
+    marker_callback_t                                   marker_callback_;
     callback_t                                          callback_;
 
     cslibs_time::Time                                   latest_time_;
@@ -81,6 +90,10 @@ protected:
     void loop();
 
     void mapRequest();
+
+    void drawMarker(
+            const int                                  & id,
+            const dynamic_map_t::distribution_bundle_t * b);
 
     void process(
             const measurement_t & points);
