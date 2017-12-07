@@ -7,7 +7,7 @@
 #include <muse_mcl_2d_mapping/mapper/occupancy_grid_mapper_2d.h>
 #include <muse_mcl_2d_mapping/mapper/ndt_grid_mapper_2d.h>
 
-#include <muse_mcl_2d/tf/tf_provider.hpp>
+#include <cslibs_math_ros/tf/tf_listener_2d.hpp>
 
 namespace muse_mcl_2d_mapping {
 class MapperNode2d
@@ -19,35 +19,35 @@ public:
     void run();
 
 private:
-    using interval_t = std::array<double, 2>;
+    using interval_t    = std::array<float, 2>;
     using point_t       = cslibs_math_2d::Point2d;
     using transform_t   = cslibs_math_2d::Transform2d;
     using measurement_t = Measurement<point_t, transform_t>;
 
 
-    ros::NodeHandle                 nh_;
-    std::vector<ros::Subscriber>    sub_lasers_;
-    muse_mcl_2d::TFProvider::Ptr    tf_;
-    OccupancyGridMapper2d::Ptr      occ_mapper_;
-    NDTGridMapper2d::Ptr            ndt_mapper_;
-    std::string                     map_frame_;
+    ros::NodeHandle                         nh_;
+    std::vector<ros::Subscriber>            sub_lasers_;
+    cslibs_math_ros::tf::TFListener2d::Ptr  tf_;
+    OccupancyGridMapper2d::Ptr              occ_mapper_;
+    NDTGridMapper2d::Ptr                    ndt_mapper_;
+    std::string                             map_frame_;
 
-    ros::Publisher                  pub_occ_map_;
-    ros::Duration                   pub_occ_interval_;
-    ros::Time                       pub_occ_last_time_;
+    ros::Publisher                          pub_occ_map_;
+    ros::Duration                           pub_occ_interval_;
+    ros::Time                               pub_occ_last_time_;
 
-    ros::Publisher                  pub_ndt_map_;
-    ros::Duration                   pub_ndt_interval_;
-    ros::Time                       pub_ndt_last_time_;
+    ros::Publisher                          pub_ndt_map_;
+    ros::Duration                           pub_ndt_interval_;
+    ros::Time                               pub_ndt_last_time_;
 
-    double                          node_rate_;
+    double                                  node_rate_;
 
-    bool                            undistortion_;              /// check if undistortion shall be applied
-    std::string                     undistortion_fixed_frame_;  /// the fixed frame necessary for the undistortion
-    ros::Duration                   tf_timeout_;                /// time out for the tf listener
+    bool                                    undistortion_;              /// check if undistortion shall be applied
+    std::string                             undistortion_fixed_frame_;  /// the fixed frame necessary for the undistortion
+    ros::Duration                           tf_timeout_;                /// time out for the tf listener
 
-    interval_t                      linear_interval_;           /// linear field of view
-    interval_t                      angular_interval_;          /// angular field of view
+    interval_t                              linear_interval_;           /// linear field of view
+    interval_t                              angular_interval_;          /// angular field of view
 
 
     void laserscan(const sensor_msgs::LaserScanConstPtr &msg);

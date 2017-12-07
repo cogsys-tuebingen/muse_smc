@@ -5,7 +5,7 @@
 #include <cslibs_math/sampling/uniform.hpp>
 
 #include <muse_mcl_2d/sampling/uniform_2d.hpp>
-#include <cslibs_math_2d/conversion/tf.hpp>
+#include <cslibs_math_ros/tf/conversion_2d.hpp>
 
 namespace muse_mcl_2d {
 using Metric              = muse_smc::state_space_samplers::Metric;
@@ -34,7 +34,7 @@ public:
             }
             tf::Transform tf_map_T_w;
             if(tf_->lookupTransform(map->getFrame(), frame, now, tf_map_T_w, tf_timeout_)) {
-                cslibs_math_2d::Transform2d map_T_w = cslibs_math_2d::conversion::from(tf_map_T_w);
+                cslibs_math_2d::Transform2d map_T_w =  cslibs_math_ros::tf::conversion_2d::from(tf_map_T_w);
                 maps_[i] = map;
                 maps_T_w_[i] =map_T_w;
 

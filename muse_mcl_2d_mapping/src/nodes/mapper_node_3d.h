@@ -12,15 +12,16 @@
 #include <muse_mcl_2d_mapping/mapper/occupancy_grid_mapper_2d.h>
 
 #include <cslibs_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
-#include <muse_mcl_2d/tf/tf_provider.hpp>
-#include <muse_mcl_2d_laser/convert.hpp>
-#include <cslibs_math_3d/conversion/tf.hpp>
+#include <cslibs_math_ros/tf/tf_listener_2d.hpp>
+#include <cslibs_math_ros/sensor_msgs/conversion_2d.hpp>
+#include <cslibs_math_ros/tf/conversion_3d.hpp>
+#include <cslibs_math_2d/linear/polar_pointcloud.hpp>
 
 namespace muse_mcl_mapping {
 class MapperNode3d
 {    
 private:
-    using interval_t        = std::array<double, 2>;
+    using interval_t        = std::array<float, 2>;
     using occ_map_2d_t      = muse_mcl_2d_mapping::OccupancyGridMapper2d;
     using ndt_map_2d_t      = muse_mcl_2d_mapping::NDTGridMapper2d;
     using ndt_map_3d_t      = muse_mcl_3d_mapping::NDTGridMapper3d;
@@ -153,23 +154,23 @@ public:
     void run();
 
 private:
-    ros::NodeHandle                 nh_;
-    std::vector<ros::Subscriber>    sub_lasers_;
+    ros::NodeHandle                         nh_;
+    std::vector<ros::Subscriber>            sub_lasers_;
 
     // possible maps
-    MapperWorker<occ_map_2d_t, msg_2d_t> occ_2d_mapper_;
-    MapperWorker<ndt_map_2d_t, msg_2d_t> ndt_2d_mapper_;
-    MapperWorker<ndt_map_3d_t, msg_3d_t> ndt_3d_mapper_;
+    MapperWorker<occ_map_2d_t, msg_2d_t>    occ_2d_mapper_;
+    MapperWorker<ndt_map_2d_t, msg_2d_t>    ndt_2d_mapper_;
+    MapperWorker<ndt_map_3d_t, msg_3d_t>    ndt_3d_mapper_;
 
-    muse_mcl_2d::TFProvider::Ptr    tf_;
-    double                          node_rate_;
+    cslibs_math_ros::tf::TFListener2d::Ptr  tf_;
+    double                                  node_rate_;
 
-    bool                            undistortion_;              /// check if undistortion shall be applied
-    std::string                     undistortion_fixed_frame_;  /// the fixed frame necessary for the undistortion
-    ros::Duration                   tf_timeout_;                /// time out for the tf listener
+    bool                                    undistortion_;              /// check if undistortion shall be applied
+    std::string                             undistortion_fixed_frame_;  /// the fixed frame necessary for the undistortion
+    ros::Duration                           tf_timeout_;                /// time out for the tf listener
 
-    interval_t                      linear_interval_;           /// linear field of view
-    interval_t                      angular_interval_;          /// angular field of view
+    interval_t                              linear_interval_;           /// linear field of view
+    interval_t                              angular_interval_;          /// angular field of view
 
     // 2d and 3d laser callbacks
     void laserscan2d(
@@ -180,20 +181,23 @@ private:
 
     template <typename map_t>
     void insert(
-            MapperWorker<map_t, msg_2d_t>             & mapper,
-            const muse_mcl_2d_laser::LaserScan2D::Ptr & laserscan)
+            MapperWorker<map_t, msg_2d_t>                & mapper,
+            const std::string                            & frame,
+            const ros::Time                              & time,
+            const cslibs_math_2d::PolarPointlcoud2d::Ptr & laserscan)
     {
         cslibs_math_2d::Transform2d o_T_l;
-        if(tf_->lookupTransform(mapper.map_frame_, laserscan->getFrame(),
-                                ros::Time(laserscan->getTimeFrame().end.seconds()),
+        if(tf_->lookupTransform(mapper.map_frame_,
+                                frame,
+                                time,
                                 o_T_l,
                                 tf_timeout_)) {
 
             cslibs_math_2d::Pointcloud2d::Ptr points(new cslibs_math_2d::Pointcloud2d);
-            measurement_2d_t m(points, o_T_l, cslibs_time::Time(laserscan->getTimeFrame().end));
+            measurement_2d_t m(points, o_T_l, cslibs_time::Time(time.toNSec()));
             for(auto it = laserscan->begin() ; it != laserscan->end() ; ++ it)
-                if(it->valid())
-                    points->insert(it->point);
+                if(it->isNormal())
+                    points->insert(it->getCartesian());
 
             mapper.mapper_->insert(m);
         }
@@ -202,17 +206,19 @@ private:
     template <typename map_t, typename point_t>
     void insert(
             MapperWorker<map_t, msg_3d_t>                     & mapper,
+            const std::string                                 & frame,
+            const ros::Time                                   & time,
             const typename pcl::PointCloud<point_t>::ConstPtr & laserscan)
     {
         tf::Transform o_T_l;
         uint64_t nanoseconds = laserscan->header.stamp * 1e3;
         if (tf_->lookupTransform(mapper.map_frame_,
-                                 laserscan->header.frame_id,
-                                 ros::Time().fromNSec(nanoseconds),
+                                 frame,
+                                 ros::Time().fromNSec(time.toNSec()),
                                  o_T_l,
                                  tf_timeout_)) {
 
-            transform_3d_t origin = cslibs_math_3d::conversion::from(o_T_l);
+            transform_3d_t origin = cslibs_math_ros::tf::conversion_3d::from(o_T_l);
             cslibs_math_3d::Pointcloud3d::Ptr points(new cslibs_math_3d::Pointcloud3d);
             measurement_3d_t m(points,
                                origin,

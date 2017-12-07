@@ -6,7 +6,7 @@
 #include <atomic>
 
 #include <muse_mcl_2d/data/data_provider_2d.hpp>
-#include <muse_mcl_2d/tf/tf_provider.hpp>
+#include <cslibs_math_ros/tf/tf_listener_2d.hpp>
 
 namespace muse_mcl_2d_odometry {
 class OdometryProviderTF2D : public muse_mcl_2d::DataProvider2D
@@ -18,7 +18,7 @@ public:
     virtual ~OdometryProviderTF2D();
 
 protected:
-    muse_mcl_2d::TFProvider               tf_;
+    cslibs_math_ros::tf::TFListener2d     tf_;
     std::string                           odom_frame_;
     std::string                           base_frame_;
 

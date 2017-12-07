@@ -6,13 +6,12 @@ project(muse_mcl_2d_mapping)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   cslibs_gridmaps
-  cslibs_ndt_2d
-  cslibs_ndt_3d
+  cslibs_time
   cslibs_utility
-  muse_mcl_2d_ndt
-  muse_mcl_2d_laser
+  cslibs_math_ros
+  cslibs_ndt_3d
+  cslibs_ndt_2d
   nav_msgs
-  muse_smc
   roscpp
   pcl_ros
 )

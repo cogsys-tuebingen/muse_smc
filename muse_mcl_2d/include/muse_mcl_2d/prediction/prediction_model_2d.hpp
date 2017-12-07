@@ -4,7 +4,7 @@
 #include <muse_smc/prediction/prediction_model.hpp>
 
 #include <muse_mcl_2d/samples/sample_2d.hpp>
-#include <muse_mcl_2d/tf/tf_provider.hpp>
+#include <cslibs_math_ros/tf/tf_listener_2d.hpp>
 #include <muse_mcl_2d/odometry/odometry_2d.h>
 #include <muse_mcl_2d/state_space/state_space_description_2d.hpp>
 
@@ -43,7 +43,7 @@ public:
         return "muse_mcl_2d::PredictionModel2D";
     }
 
-    inline void setup(const TFProvider::Ptr &tf,
+    inline void setup(const cslibs_math_ros::tf::TFListener2d::Ptr &tf,
                       ros::NodeHandle &nh)
     {
         auto param_name = [this](const std::string &name){return name_ + "/" + name;};
@@ -54,7 +54,7 @@ public:
     }
 
 protected:
-    TFProvider::Ptr tf_;
+    cslibs_math_ros::tf::TFListener2d::Ptr tf_;
     double          eps_zero_linear_;
     double          eps_zero_angular_;
 

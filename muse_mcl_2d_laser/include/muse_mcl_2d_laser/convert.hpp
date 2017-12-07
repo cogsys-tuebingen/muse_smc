@@ -4,7 +4,7 @@
 #include <sensor_msgs/LaserScan.h>
 
 #include <muse_mcl_2d_laser/laserscan_2d.hpp>
-#include <muse_mcl_2d/tf/tf_provider.hpp>
+#include <cslibs_math_ros/tf/tf_listener_2d.hpp>
 
 namespace muse_mcl_2d_laser {
 
@@ -75,13 +75,13 @@ inline bool convert(const sensor_msgs::LaserScanConstPtr &src,
     return true;
 }
 
-inline bool convertUndistorted(const sensor_msgs::LaserScanConstPtr &src,
-                               const interval_t                     &linear_interval,
-                               const interval_t                     &angular_interval,
-                               muse_mcl_2d::TFProvider::Ptr         &tf_listener,
-                               const std::string                    &fixed_frame,
-                               const ros::Duration                  &tf_timeout,
-                               LaserScan2D::Ptr                     &dst)
+inline bool convertUndistorted(const sensor_msgs::LaserScanConstPtr     &src,
+                               const interval_t                         &linear_interval,
+                               const interval_t                         &angular_interval,
+                               cslibs_math_ros::tf::TFListener2d::Ptr   &tf_listener,
+                               const std::string                        &fixed_frame,
+                               const ros::Duration                      &tf_timeout,
+                               LaserScan2D::Ptr                         &dst)
 {
 
     const auto src_linear_min  = static_cast<double>(src->range_min);
@@ -94,10 +94,10 @@ inline bool convertUndistorted(const sensor_msgs::LaserScanConstPtr &src,
     if(src_ranges.size() == 0ul)
         return false;
 
-    const interval_t dst_linear_interval  = {std::max(linear_interval[0],  src_linear_min),
-                                             std::min(linear_interval[1],  src_linear_max)};
-    const interval_t dst_angular_interval = {std::max(angular_interval[0], src_angular_min),
-                                             std::min(angular_interval[1], src_angular_max)};
+    const interval_t dst_linear_interval  = {{std::max(linear_interval[0],  src_linear_min),
+                                             std::min(linear_interval[1],  src_linear_max)}};
+    const interval_t dst_angular_interval = {{std::max(angular_interval[0], src_angular_min),
+                                             std::min(angular_interval[1], src_angular_max)}};
 
     dst = create(src, dst_linear_interval, dst_angular_interval);
 
