@@ -12,7 +12,7 @@ BeamModelParameterEstimator::BeamModelParameterEstimator(const Parameters &param
     parameters_(parameters),
     parameters_working_copy_(parameters)
 {
-    ParameterLogger::Header header = {{"z_hit, z_max, z_short, z_rand, sigma_hit, lambda_short"}};
+    ParameterLogger::header_t header = {{"z_hit, z_max, z_short, z_rand, sigma_hit, lambda_short"}};
     logger_.reset(new ParameterLogger(header,  "/tmp/beam_model.csv"));
     logger_->log(parameters_working_copy_.z_hit,
                  parameters_working_copy_.z_short,

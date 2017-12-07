@@ -10,11 +10,14 @@
     <arg name="cartographer_resolution" 
          value="0.05" />
     <arg name="bag_root" value="/home/hanten/Workspace/data/rawseeds/bags" />
-    <arg name="bag_file" value="Bicocca_2009-02-25b-static-artificial-light-tf.bag" />
- 
+    <!-- <arg name="bag_file" value="Bicocca_2009-02-25a-dynamic-natural-light.bag-tf" /> -->
+    <!-- <arg name="bag_file" value="Bicocca_2009-02-25b-static-artificial-light-tf" /> -->
+    <!-- <arg name="bag_file" value="Bicocca_2009-02-26a-dynamic-natural-light-tf" /> -->
+    <!-- <arg name="bag_file" value="Bicocca_2009-02-26b-dynamic-natural-light-tf" /> --> 
+    <!-- <arg name="bag_file" value="Bicocca_2009-02-27a-static-natural-light-tf" /> -->
 
     <group unless="$(arg no_rviz)">
-      <node name="rviz" pkg="rviz" type="rviz" required="true"
+      <node name="rviz" pkg="rviz" type="rviz" required="false"
           args="-d $(find cartographer_ros)/configuration_files/demo_2d.rviz" />
 
       <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"

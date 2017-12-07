@@ -28,15 +28,17 @@ TRAJECTORY_BUILDER_2D.use_online_correlative_scan_matching = true
 TRAJECTORY_BUILDER_2D.use_imu_data = false
 TRAJECTORY_BUILDER_2D.real_time_correlative_scan_matcher.linear_search_window = 0.2
 TRAJECTORY_BUILDER_2D.real_time_correlative_scan_matcher.angular_search_window = math.rad(35.)
-TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.hit_probability = 0.55
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.hit_probability = 0.575
 TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.miss_probability = 0.45
 TRAJECTORY_BUILDER_2D.num_accumulated_range_data = 10
+TRAJECTORY_BUILDER_2D.submaps.num_range_data = 40.
 
 
 MAP_BUILDER.use_trajectory_builder_2d = true
-MAP_BUILDER.num_background_threads = 8
+MAP_BUILDER.num_background_threads = 4
 
-POSE_GRAPH.constraint_builder.min_score = 0.65
+POSE_GRAPH.constraint_builder.min_score = 0.62
 POSE_GRAPH.constraint_builder.global_localization_min_score = 0.7
+POSE_GRAPH.optimize_every_n_nodes = 5
 
 return options
