@@ -126,6 +126,7 @@ void OccupancyGridMapper2d::process(const measurement_t &m)
         latest_time_ = m.stamp;
     }
 
+    cslibs_time::Time start = cslibs_time::Time::now();
     const double resolution2 = (resolution_ * resolution_ * 0.25);
     for(const auto &p : *(m.points)) {
         if(p.isNormal()) {
@@ -141,5 +142,6 @@ void OccupancyGridMapper2d::process(const measurement_t &m)
             *b = inverse_model_.updateOccupied(*b);
         }
     }
+    std::cout << "[OccupancyGridMapper2d]: Insertion took " << (cslibs_time::Time::now() - start).milliseconds() << "ms \n";
 }
 }

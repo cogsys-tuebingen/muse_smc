@@ -71,26 +71,22 @@ void NDTGridMapper3d::loop()
 void NDTGridMapper3d::mapRequest()
 {
     cslibs_time::Time now = cslibs_time::Time::now();
+    cslibs_time::Duration dur;
 
     if(request_map_ && dynamic_map_) {
-        dynamic_map_t::transform_t origin = dynamic_map_->getOrigin();
-        const std::size_t height = static_cast<std::size_t>(dynamic_map_->getHeight() / sampling_resolution_);
-        const std::size_t width  = static_cast<std::size_t>(dynamic_map_->getWidth()  / sampling_resolution_);
+        if(!static_map_.data())
+            static_map_.data().reset(new static_map_t());
 
-        static_map_.data().reset(new static_map_t());
         static_map_.stamp() = latest_time_;
 
         const double bundle_resolution = dynamic_map_->getBundleResolution();
-        const int chunk_step = static_cast<int>(bundle_resolution / sampling_resolution_);
-        const dynamic_map_t::index_t min_distribution_index = dynamic_map_->getMinDistributionIndex();
-        const dynamic_map_t::index_t max_distribution_index = dynamic_map_->getMaxDistributionIndex();
 
         auto sample = [](const dynamic_map_t::distribution_t * d,
-                         const dynamic_map_t::point_t        & p) {
+                         const point_t &p) {
             return d ? d->data().sampleNonNormalized(p) : 0.0;
         };
         auto sample_bundle = [&sample] (const dynamic_map_t::distribution_bundle_t * b,
-                                        const dynamic_map_t::point_t               & p)
+                                        const point_t &p)
         {
             return 0.125 * (sample(b->at(0), p) +
                             sample(b->at(1), p) +
@@ -102,49 +98,31 @@ void NDTGridMapper3d::mapRequest()
                             sample(b->at(7), p));
         };
 
-        for (int h = min_distribution_index[2] ; h <= max_distribution_index[2] ; ++ h) {
-            for(int i = min_distribution_index[1] ; i <= max_distribution_index[1] ; ++ i) {
-                for(int j = min_distribution_index[0] ; j <= max_distribution_index[0] ; ++ j) {
-                    dynamic_map_t::distribution_bundle_t * bundle = dynamic_map_->getDistributionBundle({{j,i,h}});
-                    if(bundle) {
-                        //*
-                        const dynamic_map_t::point_t p(j * bundle_resolution,
-                                                       i * bundle_resolution,
-                                                       h * bundle_resolution);
-                        pcl::PointXYZI prob;
-                        prob.x = p(0);
-                        prob.y = p(1);
-                        prob.z = p(2);
-                        prob.intensity = sample_bundle(bundle, p);
-                        if (prob.intensity > 0.0 && prob.intensity <= 1.0)
-                            static_map_.data()->points.emplace_back(prob);
-                        /*/
-                        for (int m = 0; m < chunk_step; ++ m) {
-                            for(int k = 0 ; k < chunk_step ; ++ k) {
-                                for(int l = 0 ; l < chunk_step ; ++ l) {
-                                    const dynamic_map_t::point_t p(j * bundle_resolution + l * sampling_resolution_,
-                                                                   i * bundle_resolution + k * sampling_resolution_,
-                                                                   h * bundle_resolution + m * sampling_resolution_);
-                                    pcl::PointXYZI prob;
-                                    prob.x = p(0);
-                                    prob.y = p(1);
-                                    prob.z = p(2);
-                                    prob.intensity = sample_bundle(bundle, p);
-                                    if (prob.intensity > 0.0 && prob.intensity <= 1.0)
-                                        static_map_.data()->push_back(prob);
-                                }
-                            }
-                        }
-                        //*/
-                    }
-                }
+        for(auto &bi : updated_indices_) {
+            const dynamic_map_t::distribution_bundle_t *b = dynamic_map_->getDistributionBundle(bi);
+            if(b) {
+                const dynamic_map_t::point_t p(bi[0] * bundle_resolution,
+                                               bi[1] * bundle_resolution,
+                                               bi[2] * bundle_resolution);
+                pcl::PointXYZI prob;
+                prob.x = static_cast<float>(p(0));
+                prob.y = static_cast<float>(p(1));
+                prob.z = static_cast<float>(p(2));
+
+                cslibs_time::Time start_sampling = cslibs_time::Time::now();
+                prob.intensity = static_cast<float>(sample_bundle(b, p + point_t(0.5 * bundle_resolution)));
+                dur += (cslibs_time::Time::now() - start_sampling);
+                static_map_.data()->points.emplace_back(prob);
+
             }
         }
-//        cslibs_gridmaps::static_maps::algorithms::normalize<double>(*static_map_.data());
+        updated_indices_.clear();
+
         callback_(static_map_);
 
-        std::cout << "Visualization: " << (cslibs_time::Time::now() - now) << std::endl;
-    }
+        std::cout << "Visualization [all]:      " << (cslibs_time::Time::now() - now).milliseconds() << "ms\n";
+        std::cout << "Visualization [sampling]: " << dur.milliseconds() << "ms \n";
+     }
     request_map_ = false;
     notify_static_map_.notify_one();
 }
@@ -160,10 +138,14 @@ void NDTGridMapper3d::process(const measurement_t &m)
     if (m.stamp > latest_time_)
         latest_time_ = m.stamp;
 
+
     for (const auto & p : *(m.points)) {
         const dynamic_map_t::point_t pm = m.origin * p;
-        if (std::isnormal(pm(0)) && std::isnormal(pm(1)) && std::isnormal(pm(2)))
-            dynamic_map_->add(pm);
+        if (pm.isNormal()) {
+            dynamic_map_t::index_t bi;
+            dynamic_map_->add(pm, bi);
+            updated_indices_.insert(bi);
+        }
     }
 }
 }

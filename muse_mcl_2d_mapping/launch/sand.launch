@@ -5,7 +5,7 @@
     <!-- in maize, static transform between base_footprint and base_link was missing -->
     <node pkg="tf" type="static_transform_publisher" name="odom_T" args="0.0 0.0 0.05 0.0 0.0 0.0 1.0 /base_footprint /base_link 100"/>
 
-     <group ns="muse_mcl_2d_mapping_3d_ocm_node">
+     <group ns="muse_mcl_2d_mapping_node_3d">
      <rosparam param="lasers2d">
      </rosparam>
      <rosparam param="lasers3d">
@@ -21,6 +21,6 @@
      <param name="ndt_grid_resolution" value="2.0" />
     </group>
 
-    <node name="muse_mcl_2d_mapping_3d_ocm_node" pkg="muse_mcl_2d_mapping" type="muse_mcl_2d_mapping_3d_ocm_node" output="screen" />
+    <node name="muse_mcl_2d_mapping_node_3d" pkg="muse_mcl_2d_mapping" type="muse_mcl_2d_mapping_node_3d" output="screen" />
 
 </launch>

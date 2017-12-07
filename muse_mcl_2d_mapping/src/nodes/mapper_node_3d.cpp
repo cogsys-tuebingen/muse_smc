@@ -140,16 +140,12 @@ void MapperNode3d::laserscan2d(
 void MapperNode3d::laserscan3d(
         const sensor_msgs::PointCloud2ConstPtr & msg)
 {
-    cslibs_time::Time now = cslibs_time::Time::now();
-
     pcl::PointCloud<pcl::PointXYZI> laserscan;
     std::vector<int> indices;
     pcl::fromROSMsg(*msg, laserscan);
     pcl::removeNaNFromPointCloud(laserscan, laserscan, indices);
 
     insert<ndt_map_3d_t, pcl::PointXYZI>(ndt_3d_mapper_, laserscan.makeShared());
-
-//    std::cout << "Insert: " << (cslibs_time::Time::now() - now) << std::endl;
 }
 }
 

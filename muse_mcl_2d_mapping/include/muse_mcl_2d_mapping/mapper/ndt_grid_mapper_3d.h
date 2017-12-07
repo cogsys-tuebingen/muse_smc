@@ -16,9 +16,12 @@
 #include <cslibs_time/stamped.hpp>
 #include <cslibs_math_3d/linear/pointcloud.hpp>
 #include <cslibs_math_3d/linear/box.hpp>
+#include <cslibs_math/common/array.hpp>
 
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
+
+#include <set>
 
 namespace muse_mcl_3d_mapping {
 class NDTGridMapper3d
@@ -65,6 +68,7 @@ protected:
     std::mutex                                          static_map_mutex_;
 
     static_map_stamped_t                                static_map_;
+    std::unordered_set<dynamic_map_t::index_t>          updated_indices_;
 
     callback_t                                          callback_;
 

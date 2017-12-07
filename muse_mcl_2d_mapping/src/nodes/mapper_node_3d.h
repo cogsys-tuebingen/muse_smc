@@ -180,7 +180,7 @@ private:
                     points->insert(typename map_t::dynamic_map_t::point_t(arr));
             }
             mapper.mapper_->insert(m);
-            std::cout << "Insertion on storage took " << (cslibs_time::Time::now() - now) << std::endl;
+            std::cout << "Insertion on storage took " << (cslibs_time::Time::now() - now).milliseconds() << "ms \n";
         }
     }
 };

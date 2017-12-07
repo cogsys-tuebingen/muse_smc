@@ -17,7 +17,6 @@ find_package(catkin REQUIRED COMPONENTS
   pcl_ros
 )
 find_package(OpenCV REQUIRED)
-find_package(pcl_ros REQUIRED)
 find_package(PCL REQUIRED COMPONENTS common filters segmentation io)
 
 catkin_package(
