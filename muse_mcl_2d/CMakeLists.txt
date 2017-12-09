@@ -47,7 +47,6 @@ catkin_package(
     INCLUDE_DIRS    include
     LIBRARIES       ${PROJECT_NAME}_resampling ${PROJECT_NAME}_sampling ${PROJECT_NAME}_odometry
     CATKIN_DEPENDS  muse_smc cslibs_math_ros cslibs_math_2d
-    DEPENDS         Eigen3
 )
 
 include_directories(

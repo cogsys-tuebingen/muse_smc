@@ -22,7 +22,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
     INCLUDE_DIRS    include
     CATKIN_DEPENDS  cslibs_time cslibs_math cslibs_utility
-    DEPENDS         TinyXML Eigen3
+    DEPENDS         TinyXML
     CFG_EXTRAS      muse_smc_extras.cmake
                     muse_smc_enable_c++11.cmake
                     muse_smc_add_unit_test_gtest.cmake
