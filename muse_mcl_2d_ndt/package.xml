@@ -4,7 +4,6 @@
   <version>0.0.0</version>
   <description>The muse_mcl_2d_ndt package</description>
 
-
   <maintainer email="richard.hanten@uni-tuebingen.de">Richard Hanten</maintainer>
   <author email="richard.hanten@uni-tuebingen.de">Richard Hanten</author>
 
@@ -13,11 +12,16 @@
   <buildtool_depend>catkin</buildtool_depend>
   <depend>muse_mcl_2d</depend>
   <depend>muse_mcl_2d_laser</depend>
+  <depend>cslibs_ndt_2d</depend>
+  <depend>cslibs_math_2d</depend>
+  <depend>cslibs_gridmaps</depend>
   <depend>pluginlib</depend>
   <depend>roscpp</depend>
   <depend>rostest</depend>
   <depend>tf</depend>
+  <depend>yaml-cpp</depend>
 
   <export>
+    <muse_mcl_2d plugin="${prefix}/plugins.xml" />
   </export>
 </package>
