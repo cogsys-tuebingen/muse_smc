@@ -52,9 +52,9 @@ void OccupancyGridmapBeamModel::apply(const data_t::ConstPtr          &data,
         return std::array<int, 2>({{static_cast<int>(std::floor(p(0) * bundle_resolution_inv)),
                                     static_cast<int>(std::floor(p(1) * bundle_resolution_inv))}});
     };
-    auto p_hit = [this, &gridmap, &to_bundle_index](const cslibs_math_2d::Pose2d &ray_end_point) {
-        return z_hit_ * gridmap.sampleNonNormalized(ray_end_point.translation(),
-                                                    to_bundle_index(ray_end_point.translation()),
+    auto p_hit = [this, &gridmap, &to_bundle_index](const cslibs_math_2d::Vector2d &ray_end_point) {
+        return z_hit_ * gridmap.sampleNonNormalized(ray_end_point,
+                                                    to_bundle_index(ray_end_point),
                                                     *inverse_model_);
     };
     auto p_short = [this](const double ray_range, const double map_range) {
@@ -69,7 +69,6 @@ void OccupancyGridmapBeamModel::apply(const data_t::ConstPtr          &data,
     };
     auto probability = [this, &gridmap, &p_hit, &p_short, &p_max, &p_random]
             (const muse_mcl_2d_laser::LaserScan2D::Ray &ray, const cslibs_math_2d::Pose2d &m_T_l) {
-
       const double ray_range = ray.range;
       auto         ray_end_point = m_T_l * ray.point;
       const double map_range = gridmap.getRange(m_T_l.translation(), ray_end_point, *inverse_model_, occupied_threshold_);

@@ -53,9 +53,9 @@ void GridmapBeamModelAMCL::apply(const data_t::ConstPtr          &data,
         return std::array<int, 2>({{static_cast<int>(std::floor(p(0) * bundle_resolution_inv)),
                                     static_cast<int>(std::floor(p(1) * bundle_resolution_inv))}});
     };
-    auto p_hit = [this, &gridmap, &to_bundle_index](const cslibs_math_2d::Pose2d &ray_end_point) {
-        return z_hit_ * gridmap.sampleNonNormalized(ray_end_point.translation(),
-                                                    to_bundle_index(ray_end_point.translation()));
+    auto p_hit = [this, &gridmap, &to_bundle_index](const cslibs_math_2d::Vector2d &ray_end_point) {
+        return z_hit_ * gridmap.sampleNonNormalized(ray_end_point,
+                                                    to_bundle_index(ray_end_point));
     };
 
     for(auto it = set.begin() ; it != end ; ++it) {
