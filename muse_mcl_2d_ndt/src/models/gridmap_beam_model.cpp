@@ -15,7 +15,7 @@ void GridmapBeamModel::apply(const data_t::ConstPtr          &data,
                              const state_space_t::ConstPtr   &map,
                              sample_set_t::weight_iterator_t set)
 {
-    if(!map->isType<Gridmap>() || !data->isType<muse_mcl_2d_laser::LaserScan2D>())
+    if (!map->isType<Gridmap>() || !data->isType<muse_mcl_2d_laser::LaserScan2D>())
         return;
 
     const cslibs_ndt_2d::dynamic_maps::Gridmap   &gridmap    = *(map->as<Gridmap>().data());
@@ -25,17 +25,17 @@ void GridmapBeamModel::apply(const data_t::ConstPtr          &data,
     /// laser to base transform
     cslibs_math_2d::Transform2d b_T_l;
     cslibs_math_2d::Transform2d m_T_w;
-    if(!tf_->lookupTransform(robot_base_frame_,
-                             laser_data.getFrame(),
-                             ros::Time(laser_data.getTimeFrame().end.seconds()),
-                             b_T_l,
-                             tf_timeout_))
+    if (!tf_->lookupTransform(robot_base_frame_,
+                              laser_data.getFrame(),
+                              ros::Time(laser_data.getTimeFrame().end.seconds()),
+                              b_T_l,
+                              tf_timeout_))
         return;
-    if(!tf_->lookupTransform(world_frame_,
-                             map->getFrame(),
-                             ros::Time(laser_data.getTimeFrame().end.seconds()),
-                             m_T_w,
-                             tf_timeout_))
+    if (!tf_->lookupTransform(world_frame_,
+                              map->getFrame(),
+                              ros::Time(laser_data.getTimeFrame().end.seconds()),
+                              m_T_w,
+                              tf_timeout_))
         return;
 
     const muse_mcl_2d_laser::LaserScan2D::rays_t rays = laser_data.getRays();
@@ -57,10 +57,10 @@ void GridmapBeamModel::apply(const data_t::ConstPtr          &data,
                                                     to_bundle_index(ray_end_point));
     };
 
-    for(auto it = set.begin() ; it != end ; ++it) {
+    for (auto it = set.begin() ; it != end ; ++it) {
         const cslibs_math_2d::Pose2d m_T_l = m_T_w * it.state() * b_T_l; /// laser scanner pose in map coordinates
         double p = 1.0;
-        for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
+        for (std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
             const cslibs_math_2d::Point2d ray_end_point = m_T_l * ray.point;
             p *= ray.valid() ? (p_hit(ray_end_point) + p_rand) : z_max_;

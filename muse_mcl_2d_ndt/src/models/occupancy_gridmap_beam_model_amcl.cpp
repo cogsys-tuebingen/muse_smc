@@ -16,7 +16,7 @@ void OccupancyGridmapBeamModelAMCL::apply(const data_t::ConstPtr          &data,
                                           sample_set_t::weight_iterator_t set)
 {
 
-    if(!map->isType<OccupancyGridmap>() || !data->isType<muse_mcl_2d_laser::LaserScan2D>() || !inverse_model_)
+    if (!map->isType<OccupancyGridmap>() || !data->isType<muse_mcl_2d_laser::LaserScan2D>() || !inverse_model_)
         return;
 
     const cslibs_ndt_2d::dynamic_maps::OccupancyGridmap &gridmap    = *(map->as<OccupancyGridmap>().data());
@@ -26,17 +26,17 @@ void OccupancyGridmapBeamModelAMCL::apply(const data_t::ConstPtr          &data,
     /// laser to base transform
     cslibs_math_2d::Transform2d b_T_l;
     cslibs_math_2d::Transform2d m_T_w;
-    if(!tf_->lookupTransform(robot_base_frame_,
-                             laser_data.getFrame(),
-                             ros::Time(laser_data.getTimeFrame().end.seconds()),
-                             b_T_l,
-                             tf_timeout_))
+    if (!tf_->lookupTransform(robot_base_frame_,
+                              laser_data.getFrame(),
+                              ros::Time(laser_data.getTimeFrame().end.seconds()),
+                              b_T_l,
+                              tf_timeout_))
         return;
-    if(!tf_->lookupTransform(world_frame_,
-                             map->getFrame(),
-                             ros::Time(laser_data.getTimeFrame().end.seconds()),
-                             m_T_w,
-                             tf_timeout_))
+    if (!tf_->lookupTransform(world_frame_,
+                              map->getFrame(),
+                              ros::Time(laser_data.getTimeFrame().end.seconds()),
+                              m_T_w,
+                              tf_timeout_))
         return;
 
     const muse_mcl_2d_laser::LaserScan2D::rays_t rays = laser_data.getRays();
@@ -48,39 +48,42 @@ void OccupancyGridmapBeamModelAMCL::apply(const data_t::ConstPtr          &data,
 
 
     /// mixture distribution entries
-    auto pow3 = [](const double x) {return x*x*x;};
+    auto pow2 = [](const double x) {return x*x;};
+    auto pow3 = [](const double &x) {return x*x*x;};
     const double bundle_resolution_inv = 1.0 / gridmap.getBundleResolution();
     auto to_bundle_index = [&bundle_resolution_inv](const cslibs_math_2d::Vector2d &p) {
         return std::array<int, 2>({{static_cast<int>(std::floor(p(0) * bundle_resolution_inv)),
                                     static_cast<int>(std::floor(p(1) * bundle_resolution_inv))}});
     };
-    auto p_hit = [this, &gridmap, &to_bundle_index](const cslibs_math_2d::Vector2d &ray_end_point) {
-        return z_hit_ * gridmap.sampleNonNormalized(ray_end_point,
-                                                    to_bundle_index(ray_end_point),
-                                                    *inverse_model_);
+    auto p_hit = [this, &gridmap, &to_bundle_index, &pow2](
+            const cslibs_math_2d::Vector2d &ray_end_point, const double &ray_range, const double &map_range) {
+        return z_hit_ /** std::exp(pow2(ray_range - map_range) * denominator_exponent_hit_)
+                */* gridmap.sampleNonNormalized(ray_end_point,
+                                              to_bundle_index(ray_end_point),
+                                              *inverse_model_);
     };
-    auto p_short = [this](const double ray_range, const double map_range) {
+    auto p_short = [this](const double &ray_range, const double &map_range) {
         return ray_range < map_range ? z_short_ * (1.0 / (1.0 - std::exp(-lambda_short_  * map_range))) * lambda_short_ * std::exp(-lambda_short_ * ray_range)
                                        : 0.0;
     };
-    auto p_max = [this, range_max](const double ray_range) {
+    auto p_max = [this, range_max](const double &ray_range) {
         return ray_range >= range_max ? z_max_ : 0.0;
     };
-    auto p_random = [this, range_max, p_rand](const double ray_range) {
+    auto p_random = [this, range_max, p_rand](const double &ray_range) {
         return ray_range < range_max ? p_rand : 0.0;
     };
     auto probability = [this, &gridmap, &p_hit, &p_short, &p_max, &p_random]
             (const muse_mcl_2d_laser::LaserScan2D::Ray &ray, const cslibs_math_2d::Pose2d &m_T_l) {
-      const double ray_range = ray.range;
-      auto         ray_end_point = m_T_l * ray.point;
-      const double map_range = gridmap.getRange(m_T_l.translation(), ray_end_point, *inverse_model_, occupied_threshold_);
-      return p_hit(ray_end_point) + p_short(ray_range, map_range) + p_max(ray_range) + p_random(ray_range);
+        const double ray_range = ray.range;
+        auto         ray_end_point = m_T_l * ray.point;
+        const double map_range = 0;// = gridmap.getRange(m_T_l.translation(), ray_end_point, *inverse_model_, occupied_threshold_);
+        return p_hit(ray_end_point, ray_range, map_range) /*+ p_short(ray_range, map_range)*/ + p_max(ray_range) + p_random(ray_range);
     };
 
-    for(auto it = set.begin() ; it != end ; ++it) {
+    for (auto it = set.begin() ; it != end ; ++it) {
         const cslibs_math_2d::Pose2d m_T_l = m_T_w * it.state() * b_T_l; /// laser scanner pose in map coordinates
         double p = 1.0;
-        for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
+        for (std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
             p += ray.valid() ? pow3(probability(ray, m_T_l)) : pow3(z_max_);
         }
@@ -99,6 +102,7 @@ void OccupancyGridmapBeamModelAMCL::doSetup(ros::NodeHandle &nh)
     z_rand_                     = nh.param(param_name("z_rand"), 0.05);
     sigma_hit_                  = nh.param(param_name("sigma_hit"), 0.15);
     denominator_exponent_hit_   = -0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
+    denominator_hit_            = 1.0 / sqrt(2.0 * M_PI * sigma_hit_ * sigma_hit_);
     lambda_short_               = nh.param(param_name("lambda_short"), 0.01);
     occupied_threshold_         = nh.param(param_name("occupied_threshold"), 0.5);
 

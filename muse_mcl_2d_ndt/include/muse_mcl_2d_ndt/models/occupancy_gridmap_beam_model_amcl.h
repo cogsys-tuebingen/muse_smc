@@ -22,6 +22,7 @@ protected:
     double      z_rand_;
     double      sigma_hit_;
     double      denominator_exponent_hit_;
+    double      denominator_hit_;
     double      lambda_short_;
     double      occupied_threshold_;
     cslibs_gridmaps::utility::InverseModel::Ptr inverse_model_;
