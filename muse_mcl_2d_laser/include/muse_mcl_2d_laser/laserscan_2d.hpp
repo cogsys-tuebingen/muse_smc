@@ -61,7 +61,7 @@ public:
 
         inline bool valid() const
         {
-            return range != 0.0;
+            return std::isnormal(range);//range != 0.0;
         }
 
     };

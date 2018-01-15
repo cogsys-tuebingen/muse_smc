@@ -20,7 +20,7 @@ OccupancyGridmap::state_space_boundary_t OccupancyGridmap::getMax() const
 
 OccupancyGridmap::state_space_transform_t OccupancyGridmap::getOrigin() const
 {
-    return data_->getOrigin();
+    return data_->getOrigin();  // TODO: initial origin?
 }
 
 bool OccupancyGridmap::validate(const cslibs_math_2d::Pose2d &p) const

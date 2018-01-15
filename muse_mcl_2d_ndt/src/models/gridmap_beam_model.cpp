@@ -47,8 +47,14 @@ void GridmapBeamModel::apply(const data_t::ConstPtr          &data,
 
 
     /// mixture distribution entries
-    auto p_hit = [&gridmap](const cslibs_math_2d::Pose2d &ray_end_point) {
-        return gridmap.sampleNonNormalized(ray_end_point.translation());
+    const double bundle_resolution_inv = 1.0 / gridmap.getBundleResolution();
+    auto to_bundle_index = [&bundle_resolution_inv](const cslibs_math_2d::Vector2d &p) {
+        return std::array<int, 2>({{static_cast<int>(std::floor(p(0) * bundle_resolution_inv)),
+                                    static_cast<int>(std::floor(p(1) * bundle_resolution_inv))}});
+    };
+    auto p_hit = [this, &gridmap, &to_bundle_index](const cslibs_math_2d::Pose2d &ray_end_point) {
+        return z_hit_ * gridmap.sampleNonNormalized(ray_end_point.translation(),
+                                                    to_bundle_index(ray_end_point.translation()));
     };
 
     for(auto it = set.begin() ; it != end ; ++it) {
@@ -57,7 +63,7 @@ void GridmapBeamModel::apply(const data_t::ConstPtr          &data,
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
             const cslibs_math_2d::Point2d ray_end_point = m_T_l * ray.point;
-            p *= ray.valid() ? p_hit(ray_end_point) + p_rand : z_max_;
+            p *= ray.valid() ? (p_hit(ray_end_point) + p_rand) : z_max_;
         }
         *it *= p;
     }

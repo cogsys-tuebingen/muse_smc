@@ -20,7 +20,7 @@ Gridmap::state_space_boundary_t Gridmap::getMax() const
 
 Gridmap::state_space_transform_t Gridmap::getOrigin() const
 {
-    return data_->getOrigin();
+    return data_->getOrigin();  // TODO: initial origin?
 }
 
 bool Gridmap::validate(const cslibs_math_2d::Pose2d &p) const

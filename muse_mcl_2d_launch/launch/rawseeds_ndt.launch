@@ -56,7 +56,7 @@
           <!-- <param name="angle_max" value="3.1425" /> -->
         </group>
         <group ns="beam_model_front">
-            <param name="class"         value="muse_mcl_2d_ndt::GridmapBeamModelAMCL" />
+            <param name="class"         value="muse_mcl_2d_ndt::OccupancyGridmapBeamModelAMCL" />
             <param name="base_class"    value="muse_mcl_2d::UpdateModel2D" />
             <param name="data_provider" value="front_laser" />
             <param name="map_provider"  value="rawseeds" />
@@ -71,7 +71,7 @@
             <param name="use_weights_for_estimation" value="true" />
         </group>
         <group ns="beam_model_rear">
-            <param name="class"         value="muse_mcl_2d_ndt::GridmapBeamModelAMCL" />
+            <param name="class"         value="muse_mcl_2d_ndt::OccupancyGridmapBeamModelAMCL" />
             <param name="base_class"    value="muse_mcl_2d::UpdateModel2D" />
             <param name="data_provider" value="rear_laser" />
             <param name="map_provider"  value="rawseeds" />
@@ -86,9 +86,9 @@
             <param name="use_weights_for_estimation" value="true" />
         </group>
         <group ns="rawseeds">
-          <param name="class"       value="muse_mcl_2d_ndt::GridmapProvider" />
+          <param name="class"       value="muse_mcl_2d_ndt::OccupancyGridmapProvider" />
           <param name="base_class"  value="muse_mcl_2d::MapProvider2D" />
-          <param name="path"        value="/data/0/rawseeds/maps/without_stereo/Bicocca_2009-02-25a-dynamic-natural-light-groundtruth-cartographer/map/2d/ndt/map" />
+          <param name="path"        value="/data/0/rawseeds/maps/without_stereo/Bicocca_2009-02-25a-dynamic-natural-light-groundtruth-cartographer/map/2d/occ_ndt/map" />
           <param name="blocking"    value="true" />
         </group>
         <!--- HERE GOES THE ODOMETRY MODEL! -->
@@ -155,7 +155,7 @@
     <!-- using only one map, the world and map frame can be collapsed -->
     <node pkg="tf" type="static_transform_publisher" name="map_T_w" args="0 0 0 0 0 0 map world 10"/>
 
-    <arg name="map_path" value="/data/0/rawseeds/maps/without_stereo/Bicocca_2009-02-25a-dynamic-natural-light-groundtruth-cartographer/map/2d/ndt/occ.map.raw.yaml" />    
+    <arg name="map_path" value="/data/0/rawseeds/maps/without_stereo/Bicocca_2009-02-25a-dynamic-natural-light-groundtruth-cartographer/map/2d/occ_ndt/occ.map.raw.yaml" />    
     <!--<arg name="ndt_map_path" value="/data/0/rawseeds/maps/without_stereo/Bicocca_2009-02-25a-dynamic-natural-light-ext-groundtruth/map/2d/occ_ndt/map" />-->
     <arg name="bag_root" value="/data/0/rawseeds/bagfiles/without_stereo" />
     <arg name="bag_file" value="Bicocca_2009-02-25a-dynamic-natural-light-groundtruth-cartographer.bag" />

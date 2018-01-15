@@ -48,8 +48,16 @@ void OccupancyGridmapBeamModelAMCL::apply(const data_t::ConstPtr          &data,
 
 
     /// mixture distribution entries
-    auto p_hit = [this, &gridmap](const cslibs_math_2d::Pose2d &ray_end_point) {
-        return gridmap.sampleNonNormalized(ray_end_point.translation(), *inverse_model_);
+    auto pow3 = [](const double x) {return x*x*x;};
+    const double bundle_resolution_inv = 1.0 / gridmap.getBundleResolution();
+    auto to_bundle_index = [&bundle_resolution_inv](const cslibs_math_2d::Vector2d &p) {
+        return std::array<int, 2>({{static_cast<int>(std::floor(p(0) * bundle_resolution_inv)),
+                                    static_cast<int>(std::floor(p(1) * bundle_resolution_inv))}});
+    };
+    auto p_hit = [this, &gridmap, &to_bundle_index](const cslibs_math_2d::Pose2d &ray_end_point) {
+        return z_hit_ * gridmap.sampleNonNormalized(ray_end_point.translation(),
+                                                    to_bundle_index(ray_end_point.translation()),
+                                                    *inverse_model_);
     };
     auto p_short = [this](const double ray_range, const double map_range) {
         return ray_range < map_range ? z_short_ * (1.0 / (1.0 - std::exp(-lambda_short_  * map_range))) * lambda_short_ * std::exp(-lambda_short_ * ray_range)
@@ -75,7 +83,7 @@ void OccupancyGridmapBeamModelAMCL::apply(const data_t::ConstPtr          &data,
         double p = 1.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
-            p *= ray.valid() ? probability(ray, m_T_l) : z_max_;
+            p += ray.valid() ? pow3(probability(ray, m_T_l)) : pow3(z_max_);
         }
         *it *= p;
     }
