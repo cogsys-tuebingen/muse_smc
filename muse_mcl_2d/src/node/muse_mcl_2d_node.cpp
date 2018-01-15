@@ -280,7 +280,7 @@ void MuseMCL2DNode::checkPoseInitialization()
         cslibs_math_2d::Pose2d pose = cslibs_math_2d::Pose2d(p_v[0], p_v[1], p_v[2]);
 
         if(c_v.size() != 9) {
-            ROS_ERROR_STREAM("The initliazation covariance is expected to have 9 values.");
+            ROS_ERROR_STREAM("The initialization covariance is expected to have 9 values.");
             return;
         }
 

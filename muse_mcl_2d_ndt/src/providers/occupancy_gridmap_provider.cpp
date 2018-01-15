@@ -40,20 +40,26 @@ void OccupancyGridmapProvider::loadMap()
 
         auto load = [this]() {
             ROS_INFO_STREAM("Loading file '" << path_ << "'...");
-            cslibs_ndt_2d::dynamic_maps::OccupancyGridmap::Ptr map =
-                YAML::LoadFile(path_).as<cslibs_ndt_2d::dynamic_maps::OccupancyGridmap::Ptr>();
-            std::unique_lock<std::mutex> l(map_mutex_);
-            map_.reset(new OccupancyGridmap(map, frame_id_));
-            loading_ = false;
+            cslibs_ndt_2d::dynamic_maps::OccupancyGridmap::Ptr map;
+            if (cslibs_ndt_2d::dynamic_maps::load(map, path_)) {
+                std::unique_lock<std::mutex> l(map_mutex_);
+                map_.reset(new OccupancyGridmap(map, frame_id_));
+                loading_ = false;
+                ROS_INFO_STREAM("Successfully loaded file '" << path_ << "'!");
+            } else
+                ROS_INFO_STREAM("Could not load file '" << path_ << "'!");
         };
         auto load_blocking = [this]() {
             ROS_INFO_STREAM("Loading file '" << path_ << "'...");
-            cslibs_ndt_2d::dynamic_maps::OccupancyGridmap::Ptr map =
-                YAML::LoadFile(path_).as<cslibs_ndt_2d::dynamic_maps::OccupancyGridmap::Ptr>();
-            std::unique_lock<std::mutex> l(map_mutex_);
-            map_.reset(new OccupancyGridmap(map, frame_id_));
-            loading_ = false;
-            map_loaded_.notify_one();
+            cslibs_ndt_2d::dynamic_maps::OccupancyGridmap::Ptr map;
+            if (cslibs_ndt_2d::dynamic_maps::load(map, path_)) {
+                std::unique_lock<std::mutex> l(map_mutex_);
+                map_.reset(new OccupancyGridmap(map, frame_id_));
+                loading_ = false;
+                ROS_INFO_STREAM("Successfully loaded file '" << path_ << "'!");
+                map_loaded_.notify_one();
+            } else
+                ROS_INFO_STREAM("Could not load file '" << path_ << "'!");
         };
 
         if (blocking_)

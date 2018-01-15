@@ -179,11 +179,11 @@ void SampleSetPublisher2D::loop()
     running_ = true;
     lock_t notify_lock(notify_mutex_);
 
-    time_t               stamp;
-    sample_vector_t::Ptr samples;
+    time_t                         stamp;
+    sample_vector_t::Ptr           samples;
     cslibs_math_2d::Pose2d         mean;
     cslibs_math_2d::Covariance2d   covariance;
-    double               maximum_weight = 0.0;
+    double                         maximum_weight = 0.0;
 
     while(!stop_) {
         notify_.wait(notify_lock);

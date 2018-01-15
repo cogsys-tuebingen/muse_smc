@@ -15,8 +15,9 @@
         
         <group ns="initialization">
             <!-- x y yaw -->
+            <!--    [-1.37, -7.28, 1.4943509]-->
             <rosparam param="pose">
-                [-1.37, -7.28, 1.4943509]
+                [0, 0, 0]
             </rosparam>
             <!-- (x y phi)² -->
             <rosparam param="covariance">
@@ -154,14 +155,17 @@
     <!-- using only one map, the world and map frame can be collapsed -->
     <node pkg="tf" type="static_transform_publisher" name="map_T_w" args="0 0 0 0 0 0 map world 10"/>
 
-    <arg name="map_path" value="/home/hanten/Workspace/data/rawseeds/grid_maps/rawseeds_0.05.yaml" />
-    <arg name="bag_root" value="/home/hanten/Workspace/data/rawseeds/bags" />
-    <arg name="bag_file" value="Bicocca_2009-02-25b-static-artificial-light.bag" />
+    <arg name="map_path" value="/data/0/rawseeds/maps/without_stereo/Bicocca_2009-02-25a-dynamic-natural-light-groundtruth-cartographer/map/2d/occ/occ.map.yaml" />
+    <!--<arg name="map_path" value="/data/0/rawseeds/grid_maps/rawseeds_0.05.yaml" />-->
+    <!-- "/home/hanten/Workspace/data/rawseeds/grid_maps/rawseeds_0.05.yaml" -->
+    <arg name="bag_root" value="/data/0/rawseeds/bagfiles/without_stereo" />
+    <!-- "/home/hanten/Workspace/data/rawseeds/bags" -->
+    <arg name="bag_file" value="Bicocca_2009-02-25a-dynamic-natural-light-groundtruth-cartographer.bag" />
     <node pkg="rosbag" type="play" name="player" output="log" args="--clock --rate 1.0 -d 5 $(arg bag_root)/$(arg bag_file)" required="true" />
     <node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(arg map_path)" />
 
 
-    <include file="$(find rawseeds_ros)/launch/transforms.launch" />
+    <include file="$(find rawseeds_ros)/launch/transforms_biccoca.launch" />
     <node pkg="rawseeds_ros" type="log_trajectory.py" name="log_trajectory" />
     <!-- <node type="record" name="robag_record" pkg="rosbag" args="-o /tmp/particles /muse_mcl/particles /muse_mcl/markers /tf" /> -->
     <!-- <node type="rviz" name="rviz" pkg="rviz" /> -->
