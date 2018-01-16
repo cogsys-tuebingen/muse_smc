@@ -68,7 +68,7 @@ void LikelihoodFieldGridmapServiceProvider::loadMap() const
 
                 cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr lf_map;
                 cslibs_ndt_2d::conversion::from(map, lf_map, sampling_resolution_,
-                                                maximum_distance_, sigma_hit_);
+                                                maximum_distance_, sigma_hit_, threshold_);
                 if (lf_map) {
                     map_.reset(new muse_mcl_2d_gridmaps::LikelihoodFieldGridmap(lf_map, frame_id_));
                     loading_ = false;
@@ -87,7 +87,7 @@ void LikelihoodFieldGridmapServiceProvider::loadMap() const
 
                 cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr lf_map;
                 cslibs_ndt_2d::conversion::from(map, lf_map, sampling_resolution_,
-                                                maximum_distance_, sigma_hit_);
+                                                maximum_distance_, sigma_hit_, threshold_);
                 if (lf_map) {
                     map_.reset(new muse_mcl_2d_gridmaps::LikelihoodFieldGridmap(lf_map, frame_id_));
                     loading_ = false;
