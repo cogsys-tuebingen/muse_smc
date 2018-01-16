@@ -54,7 +54,7 @@ void LikelihoodFieldOccupancyGridmapServiceProvider::setup(ros::NodeHandle &nh)
     const double prob_occupied  = nh.param(param_name("prob_occupied"), 0.65);
     inverse_model_.reset(new cslibs_gridmaps::utility::InverseModel(prob_prior, prob_free, prob_occupied));
 
-    const std::string topic = nh.param<std::string>(param_name("topic"), "/muse_mcl_2d_ndt/occ_map");
+    const std::string topic = nh.param<std::string>(param_name("topic"), "/muse_mcl_2d_ndt/likelihood_occ_ndt_map");
     pub_ = nh.advertise<nav_msgs::OccupancyGrid>(topic, 1);
 
     source_ = nh.serviceClient<nav_msgs::GetMap>(service_name_);
@@ -73,7 +73,7 @@ void LikelihoodFieldOccupancyGridmapServiceProvider::loadMap() const
 
                 cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr lf_map;
                 cslibs_ndt_2d::conversion::from(map, lf_map, sampling_resolution_, inverse_model_,
-                                                maximum_distance_, sigma_hit_, threshold_);
+                                                maximum_distance_, sigma_hit_);
                 if (lf_map) {
                     map_.reset(new muse_mcl_2d_gridmaps::LikelihoodFieldGridmap(lf_map, frame_id_));
                     loading_ = false;
@@ -92,7 +92,7 @@ void LikelihoodFieldOccupancyGridmapServiceProvider::loadMap() const
 
                 cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr lf_map;
                 cslibs_ndt_2d::conversion::from(map, lf_map, sampling_resolution_, inverse_model_,
-                                                maximum_distance_, sigma_hit_, threshold_);
+                                                maximum_distance_, sigma_hit_);
                 if (lf_map) {
                     map_.reset(new muse_mcl_2d_gridmaps::LikelihoodFieldGridmap(lf_map, frame_id_));
                     loading_ = false;

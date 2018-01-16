@@ -49,7 +49,7 @@ void LikelihoodFieldGridmapServiceProvider::setup(ros::NodeHandle &nh)
     sigma_hit_        = nh.param<double>(param_name("sigma_hit"), 0.5);
     threshold_        = nh.param<double>(param_name("threshold"), 0.5);
 
-    const std::string topic = nh.param<std::string>(param_name("topic"), "/muse_mcl_2d_ndt/map");
+    const std::string topic = nh.param<std::string>(param_name("topic"), "/muse_mcl_2d_ndt/likelihood_ndt_map");
     pub_ = nh.advertise<nav_msgs::OccupancyGrid>(topic, 1);
 
     source_ = nh.serviceClient<nav_msgs::GetMap>(service_name_);
@@ -68,7 +68,7 @@ void LikelihoodFieldGridmapServiceProvider::loadMap() const
 
                 cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr lf_map;
                 cslibs_ndt_2d::conversion::from(map, lf_map, sampling_resolution_,
-                                                maximum_distance_, sigma_hit_, threshold_);
+                                                maximum_distance_, sigma_hit_);
                 if (lf_map) {
                     map_.reset(new muse_mcl_2d_gridmaps::LikelihoodFieldGridmap(lf_map, frame_id_));
                     loading_ = false;
@@ -87,7 +87,7 @@ void LikelihoodFieldGridmapServiceProvider::loadMap() const
 
                 cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr lf_map;
                 cslibs_ndt_2d::conversion::from(map, lf_map, sampling_resolution_,
-                                                maximum_distance_, sigma_hit_, threshold_);
+                                                maximum_distance_, sigma_hit_);
                 if (lf_map) {
                     map_.reset(new muse_mcl_2d_gridmaps::LikelihoodFieldGridmap(lf_map, frame_id_));
                     loading_ = false;
@@ -114,7 +114,6 @@ void LikelihoodFieldGridmapServiceProvider::publishMap() const
     nav_msgs::OccupancyGrid::Ptr msg;
     {
         std::unique_lock<std::mutex> l(map_mutex_);
-
         cslibs_gridmaps::static_maps::conversion::from(map_->data(), msg);
     }
 

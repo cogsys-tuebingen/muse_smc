@@ -1,20 +1,25 @@
-#include <muse_mcl_2d_ndt/providers/gridmap_provider.h>
+#include <muse_mcl_2d_ndt/providers/ndt_gridmap_service_provider.h>
 
 #include <cslibs_ndt_2d/serialization/dynamic_maps/gridmap.hpp>
-#include <fstream>
 #include <yaml-cpp/yaml.h>
+#include <fstream>
+#include <nav_msgs/GetMap.h>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_ndt::GridmapProvider, muse_mcl_2d::MapProvider2D)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_ndt::NDTGridmapServiceProvider, muse_mcl_2d::MapProvider2D)
 
 namespace muse_mcl_2d_ndt {
-GridmapProvider::GridmapProvider() :
+NDTGridmapServiceProvider::NDTGridmapServiceProvider() :
     loading_(false)
 {
 }
 
-GridmapProvider::state_space_t::ConstPtr GridmapProvider::getStateSpace() const
+NDTGridmapServiceProvider::state_space_t::ConstPtr NDTGridmapServiceProvider::getStateSpace() const
 {
+    nav_msgs::GetMap req;
+    if (source_.call(req))
+        loadMap();
+
     std::unique_lock<std::mutex> l(map_mutex_);
     if (!map_ && blocking_)
         map_loaded_.wait(l);
@@ -22,18 +27,18 @@ GridmapProvider::state_space_t::ConstPtr GridmapProvider::getStateSpace() const
     return map_;
 }
 
-void GridmapProvider::setup(ros::NodeHandle &nh)
+void NDTGridmapServiceProvider::setup(ros::NodeHandle &nh)
 {
     auto param_name = [this](const std::string &name){return name_ + "/" + name;};
 
-    path_     = nh.param<std::string>(param_name("path"), "");
-    frame_id_ = nh.param<std::string>(param_name("frame_id"), "/world");
-    blocking_ = nh.param<bool>(param_name("blocking"), false);
-
-    loadMap();
+    service_name_ = nh.param<std::string>(param_name("service"), "/static_map");
+    path_         = nh.param<std::string>(param_name("path"), "");
+    frame_id_     = nh.param<std::string>(param_name("frame_id"), "/world");
+    blocking_     = nh.param<bool>(param_name("blocking"), false);
+    source_       = nh.serviceClient<nav_msgs::GetMap>(service_name_);
 }
 
-void GridmapProvider::loadMap()
+void NDTGridmapServiceProvider::loadMap() const
 {
     if (!loading_ && !map_) {
         loading_ = true;

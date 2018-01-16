@@ -1,23 +1,23 @@
-#include <muse_mcl_2d_ndt/providers/probability_gridmap_provider.h>
+#include <muse_mcl_2d_ndt/providers/distance_gridmap_provider.h>
 
 #include <cslibs_ndt_2d/serialization/dynamic_maps/gridmap.hpp>
-#include <cslibs_ndt_2d/conversion/probability_gridmap.hpp>
-#include <cslibs_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
+#include <cslibs_ndt_2d/conversion/distance_gridmap.hpp>
+#include <cslibs_gridmaps/static_maps/conversion/convert_distance_gridmap.hpp>
 
 #include <fstream>
 #include <yaml-cpp/yaml.h>
 #include <nav_msgs/OccupancyGrid.h>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_ndt::ProbabilityGridmapProvider, muse_mcl_2d::MapProvider2D)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_ndt::DistanceGridmapProvider, muse_mcl_2d::MapProvider2D)
 
 namespace muse_mcl_2d_ndt {
-ProbabilityGridmapProvider::ProbabilityGridmapProvider() :
+DistanceGridmapProvider::DistanceGridmapProvider() :
     loading_(false)
 {
 }
 
-ProbabilityGridmapProvider::state_space_t::ConstPtr ProbabilityGridmapProvider::getStateSpace() const
+DistanceGridmapProvider::state_space_t::ConstPtr DistanceGridmapProvider::getStateSpace() const
 {
     {
         std::unique_lock<std::mutex> l(map_mutex_);
@@ -30,22 +30,25 @@ ProbabilityGridmapProvider::state_space_t::ConstPtr ProbabilityGridmapProvider::
     return map_;
 }
 
-void ProbabilityGridmapProvider::setup(ros::NodeHandle &nh)
+void DistanceGridmapProvider::setup(ros::NodeHandle &nh)
 {
     auto param_name = [this](const std::string &name){return name_ + "/" + name;};
 
     path_                = nh.param<std::string>(param_name("path"), "");
     frame_id_            = nh.param<std::string>(param_name("frame_id"), "/world");
     blocking_            = nh.param<bool>(param_name("blocking"), false);
-    sampling_resolution_ = nh.param<double>(param_name("sampling_resolution"), 0.05);
 
-    const std::string topic = nh.param<std::string>(param_name("topic"), "/muse_mcl_2d_ndt/prob_ndt_map");
+    sampling_resolution_ = nh.param<double>(param_name("sampling_resolution"), 0.05);
+    maximum_distance_    = nh.param<double>(param_name("maximum_distance"), 2.0);
+    threshold_           = nh.param<double>(param_name("threshold"), 0.5);
+
+    const std::string topic = nh.param<std::string>(param_name("topic"), "/muse_mcl_2d_ndt/distance_ndt_map");
     pub_ = nh.advertise<nav_msgs::OccupancyGrid>(topic, 1);
 
     loadMap();
 }
 
-void ProbabilityGridmapProvider::loadMap()
+void DistanceGridmapProvider::loadMap()
 {
     if (!loading_ && !map_) {
         loading_ = true;
@@ -56,10 +59,11 @@ void ProbabilityGridmapProvider::loadMap()
             if (cslibs_ndt_2d::dynamic_maps::load(map, path_)) {
                 std::unique_lock<std::mutex> l(map_mutex_);
 
-                cslibs_gridmaps::static_maps::ProbabilityGridmap::Ptr lf_map;
-                cslibs_ndt_2d::conversion::from(map, lf_map, sampling_resolution_);
+                cslibs_gridmaps::static_maps::DistanceGridmap::Ptr lf_map;
+                cslibs_ndt_2d::conversion::from(map, lf_map, sampling_resolution_,
+                                                maximum_distance_, threshold_);
                 if (lf_map) {
-                    map_.reset(new muse_mcl_2d_gridmaps::ProbabilityGridmap(lf_map, frame_id_));
+                    map_.reset(new muse_mcl_2d_gridmaps::DistanceGridmap(lf_map, frame_id_));
                     loading_ = false;
                     ROS_INFO_STREAM("Successfully loaded file '" << path_ << "'!");
                     map_loaded_.notify_one();
@@ -74,10 +78,11 @@ void ProbabilityGridmapProvider::loadMap()
             if (cslibs_ndt_2d::dynamic_maps::load(map, path_)) {
                 std::unique_lock<std::mutex> l(map_mutex_);
 
-                cslibs_gridmaps::static_maps::ProbabilityGridmap::Ptr lf_map;
-                cslibs_ndt_2d::conversion::from(map, lf_map, sampling_resolution_);
+                cslibs_gridmaps::static_maps::DistanceGridmap::Ptr lf_map;
+                cslibs_ndt_2d::conversion::from(map, lf_map, sampling_resolution_,
+                                                maximum_distance_, threshold_);
                 if (lf_map) {
-                    map_.reset(new muse_mcl_2d_gridmaps::ProbabilityGridmap(lf_map, frame_id_));
+                    map_.reset(new muse_mcl_2d_gridmaps::DistanceGridmap(lf_map, frame_id_));
                     loading_ = false;
                     ROS_INFO_STREAM("Successfully loaded file '" << path_ << "'!");
                     map_loaded_.notify_one();
@@ -94,7 +99,7 @@ void ProbabilityGridmapProvider::loadMap()
     }
 }
 
-void ProbabilityGridmapProvider::publishMap() const
+void DistanceGridmapProvider::publishMap() const
 {
     if (!map_)
         return;

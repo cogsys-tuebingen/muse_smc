@@ -44,7 +44,7 @@ void ProbabilityOccupancyGridmapProvider::setup(ros::NodeHandle &nh)
     const double prob_occupied  = nh.param(param_name("prob_occupied"), 0.65);
     inverse_model_.reset(new cslibs_gridmaps::utility::InverseModel(prob_prior, prob_free, prob_occupied));
 
-    const std::string topic = nh.param<std::string>(param_name("topic"), "/muse_mcl_2d_ndt/occ_map");
+    const std::string topic = nh.param<std::string>(param_name("topic"), "/muse_mcl_2d_ndt/prob_occ_ndt_map");
     pub_ = nh.advertise<nav_msgs::OccupancyGrid>(topic, 1);
 
     loadMap();
