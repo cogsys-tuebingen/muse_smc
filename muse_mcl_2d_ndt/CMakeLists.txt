@@ -4,6 +4,7 @@ project(muse_mcl_2d_ndt)
 find_package(catkin REQUIRED COMPONENTS
   muse_mcl_2d
   muse_mcl_2d_laser
+  muse_mcl_2d_gridmaps
   cslibs_ndt_2d
   cslibs_math_2d
   cslibs_gridmaps
@@ -27,37 +28,42 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}_maps SHARED
-    src/maps/gridmap.cpp
-    src/maps/occupancy_gridmap.cpp
+  src/maps/gridmap.cpp
+  src/maps/occupancy_gridmap.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}_maps
-    ${catkin_LIBRARIES}
+  ${catkin_LIBRARIES}
 )
 
 add_library(${PROJECT_NAME}_providers SHARED
-    src/providers/gridmap_provider.cpp
-    src/providers/occupancy_gridmap_provider.cpp
-    src/providers/gridmap_service_provider.cpp
-    src/providers/occupancy_gridmap_service_provider.cpp
+  src/providers/gridmap_provider.cpp
+  src/providers/occupancy_gridmap_provider.cpp
+  src/providers/gridmap_service_provider.cpp
+  src/providers/occupancy_gridmap_service_provider.cpp
+  src/providers/likelihood_field_gridmap_provider.cpp
+  src/providers/likelihood_field_occupancy_gridmap_provider.cpp
+  src/providers/likelihood_field_gridmap_service_provider.cpp
+  src/providers/likelihood_field_occupancy_gridmap_service_provider.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}_providers
-    ${catkin_LIBRARIES}
-    ${PROJECT_NAME}_maps
-    yaml-cpp
+  ${catkin_LIBRARIES}
+  ${PROJECT_NAME}_maps
+  muse_mcl_2d_gridmaps_maps
+  yaml-cpp
 )
 
 add_library(${PROJECT_NAME}_models SHARED
-    src/models/gridmap_beam_model.cpp
-    src/models/gridmap_beam_model_amcl.cpp
-    src/models/occupancy_gridmap_beam_model.cpp
-    src/models/occupancy_gridmap_beam_model_amcl.cpp
+  src/models/gridmap_beam_model.cpp
+  src/models/gridmap_beam_model_amcl.cpp
+  src/models/occupancy_gridmap_beam_model.cpp
+  src/models/occupancy_gridmap_beam_model_amcl.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}_models
-    ${catkin_LIBRARIES}
-    ${PROJECT_NAME}_maps
+  ${catkin_LIBRARIES}
+  ${PROJECT_NAME}_maps
 )
 
 install(FILES plugins.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})

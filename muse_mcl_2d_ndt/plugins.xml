@@ -11,6 +11,18 @@
    <class type="muse_mcl_2d_ndt::OccupancyGridmapServiceProvider" base_class_type="muse_mcl_2d::MapProvider2D">
       <description></description>
    </class>
+   <class type="muse_mcl_2d_ndt::LikelihoodFieldyGridmapProvider" base_class_type="muse_mcl_2d::MapProvider2D">
+      <description></description>
+   </class>
+   <class type="muse_mcl_2d_ndt::LikelihoodFieldGridmapServiceProvider" base_class_type="muse_mcl_2d::MapProvider2D">
+      <description></description>
+   </class>
+   <class type="muse_mcl_2d_ndt::LikelihoodFieldOccupancyGridmapProvider" base_class_type="muse_mcl_2d::MapProvider2D">
+      <description></description>
+   </class>
+   <class type="muse_mcl_2d_ndt::LikelihoodFieldOccupancyGridmapServiceProvider" base_class_type="muse_mcl_2d::MapProvider2D">
+      <description></description>
+   </class>
 </library>
 <library path="libmuse_mcl_2d_ndt_models">
    <class type="muse_mcl_2d_ndt::GridmapBeamModel" base_class_type="muse_mcl_2d::UpdateModel2D">

@@ -58,7 +58,7 @@ void OccupancyGridmapBeamModel::apply(const data_t::ConstPtr          &data,
         return z_hit_ * denominator_hit_ * std::exp(pow2(ray_range - map_range) * denominator_exponent_hit_)
                 * gridmap.sampleNonNormalized(ray_end_point,
                                               to_bundle_index(ray_end_point),
-                                              *inverse_model_);
+                                              inverse_model_);
     };
     auto p_short = [this](const double &ray_range, const double &map_range) {
         return ray_range < map_range ? z_short_ * (1.0 / (1.0 - std::exp(-lambda_short_  * map_range))) * lambda_short_ * std::exp(-lambda_short_ * ray_range)
