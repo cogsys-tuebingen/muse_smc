@@ -50,7 +50,6 @@ add_library(${PROJECT_NAME}_providers SHARED
 target_link_libraries(${PROJECT_NAME}_providers
   ${catkin_LIBRARIES}
   ${PROJECT_NAME}_maps
-  muse_mcl_2d_gridmaps_maps
   yaml-cpp
 )
 

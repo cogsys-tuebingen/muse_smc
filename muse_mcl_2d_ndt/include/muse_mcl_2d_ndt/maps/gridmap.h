@@ -8,6 +8,8 @@ namespace muse_mcl_2d_ndt {
 class Gridmap : public muse_mcl_2d::Map2D
 {
 public:
+    using Ptr = std::shared_ptr<Gridmap>;
+
     Gridmap(const cslibs_ndt_2d::dynamic_maps::Gridmap::Ptr &map,
             const std::string frame_id);
 

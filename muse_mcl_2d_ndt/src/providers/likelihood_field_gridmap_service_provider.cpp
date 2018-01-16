@@ -108,6 +108,7 @@ void LikelihoodFieldGridmapServiceProvider::publishMap() const
     nav_msgs::OccupancyGrid::Ptr msg;
     {
         std::unique_lock<std::mutex> l(map_mutex_);
+
         cslibs_gridmaps::static_maps::conversion::from(map_->data(), msg);
     }
 

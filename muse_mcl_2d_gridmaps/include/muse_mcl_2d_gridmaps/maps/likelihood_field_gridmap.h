@@ -10,6 +10,8 @@ namespace muse_mcl_2d_gridmaps {
 class LikelihoodFieldGridmap : public muse_mcl_2d::Map2D
 {
 public:
+    using Ptr = std::shared_ptr<LikelihoodFieldGridmap>;
+
     LikelihoodFieldGridmap(const cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr &map,
                                   const std::string frame_id);
     state_space_boundary_t getMin() const override;

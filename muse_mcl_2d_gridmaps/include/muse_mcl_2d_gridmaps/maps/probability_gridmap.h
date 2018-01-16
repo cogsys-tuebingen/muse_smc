@@ -10,6 +10,8 @@ namespace muse_mcl_2d_gridmaps {
 class ProbabilityGridmap : public muse_mcl_2d::Map2D
 {
 public:
+    using Ptr = std::shared_ptr<ProbabilityGridmap>;
+
     ProbabilityGridmap(const cslibs_gridmaps::static_maps::ProbabilityGridmap::Ptr &map,
                        const std::string frame_id);
     state_space_boundary_t getMin() const override;

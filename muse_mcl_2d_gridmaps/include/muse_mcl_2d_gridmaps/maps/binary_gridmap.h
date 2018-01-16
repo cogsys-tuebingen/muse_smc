@@ -11,6 +11,8 @@ namespace muse_mcl_2d_gridmaps {
 class BinaryGridmap : public muse_mcl_2d::Map2D
 {
 public:
+    using Ptr = std::shared_ptr<BinaryGridmap>;
+
     BinaryGridmap(const cslibs_gridmaps::static_maps::BinaryGridmap::Ptr &map,
                   const std::string frame_id);
 

@@ -11,6 +11,8 @@ namespace muse_mcl_2d_gridmaps {
 class DistanceGridmap : public muse_mcl_2d::Map2D
 {
 public:
+    using Ptr = std::shared_ptr<DistanceGridmap>;
+
     DistanceGridmap(const cslibs_gridmaps::static_maps::DistanceGridmap::Ptr &map,
                     const std::string frame_id);
 
