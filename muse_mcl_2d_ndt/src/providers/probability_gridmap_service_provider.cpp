@@ -1,8 +1,8 @@
-#include <muse_mcl_2d_ndt/providers/likelihood_field_gridmap_service_provider.h>
+#include <muse_mcl_2d_ndt/providers/probability_gridmap_service_provider.h>
 
 #include <cslibs_ndt_2d/serialization/dynamic_maps/gridmap.hpp>
-#include <cslibs_ndt_2d/conversion/likelihood_field_gridmap.hpp>
-#include <cslibs_gridmaps/static_maps/conversion/convert_likelihood_field_gridmap.hpp>
+#include <cslibs_ndt_2d/conversion/probability_gridmap.hpp>
+#include <cslibs_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
 
 #include <yaml-cpp/yaml.h>
 #include <fstream>
@@ -10,15 +10,15 @@
 #include <nav_msgs/OccupancyGrid.h>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_ndt::LikelihoodFieldGridmapServiceProvider, muse_mcl_2d::MapProvider2D)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_ndt::ProbabilityGridmapServiceProvider, muse_mcl_2d::MapProvider2D)
 
 namespace muse_mcl_2d_ndt {
-LikelihoodFieldGridmapServiceProvider::LikelihoodFieldGridmapServiceProvider() :
+ProbabilityGridmapServiceProvider::ProbabilityGridmapServiceProvider() :
     loading_(false)
 {
 }
 
-LikelihoodFieldGridmapServiceProvider::state_space_t::ConstPtr LikelihoodFieldGridmapServiceProvider::getStateSpace() const
+ProbabilityGridmapServiceProvider::state_space_t::ConstPtr ProbabilityGridmapServiceProvider::getStateSpace() const
 {
     nav_msgs::GetMap req;
     if (source_.call(req))
@@ -35,7 +35,7 @@ LikelihoodFieldGridmapServiceProvider::state_space_t::ConstPtr LikelihoodFieldGr
     return map_;
 }
 
-void LikelihoodFieldGridmapServiceProvider::setup(ros::NodeHandle &nh)
+void ProbabilityGridmapServiceProvider::setup(ros::NodeHandle &nh)
 {
     auto param_name = [this](const std::string &name){return name_ + "/" + name;};
 
@@ -48,10 +48,10 @@ void LikelihoodFieldGridmapServiceProvider::setup(ros::NodeHandle &nh)
     const std::string topic = nh.param<std::string>(param_name("topic"), "/muse_mcl_2d_ndt/map");
     pub_ = nh.advertise<nav_msgs::OccupancyGrid>(topic, 1);
 
-    source_              = nh.serviceClient<nav_msgs::GetMap>(service_name_);
+    source_ = nh.serviceClient<nav_msgs::GetMap>(service_name_);
 }
 
-void LikelihoodFieldGridmapServiceProvider::loadMap() const
+void ProbabilityGridmapServiceProvider::loadMap() const
 {
     if (!loading_ && !map_) {
         loading_ = true;
@@ -62,10 +62,10 @@ void LikelihoodFieldGridmapServiceProvider::loadMap() const
             if (cslibs_ndt_2d::dynamic_maps::load(map, path_)) {
                 std::unique_lock<std::mutex> l(map_mutex_);
 
-                cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr lf_map =
+                cslibs_gridmaps::static_maps::ProbabilityGridmap::Ptr lf_map =
                         cslibs_ndt_2d::conversion::from(map, sampling_resolution_);
                 if (lf_map) {
-                    map_.reset(new muse_mcl_2d_gridmaps::LikelihoodFieldGridmap(lf_map, frame_id_));
+                    map_.reset(new muse_mcl_2d_gridmaps::ProbabilityGridmap(lf_map, frame_id_));
                     loading_ = false;
                     ROS_INFO_STREAM("Successfully loaded file '" << path_ << "'!");
                     map_loaded_.notify_one();
@@ -80,10 +80,10 @@ void LikelihoodFieldGridmapServiceProvider::loadMap() const
             if (cslibs_ndt_2d::dynamic_maps::load(map, path_)) {
                 std::unique_lock<std::mutex> l(map_mutex_);
 
-                cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr lf_map =
+                cslibs_gridmaps::static_maps::ProbabilityGridmap::Ptr lf_map =
                         cslibs_ndt_2d::conversion::from(map, sampling_resolution_);
                 if (lf_map) {
-                    map_.reset(new muse_mcl_2d_gridmaps::LikelihoodFieldGridmap(lf_map, frame_id_));
+                    map_.reset(new muse_mcl_2d_gridmaps::ProbabilityGridmap(lf_map, frame_id_));
                     loading_ = false;
                     ROS_INFO_STREAM("Successfully loaded file '" << path_ << "'!");
                     map_loaded_.notify_one();
@@ -100,7 +100,7 @@ void LikelihoodFieldGridmapServiceProvider::loadMap() const
     }
 }
 
-void LikelihoodFieldGridmapServiceProvider::publishMap() const
+void ProbabilityGridmapServiceProvider::publishMap() const
 {
     if (!map_)
         return;

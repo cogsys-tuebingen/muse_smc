@@ -1,8 +1,8 @@
-#include <muse_mcl_2d_ndt/providers/likelihood_field_occupancy_gridmap_service_provider.h>
+#include <muse_mcl_2d_ndt/providers/probability_occupancy_gridmap_service_provider.h>
 
 #include <cslibs_ndt_2d/serialization/dynamic_maps/occupancy_gridmap.hpp>
-#include <cslibs_ndt_2d/conversion/likelihood_field_gridmap.hpp>
-#include <cslibs_gridmaps/static_maps/conversion/convert_likelihood_field_gridmap.hpp>
+#include <cslibs_ndt_2d/conversion/probability_gridmap.hpp>
+#include <cslibs_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
 
 #include <fstream>
 #include <yaml-cpp/yaml.h>
@@ -10,15 +10,15 @@
 #include <nav_msgs/OccupancyGrid.h>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_ndt::LikelihoodFieldOccupancyGridmapServiceProvider, muse_mcl_2d::MapProvider2D)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_ndt::ProbabilityOccupancyGridmapServiceProvider, muse_mcl_2d::MapProvider2D)
 
 namespace muse_mcl_2d_ndt {
-LikelihoodFieldOccupancyGridmapServiceProvider::LikelihoodFieldOccupancyGridmapServiceProvider() :
+ProbabilityOccupancyGridmapServiceProvider::ProbabilityOccupancyGridmapServiceProvider() :
     loading_(false)
 {
 }
 
-LikelihoodFieldOccupancyGridmapServiceProvider::state_space_t::ConstPtr LikelihoodFieldOccupancyGridmapServiceProvider::getStateSpace() const
+ProbabilityOccupancyGridmapServiceProvider::state_space_t::ConstPtr ProbabilityOccupancyGridmapServiceProvider::getStateSpace() const
 {
     nav_msgs::GetMap req;
     if (source_.call(req))
@@ -35,7 +35,7 @@ LikelihoodFieldOccupancyGridmapServiceProvider::state_space_t::ConstPtr Likeliho
     return map_;
 }
 
-void LikelihoodFieldOccupancyGridmapServiceProvider::setup(ros::NodeHandle &nh)
+void ProbabilityOccupancyGridmapServiceProvider::setup(ros::NodeHandle &nh)
 {
     auto param_name = [this](const std::string &name){return name_ + "/" + name;};
 
@@ -56,7 +56,7 @@ void LikelihoodFieldOccupancyGridmapServiceProvider::setup(ros::NodeHandle &nh)
     source_ = nh.serviceClient<nav_msgs::GetMap>(service_name_);
 }
 
-void LikelihoodFieldOccupancyGridmapServiceProvider::loadMap() const
+void ProbabilityOccupancyGridmapServiceProvider::loadMap() const
 {
     if (!loading_ && !map_) {
         loading_ = true;
@@ -67,10 +67,10 @@ void LikelihoodFieldOccupancyGridmapServiceProvider::loadMap() const
             if (cslibs_ndt_2d::dynamic_maps::load(map, path_)) {
                 std::unique_lock<std::mutex> l(map_mutex_);
 
-                cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr lf_map =
+                cslibs_gridmaps::static_maps::ProbabilityGridmap::Ptr lf_map =
                         cslibs_ndt_2d::conversion::from(map, sampling_resolution_, inverse_model_);
                 if (lf_map) {
-                    map_.reset(new muse_mcl_2d_gridmaps::LikelihoodFieldGridmap(lf_map, frame_id_));
+                    map_.reset(new muse_mcl_2d_gridmaps::ProbabilityGridmap(lf_map, frame_id_));
                     loading_ = false;
                     ROS_INFO_STREAM("Successfully loaded file '" << path_ << "'!");
                     map_loaded_.notify_one();
@@ -85,10 +85,10 @@ void LikelihoodFieldOccupancyGridmapServiceProvider::loadMap() const
             if (cslibs_ndt_2d::dynamic_maps::load(map, path_)) {
                 std::unique_lock<std::mutex> l(map_mutex_);
 
-                cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr lf_map =
+                cslibs_gridmaps::static_maps::ProbabilityGridmap::Ptr lf_map =
                         cslibs_ndt_2d::conversion::from(map, sampling_resolution_, inverse_model_);
                 if (lf_map) {
-                    map_.reset(new muse_mcl_2d_gridmaps::LikelihoodFieldGridmap(lf_map, frame_id_));
+                    map_.reset(new muse_mcl_2d_gridmaps::ProbabilityGridmap(lf_map, frame_id_));
                     loading_ = false;
                     ROS_INFO_STREAM("Successfully loaded file '" << path_ << "'!");
                     map_loaded_.notify_one();
@@ -105,7 +105,7 @@ void LikelihoodFieldOccupancyGridmapServiceProvider::loadMap() const
     }
 }
 
-void LikelihoodFieldOccupancyGridmapServiceProvider::publishMap() const
+void ProbabilityOccupancyGridmapServiceProvider::publishMap() const
 {
     if (!map_)
         return;
