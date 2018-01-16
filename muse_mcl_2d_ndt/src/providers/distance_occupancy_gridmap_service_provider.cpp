@@ -46,7 +46,7 @@ void DistanceOccupancyGridmapServiceProvider::setup(ros::NodeHandle &nh)
 
     sampling_resolution_ = nh.param<double>(param_name("sampling_resolution"), 0.05);
     maximum_distance_ = nh.param<double>(param_name("maximum_distance"), 2.0);
-    threshold_        = nh.param<double>(param_name("threshold"), 0.5);
+    threshold_        = nh.param<double>(param_name("threshold"), 0.196);
 
     const double prob_prior     = nh.param(param_name("prob_prior"), 0.5);
     const double prob_free      = nh.param(param_name("prob_free"), 0.45);

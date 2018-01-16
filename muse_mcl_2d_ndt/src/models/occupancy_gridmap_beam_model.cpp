@@ -102,7 +102,7 @@ void OccupancyGridmapBeamModel::doSetup(ros::NodeHandle &nh)
     denominator_exponent_hit_   = -0.5 * 1.0 / (sigma_hit_ * sigma_hit_);
     denominator_hit_            = 1.0 / sqrt(2.0 * M_PI * sigma_hit_ * sigma_hit_);
     lambda_short_               = nh.param(param_name("lambda_short"), 0.01);
-    occupied_threshold_         = nh.param(param_name("occupied_threshold"), 0.5);
+    occupied_threshold_         = nh.param(param_name("occupied_threshold"), 0.196);
 
     const double prob_prior     = nh.param(param_name("prob_prior"), 0.5);
     const double prob_free      = nh.param(param_name("prob_free"), 0.45);

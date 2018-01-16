@@ -47,7 +47,7 @@ void LikelihoodFieldGridmapServiceProvider::setup(ros::NodeHandle &nh)
 
     maximum_distance_ = nh.param<double>(param_name("maximum_distance"), 2.0);
     sigma_hit_        = nh.param<double>(param_name("sigma_hit"), 0.5);
-    threshold_        = nh.param<double>(param_name("threshold"), 0.5);
+    threshold_        = nh.param<double>(param_name("threshold"), 0.196);
 
     const std::string topic = nh.param<std::string>(param_name("topic"), "/muse_mcl_2d_ndt/likelihood_ndt_map");
     pub_ = nh.advertise<nav_msgs::OccupancyGrid>(topic, 1);

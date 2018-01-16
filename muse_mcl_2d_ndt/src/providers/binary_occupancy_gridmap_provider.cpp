@@ -39,7 +39,7 @@ void BinaryOccupancyGridmapProvider::setup(ros::NodeHandle &nh)
     blocking_            = nh.param<bool>(param_name("blocking"), false);
 
     sampling_resolution_ = nh.param<double>(param_name("sampling_resolution"), 0.05);
-    threshold_           = nh.param<double>(param_name("threshold"), 0.5);
+    threshold_           = nh.param<double>(param_name("threshold"), 0.196);
 
     const double prob_prior     = nh.param(param_name("prob_prior"), 0.5);
     const double prob_free      = nh.param(param_name("prob_free"), 0.45);

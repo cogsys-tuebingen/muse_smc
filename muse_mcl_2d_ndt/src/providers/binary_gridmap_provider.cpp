@@ -39,7 +39,7 @@ void BinaryGridmapProvider::setup(ros::NodeHandle &nh)
     blocking_            = nh.param<bool>(param_name("blocking"), false);
 
     sampling_resolution_ = nh.param<double>(param_name("sampling_resolution"), 0.05);
-    threshold_           = nh.param<double>(param_name("threshold"), 0.5);
+    threshold_           = nh.param<double>(param_name("threshold"), 0.196);
 
     const std::string topic = nh.param<std::string>(param_name("topic"), "/muse_mcl_2d_ndt/binary_ndt_map");
     pub_ = nh.advertise<nav_msgs::OccupancyGrid>(topic, 1);

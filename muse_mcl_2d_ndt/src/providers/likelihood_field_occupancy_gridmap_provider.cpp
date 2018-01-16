@@ -41,7 +41,7 @@ void LikelihoodFieldOccupancyGridmapProvider::setup(ros::NodeHandle &nh)
 
     maximum_distance_ = nh.param<double>(param_name("maximum_distance"), 2.0);
     sigma_hit_        = nh.param<double>(param_name("sigma_hit"), 0.5);
-    threshold_        = nh.param<double>(param_name("threshold"), 0.5);
+    threshold_        = nh.param<double>(param_name("threshold"), 0.196);
 
     const double prob_prior     = nh.param(param_name("prob_prior"), 0.5);
     const double prob_free      = nh.param(param_name("prob_free"), 0.45);
