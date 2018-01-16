@@ -67,8 +67,8 @@ void ProbabilityOccupancyGridmapServiceProvider::loadMap() const
             if (cslibs_ndt_2d::dynamic_maps::load(map, path_)) {
                 std::unique_lock<std::mutex> l(map_mutex_);
 
-                cslibs_gridmaps::static_maps::ProbabilityGridmap::Ptr lf_map =
-                        cslibs_ndt_2d::conversion::from(map, sampling_resolution_, inverse_model_);
+                cslibs_gridmaps::static_maps::ProbabilityGridmap::Ptr lf_map;
+                cslibs_ndt_2d::conversion::from(map, lf_map, sampling_resolution_, inverse_model_);
                 if (lf_map) {
                     map_.reset(new muse_mcl_2d_gridmaps::ProbabilityGridmap(lf_map, frame_id_));
                     loading_ = false;
@@ -85,8 +85,8 @@ void ProbabilityOccupancyGridmapServiceProvider::loadMap() const
             if (cslibs_ndt_2d::dynamic_maps::load(map, path_)) {
                 std::unique_lock<std::mutex> l(map_mutex_);
 
-                cslibs_gridmaps::static_maps::ProbabilityGridmap::Ptr lf_map =
-                        cslibs_ndt_2d::conversion::from(map, sampling_resolution_, inverse_model_);
+                cslibs_gridmaps::static_maps::ProbabilityGridmap::Ptr lf_map;
+                cslibs_ndt_2d::conversion::from(map, lf_map, sampling_resolution_, inverse_model_);
                 if (lf_map) {
                     map_.reset(new muse_mcl_2d_gridmaps::ProbabilityGridmap(lf_map, frame_id_));
                     loading_ = false;

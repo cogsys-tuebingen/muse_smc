@@ -41,7 +41,7 @@ void LikelihoodFieldOccupancyGridmapProvider::setup(ros::NodeHandle &nh)
 
     maximum_distance_ = nh.param<double>(param_name("maximum_distance"), 2.0);
     sigma_hit_        = nh.param<double>(param_name("sigma_hit"), 0.5);
-    threshold_        = nh.param<double>(param_name("threshold"), 1.0);
+    threshold_        = nh.param<double>(param_name("threshold"), 0.5);
 
     const double prob_prior     = nh.param(param_name("prob_prior"), 0.5);
     const double prob_free      = nh.param(param_name("prob_free"), 0.45);
@@ -65,9 +65,9 @@ void LikelihoodFieldOccupancyGridmapProvider::loadMap()
             if (cslibs_ndt_2d::dynamic_maps::load(map, path_)) {
                 std::unique_lock<std::mutex> l(map_mutex_);
 
-                cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr lf_map =
-                        cslibs_ndt_2d::conversion::from(map, sampling_resolution_, inverse_model_,
-                                                        maximum_distance_, sigma_hit_, threshold_);
+                cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr lf_map;
+                cslibs_ndt_2d::conversion::from(map, lf_map, sampling_resolution_, inverse_model_,
+                                                maximum_distance_, sigma_hit_, threshold_);
                 if (lf_map) {
                     map_.reset(new muse_mcl_2d_gridmaps::LikelihoodFieldGridmap(lf_map, frame_id_));
                     loading_ = false;
@@ -84,9 +84,9 @@ void LikelihoodFieldOccupancyGridmapProvider::loadMap()
             if (cslibs_ndt_2d::dynamic_maps::load(map, path_)) {
                 std::unique_lock<std::mutex> l(map_mutex_);
 
-                cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr lf_map =
-                        cslibs_ndt_2d::conversion::from(map, sampling_resolution_, inverse_model_,
-                                                        maximum_distance_, sigma_hit_, threshold_);
+                cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr lf_map;
+                cslibs_ndt_2d::conversion::from(map, lf_map, sampling_resolution_, inverse_model_,
+                                                maximum_distance_, sigma_hit_, threshold_);
                 if (lf_map) {
                     map_.reset(new muse_mcl_2d_gridmaps::LikelihoodFieldGridmap(lf_map, frame_id_));
                     loading_ = false;
