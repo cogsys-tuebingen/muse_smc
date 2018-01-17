@@ -21,6 +21,7 @@ void LikelihoodFieldModelLog::apply(const data_t::ConstPtr          &data,
     if(ps_.size() != set.capacity()) {
         ps_.resize(set.capacity(), 0.0);
     }
+    std::fill(ps_.begin(), ps_.end(), 0.0);
 
     const cslibs_gridmaps::static_maps::DistanceGridmap &gridmap    = *(map->as<DistanceGridmap>().data());
     const muse_mcl_2d_laser::LaserScan2D                &laser_data = data->as<muse_mcl_2d_laser::LaserScan2D>();

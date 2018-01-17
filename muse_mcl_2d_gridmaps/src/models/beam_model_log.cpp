@@ -50,6 +50,7 @@ void BeamModelLog::apply(const data_t::ConstPtr          &data,
     if(ps_.size() != set.capacity()) {
         ps_.resize(set.capacity(), 0.0);
     }
+    std::fill(ps_.begin(), ps_.end(), 0.0);
 
     /// mixture distribution entries
     auto pow2 = [](const double x) {return x*x;};

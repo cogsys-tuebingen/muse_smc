@@ -55,13 +55,10 @@ void LikelihoodFieldProbModelAMCL::apply(const data_t::ConstPtr          &data,
     std::fill(observation_mask_.begin(), observation_mask_.end(), 0);
     const std::size_t sample_size = set.size();
     const std::size_t probability_buffer_size = sample_size * max_beams_;
-    if(probability_buffer_size > observation_probability_buffer_.size()) {
+    if(probability_buffer_size != observation_probability_buffer_.size()) {
         observation_probability_buffer_.resize(probability_buffer_size, 0.0);
-    } else {
-        std::fill_n(observation_probability_buffer_.begin(),
-                    probability_buffer_size,
-                    0.0);
     }
+    std::fill(observation_probability_buffer_.begin(), observation_probability_buffer_.end(), 0.0);
 
     {   /// sensor probabilty calculation.
         const auto end = set.const_end();
@@ -128,5 +125,6 @@ void LikelihoodFieldProbModelAMCL::doSetup(ros::NodeHandle &nh)
 
     observation_histogram_.resize(max_beams_, 0);
     observation_mask_.resize(max_beams_, 0);
+
 }
 }
