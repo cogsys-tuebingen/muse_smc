@@ -74,7 +74,7 @@ void OccupancyGridmapBeamModel::apply(const data_t::ConstPtr          &data,
             (const muse_mcl_2d_laser::LaserScan2D::Ray &ray, const cslibs_math_2d::Pose2d &m_T_l) {
         const double ray_range = ray.range;
         auto         ray_end_point = m_T_l * ray.point;
-        const double map_range = gridmap.getRange(m_T_l.translation(), ray_end_point, *inverse_model_, occupied_threshold_);
+        const double map_range = gridmap.getRange(m_T_l.translation(), ray_end_point, inverse_model_, occupied_threshold_);
         return p_hit(ray_end_point, ray_range, map_range) + p_short(ray_range, map_range) + p_max(ray_range) + p_random(ray_range);
     };
 

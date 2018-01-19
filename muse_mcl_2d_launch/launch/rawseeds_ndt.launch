@@ -56,7 +56,7 @@
           <!-- <param name="angle_max" value="3.1425" /> -->
         </group>
         <group ns="beam_model_front">
-            <param name="class"         value="muse_mcl_2d_ndt::LikelihoodFieldModel" />
+            <param name="class"         value="muse_mcl_2d_gridmaps::LikelihoodFieldModelAMCL" />
             <param name="base_class"    value="muse_mcl_2d::UpdateModel2D" />
             <param name="data_provider" value="front_laser" />
             <param name="map_provider"  value="rawseeds" />
@@ -71,7 +71,7 @@
             <param name="use_weights_for_estimation" value="true" />
         </group>
         <group ns="beam_model_rear">
-            <param name="class"         value="muse_mcl_2d_gridmaps::LikelihoodFieldModel" />
+            <param name="class"         value="muse_mcl_2d_gridmaps::LikelihoodFieldModelAMCL" />
             <param name="base_class"    value="muse_mcl_2d::UpdateModel2D" />
             <param name="data_provider" value="rear_laser" />
             <param name="map_provider"  value="rawseeds" />
@@ -86,7 +86,7 @@
             <param name="use_weights_for_estimation" value="true" />
         </group>
         <group ns="rawseeds">
-          <param name="class"       value="muse_mcl_2d_ndt::LikelihoodFieldOccupancyGridmapProvider" />
+          <param name="class"       value="muse_mcl_2d_ndt::DistanceOccupancyGridmapProvider" />
           <param name="base_class"  value="muse_mcl_2d::MapProvider2D" />
           <param name="path"        value="/data/0/rawseeds/maps/without_stereo/Bicocca_2009-02-25a-dynamic-natural-light-groundtruth-cartographer/map/2d/occ_ndt/map" />
           <param name="blocking"    value="true" />
