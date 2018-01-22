@@ -61,7 +61,7 @@ void DistanceOccupancyGridmapProvider::loadMap()
         auto load = [this]() {
             ROS_INFO_STREAM("Loading file '" << path_ << "'...");
             cslibs_ndt_2d::dynamic_maps::OccupancyGridmap::Ptr map;
-            if (cslibs_ndt_2d::dynamic_maps::load(map, path_)) {
+            if (cslibs_ndt_2d::dynamic_maps::loadBinary(path_, map)) {
                 std::unique_lock<std::mutex> l(map_mutex_);
 
                 cslibs_gridmaps::static_maps::DistanceGridmap::Ptr lf_map;
@@ -80,7 +80,7 @@ void DistanceOccupancyGridmapProvider::loadMap()
         auto load_blocking = [this]() {
             ROS_INFO_STREAM("Loading file '" << path_ << "'...");
             cslibs_ndt_2d::dynamic_maps::OccupancyGridmap::Ptr map;
-            if (cslibs_ndt_2d::dynamic_maps::load(map, path_)) {
+            if (cslibs_ndt_2d::dynamic_maps::loadBinary(path_, map)) {
                 std::unique_lock<std::mutex> l(map_mutex_);
 
                 cslibs_gridmaps::static_maps::DistanceGridmap::Ptr lf_map;
