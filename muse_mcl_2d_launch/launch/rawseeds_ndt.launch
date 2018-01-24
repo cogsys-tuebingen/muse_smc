@@ -55,6 +55,13 @@
           <!-- <param name="angle_min" value="-3.1425" /> -->
           <!-- <param name="angle_max" value="3.1425" /> -->
         </group>
+        <group ns="stereo">
+          <param name="class"                    value="muse_mcl_2d_stereo::StereoProvider2D" />
+          <param name="base_class"               value="muse_mcl_2d::DataProvider2D" />
+          <param name="topic"                    value="/svs_l/filtered_points" />
+          <param name="queue_size"               value="10" />
+          <param name="rate"                     value="0.0" />
+        </group>
         <group ns="beam_model_front">
             <param name="class"         value="muse_mcl_2d_gridmaps::LikelihoodFieldModelAMCL" />
             <param name="base_class"    value="muse_mcl_2d::UpdateModel2D" />
@@ -75,6 +82,21 @@
             <param name="base_class"    value="muse_mcl_2d::UpdateModel2D" />
             <param name="data_provider" value="rear_laser" />
             <param name="map_provider"  value="rawseeds" />
+            <param name="z_hit"         value="0.8"/>
+            <param name="z_short"       value="0.05"/>
+            <param name="z_max"         value="0.05"/>
+            <param name="z_rand"        value="0.1"/>
+            <param name="sigma_hit"     value="0.15"/>
+            <param name="lambda_short"  value="0.1"/>
+            <param name="max_beams"     value="30" />
+            <param name="use_estimated_parameters" value="false" />
+            <param name="use_weights_for_estimation" value="true" />
+        </group>
+        <group ns="beam_model_stereo">
+            <param name="class"         value="muse_mcl_2d_ndt::LikelihoodFieldModel3dAMCL" />
+            <param name="base_class"    value="muse_mcl_2d::UpdateModel2D" />
+            <param name="data_provider" value="stereo" />
+            <param name="map_provider"  value="rawseeds_3d" />
             <param name="z_hit"         value="0.8"/>
             <param name="z_short"       value="0.05"/>
             <param name="z_max"         value="0.05"/>
