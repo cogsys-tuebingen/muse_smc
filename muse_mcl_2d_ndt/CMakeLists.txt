@@ -5,6 +5,7 @@ find_package(catkin REQUIRED COMPONENTS
   muse_mcl_2d
   muse_mcl_2d_laser
   muse_mcl_2d_gridmaps
+  muse_mcl_2d_stereo
   cslibs_ndt_2d
   cslibs_math_2d
   cslibs_ndt_3d
@@ -78,6 +79,10 @@ add_library(${PROJECT_NAME}_models SHARED
   src/models/gridmap_beam_model_amcl.cpp
   src/models/occupancy_gridmap_beam_model.cpp
   src/models/occupancy_gridmap_beam_model_amcl.cpp
+  src/models/gridmap_3d_likelihood_field_model.cpp
+  src/models/gridmap_3d_likelihood_field_model_normalized.cpp
+  src/models/occupancy_gridmap_3d_likelihood_field_model.cpp
+  src/models/occupancy_gridmap_3d_likelihood_field_model_normalized.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}_models

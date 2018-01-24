@@ -13,6 +13,7 @@
   <depend>muse_mcl_2d</depend>
   <depend>muse_mcl_2d_laser</depend>
   <depend>muse_mcl_2d_gridmaps</depend>
+  <depend>muse_mcl_2d_stereo</depend>
   <depend>cslibs_ndt_2d</depend>
   <depend>cslibs_math_2d</depend>
   <depend>cslibs_ndt_3d</depend>

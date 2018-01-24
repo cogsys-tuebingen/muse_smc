@@ -1,5 +1,5 @@
-#ifndef MUSE_MCL_2D_NDT_GRIDMAP_BEAM_MODEL_H
-#define MUSE_MCL_2D_NDT_GRIDMAP_BEAM_MODEL_H
+#ifndef MUSE_MCL_2D_GRIDMAP_BEAM_MODEL_H
+#define MUSE_MCL_2D_GRIDMAP_BEAM_MODEL_H
 
 #include <muse_mcl_2d/update/update_model_2d.hpp>
 
@@ -28,4 +28,4 @@ protected:
 };
 }
 
-#endif // MUSE_MCL_2D_NDT_GRIDMAP_BEAM_MODEL_H
+#endif // MUSE_MCL_2D_GRIDMAP_BEAM_MODEL_H

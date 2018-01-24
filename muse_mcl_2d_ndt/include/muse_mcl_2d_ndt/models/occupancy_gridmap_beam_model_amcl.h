@@ -1,5 +1,5 @@
-#ifndef MUSE_MCL_2D_NDT_OCCUPANCY_GRIDMAP_BEAM_MODEL_AMCL_H
-#define MUSE_MCL_2D_NDT_OCCUPANCY_GRIDMAP_BEAM_MODEL_AMCL_H
+#ifndef MUSE_MCL_2D_OCCUPANCY_GRIDMAP_BEAM_MODEL_AMCL_H
+#define MUSE_MCL_2D_OCCUPANCY_GRIDMAP_BEAM_MODEL_AMCL_H
 
 #include <muse_mcl_2d/update/update_model_2d.hpp>
 #include <cslibs_gridmaps/utility/inverse_model.hpp>
@@ -32,4 +32,4 @@ protected:
 };
 }
 
-#endif // MUSE_MCL_2D_NDT_OCCUPANCY_GRIDMAP_BEAM_MODEL_AMCL_H
+#endif // MUSE_MCL_2D_OCCUPANCY_GRIDMAP_BEAM_MODEL_AMCL_H
