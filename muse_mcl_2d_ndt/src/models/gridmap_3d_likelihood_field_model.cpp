@@ -84,6 +84,6 @@ void Gridmap3dLikelihoodFieldModel::doSetup(ros::NodeHandle &nh)
 
     max_points_ = nh.param(param_name("max_points"), 30);
     d1_         = nh.param(param_name("d1"), 0.9);
-    d2_         = nh.param(param_name("d1"), 0.05);
+    d2_         = nh.param(param_name("d2"), 0.05);
 }
 }
