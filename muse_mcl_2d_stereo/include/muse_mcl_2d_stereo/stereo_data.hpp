@@ -22,7 +22,7 @@ public:
         cslibs_math_ros::sensor_msgs::conversion_3d::from(msg, points_);
     }
 
-    inline const typename cloud_t::Ptr& getRays() const
+    inline const typename cloud_t::Ptr& getPoints() const
     {
         return points_;
     }

@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   rostest
   tf
 )
+find_package(PCL REQUIRED COMPONENTS common filters segmentation io)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -28,7 +29,9 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
 )
+link_directories(${PCL_LIBRARY_DIRS})
 
 add_library(${PROJECT_NAME}_maps SHARED
   src/maps/gridmap.cpp
@@ -87,6 +90,7 @@ add_library(${PROJECT_NAME}_models SHARED
 
 target_link_libraries(${PROJECT_NAME}_models
   ${catkin_LIBRARIES}
+  ${PCL_LIBRARIES}
   ${PROJECT_NAME}_maps
 )
 

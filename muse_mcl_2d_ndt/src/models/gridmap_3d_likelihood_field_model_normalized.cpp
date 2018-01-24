@@ -41,8 +41,8 @@ void Gridmap3dLikelihoodFieldModelNormalized::apply(const data_t::ConstPtr      
                               tf_timeout_))
         return;
 
-    const std::size_t points_size = stereo_points.size();
-    const std::size_t points_step = std::max(1ul, stereo_points / max_points_);
+    const std::size_t points_size = stereo_points->size();
+    const std::size_t points_step = std::max(1ul, points_size / max_points_);
 
     // mixture distribution entries
     const double bundle_resolution_inv = 1.0 / gridmap.getBundleResolution();
@@ -52,7 +52,7 @@ void Gridmap3dLikelihoodFieldModelNormalized::apply(const data_t::ConstPtr      
                                     static_cast<int>(std::floor(p(2) * bundle_resolution_inv))}});
     };
     auto likelihood = [this](const cslibs_math_3d::Point3d &p, const cslibs_math::statistics::Distribution<3, 3> &d) {
-        const auto &q         = p - d.getMean();
+        const auto &q         = cslibs_math::statistics::Distribution<3, 3>::sample_t(p) - d.getMean();
         const double exponent = -0.5 * d2_ * double(q.transpose() * d.getInformationMatrix() * q);
         return d1_ * std::exp(exponent);
     };
@@ -70,12 +70,13 @@ void Gridmap3dLikelihoodFieldModelNormalized::apply(const data_t::ConstPtr      
 
     auto it_ps = ps_.begin();
     double p_max = std::numeric_limits<double>::lowest();
-    for (auto it = set.const_begin() ; it != set.const_end() ; ++it, ++it_ps) {
+    for (auto it = set.begin() ; it != set.end() ; ++it, ++it_ps) {
         const cslibs_math_2d::Pose2d m_T_s = m_T_w * it.state() * b_T_s; /// stereo camera pose in map coordinates
+        const cslibs_math_3d::Pose3d m_T_s_3d(m_T_s.tx(), m_T_s.ty(), m_T_s.yaw());
         double p = 1.0;
         for (std::size_t i = 0 ; i < points_size ;  i+= points_step) {
-            const auto &point = stereo_points[i];
-            const cslibs_math_3d::Point3d map_point = m_T_s * point;
+            const auto &point = stereo_points->at(i);
+            const cslibs_math_3d::Point3d map_point = m_T_s_3d * point;
             p += map_point.isNormal() ? bundle_likelihood(map_point) : 0;
         }
         *it_ps = p;
