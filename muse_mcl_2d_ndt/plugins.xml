@@ -97,4 +97,16 @@
    <class type="muse_mcl_2d_ndt::OccupancyGridmap3dLikelihoodFieldModelNormalized" base_class_type="muse_mcl_2d::UpdateModel2D">
      <description></description>
    </class>
+   <class type="muse_mcl_2d_ndt::Gridmap3dNDTLikelihoodFieldModel" base_class_type="muse_mcl_2d::UpdateModel2D">
+     <description></description>
+   </class>
+   <class type="muse_mcl_2d_ndt::Gridmap3dNDTLikelihoodFieldModelNormalized" base_class_type="muse_mcl_2d::UpdateModel2D">
+     <description></description>
+   </class>
+   <class type="muse_mcl_2d_ndt::OccupancyGridmap3dNDTLikelihoodFieldModel" base_class_type="muse_mcl_2d::UpdateModel2D">
+     <description></description>
+   </class>
+   <class type="muse_mcl_2d_ndt::OccupancyGridmap3dNDTLikelihoodFieldModelNormalized" base_class_type="muse_mcl_2d::UpdateModel2D">
+     <description></description>
+   </class>
 </library>

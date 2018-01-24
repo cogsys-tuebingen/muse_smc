@@ -1,17 +1,17 @@
-#include <muse_mcl_2d_ndt/models/gridmap_3d_likelihood_field_model_normalized.h>
+#include <muse_mcl_2d_ndt/models/gridmap_3d_ndt_likelihood_field_model_normalized.h>
 
 #include <muse_mcl_2d_stereo/stereo_data.hpp>
 #include <muse_mcl_2d_ndt/maps/gridmap_3d.h>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_ndt::Gridmap3dLikelihoodFieldModelNormalized, muse_mcl_2d::UpdateModel2D)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_ndt::Gridmap3dNDTLikelihoodFieldModelNormalized, muse_mcl_2d::UpdateModel2D)
 
 namespace muse_mcl_2d_ndt {
-Gridmap3dLikelihoodFieldModelNormalized::Gridmap3dLikelihoodFieldModelNormalized()
+Gridmap3dNDTLikelihoodFieldModelNormalized::Gridmap3dNDTLikelihoodFieldModelNormalized()
 {
 }
 
-void Gridmap3dLikelihoodFieldModelNormalized::apply(const data_t::ConstPtr          &data,
+void Gridmap3dNDTLikelihoodFieldModelNormalized::apply(const data_t::ConstPtr          &data,
                                           const state_space_t::ConstPtr   &map,
                                           sample_set_t::weight_iterator_t set)
 {
@@ -41,44 +41,59 @@ void Gridmap3dLikelihoodFieldModelNormalized::apply(const data_t::ConstPtr      
                               tf_timeout_))
         return;
 
-    const std::size_t points_size = stereo_points->size();
-    const std::size_t points_step = std::max(1ul, points_size / max_points_);
 
-    // mixture distribution entries
     const double bundle_resolution_inv = 1.0 / gridmap.getBundleResolution();
     auto to_bundle_index = [&bundle_resolution_inv](const cslibs_math_3d::Point3d &p) {
         return std::array<int, 3>({{static_cast<int>(std::floor(p(0) * bundle_resolution_inv)),
                                     static_cast<int>(std::floor(p(1) * bundle_resolution_inv)),
                                     static_cast<int>(std::floor(p(2) * bundle_resolution_inv))}});
     };
-    auto likelihood = [this](const cslibs_math_3d::Point3d &p, const cslibs_math::statistics::Distribution<3, 3> &d) {
-        const auto &q         = p.data() - d.getMean();
-        const double exponent = -0.5 * d2_ * double(q.transpose() * d.getInformationMatrix() * q);
-        return d1_ * std::exp(exponent);
-    };
-    auto bundle_likelihood = [&gridmap, &to_bundle_index, &likelihood](const cslibs_math_3d::Point3d &p) {
-        const auto &bundle = gridmap.getDistributionBundle(to_bundle_index(p));
-        return 0.125 * (likelihood(p, bundle->at(0)->getHandle()->data()) +
-                        likelihood(p, bundle->at(1)->getHandle()->data()) +
-                        likelihood(p, bundle->at(2)->getHandle()->data()) +
-                        likelihood(p, bundle->at(3)->getHandle()->data()) +
-                        likelihood(p, bundle->at(4)->getHandle()->data()) +
-                        likelihood(p, bundle->at(5)->getHandle()->data()) +
-                        likelihood(p, bundle->at(6)->getHandle()->data()) +
-                        likelihood(p, bundle->at(7)->getHandle()->data()));
+    auto to_rotation_matrix = [](const double &cos, const double &sin) {
+        Eigen::Matrix<double, 3, 3> r(Eigen::Matrix<double, 3, 3>::Identity());
+        r(0, 0) = r(1, 1) = cos;
+        r(0, 1) = -sin;
+        r(1, 0) = sin;
+        return r;
     };
 
+    using index_t = std::array<int, 3>;
+    using point_t = cslibs_math_3d::Point3d;
+    using distribution_t = cslibs_ndt_3d::dynamic_maps::Gridmap::distribution_t;
+    using distribution_storage_t = cslibs_ndt_3d::dynamic_maps::Gridmap::distribution_storage_t;
+
+    // local ndt map
+    distribution_storage_t local_storage;
+    for (const auto &p : *stereo_points) {
+        if (p.isNormal()) {
+            const index_t &bi = to_bundle_index(p);
+            distribution_t *d = local_storage.get(bi);
+            (d ? d : &local_storage.insert(bi, distribution_t()))->data().add(p);
+        }
+    }
+
+    // mixture distribution entries
     auto it_ps = ps_.begin();
     double p_max = std::numeric_limits<double>::lowest();
-    for (auto it = set.begin() ; it != set.end() ; ++it, ++it_ps) {
+    for (auto it = set.begin() ; it != set.end() ; ++it_ps) {
         const cslibs_math_2d::Pose2d m_T_s = m_T_w * it.state() * b_T_s; /// stereo camera pose in map coordinates
         const cslibs_math_3d::Pose3d m_T_s_3d(m_T_s.tx(), m_T_s.ty(), m_T_s.yaw());
         double p = 0.0;
-        for (std::size_t i = 0 ; i < points_size ;  i+= points_step) {
-            const auto &point = stereo_points->at(i);
-            const cslibs_math_3d::Point3d map_point = m_T_s_3d * point;
-            p += map_point.isNormal() ? bundle_likelihood(map_point) : 0;
-        }
+
+        const Eigen::Matrix<double, 3, 3> r = to_rotation_matrix(m_T_s.cos(), m_T_s.sin());
+        local_storage.traverse([this, &p, &m_T_s_3d, &gridmap, &r, &to_bundle_index](const index_t& , const distribution_t &d_local) {
+            const point_t mean = m_T_s_3d * point_t(d_local.getHandle()->data().getMean());
+            const Eigen::Matrix<double, 3, 3> cov = d_local.getHandle()->data().getCovariance();
+
+            const auto &bundle = gridmap.getDistributionBundle(to_bundle_index(mean));
+            cslibs_math::statistics::Distribution<3, 3> d;
+            for (std::size_t i = 0 ; i < 8 ; ++ i)
+                d += bundle->at(i)->getHandle()->data();
+
+            const Eigen::Matrix<double, 3, 1> mn  = mean.data();
+            const Eigen::Matrix<double, 3, 3> inf = (r * cov * r.transpose()).inverse();
+            p += d1_ * std::exp(-0.5 * d2_ * double(mn.transpose() * inf * mn));
+        });
+
         *it_ps = p;
         p_max = p >= p_max ? p : p_max;
     }
@@ -88,7 +103,7 @@ void Gridmap3dLikelihoodFieldModelNormalized::apply(const data_t::ConstPtr      
         *it *= *it_ps / p_max;
 }
 
-void Gridmap3dLikelihoodFieldModelNormalized::doSetup(ros::NodeHandle &nh)
+void Gridmap3dNDTLikelihoodFieldModelNormalized::doSetup(ros::NodeHandle &nh)
 {
     auto param_name = [this](const std::string &name){return name_ + "/" + name;};
 

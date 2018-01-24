@@ -1,17 +1,18 @@
-#include <muse_mcl_2d_ndt/models/occupancy_gridmap_3d_likelihood_field_model.h>
+#include <muse_mcl_2d_ndt/models/occupancy_gridmap_3d_ndt_likelihood_field_model.h>
 
 #include <muse_mcl_2d_stereo/stereo_data.hpp>
 #include <muse_mcl_2d_ndt/maps/occupancy_gridmap_3d.h>
+#include <muse_mcl_2d_ndt/maps/gridmap_3d.h>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_ndt::OccupancyGridmap3dLikelihoodFieldModel, muse_mcl_2d::UpdateModel2D)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_ndt::OccupancyGridmap3dNDTLikelihoodFieldModel, muse_mcl_2d::UpdateModel2D)
 
 namespace muse_mcl_2d_ndt {
-OccupancyGridmap3dLikelihoodFieldModel::OccupancyGridmap3dLikelihoodFieldModel()
+OccupancyGridmap3dNDTLikelihoodFieldModel::OccupancyGridmap3dNDTLikelihoodFieldModel()
 {
 }
 
-void OccupancyGridmap3dLikelihoodFieldModel::apply(const data_t::ConstPtr          &data,
+void OccupancyGridmap3dNDTLikelihoodFieldModel::apply(const data_t::ConstPtr          &data,
                                           const state_space_t::ConstPtr   &map,
                                           sample_set_t::weight_iterator_t set)
 {
@@ -38,51 +39,67 @@ void OccupancyGridmap3dLikelihoodFieldModel::apply(const data_t::ConstPtr       
                               tf_timeout_))
         return;
 
-    const std::size_t points_size = stereo_points->size();
-    const std::size_t points_step = std::max(1ul, points_size / max_points_);
-
-    // mixture distribution entries
     const double bundle_resolution_inv = 1.0 / gridmap.getBundleResolution();
     auto to_bundle_index = [&bundle_resolution_inv](const cslibs_math_3d::Point3d &p) {
         return std::array<int, 3>({{static_cast<int>(std::floor(p(0) * bundle_resolution_inv)),
                                     static_cast<int>(std::floor(p(1) * bundle_resolution_inv)),
                                     static_cast<int>(std::floor(p(2) * bundle_resolution_inv))}});
     };
-    auto likelihood = [this](const cslibs_math_3d::Point3d &p, const cslibs_math::statistics::Distribution<3, 3>::Ptr &d) {
-        if (!d) return 0.0;
-        const auto &q         = p.data() - d->getMean();
-        const double exponent = -0.5 * d2_ * double(q.transpose() * d->getInformationMatrix() * q);
-        return d1_ * std::exp(exponent);
-    };
-    auto occupancy_likelihood = [this, &likelihood](const cslibs_math_3d::Point3d &p, const cslibs_ndt::OccupancyDistribution<3>* d) {
-        return d ? d->getOccupancy(inverse_model_) * likelihood(p, d->getDistribution()) : 0.0;
-    };
-    auto bundle_likelihood = [&gridmap, &to_bundle_index, &occupancy_likelihood](const cslibs_math_3d::Point3d &p) {
-        const auto &bundle = gridmap.getDistributionBundle(to_bundle_index(p));
-        return 0.125 * (occupancy_likelihood(p, bundle->at(0)) +
-                        occupancy_likelihood(p, bundle->at(1)) +
-                        occupancy_likelihood(p, bundle->at(2)) +
-                        occupancy_likelihood(p, bundle->at(3)) +
-                        occupancy_likelihood(p, bundle->at(4)) +
-                        occupancy_likelihood(p, bundle->at(5)) +
-                        occupancy_likelihood(p, bundle->at(6)) +
-                        occupancy_likelihood(p, bundle->at(7)));
+    auto to_rotation_matrix = [](const double &cos, const double &sin) {
+        Eigen::Matrix<double, 3, 3> r(Eigen::Matrix<double, 3, 3>::Identity());
+        r(0, 0) = r(1, 1) = cos;
+        r(0, 1) = -sin;
+        r(1, 0) = sin;
+        return r;
     };
 
+    using index_t = std::array<int, 3>;
+    using point_t = cslibs_math_3d::Point3d;
+    using distribution_t = cslibs_ndt_3d::dynamic_maps::Gridmap::distribution_t;
+    using distribution_storage_t = cslibs_ndt_3d::dynamic_maps::Gridmap::distribution_storage_t;
+
+    // local ndt map
+    distribution_storage_t local_storage;
+    for (const auto &p : *stereo_points) {
+        if (p.isNormal()) {
+            const index_t &bi = to_bundle_index(p);
+            distribution_t *d = local_storage.get(bi);
+            (d ? d : &local_storage.insert(bi, distribution_t()))->data().add(p);
+        }
+    }
+
+    // mixture distribution entries
     for (auto it = set.begin() ; it != set.end() ; ++it) {
         const cslibs_math_2d::Pose2d m_T_s = m_T_w * it.state() * b_T_s; /// stereo camera pose in map coordinates
         const cslibs_math_3d::Pose3d m_T_s_3d(m_T_s.tx(), m_T_s.ty(), m_T_s.yaw());
         double p = 0.0;
-        for (std::size_t i = 0 ; i < points_size ;  i+= points_step) {
-            const auto &point = stereo_points->at(i);
-            const cslibs_math_3d::Point3d map_point = m_T_s_3d * point;
-            p += map_point.isNormal() ? bundle_likelihood(map_point) : 0;
-        }
+
+        const Eigen::Matrix<double, 3, 3> r = to_rotation_matrix(m_T_s.cos(), m_T_s.sin());
+        local_storage.traverse([this, &p, &m_T_s_3d, &gridmap, &r, &to_bundle_index](const index_t& , const distribution_t &d_local) {
+            const point_t mean = m_T_s_3d * point_t(d_local.getHandle()->data().getMean());
+            const Eigen::Matrix<double, 3, 3> cov = d_local.getHandle()->data().getCovariance();
+
+            const auto &bundle = gridmap.getDistributionBundle(to_bundle_index(mean));
+            cslibs_math::statistics::Distribution<3, 3> d;
+            double occupancy = 0.0;
+            for (std::size_t i = 0 ; i < 8 ; ++ i) {
+                if (bundle->at(i)) {
+                    if (bundle->at(i)->getDistribution())
+                        d += *(bundle->at(i)->getDistribution());
+                    occupancy += 0.125 * bundle->at(i)->getOccupancy(inverse_model_);
+                }
+            }
+
+            const Eigen::Matrix<double, 3, 1> mn  = mean.data();
+            const Eigen::Matrix<double, 3, 3> inf = (r * cov * r.transpose()).inverse();
+            p += occupancy * (d1_ * std::exp(-0.5 * d2_ * double(mn.transpose() * inf * mn)));
+        });
+
         *it *= p;
     }
 }
 
-void OccupancyGridmap3dLikelihoodFieldModel::doSetup(ros::NodeHandle &nh)
+void OccupancyGridmap3dNDTLikelihoodFieldModel::doSetup(ros::NodeHandle &nh)
 {
     auto param_name = [this](const std::string &name){return name_ + "/" + name;};
 

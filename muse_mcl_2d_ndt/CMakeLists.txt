@@ -86,6 +86,10 @@ add_library(${PROJECT_NAME}_models SHARED
   src/models/gridmap_3d_likelihood_field_model_normalized.cpp
   src/models/occupancy_gridmap_3d_likelihood_field_model.cpp
   src/models/occupancy_gridmap_3d_likelihood_field_model_normalized.cpp
+  src/models/gridmap_3d_ndt_likelihood_field_model.cpp
+  src/models/gridmap_3d_ndt_likelihood_field_model_normalized.cpp
+  src/models/occupancy_gridmap_3d_ndt_likelihood_field_model.cpp
+  src/models/occupancy_gridmap_3d_ndt_likelihood_field_model_normalized.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}_models
