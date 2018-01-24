@@ -7,6 +7,8 @@ find_package(catkin REQUIRED COMPONENTS
   muse_mcl_2d_gridmaps
   cslibs_ndt_2d
   cslibs_math_2d
+  cslibs_ndt_3d
+  cslibs_math_3d
   cslibs_gridmaps
   pluginlib
   roscpp
@@ -19,7 +21,7 @@ catkin_package(
   LIBRARIES ${PROJECT_NAME}_providers
             ${PROJECT_NAME}_models
             ${PROJECT_NAME}_maps
-  CATKIN_DEPENDS muse_mcl_2d cslibs_math_2d cslibs_ndt_2d cslibs_gridmaps
+  CATKIN_DEPENDS muse_mcl_2d cslibs_math_2d cslibs_ndt_2d cslibs_math_3d cslibs_ndt_3d cslibs_gridmaps
 )
 
 include_directories(
@@ -30,6 +32,8 @@ include_directories(
 add_library(${PROJECT_NAME}_maps SHARED
   src/maps/gridmap.cpp
   src/maps/occupancy_gridmap.cpp
+  src/maps/gridmap_3d.cpp
+  src/maps/occupancy_gridmap_3d.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}_maps
