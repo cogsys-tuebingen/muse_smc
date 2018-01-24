@@ -45,6 +45,10 @@ add_library(${PROJECT_NAME}_providers SHARED
   src/providers/ndt_occupancy_gridmap_provider.cpp
   src/providers/ndt_gridmap_service_provider.cpp
   src/providers/ndt_occupancy_gridmap_service_provider.cpp
+  src/providers/ndt_gridmap_3d_provider.cpp
+  src/providers/ndt_occupancy_gridmap_3d_provider.cpp
+  src/providers/ndt_gridmap_3d_service_provider.cpp
+  src/providers/ndt_occupancy_gridmap_3d_service_provider.cpp
   src/providers/probability_gridmap_provider.cpp
   src/providers/probability_occupancy_gridmap_provider.cpp
   src/providers/probability_gridmap_service_provider.cpp

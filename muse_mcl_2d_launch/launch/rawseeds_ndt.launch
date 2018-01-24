@@ -88,7 +88,16 @@
         <group ns="rawseeds">
           <param name="class"       value="muse_mcl_2d_ndt::DistanceOccupancyGridmapProvider" />
           <param name="base_class"  value="muse_mcl_2d::MapProvider2D" />
-          <param name="path"        value="/data/0/rawseeds/maps/without_stereo/Bicocca_2009-02-25a-dynamic-natural-light-groundtruth-cartographer/map/2d/occ_ndt/map" />
+          <param name="path"        value="/data/0/rawseeds/maps/with_stereo/Bicocca_2009-02-25a-dynamic-natural-light-groundtruth-cartographer/map/2d/occ_ndt/map" />
+          <param name="blocking"    value="true" />
+	  <param name="sampling_resolution" value="0.025" />
+          <param name="threshold"   value="0.196" />
+          <param name="sigma_hit"   value="0.2" />
+        </group>
+        <group ns="rawseeds_3d">
+          <param name="class"       value="muse_mcl_2d_ndt::NDTOccupancyGridmap3dProvider" />
+          <param name="base_class"  value="muse_mcl_2d::MapProvider2D" />
+          <param name="path"        value="/data/0/rawseeds/maps/with_stereo/Bicocca_2009-02-25a-dynamic-natural-light-groundtruth-cartographer/map/3d/occ_ndt/map" />
           <param name="blocking"    value="true" />
 	  <param name="sampling_resolution" value="0.025" />
           <param name="threshold"   value="0.196" />
@@ -158,7 +167,7 @@
     <!-- using only one map, the world and map frame can be collapsed -->
     <node pkg="tf" type="static_transform_publisher" name="map_T_w" args="0 0 0 0 0 0 map world 10"/>
 
-    <arg name="map_path" value="/data/0/rawseeds/maps/without_stereo/Bicocca_2009-02-25a-dynamic-natural-light-groundtruth-cartographer/map/2d/occ_ndt/occ.map.raw.yaml" />    
+    <arg name="map_path" value="/data/0/rawseeds/maps/with_stereo/Bicocca_2009-02-25a-dynamic-natural-light-groundtruth-cartographer/map/2d/occ_ndt/occ.map.raw.yaml" />    
     <!--<arg name="ndt_map_path" value="/data/0/rawseeds/maps/without_stereo/Bicocca_2009-02-25a-dynamic-natural-light-ext-groundtruth/map/2d/occ_ndt/map" />-->
     <arg name="bag_root" value="/data/0/rawseeds/bagfiles/without_stereo" />
     <arg name="bag_file" value="Bicocca_2009-02-25a-dynamic-natural-light-groundtruth-cartographer.bag" />

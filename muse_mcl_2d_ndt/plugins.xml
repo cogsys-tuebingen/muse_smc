@@ -11,6 +11,18 @@
    <class type="muse_mcl_2d_ndt::NDTOccupancyGridmapServiceProvider" base_class_type="muse_mcl_2d::MapProvider2D">
       <description></description>
    </class>
+   <class type="muse_mcl_2d_ndt::NDTGridmap3dProvider" base_class_type="muse_mcl_2d::MapProvider2D">
+     <description></description>
+   </class>
+   <class type="muse_mcl_2d_ndt::NDTGridmap3dServiceProvider" base_class_type="muse_mcl_2d::MapProvider2D">
+      <description></description>
+   </class>
+   <class type="muse_mcl_2d_ndt::NDTOccupancyGridmap3dProvider" base_class_type="muse_mcl_2d::MapProvider2D">
+      <description></description>
+   </class>
+   <class type="muse_mcl_2d_ndt::NDTOccupancyGridmap3dServiceProvider" base_class_type="muse_mcl_2d::MapProvider2D">
+      <description></description>
+   </class>
    <class type="muse_mcl_2d_ndt::ProbabilityGridmapProvider" base_class_type="muse_mcl_2d::MapProvider2D">
       <description></description>
    </class>
