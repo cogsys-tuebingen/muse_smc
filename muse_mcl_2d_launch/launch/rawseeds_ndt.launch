@@ -93,7 +93,7 @@
             <param name="use_weights_for_estimation" value="true" />
         </group>
         <group ns="beam_model_stereo">
-            <param name="class"         value="muse_mcl_2d_ndt::OccupancyGridmap3dNDTLikelihoodFieldModelNormalized" />
+            <param name="class"         value="muse_mcl_2d_ndt::Gridmap3dLikelihoodFieldModel" />
             <param name="base_class"    value="muse_mcl_2d::UpdateModel2D" />
             <param name="data_provider" value="stereo" />
             <param name="map_provider"  value="rawseeds_3d" />
@@ -113,9 +113,9 @@
           <param name="sigma_hit"   value="0.2" />
         </group>
         <group ns="rawseeds_3d">
-          <param name="class"       value="muse_mcl_2d_ndt::NDTOccupancyGridmap3dProvider" />
+          <param name="class"       value="muse_mcl_2d_ndt::NDTGridmap3dProvider" />
           <param name="base_class"  value="muse_mcl_2d::MapProvider2D" />
-          <param name="path"        value="/data/0/rawseeds/maps/with_stereo/Bicocca_2009-02-25a-dynamic-natural-light-groundtruth-cartographer/map/3d/occ_ndt/map" />
+          <param name="path"        value="/data/0/rawseeds/maps/with_stereo/Bicocca_2009-02-25a-dynamic-natural-light-groundtruth-cartographer/map/3d/ndt/map" />
           <param name="blocking"    value="true" />
 	  <param name="sampling_resolution" value="0.025" />
           <param name="threshold"   value="0.196" />

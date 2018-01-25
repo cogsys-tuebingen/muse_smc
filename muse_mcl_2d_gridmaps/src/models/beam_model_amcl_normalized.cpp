@@ -81,21 +81,11 @@ void BeamModelAMCLNormalized::apply(const data_t::ConstPtr &data,
         return p_hit(ray_range, map_range) + p_short(ray_range, map_range) + p_max(ray_range) + p_random(ray_range);
     };
 
-    for(auto it = set.begin() ; it != end ; ++it) {
-        const cslibs_math_2d::Pose2d m_T_l = m_T_w * it.state() * b_T_l; /// laser scanner pose in map coordinates
-        double p = 1.0;
-        for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
-            const auto &ray = laser_rays[i];
-            p *= ray.valid() ? pow3(probability(ray, m_T_l)) : pow3(z_max_);
-        }
-        *it *= p;
-    }
-
     auto it_ps = ps_.begin();
     double max = std::numeric_limits<double>::lowest();
     for(auto it = set.const_begin() ; it != const_end ; ++it, ++it_ps) {
         const cslibs_math_2d::Pose2d m_T_l = m_T_w * it->state * b_T_l; /// laser scanner pose in map coordinates
-        double p = 1.0;
+        double p = 0.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
             p += ray.valid() ? pow3(probability(ray, m_T_l)) : pow3(z_max_);
