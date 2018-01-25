@@ -31,7 +31,11 @@ protected:
     mutable std::atomic_bool        loading_;
     mutable std::thread             worker_;
 
+    mutable ros::Publisher          pub_;
+    double                          sampling_resolution_;
+
     void loadMap() const;
+    void publishMap() const;
 };
 }
 

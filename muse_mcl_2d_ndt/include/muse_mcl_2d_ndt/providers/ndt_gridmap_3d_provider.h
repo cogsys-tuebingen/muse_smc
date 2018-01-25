@@ -29,7 +29,10 @@ protected:
     std::atomic_bool                loading_;
     std::thread                     worker_;
 
+    mutable ros::Publisher          pub_;
+
     void loadMap();
+    void publishMap() const;
 };
 }
 

@@ -73,6 +73,7 @@ add_library(${PROJECT_NAME}_providers SHARED
 
 target_link_libraries(${PROJECT_NAME}_providers
   ${catkin_LIBRARIES}
+  ${PCL_LIBRARIES}
   ${PROJECT_NAME}_maps
   yaml-cpp
 )

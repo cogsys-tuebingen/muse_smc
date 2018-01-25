@@ -1,6 +1,8 @@
 #include <muse_mcl_2d_ndt/providers/ndt_occupancy_gridmap_3d_provider.h>
 
 #include <cslibs_ndt_3d/serialization/dynamic_maps/occupancy_gridmap.hpp>
+#include <cslibs_ndt_3d/conversion/pointcloud.hpp>
+#include <pcl_conversions/pcl_conversions.h>
 #include <fstream>
 #include <yaml-cpp/yaml.h>
 
@@ -15,10 +17,13 @@ NDTOccupancyGridmap3dProvider::NDTOccupancyGridmap3dProvider() :
 
 NDTOccupancyGridmap3dProvider::state_space_t::ConstPtr NDTOccupancyGridmap3dProvider::getStateSpace() const
 {
-    std::unique_lock<std::mutex> l(map_mutex_);
-    if (!map_ && blocking_)
-        map_loaded_.wait(l);
+    {
+        std::unique_lock<std::mutex> l(map_mutex_);
+        if (!map_ && blocking_)
+            map_loaded_.wait(l);
+    }
 
+    publishMap();
     return map_;
 }
 
@@ -29,6 +34,15 @@ void NDTOccupancyGridmap3dProvider::setup(ros::NodeHandle &nh)
     path_     = nh.param<std::string>(param_name("path"), "");
     frame_id_ = nh.param<std::string>(param_name("frame_id"), "/world");
     blocking_ = nh.param<bool>(param_name("blocking"), false);
+
+    const std::string topic = nh.param<std::string>(param_name("topic"), "/muse_mcl_2d_ndt/occ_ndt_3d_map");
+    pub_ = nh.advertise<sensor_msgs::PointCloud2>(topic, 1);
+
+    threshold_                  = nh.param(param_name("threshold"), 0.196);
+    const double prob_prior     = nh.param(param_name("prob_prior"), 0.5);
+    const double prob_free      = nh.param(param_name("prob_free"), 0.45);
+    const double prob_occupied  = nh.param(param_name("prob_occupied"), 0.65);
+    inverse_model_.reset(new cslibs_gridmaps::utility::InverseModel(prob_prior, prob_free, prob_occupied));
 
     loadMap();
 }
@@ -67,5 +81,26 @@ void NDTOccupancyGridmap3dProvider::loadMap()
         else
             worker_ = std::thread(load);
     }
+}
+
+void NDTOccupancyGridmap3dProvider::publishMap() const
+{
+    if (!map_)
+        return;
+
+    sensor_msgs::PointCloud2::Ptr msg;
+    {
+        pcl::PointCloud<pcl::PointXYZI>::Ptr prob;
+        std::unique_lock<std::mutex> l(map_mutex_);
+        cslibs_ndt_3d::conversion::from(map_->data(), prob, inverse_model_, threshold_);
+        pcl::toROSMsg(*prob, *msg);
+    }
+
+    if (msg) {
+        msg->header.frame_id = frame_id_;
+        msg->header.stamp    = ros::Time::now();
+        pub_.publish(msg);
+    } else
+        ROS_INFO_STREAM("Could not publish loaded map!");
 }
 }

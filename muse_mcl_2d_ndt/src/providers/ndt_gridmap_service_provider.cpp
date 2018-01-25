@@ -1,6 +1,9 @@
 #include <muse_mcl_2d_ndt/providers/ndt_gridmap_service_provider.h>
 
 #include <cslibs_ndt_2d/serialization/dynamic_maps/gridmap.hpp>
+#include <cslibs_ndt_2d/conversion/probability_gridmap.hpp>
+#include <cslibs_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
+#include <cslibs_gridmaps/static_maps/algorithms/normalize.hpp>
 #include <yaml-cpp/yaml.h>
 #include <fstream>
 #include <nav_msgs/GetMap.h>
@@ -20,10 +23,13 @@ NDTGridmapServiceProvider::state_space_t::ConstPtr NDTGridmapServiceProvider::ge
     if (source_.call(req))
         loadMap();
 
-    std::unique_lock<std::mutex> l(map_mutex_);
-    if (!map_ && blocking_)
-        map_loaded_.wait(l);
+    {
+        std::unique_lock<std::mutex> l(map_mutex_);
+        if (!map_ && blocking_)
+            map_loaded_.wait(l);
+    }
 
+    publishMap();
     return map_;
 }
 
@@ -35,7 +41,12 @@ void NDTGridmapServiceProvider::setup(ros::NodeHandle &nh)
     path_         = nh.param<std::string>(param_name("path"), "");
     frame_id_     = nh.param<std::string>(param_name("frame_id"), "/world");
     blocking_     = nh.param<bool>(param_name("blocking"), false);
-    source_       = nh.serviceClient<nav_msgs::GetMap>(service_name_);
+
+    sampling_resolution_    = nh.param<double>(param_name("sampling_resolution"), 0.05);
+    const std::string topic = nh.param<std::string>(param_name("topic"), "/muse_mcl_2d_ndt/ndt_map");
+    pub_ = nh.advertise<nav_msgs::OccupancyGrid>(topic, 1);
+
+    source_ = nh.serviceClient<nav_msgs::GetMap>(service_name_);
 }
 
 void NDTGridmapServiceProvider::loadMap() const
@@ -72,5 +83,27 @@ void NDTGridmapServiceProvider::loadMap() const
         else
             worker_ = std::thread(load);
     }
+}
+
+void NDTGridmapServiceProvider::publishMap() const
+{
+    if (!map_)
+        return;
+
+    nav_msgs::OccupancyGrid::Ptr msg;
+    {
+        cslibs_gridmaps::static_maps::ProbabilityGridmap::Ptr prob;
+        std::unique_lock<std::mutex> l(map_mutex_);
+        cslibs_ndt_2d::conversion::from(map_->data(), prob, sampling_resolution_);
+        cslibs_gridmaps::static_maps::algorithms::normalize<double>(*prob);
+        cslibs_gridmaps::static_maps::conversion::from(prob, msg);
+    }
+
+    if (msg) {
+        msg->header.frame_id = frame_id_;
+        msg->header.stamp    = ros::Time::now();
+        pub_.publish(msg);
+    } else
+        ROS_INFO_STREAM("Could not publish loaded map!");
 }
 }

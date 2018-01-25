@@ -93,7 +93,7 @@
             <param name="use_weights_for_estimation" value="true" />
         </group>
         <group ns="beam_model_stereo">
-            <param name="class"         value="muse_mcl_2d_ndt::OccupancyGridmap3dLikelihoodFieldModelNormalized" />
+            <param name="class"         value="muse_mcl_2d_ndt::OccupancyGridmap3dNDTLikelihoodFieldModelNormalized" />
             <param name="base_class"    value="muse_mcl_2d::UpdateModel2D" />
             <param name="data_provider" value="stereo" />
             <param name="map_provider"  value="rawseeds_3d" />

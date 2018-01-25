@@ -6,9 +6,6 @@
 #include <cslibs_math_3d/linear/pointcloud.hpp>
 #include <cslibs_math_ros/sensor_msgs/conversion_3d.hpp>
 
-#include <limits>
-#include <vector>
-
 namespace muse_mcl_2d_stereo {
 class StereoData : public muse_smc::Data
 {

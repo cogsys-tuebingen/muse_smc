@@ -1,6 +1,8 @@
 #include <muse_mcl_2d_ndt/providers/ndt_gridmap_3d_service_provider.h>
 
 #include <cslibs_ndt_3d/serialization/dynamic_maps/gridmap.hpp>
+#include <cslibs_ndt_3d/conversion/pointcloud.hpp>
+#include <pcl_conversions/pcl_conversions.h>
 #include <yaml-cpp/yaml.h>
 #include <fstream>
 #include <nav_msgs/GetMap.h>
@@ -20,10 +22,13 @@ NDTGridmap3dServiceProvider::state_space_t::ConstPtr NDTGridmap3dServiceProvider
     if (source_.call(req))
         loadMap();
 
-    std::unique_lock<std::mutex> l(map_mutex_);
-    if (!map_ && blocking_)
-        map_loaded_.wait(l);
+    {
+        std::unique_lock<std::mutex> l(map_mutex_);
+        if (!map_ && blocking_)
+            map_loaded_.wait(l);
+    }
 
+    publishMap();
     return map_;
 }
 
@@ -35,7 +40,11 @@ void NDTGridmap3dServiceProvider::setup(ros::NodeHandle &nh)
     path_         = nh.param<std::string>(param_name("path"), "");
     frame_id_     = nh.param<std::string>(param_name("frame_id"), "/world");
     blocking_     = nh.param<bool>(param_name("blocking"), false);
-    source_       = nh.serviceClient<nav_msgs::GetMap>(service_name_);
+
+    const std::string topic = nh.param<std::string>(param_name("topic"), "/muse_mcl_2d_ndt/ndt_3d_map");
+    pub_ = nh.advertise<sensor_msgs::PointCloud2>(topic, 1);
+
+    source_ = nh.serviceClient<nav_msgs::GetMap>(service_name_);
 }
 
 void NDTGridmap3dServiceProvider::loadMap() const
@@ -72,5 +81,26 @@ void NDTGridmap3dServiceProvider::loadMap() const
         else
             worker_ = std::thread(load);
     }
+}
+
+void NDTGridmap3dServiceProvider::publishMap() const
+{
+    if (!map_)
+        return;
+
+    sensor_msgs::PointCloud2::Ptr msg;
+    {
+        pcl::PointCloud<pcl::PointXYZI>::Ptr prob;
+        std::unique_lock<std::mutex> l(map_mutex_);
+        cslibs_ndt_3d::conversion::from(map_->data(), prob);
+        pcl::toROSMsg(*prob, *msg);
+    }
+
+    if (msg) {
+        msg->header.frame_id = frame_id_;
+        msg->header.stamp    = ros::Time::now();
+        pub_.publish(msg);
+    } else
+        ROS_INFO_STREAM("Could not publish loaded map!");
 }
 }

@@ -31,7 +31,12 @@ protected:
     mutable std::atomic_bool        loading_;
     mutable std::thread             worker_;
 
+    mutable ros::Publisher          pub_;
+    double                          threshold_;
+    cslibs_gridmaps::utility::InverseModel::Ptr inverse_model_;
+
     void loadMap() const;
+    void publishMap() const;
 };
 }
 

@@ -82,7 +82,7 @@ void Gridmap3dNDTLikelihoodFieldModel::apply(const data_t::ConstPtr          &da
             cslibs_math::statistics::Distribution<3, 3> d;
             for (std::size_t i = 0 ; i < 8 ; ++ i)
                 if (bundle->at(i))
-                    d += bundle->at(i)->getHandle()->data();
+                    d += bundle->at(i)->data();
 
             const Eigen::Matrix<double, 3, 1> mn  = mean.data();
             const Eigen::Matrix<double, 3, 3> inf = (r * cov * r.transpose()).inverse();
