@@ -8,6 +8,8 @@
 #include <muse_mcl_2d/samples/sample_density_data_2d.hpp>
 #include <muse_mcl_2d/samples/sample_indexation_2d.hpp>
 
+#include <cslibs_math/common/mod.hpp>
+
 namespace cis = cslibs_indexed_storage;
 
 namespace muse_mcl_2d {
@@ -86,7 +88,10 @@ struct SampleClustering2D {
     template<typename offset_t>
     inline index_t add(const index_t& a, const offset_t& b) const
     {
-        return index_t({a[0] + b[0], a[1] + b[1], (a[2] + b[2]) % angular_bins});
+        return index_t({a[0] + b[0],
+                        a[1] + b[1],
+                        cslibs_math::common::mod(a[2] + b[2], angular_bins)});
+
     }
 
     indexation_t       indexation;
