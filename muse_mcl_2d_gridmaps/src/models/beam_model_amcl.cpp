@@ -55,7 +55,7 @@ void BeamModelAMCL::apply(const data_t::ConstPtr          &data,
         return z_hit_ * std::exp(pow2(ray_range - map_range) * denominator_exponent_hit_);
     };
     auto p_short = [this](const double ray_range, const double map_range) {
-        return ray_range < map_range ? z_short_ * (1.0 / (1.0 - std::exp(-lambda_short_  * map_range))) * lambda_short_ * std::exp(-lambda_short_ * ray_range)
+        return ray_range < map_range ? z_short_ * /*(1.0 / (1.0 - std::exp(-lambda_short_  * map_range))) **/ lambda_short_ * std::exp(-lambda_short_ * ray_range)
                                        : 0.0;
     };
     auto p_max = [this, range_max](const double ray_range)
@@ -69,7 +69,6 @@ void BeamModelAMCL::apply(const data_t::ConstPtr          &data,
     auto probability = [&gridmap, &p_hit, &p_short, &p_max, &p_random]
             (const muse_mcl_2d_laser::LaserScan2D::Ray &ray, const cslibs_math_2d::Pose2d &m_T_l)
     {
-
         const double ray_range = ray.range;
         auto         ray_end_point = m_T_l * ray.point;
         const double map_range = gridmap.getRange(m_T_l.translation(), ray_end_point);
@@ -78,7 +77,7 @@ void BeamModelAMCL::apply(const data_t::ConstPtr          &data,
 
     for(auto it = set.begin() ; it != end ; ++it) {
         const cslibs_math_2d::Pose2d m_T_l = m_T_w * it.state() * b_T_l; /// laser scanner pose in map coordinates
-        double p = 0.0;
+        double p = 1.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
             p += ray.valid() ? pow3(probability(ray, m_T_l)) : pow3(z_max_);

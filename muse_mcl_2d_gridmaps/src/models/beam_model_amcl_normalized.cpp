@@ -60,7 +60,7 @@ void BeamModelAMCLNormalized::apply(const data_t::ConstPtr &data,
         return z_hit_ * std::exp(pow2(ray_range - map_range) * denominator_exponent_hit_);
     };
     auto p_short = [this](const double ray_range, const double map_range) {
-        return ray_range < map_range ? z_short_ * (1.0 / (1.0 - std::exp(-lambda_short_  * map_range))) * lambda_short_ * std::exp(-lambda_short_ * ray_range)
+        return ray_range < map_range ? z_short_ * /*(1.0 / (1.0 - std::exp(-lambda_short_  * map_range))) **/ lambda_short_ * std::exp(-lambda_short_ * ray_range)
                                        : 0.0;
     };
     auto p_max = [this, range_max](const double ray_range)
@@ -85,7 +85,7 @@ void BeamModelAMCLNormalized::apply(const data_t::ConstPtr &data,
     double max = std::numeric_limits<double>::lowest();
     for(auto it = set.const_begin() ; it != const_end ; ++it, ++it_ps) {
         const cslibs_math_2d::Pose2d m_T_l = m_T_w * it->state * b_T_l; /// laser scanner pose in map coordinates
-        double p = 0.0;
+        double p = 1.0;
         for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step) {
             const auto &ray = laser_rays[i];
             p += ray.valid() ? pow3(probability(ray, m_T_l)) : pow3(z_max_);
