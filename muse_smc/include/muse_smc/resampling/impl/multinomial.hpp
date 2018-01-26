@@ -17,13 +17,13 @@ public:
 
     inline static void apply(sample_set_t &sample_set)
     {
-        const sample_set_t::sample_vector_t &p_t_1 = particle_set.getSamples();
+        const sample_set_t::sample_vector_t &p_t_1 = sample_set.getSamples();
         const std::size_t size = p_t_1.size();
         if(size == 0) {
             return;
         }
 
-        sample_set_t::sample_insertion_t i_p_t = particle_set.getInsertion();
+        sample_set_t::sample_insertion_t i_p_t = sample_set.getInsertion();
 
         /// prepare ordered sequence of random numbers
         cslibs_math::random::Uniform<1> rng(0.0, 1.0);
@@ -68,8 +68,8 @@ public:
             return;
         }
 
-        const sample_set_t::sample_vector_t &p_t_1 = particle_set.getSamples();
-        sample_set_t::sample_insertion_t i_p_t = particle_set.getInsertion();
+        const sample_set_t::sample_vector_t &p_t_1 = sample_set.getSamples();
+        sample_set_t::sample_insertion_t i_p_t = sample_set.getInsertion();
 
         /// prepare ordered sequence of random numbers
         const std::size_t size = p_t_1.size();
