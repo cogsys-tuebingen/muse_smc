@@ -88,12 +88,9 @@ struct SampleClustering2D {
     template<typename offset_t>
     inline index_t add(const index_t& a, const offset_t& b) const
     {
-        int ab = a[2] + b[2];
-        ab += ab  < 0 ? angular_bins : 0;
-        ab -= ab >= angular_bins ? angular_bins : 0;
         return index_t({a[0] + b[0],
                         a[1] + b[1],
-                        ab});
+                        cslibs_math::common::mod(a[2] + b[2], angular_bins)});
     }
 
     indexation_t       indexation;

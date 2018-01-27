@@ -97,13 +97,13 @@ target_link_libraries(${PROJECT_NAME}_node
     ${catkin_LIBRARIES}
 )
 
-#add_executable(${PROJECT_NAME}_box_muller
-#    src/test_box_muller.cpp
-#)
+add_executable(${PROJECT_NAME}_box_muller
+    test/test_box_muller.cpp
+)
 
-#target_link_libraries(${PROJECT_NAME}_box_muller
-#    ${catkin_LIBRARIES}
-#)
+target_link_libraries(${PROJECT_NAME}_box_muller
+    ${catkin_LIBRARIES}
+)
 
 set(MUSE_MCL_2D_PERF_TESTS True)
 if(${MUSE_MCL_2D_PERF_TESTS})
