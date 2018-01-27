@@ -33,7 +33,7 @@ struct SampleClustering2D {
         indexation(indexation)
     {
         auto resolution = indexation.getResolution();
-        angular_bins = static_cast<int>(std::floor(2 * M_PI / resolution[2]));
+        angular_bins = static_cast<int>(std::floor(2 * M_PI / resolution[1]));
     }
 
     inline void clear()
