@@ -185,6 +185,18 @@ bool MuseMCL2DNode::setup()
         ROS_INFO_STREAM("Loaded resampling algorithm.");
         ROS_INFO_STREAM("[" << resampling_->getName() << "]");
     }
+    { /// density estimation
+
+        loader.load<SampleDensity2D, ros::NodeHandle&>(sample_density_, nh_private_);
+        if(!sample_density_) {
+            ROS_ERROR_STREAM("No sample density estimation function was found!");
+            ROS_ERROR_STREAM("Setup is incomplete and is aborted!");
+            return false;
+        }
+
+        ROS_INFO_STREAM("Loaded density estimation function.");
+        ROS_INFO_STREAM("[" << sample_density_->getName() << "]");
+    }
 
     //// set up the necessary functions for the particle filter
     {
@@ -193,8 +205,6 @@ bool MuseMCL2DNode::setup()
 
         auto param_name = [](const std::string &param){return "particle_filter/" + param;};
 
-        const double resolution_linear              = nh_private_.param<double>(param_name("resolution_linear"), 0.1);
-        const double resolution_angular             = cslibs_math::common::angle::toRad(nh_private_.param<double>(param_name("resolution_angular"), 5.0));
         const double preferred_rate                 = nh_private_.param<double>(param_name("preferred_rate"), 60.0);
         const std::size_t resampling_cycle          = nh_private_.param<int>(param_name("resampling_cycle"), 20);
         const double resampling_threshold_linear    = nh_private_.param<double>(param_name("resampling_threshold_linear"), 0.1);
@@ -219,8 +229,6 @@ bool MuseMCL2DNode::setup()
             return false;
         }
 
-        SampleIndexation2D::resolution_t resolution{resolution_linear, resolution_angular};
-        sample_density_.reset(new SampleDensity2D(SampleIndexation2D(resolution), maximum_sample_size));
         sample_set_.reset(new sample_set_t(world_frame,
                                            cslibs_time::Time(ros::Time::now().toNSec()),
                                            minimum_sample_size,

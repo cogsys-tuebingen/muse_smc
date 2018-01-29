@@ -29,6 +29,8 @@ struct SampleClustering2D {
     using neighborhood_t  = cis::operations::clustering::GridNeighborhoodStatic<std::tuple_size<index_t>::value, 3>;
     using visitor_index_t = neighborhood_t::offset_t;
 
+    inline SampleClustering2D() = default;
+
     inline SampleClustering2D(indexation_t &indexation) :
         indexation(indexation)
     {

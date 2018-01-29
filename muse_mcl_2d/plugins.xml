@@ -37,3 +37,8 @@
     </description>
 </class>
 </library>
+<library path="libmuse_mcl_2d_density">
+    <class type="muse_mcl_2d::SimpleSampleDensity2D" base_class_type="muse_mcl_2d::SampleDensity2D">
+    <description>Simple density grid to estimate the sample density.</description>
+    </class>
+</library>
