@@ -14,7 +14,7 @@
 #include <muse_mcl_2d/sampling/uniform_2d.hpp>
 #include <muse_mcl_2d/sampling/normal_2d.hpp>
 #include <muse_mcl_2d/resampling/resampling_2d.hpp>
-#include <muse_mcl_2d/samples/sample_density_2d.hpp>
+#include <muse_mcl_2d/density/sample_density_2d.hpp>
 #include <muse_mcl_2d/state_space/state_space_description_2d.hpp>
 
 #include "state_publisher_2d.h"

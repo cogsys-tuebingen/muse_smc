@@ -1,10 +1,9 @@
 #include <ros/ros.h>
 #include <unordered_map>
 
-#include <muse_mcl_2d/samples/sample_density_2d.hpp>
-#include <muse_mcl_2d/samples/sample_indexation_2d.hpp>
-#include <muse_mcl_2d/samples/sample_density_data_2d.hpp>
-#include <muse_mcl_2d/samples/sample_clustering_2d.hpp>
+#include <muse_mcl_2d/density/sample_density_2d.hpp>
+#include "sample_indexation_2d.hpp"
+#include "sample_clustering_2d.hpp"
 
 #include <cslibs_indexed_storage/storage.hpp>
 #include <cslibs_indexed_storage/backend/kdtree/kdtree_buffered.hpp>

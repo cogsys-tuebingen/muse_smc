@@ -5,8 +5,8 @@
 
 #include <cslibs_indexed_storage/operations/clustering.hpp>
 
-#include <muse_mcl_2d/samples/sample_density_data_2d.hpp>
-#include <muse_mcl_2d/samples/sample_indexation_2d.hpp>
+#include "sample_density_data_2d.hpp"
+#include "sample_indexation_2d.hpp"
 
 #include <cslibs_math/common/mod.hpp>
 

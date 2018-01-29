@@ -1,7 +1,7 @@
 #include <cslibs_math/random/random.hpp>
 
 #include <muse_mcl_2d/resampling/resampling_2d.hpp>
-#include <muse_mcl_2d/samples/sample_density_2d.hpp>
+#include <muse_mcl_2d/density/sample_density_2d.hpp>
 
 namespace muse_mcl_2d {
 class KLD2D : public Resampling2D
