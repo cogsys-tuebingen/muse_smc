@@ -58,7 +58,8 @@ public:
 
     virtual void insert(const Sample2D &sample) override
     {
-        kdtree_->insert(indexation_.create(sample), sample_data_t(sample));
+        state_t state = offset_ * sample.state;
+        kdtree_->insert(indexation_.create(state), sample_data_t(sample));
     }
 
     virtual void estimate() override
@@ -108,6 +109,8 @@ public:
             mean.translation() = distribution.getMean();
             mean.setYaw(angular_mean.getMean());
 
+            offset_ = mean.inverse();
+
             const Eigen::Matrix2d  linear_covariance    = distribution.getCovariance();
             const double           angular_covariance   = angular_mean.getCovariance();
             covariance(0,0) = linear_covariance(0,0);
@@ -124,7 +127,7 @@ protected:
     indexation_t                            indexation_;
     std::shared_ptr<cis_kd_tree_buffered_t> kdtree_;
 
-    state_t                                 offset_;
+    mutable state_t                         offset_;
     clustering_t                            clustering_impl_;
 };
 }
