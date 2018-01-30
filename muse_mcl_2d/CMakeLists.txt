@@ -80,6 +80,8 @@ target_link_libraries(${PROJECT_NAME}_sampling
 add_library(${PROJECT_NAME}_density
     src/density/simple_sample_density_2d.cpp
     src/density/mc_sample_density_2d.cpp
+    src/density/dual_sample_density_2d.cpp
+    src/density/md_sample_density_2d.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}_density
