@@ -5,33 +5,37 @@
 
 #include <cslibs_indexed_storage/operations/clustering.hpp>
 
-#include "sample_density_data_2d.hpp"
-#include "sample_indexation_2d.hpp"
+#include "simple_sample_density_data_2d.hpp"
+#include "simple_sample_indexation_2d.hpp"
 
 #include <cslibs_math/common/mod.hpp>
 
 namespace cis = cslibs_indexed_storage;
 
 namespace muse_mcl_2d {
-struct SampleClustering2D {
-    using indexation_t = SampleIndexation2D;
-    using index_t = SampleIndexation2D::index_t;
-    using allocator_t = Eigen::aligned_allocator<std::pair<const int, SampleDensityData2D::distribution_t>>;
-    using distribution_map_t = std::unordered_map<int,
-                                                  SampleDensityData2D::distribution_t,
+struct SimpleSampleClustering2D {
+    using indexation_t          = SimpleSampleIndexation2D;
+    using index_t               = SimpleSampleIndexation2D::index_t;
+    using distribution_t        = SimpleSampleDensityData2D::distribution_t;
+    using sample_ptr_vector_t   = SimpleSampleDensityData2D::sample_ptr_vector_t;
+    using angular_mean_t        = SimpleSampleDensityData2D::angular_mean_t;
+
+    using allocator_t           = Eigen::aligned_allocator<std::pair<const int, distribution_t>>;
+    using distribution_map_t    = std::unordered_map<int,
+                                                  distribution_t,
                                                   std::hash<int>,
                                                   std::equal_to<int>,
                                                   allocator_t>;
-    using cluster_map_t = std::unordered_map<int, SampleDensityData2D::sample_ptr_vector_t>;
-    using angular_mean_map_t = std::unordered_map<int, SampleDensityData2D::angular_mean_t>;
+    using cluster_map_t         = std::unordered_map<int, sample_ptr_vector_t>;
+    using angular_mean_map_t    = std::unordered_map<int, angular_mean_t>;
 
     /// required definitions -->
-    using neighborhood_t  = cis::operations::clustering::GridNeighborhoodStatic<std::tuple_size<index_t>::value, 3>;
-    using visitor_index_t = neighborhood_t::offset_t;
+    using neighborhood_t        = cis::operations::clustering::GridNeighborhoodStatic<std::tuple_size<index_t>::value, 3>;
+    using visitor_index_t       = neighborhood_t::offset_t;
 
-    inline SampleClustering2D() = default;
+    inline SimpleSampleClustering2D() = default;
 
-    inline SampleClustering2D(indexation_t &indexation) :
+    inline SimpleSampleClustering2D(indexation_t &indexation) :
         indexation(indexation)
     {
         auto resolution = indexation.getResolution();
@@ -46,7 +50,7 @@ struct SampleClustering2D {
         angular_means.clear();
     }
 
-    inline bool start(const index_t &, SampleDensityData2D& data)
+    inline bool start(const index_t &, SimpleSampleDensityData2D& data)
     {
         if(data.cluster != -1)
             return false;
@@ -62,7 +66,7 @@ struct SampleClustering2D {
         return true;
     }
 
-    inline bool extend(const index_t&, const index_t&, SampleDensityData2D& data)
+    inline bool extend(const index_t&, const index_t&, SimpleSampleDensityData2D& data)
     {
         if (data.cluster != -1)
             return false;

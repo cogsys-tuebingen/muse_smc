@@ -9,7 +9,7 @@
 #include <vector>
 
 namespace muse_mcl_2d {
-struct SampleDensityData2D {
+struct SimpleSampleDensityData2D {
     using sample_ptr_vector_t = std::vector<const Sample2D *>;
 
     using distribution_t      = cslibs_math::statistics::WeightedDistribution<2>;
@@ -20,11 +20,11 @@ struct SampleDensityData2D {
     distribution_t      distribution;
     angular_mean_t      angular_mean;
 
-    inline SampleDensityData2D()
+    inline SimpleSampleDensityData2D()
     {
     }
 
-    inline SampleDensityData2D(const SampleDensityData2D &other) :
+    inline SimpleSampleDensityData2D(const SimpleSampleDensityData2D &other) :
         cluster(other.cluster),
         samples((other.samples)),
         distribution((other.distribution)),
@@ -33,7 +33,7 @@ struct SampleDensityData2D {
     }
 
 
-    inline SampleDensityData2D(SampleDensityData2D &&other) :
+    inline SimpleSampleDensityData2D(SimpleSampleDensityData2D &&other) :
         cluster(other.cluster),
         samples(std::move(other.samples)),
         distribution(std::move(other.distribution)),
@@ -41,7 +41,7 @@ struct SampleDensityData2D {
     {
     }
 
-    inline SampleDensityData2D& operator = (const SampleDensityData2D &other)
+    inline SimpleSampleDensityData2D& operator = (const SimpleSampleDensityData2D &other)
     {
         cluster         = (other.cluster);
         samples         = ((other.samples));
@@ -50,19 +50,19 @@ struct SampleDensityData2D {
         return *this;
     }
 
-    virtual ~SampleDensityData2D()
+    virtual ~SimpleSampleDensityData2D()
     {
     }
 
 
-    inline SampleDensityData2D(const Sample2D &sample)
+    inline SimpleSampleDensityData2D(const Sample2D &sample)
     {
         samples.emplace_back(&sample);
         distribution.add(sample.state.translation(), sample.weight);
         angular_mean.add(sample.state.yaw(), sample.weight);
      }
 
-    inline void merge(const SampleDensityData2D &other)
+    inline void merge(const SimpleSampleDensityData2D &other)
     {
         samples.insert(samples.end(), other.samples.begin(), other.samples.end());
         distribution += other.distribution;

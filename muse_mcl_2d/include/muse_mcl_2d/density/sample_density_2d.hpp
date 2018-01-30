@@ -5,9 +5,11 @@
 #include <unordered_map>
 #include <class_loader/class_loader_register_macro.h>
 
+
 #include <muse_smc/samples/sample_density.hpp>
 
 #include <muse_mcl_2d/samples/sample_2d.hpp>
+#include <muse_mcl_2d/state_space/state_space_description_2d.hpp>
 
 #include <cslibs_math/statistics/weighted_angular_mean.hpp>
 #include <cslibs_math/statistics/weighted_distribution.hpp>
@@ -18,6 +20,8 @@ class SampleDensity2D : public muse_smc::SampleDensity<Sample2D>
 public:
     using Ptr                       = std::shared_ptr<SampleDensity2D>;
     using ConstPtr                  = std::shared_ptr<SampleDensity2D const>;
+    using state_t                   = StateSpaceDescription2D::state_t;
+    using covariance_t              = StateSpaceDescription2D::covariance_t;
 
     inline const static std::string Type()
     {
@@ -41,6 +45,8 @@ public:
     virtual distribution_map_t const & clusterDistributions() const = 0;
     virtual angular_mean_map_t const & clusterAngularMeans() const = 0;
     virtual std::size_t histogramSize() const = 0;
+    virtual bool mean(state_t &mean, covariance_t &covariance) const = 0;
+
 };
 }
 

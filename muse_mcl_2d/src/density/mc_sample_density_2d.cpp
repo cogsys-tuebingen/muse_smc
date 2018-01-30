@@ -11,8 +11,13 @@
 namespace cis = cslibs_indexed_storage;
 
 namespace muse_mcl_2d {
-class SimpleSampleDensity2D : public muse_mcl_2d::SampleDensity2D
+/**
+ * @brief The MCSampleDensity2D class is an extension to the simple density estimation using the last
+ *        mean for the upcoming next iteration.
+ */
+class MCSampleDensity2D : public muse_mcl_2d::SampleDensity2D
 {
+public:
 public:
     using indexation_t              = SimpleSampleIndexation2D;
     using sample_data_t             = SimpleSampleDensityData2D;
@@ -119,8 +124,9 @@ protected:
     indexation_t                            indexation_;
     std::shared_ptr<cis_kd_tree_buffered_t> kdtree_;
 
+    state_t                                 offset_;
     clustering_t                            clustering_impl_;
 };
 }
 
-CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d::SimpleSampleDensity2D, muse_mcl_2d::SampleDensity2D)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d::MCSampleDensity2D, muse_mcl_2d::SampleDensity2D)
