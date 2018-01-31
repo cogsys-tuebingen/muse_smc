@@ -62,6 +62,7 @@ private:
     using sample_set_t           = muse_smc::SampleSet<StateSpaceDescription2D>;
     using prediction_integrals_t = muse_smc::PredictionIntegrals<StateSpaceDescription2D>;
     using scheduler_t            = muse_smc::Scheduler<StateSpaceDescription2D>;
+    using cycle_scheduler_t      = muse_smc::CycleScheduler<StateSpaceDescription2D>;
 
     using update_model_mapping_t = UpdateRelay2D::map_t;
 

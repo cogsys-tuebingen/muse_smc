@@ -18,11 +18,10 @@ public:
     using resampling_t          = Resampling<state_space_description_t>;
     using sample_set_t          = SampleSet<state_space_description_t>;
 
-
-    virtual void apply(typename update_t::Ptr &u,
+    virtual bool apply(typename update_t::Ptr &u,
                        typename sample_set_t::Ptr &s) = 0;
 
-    virtual void apply(typename resampling_t::Ptr &r,
+    virtual bool apply(typename resampling_t::Ptr &r,
                        typename sample_set_t::Ptr &s) = 0;
 
 };

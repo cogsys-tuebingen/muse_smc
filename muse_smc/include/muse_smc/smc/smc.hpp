@@ -314,7 +314,7 @@ protected:
                         const auto model_id = u->getModelId();
                         if(!prediction_integrals_->isZero(model_id)) {
 
-                            scheduler_->applyUpdate(u, sample_set_);
+                            scheduler_->apply(u, sample_set_);
 
                             prediction_integrals_->reset(model_id);
                             state_publisher_->publishIntermidiate(sample_set_);
