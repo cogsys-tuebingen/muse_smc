@@ -9,7 +9,6 @@ namespace muse_mcl_2d_stereo {
 class StereoProvider2D : public muse_mcl_2d::DataProvider2D
 {
 public:
-    using point_t    = cslibs_math_2d::Point2d;
     using interval_t = std::array<double, 2>;
 
     StereoProvider2D();

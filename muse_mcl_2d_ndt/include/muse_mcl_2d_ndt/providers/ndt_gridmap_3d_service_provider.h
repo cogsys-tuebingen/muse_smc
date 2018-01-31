@@ -9,6 +9,8 @@
 #include <muse_mcl_2d/map/map_provider_2d.hpp>
 #include <muse_mcl_2d_ndt/maps/gridmap_3d.h>
 
+#include <sensor_msgs/PointCloud2.h>
+
 namespace muse_mcl_2d_ndt {
 class NDTGridmap3dServiceProvider : public muse_mcl_2d::MapProvider2D
 {
@@ -32,6 +34,7 @@ protected:
     mutable std::thread             worker_;
 
     mutable ros::Publisher          pub_;
+    mutable sensor_msgs::PointCloud2::Ptr msg_;
 
     void loadMap() const;
     void publishMap() const;

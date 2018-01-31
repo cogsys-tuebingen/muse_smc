@@ -16,7 +16,7 @@ NDTGridmap3dProvider::NDTGridmap3dProvider() :
 }
 
 NDTGridmap3dProvider::state_space_t::ConstPtr NDTGridmap3dProvider::getStateSpace() const
-{
+{std::cout << "NDT: getStateSpace" << std::endl;
     {
         std::unique_lock<std::mutex> l(map_mutex_);
         if (!map_ && blocking_)
@@ -82,18 +82,20 @@ void NDTGridmap3dProvider::publishMap() const
     if (!map_)
         return;
 
-    sensor_msgs::PointCloud2::Ptr msg;
-    {
+    if (!msg_) {
         pcl::PointCloud<pcl::PointXYZI>::Ptr prob;
         std::unique_lock<std::mutex> l(map_mutex_);
         cslibs_ndt_3d::conversion::from(map_->data(), prob);
-        pcl::toROSMsg(*prob, *msg);
+        if (prob) {
+            msg_.reset(new sensor_msgs::PointCloud2);
+            pcl::toROSMsg(*prob, *msg_);
+        }
     }
 
-    if (msg) {
-        msg->header.frame_id = frame_id_;
-        msg->header.stamp    = ros::Time::now();
-        pub_.publish(msg);
+    if (msg_) {std::cout << "NDT: publish" << std::endl;
+        msg_->header.frame_id = frame_id_;
+        msg_->header.stamp    = ros::Time::now();
+        pub_.publish(msg_);
     } else
         ROS_INFO_STREAM("Could not publish loaded map!");
 }

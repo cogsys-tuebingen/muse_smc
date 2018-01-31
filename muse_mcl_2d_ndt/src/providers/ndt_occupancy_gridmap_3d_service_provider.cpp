@@ -94,18 +94,20 @@ void NDTOccupancyGridmap3dServiceProvider::publishMap() const
     if (!map_)
         return;
 
-    sensor_msgs::PointCloud2::Ptr msg;
-    {
+    if (!msg_) {
         pcl::PointCloud<pcl::PointXYZI>::Ptr prob;
         std::unique_lock<std::mutex> l(map_mutex_);
         cslibs_ndt_3d::conversion::from(map_->data(), prob, inverse_model_, threshold_);
-        pcl::toROSMsg(*prob, *msg);
+        if (prob) {
+            msg_.reset(new sensor_msgs::PointCloud2);
+            pcl::toROSMsg(*prob, *msg_);
+        }
     }
 
-    if (msg) {
-        msg->header.frame_id = frame_id_;
-        msg->header.stamp    = ros::Time::now();
-        pub_.publish(msg);
+    if (msg_) {
+        msg_->header.frame_id = frame_id_;
+        msg_->header.stamp    = ros::Time::now();
+        pub_.publish(msg_);
     } else
         ROS_INFO_STREAM("Could not publish loaded map!");
 }

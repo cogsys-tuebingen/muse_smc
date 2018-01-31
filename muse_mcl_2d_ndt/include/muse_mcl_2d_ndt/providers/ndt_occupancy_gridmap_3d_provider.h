@@ -9,6 +9,8 @@
 #include <muse_mcl_2d/map/map_provider_2d.hpp>
 #include <muse_mcl_2d_ndt/maps/occupancy_gridmap_3d.h>
 
+#include <sensor_msgs/PointCloud2.h>
+
 namespace muse_mcl_2d_ndt {
 class NDTOccupancyGridmap3dProvider : public muse_mcl_2d::MapProvider2D
 {
@@ -32,6 +34,7 @@ protected:
     mutable ros::Publisher          pub_;
     double                          threshold_;
     cslibs_gridmaps::utility::InverseModel::Ptr inverse_model_;
+    mutable sensor_msgs::PointCloud2::Ptr msg_;
 
     void loadMap();
     void publishMap() const;

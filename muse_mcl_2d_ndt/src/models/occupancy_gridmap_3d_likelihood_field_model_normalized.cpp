@@ -77,7 +77,7 @@ void OccupancyGridmap3dLikelihoodFieldModelNormalized::apply(const data_t::Const
     for (auto it = set.begin() ; it != set.end() ; ++it, ++it_ps) {
         const cslibs_math_2d::Pose2d m_T_s = m_T_w * it.state() * b_T_s; /// stereo camera pose in map coordinates
         const cslibs_math_3d::Pose3d m_T_s_3d(m_T_s.tx(), m_T_s.ty(), m_T_s.yaw());
-        double p = 0.0;
+        double p = 1.0;
         for (std::size_t i = 0 ; i < points_size ;  i+= points_step) {
             const auto &point = stereo_points->at(i);
             const cslibs_math_3d::Point3d map_point = m_T_s_3d * point;
