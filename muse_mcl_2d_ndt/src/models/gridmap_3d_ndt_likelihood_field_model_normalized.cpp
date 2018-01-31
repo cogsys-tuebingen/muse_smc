@@ -77,7 +77,7 @@ void Gridmap3dNDTLikelihoodFieldModelNormalized::apply(const data_t::ConstPtr   
     for (auto it = set.begin() ; it != set.end() ; ++it_ps) {
         const cslibs_math_2d::Pose2d m_T_s = m_T_w * it.state() * b_T_s; /// stereo camera pose in map coordinates
         const cslibs_math_3d::Pose3d m_T_s_3d(m_T_s.tx(), m_T_s.ty(), m_T_s.yaw());
-        double p = 1.0;
+        double p = 0.0;
 
         const Eigen::Matrix<double, 3, 3> r = to_rotation_matrix(m_T_s.cos(), m_T_s.sin());
         local_storage.traverse([this, &p, &m_T_s_3d, &gridmap, &r, &to_bundle_index](const index_t& , const distribution_t &d_local) {
