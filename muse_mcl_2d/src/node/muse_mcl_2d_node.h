@@ -24,6 +24,7 @@
 #include <muse_smc/prediction/prediction_relay.hpp>
 #include <muse_smc/plugins/plugin_loader.hpp>
 #include <muse_smc/plugins/plugin_factory.hpp>
+#include <muse_smc/scheduling/cycle_scheduler.hpp>
 
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 
@@ -60,6 +61,8 @@ private:
     using smc_t                  = muse_smc::SMC<StateSpaceDescription2D>;
     using sample_set_t           = muse_smc::SampleSet<StateSpaceDescription2D>;
     using prediction_integrals_t = muse_smc::PredictionIntegrals<StateSpaceDescription2D>;
+    using scheduler_t            = muse_smc::Scheduler<StateSpaceDescription2D>;
+    using cycle_scheduler_t      = muse_smc::CycleScheduler<StateSpaceDescription2D>;
 
     using update_model_mapping_t = UpdateRelay2D::map_t;
 
@@ -70,17 +73,17 @@ private:
     ros::Subscriber             initialization_subscriber_pose_;
 
     //// data providers
-    cslibs_math_ros::tf::TFListener2d::Ptr             tf_provider_frontend_;  /// for data providers and data conversion
-    cslibs_math_ros::tf::TFListener2d::Ptr             tf_provider_backend_;   /// for the backend (the particle filter and the sensor updates)
-    map_provider_map_t          map_providers_;
-    data_provider_map_t         data_providers_;
+    cslibs_math_ros::tf::TFListener2d::Ptr  tf_provider_frontend_;  /// for data providers and data conversion
+    cslibs_math_ros::tf::TFListener2d::Ptr  tf_provider_backend_;   /// for the backend (the particle filter and the sensor updates)
+    map_provider_map_t                      map_providers_;
+    data_provider_map_t                     data_providers_;
 
-    smc_t::Ptr                  particle_filter_;
-    prediction_integrals_t::Ptr prediction_integrals_;
-    sample_set_t::Ptr           sample_set_;
+    smc_t::Ptr                              particle_filter_;
+    prediction_integrals_t::Ptr             prediction_integrals_;
+    sample_set_t::Ptr                       sample_set_;
 
-    SampleDensity2D::Ptr        sample_density_;
-    StatePublisher::Ptr         state_publisher_;
+    SampleDensity2D::Ptr                    sample_density_;
+    StatePublisher::Ptr                     state_publisher_;
 
 
     //// prediction & update
@@ -91,9 +94,13 @@ private:
     UniformSampling2D::Ptr      uniform_sampling_;
     NormalSampling2D::Ptr       normal_sampling_;
     Resampling2D::Ptr           resampling_;
+    scheduler_t::Ptr            scheduler_;
 
     UpdateRelay2D::Ptr          update_forwarder_;
     PredictionRelay2D::Ptr      predicition_forwarder_;
+
+    /// scheduling
+
 
     void checkPoseInitialization();
     bool getUpdateModelProviderMapping(update_model_mapping_t &update_mapping);

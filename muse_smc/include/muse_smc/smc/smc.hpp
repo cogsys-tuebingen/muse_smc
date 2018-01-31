@@ -9,6 +9,7 @@
 #include <muse_smc/samples/sample_set.hpp>
 #include <muse_smc/resampling/resampling.hpp>
 #include <muse_smc/smc/smc_state.hpp>
+#include <muse_smc/scheduling/scheduler.hpp>
 #include <cslibs_time/rate.hpp>
 #include <cslibs_utility/synchronized/synchronized_priority_queue.hpp>
 
@@ -61,6 +62,7 @@ public:
     using normal_sampling_t     = NormalSampling<state_space_description_t>;
     using uniform_sampling_t    = UniformSampling<state_space_description_t>;
     using resampling_t          = Resampling<state_space_description_t>;
+    using scheduler_t           = Scheduler<state_space_description_t>;
     using filter_state_t        = SMCState<state_space_description_t>;
     using update_queue_t        = cslibs_utility::synchronized::priority_queue<typename update_t::Ptr,
                                                                                typename update_t::Greater>;
@@ -68,7 +70,6 @@ public:
                                                                                typename prediction_t::Greater>;
 
     inline SMC() :
-        updates_applied_after_resampling_(0ul),
         request_init_state_(false),
         request_init_uniform_(false),
         worker_thread_active_(false),
@@ -81,14 +82,13 @@ public:
         end();
     }
 
-    inline void setup(typename sample_set_t::Ptr            sample_set,
-                      typename uniform_sampling_t::Ptr      sample_uniform,
-                      typename normal_sampling_t::Ptr       sample_normal,
-                      typename resampling_t::Ptr            resampling,
-                      typename filter_state_t::Ptr          state_publisher,
-                      typename prediction_integrals_t::Ptr  prediction_integrals,
-                      const cslibs_time::Rate              &preferred_filter_rate,
-                      const std::size_t                     minimum_update_cycles)
+    inline void setup(const typename sample_set_t::Ptr            &sample_set,
+                      const typename uniform_sampling_t::Ptr      &sample_uniform,
+                      const typename normal_sampling_t::Ptr       &sample_normal,
+                      const typename resampling_t::Ptr            &resampling,
+                      const typename filter_state_t::Ptr          &state_publisher,
+                      const typename prediction_integrals_t::Ptr  &prediction_integrals,
+                      const typename scheduler_t::Ptr             &scheduler)
     {
         sample_set_             = sample_set;
         sample_uniform_         = sample_uniform;
@@ -96,8 +96,7 @@ public:
         resampling_             = resampling;
         state_publisher_        = state_publisher;
         prediction_integrals_   = prediction_integrals;
-        preferred_filter_rate_  = preferred_filter_rate;
-        minimum_update_cycles_  = minimum_update_cycles;
+        scheduler_              = scheduler;
 
 #ifdef MUSE_SMC_USE_DOTTY
         dotty_.reset(new Dotty);
@@ -171,11 +170,7 @@ protected:
     typename normal_sampling_t::Ptr         sample_normal_;
     typename resampling_t::Ptr              resampling_;
     typename prediction_integrals_t::Ptr    prediction_integrals_;
-
-    cslibs_time::Rate                       preferred_filter_rate_;
-    std::size_t                             updates_applied_after_resampling_;
-    std::size_t                             minimum_update_cycles_;
-
+    typename scheduler_t::Ptr               scheduler_;
     typename filter_state_t::Ptr            state_publisher_;
 
     /// requests
@@ -228,7 +223,7 @@ protected:
             sample_normal_->apply(init_state_,
                                   init_state_covariance_,
                                   *sample_set_);
-            state_publisher_->publishIntermidiate(sample_set_);
+            state_publisher_->publish(sample_set_);
             request_init_state_ = false;
         }
         if(request_init_uniform_) {
@@ -318,11 +313,10 @@ protected:
                     } else if (t == sample_set_stamp) {
                         const auto model_id = u->getModelId();
                         if(!prediction_integrals_->isZero(model_id)) {
-                            now = cslibs_time::Time::now();
-                            u->apply(sample_set_->getWeightIterator());
+
+                            scheduler_->apply(u, sample_set_);
 
                             prediction_integrals_->reset(model_id);
-                            ++updates_applied_after_resampling_;
                             state_publisher_->publishIntermidiate(sample_set_);
 #ifdef MUSE_SMC_LOG_STATE
                             log();
@@ -336,12 +330,8 @@ protected:
                 }
 
                 if(prediction_integrals_->thresholdExceeded() &&
-                        updates_applied_after_resampling_ > minimum_update_cycles_) {
-
-                    resampling_->apply(*sample_set_);
-                    updates_applied_after_resampling_ = 0ul;
+                        scheduler_->apply(resampling_, sample_set_)) {
                     prediction_integrals_->reset();
-
                     state_publisher_->publish(sample_set_);
                     sample_set_->resetWeights();
                 }

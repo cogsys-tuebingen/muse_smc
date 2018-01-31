@@ -205,7 +205,6 @@ bool MuseMCL2DNode::setup()
 
         auto param_name = [](const std::string &param){return "particle_filter/" + param;};
 
-        const double preferred_rate                 = nh_private_.param<double>(param_name("preferred_rate"), 60.0);
         const std::size_t resampling_cycle          = nh_private_.param<int>(param_name("resampling_cycle"), 20);
         const double resampling_threshold_linear    = nh_private_.param<double>(param_name("resampling_threshold_linear"), 0.1);
         const double resampling_threshold_angular   = cslibs_math::common::angle::toRad(nh_private_.param<double>(param_name("resampling_threshold_angular"), 5.0));
@@ -237,14 +236,15 @@ bool MuseMCL2DNode::setup()
         state_publisher_.reset(new StatePublisher);
         state_publisher_->setup(nh_private_);
 
+        scheduler_.reset(new cycle_scheduler_t(resampling_cycle));
+
         particle_filter_.reset(new smc_t);
         particle_filter_->setup(sample_set_,
                                 uniform_sampling_, normal_sampling_,
                                 resampling_,
                                 state_publisher_,
                                 prediction_integrals_,
-                                cslibs_time::Rate(preferred_rate),
-                                resampling_cycle);
+                                scheduler_);
     }
 
     predicition_forwarder_.reset(new PredictionRelay2D(particle_filter_));
