@@ -237,14 +237,15 @@ bool MuseMCL2DNode::setup()
         state_publisher_.reset(new StatePublisher);
         state_publisher_->setup(nh_private_);
 
+        scheduler_.reset(new muse_smc::CycleScheduler(resampling_cyclem, 0));
+
         particle_filter_.reset(new smc_t);
         particle_filter_->setup(sample_set_,
                                 uniform_sampling_, normal_sampling_,
                                 resampling_,
                                 state_publisher_,
                                 prediction_integrals_,
-                                cslibs_time::Rate(preferred_rate),
-                                resampling_cycle);
+                                scheduler_);
     }
 
     predicition_forwarder_.reset(new PredictionRelay2D(particle_filter_));
