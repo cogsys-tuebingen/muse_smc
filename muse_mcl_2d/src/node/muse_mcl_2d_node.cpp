@@ -236,13 +236,14 @@ bool MuseMCL2DNode::setup()
         state_publisher_.reset(new StatePublisher);
         state_publisher_->setup(nh_private_);
 
-        cycle_scheduler_t::threshold_map_t cycle_thresholds;
+        cycle_scheduler_t::cycle_map_t update_cycle_perdiods;
+        cycle_scheduler_t::Ptr         cycle_scheduler(new cycle_scheduler_t);
         for(const auto &u : update_models_) {
             const std::size_t id = u.second->getId();
-            cycle_thresholds[id] = 0;
+            update_cycle_perdiods[id] = 0;
         }
-
-        scheduler_.reset(new cycle_scheduler_t(resampling_cycle, cycle_thresholds));
+        cycle_scheduler->setup(resampling_cycle, update_cycle_perdiods);
+        scheduler_ = cycle_scheduler;
 
         particle_filter_.reset(new smc_t);
         particle_filter_->setup(sample_set_,

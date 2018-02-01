@@ -9,27 +9,42 @@ template<typename state_space_description_t>
 class CycleScheduler : public Scheduler<state_space_description_t>
 {
 public:
-    using threshold_map_t         = std::unordered_map<id_t, std::size_t>;
+    using cycle_t       = std::size_t;
+    using cycle_map_t   = std::unordered_map<id_t, cycle_t>;
     using update_t      = Update<state_space_description_t>;
     using resampling_t  = Resampling<state_space_description_t>;
     using sample_set_t  = SampleSet<state_space_description_t>;
+    using Ptr           = std::shared_ptr<CycleScheduler>;
 
-    CycleScheduler(const std::size_t    &resampling_update_cycle_threshold,
-                   const threshold_map_t          &update_cycle_thresholds) :
-        resampling_update_cycle_threshold_(resampling_update_cycle_threshold),
-        updates_applied_(0),
-        update_cycle_thresholds_(update_cycle_thresholds)
+    CycleScheduler() :
+        updates_applied_(0)
     {
+
+    }
+
+    void setup(const std::size_t &resampling_cycle_period,
+               const cycle_map_t &update_cycle_periods)
+    {
+        resampling_cycle_period_ = resampling_cycle_period;
+        update_cycle_periods_ = update_cycle_periods;
+        for(const auto &u : update_cycle_periods_) {
+            update_cycles_[u.first] = 0;
+        }
     }
 
     virtual bool apply(typename update_t::Ptr &u,
                        typename sample_set_t::Ptr &s) override
     {
-        const id_t id = u->getModelId();
-        std::size_t &update_cycles = update_cycles_[id];
-        std::size_t &updates_applied = updates_applied_;
+        assert(update_cycles_.find(u->getModelId()) != update_cycles_.end());
+        assert(update_cycle_periods_.find(u->getModelId()) != update_cycle_periods_.end());
 
-        auto do_apply = [&u, &s, &update_cycles, &updates_applied] ()
+
+        const id_t id                     = u->getModelId();
+        const cycle_t update_cycle_period = update_cycle_periods_[id];
+        cycle_t &update_cycles            = update_cycles_[id];
+        cycle_t &updates_applied          = updates_applied_;
+
+        auto do_apply = [&u, &s, &updates_applied, &update_cycles] ()
         {
             u->apply(s->getWeightIterator());
             update_cycles = 1;
@@ -42,7 +57,7 @@ public:
             return false;
         };
 
-        return update_cycles > update_cycle_thresholds_[id] ? do_apply() : do_not_apply();
+        return update_cycles > update_cycle_period ? do_apply() : do_not_apply();
     }
 
     virtual  bool apply(typename resampling_t::Ptr &r,
@@ -58,14 +73,14 @@ public:
             return false;
         };
 
-        return updates_applied_ > resampling_update_cycle_threshold_ ? do_apply() : do_not_apply();
+        return updates_applied_ > resampling_cycle_period_ ? do_apply() : do_not_apply();
     }
 
 protected:
-    std::size_t     resampling_update_cycle_threshold_;
-    std::size_t     updates_applied_;
-    threshold_map_t update_cycles_;
-    threshold_map_t update_cycle_thresholds_;
+    cycle_t     resampling_cycle_period_;
+    cycle_t     updates_applied_;
+    cycle_map_t update_cycles_;
+    cycle_map_t update_cycle_periods_;
 };
 }
 
