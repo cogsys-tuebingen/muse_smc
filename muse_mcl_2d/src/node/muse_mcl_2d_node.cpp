@@ -205,7 +205,6 @@ bool MuseMCL2DNode::setup()
 
         auto param_name = [](const std::string &param){return "particle_filter/" + param;};
 
-        const std::size_t resampling_cycle          = nh_private_.param<int>(param_name("resampling_cycle"), 20);
         const double resampling_threshold_linear    = nh_private_.param<double>(param_name("resampling_threshold_linear"), 0.1);
         const double resampling_threshold_angular   = cslibs_math::common::angle::toRad(nh_private_.param<double>(param_name("resampling_threshold_angular"), 5.0));
 
@@ -236,14 +235,33 @@ bool MuseMCL2DNode::setup()
         state_publisher_.reset(new StatePublisher);
         state_publisher_->setup(nh_private_);
 
-        cycle_scheduler_t::cycle_map_t update_cycle_perdiods;
-        cycle_scheduler_t::Ptr         cycle_scheduler(new cycle_scheduler_t);
-        for(const auto &u : update_models_) {
-            const std::size_t id = u.second->getId();
-            update_cycle_perdiods[id] = 0;
+        /// TEMPORARY TEST
+        ///
+        rate_scheduler_t::time_priority_map_t scheduler_priorities;
+        std::map<std::string, double> priorities;
+        nh_private_.getParam("scheduler/priorities", priorities);
+        for(const auto &p : priorities) {
+            if(update_models_.find(p.first) == update_models_.end()) {
+                ROS_ERROR_STREAM("Update model entered in priority weights not found.");
+                return false;
+            }
+            const std::size_t id = update_models_[p.first]->getId();
+            scheduler_priorities[id] = p.second;
         }
-        cycle_scheduler->setup(resampling_cycle, update_cycle_perdiods);
-        scheduler_ = cycle_scheduler;
+        double preferred_rate = nh_private_.param<double>("particle_filter/preferred_rate", 30.0);
+        if(preferred_rate < 0.0) {
+            ROS_ERROR_STREAM("Cannot use a particle filter rate smaller 0.0!");
+            return false;
+        }
+
+        rate_scheduler_t::Ptr scheduler(new rate_scheduler_t);
+        scheduler->setup(rate_scheduler_t::rate_t(preferred_rate),
+                         scheduler_priorities);
+
+        scheduler_ = scheduler;
+        ///
+        /// TEMPORARY TEST
+
 
         particle_filter_.reset(new smc_t);
         particle_filter_->setup(sample_set_,
