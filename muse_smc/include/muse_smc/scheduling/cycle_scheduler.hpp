@@ -64,8 +64,8 @@ public:
 protected:
     std::size_t     resampling_update_cycle_threshold_;
     std::size_t     updates_applied_;
-    threshold_map_t           update_cycles_;
-    threshold_map_t           update_cycle_thresholds_;
+    threshold_map_t update_cycles_;
+    threshold_map_t update_cycle_thresholds_;
 };
 }
 
