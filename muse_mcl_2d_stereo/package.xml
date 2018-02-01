@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>muse_mcl_2d_stereo</name>
-  <version>0.0.2</version>
+  <version>0.0.1</version>
   <description>The muse_mcl_2d_stereo package</description>
 
   <maintainer email="richard.hanten@uni-tuebingen.de">Richard Hanten</maintainer>
