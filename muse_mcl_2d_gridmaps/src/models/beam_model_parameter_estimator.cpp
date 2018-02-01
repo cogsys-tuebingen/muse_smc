@@ -1,10 +1,9 @@
 #include "beam_model_parameter_estimator.h"
 
-using namespace muse_mcl_2d_gridmaps;
-
 #include <cmath>
 #include <assert.h>
 
+namespace muse_mcl_2d_gridmaps {
 BeamModelParameterEstimator::BeamModelParameterEstimator(const Parameters &parameters,
                                                          const std::size_t max_iterations) :
     running_(false),
@@ -13,7 +12,7 @@ BeamModelParameterEstimator::BeamModelParameterEstimator(const Parameters &param
     parameters_(parameters),
     parameters_working_copy_(parameters)
 {
-    ParameterLogger::Header header = {"z_hit, z_max, z_short, z_rand, sigma_hit, lambda_short"};
+    ParameterLogger::header_t header = {{"z_hit, z_max, z_short, z_rand, sigma_hit, lambda_short"}};
     logger_.reset(new ParameterLogger(header,  "/tmp/beam_model.csv"));
     logger_->log(parameters_working_copy_.z_hit,
                  parameters_working_copy_.z_short,
@@ -159,4 +158,5 @@ void BeamModelParameterEstimator::run()
                  parameters_working_copy_.lambda_short);
 
     running_ = false;
+}
 }

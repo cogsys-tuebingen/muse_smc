@@ -1,11 +1,11 @@
 #include "likelihood_field_gridmap_provider.h"
 
+#include <cslibs_gridmaps/static_maps/conversion/convert_likelihood_field_gridmap.hpp>
+
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::LikelihoodFieldGridmapProvider, muse_mcl_2d::MapProvider2D)
 
-using namespace muse_mcl_2d_gridmaps;
-using namespace muse_mcl_2d;
-
+namespace muse_mcl_2d_gridmaps {
 LikelihoodFieldGridmapProvider::LikelihoodFieldGridmapProvider() :
     loading_(false)
 {
@@ -39,21 +39,22 @@ void LikelihoodFieldGridmapProvider::callback(const nav_msgs::OccupancyGridConst
     /// conversion can take time
     /// we allow concurrent loading, this way, the front end thread is not blocking.
     if(!loading_) {
-        if(!map_ || muse_smc::Time(msg->info.map_load_time.toNSec()) > map_->getStamp()) {
+        if(!map_ || cslibs_time::Time(msg->info.map_load_time.toNSec()) > map_->getStamp()) {
             loading_ = true;
 
             auto load = [this, msg]() {
-                static_maps::LikelihoodFieldGridMap::Ptr map(new static_maps::LikelihoodFieldGridMap(*msg, sigma_hit_, z_hit_, maximum_distance_, binarization_threshold_));
+                cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr map;
+                cslibs_gridmaps::static_maps::conversion::from(*msg, map, maximum_distance_, sigma_hit_, binarization_threshold_);
                 std::unique_lock<std::mutex>l(map_mutex_);
-                map_ = map;
+                map_.reset(new LikelihoodFieldGridmap(map, msg->header.frame_id));
                 loading_ = false;
             };
             auto load_blocking = [this, msg]() {
+                cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr map;
+                cslibs_gridmaps::static_maps::conversion::from(*msg, map, maximum_distance_, sigma_hit_, binarization_threshold_);
                 std::unique_lock<std::mutex>l(map_mutex_);
-                static_maps::LikelihoodFieldGridMap::Ptr map(new static_maps::LikelihoodFieldGridMap(*msg, sigma_hit_, z_hit_, maximum_distance_, binarization_threshold_));
-                map_ = map;
+                map_.reset(new LikelihoodFieldGridmap(map, msg->header.frame_id));
                 loading_ = false;
-
                 map_loaded_.notify_one();
             };
             if(blocking_) {
@@ -61,7 +62,7 @@ void LikelihoodFieldGridmapProvider::callback(const nav_msgs::OccupancyGridConst
             } else {
                 worker_ = std::thread(load);
             }
-            worker_.detach();
         }
     }
+}
 }

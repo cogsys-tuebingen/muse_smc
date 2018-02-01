@@ -32,15 +32,15 @@ int main(int argc, char *argv[])
             cv::circle(display, end, 2, cv::Scalar(255,255),CV_FILLED, CV_AA);
             mask.at<uchar>(end.y, end.x) = 255;
 
-            muse_mcl_2d_gridmaps::algorithms::Bresenham<uchar> it({start.x, start.y},
+            muse_mcl_2d_gridmaps::static_maps::algorithms::Bresenham<uchar> it({start.x, start.y},
             {end.x,end.y},
             {mask.cols, mask.rows},
-                                                mask.ptr<uchar>() );
+                                                                               mask.ptr<uchar>() );
 
-            muse_mcl_2d_gridmaps::algorithms::Bresenham<uchar> const_it({start.x, start.y},
+            muse_mcl_2d_gridmaps::static_maps::algorithms::Bresenham<uchar> const_it({start.x, start.y},
             {end.x,end.y},
             {mask.cols, mask.rows},
-                                                      mask.ptr<uchar>() );
+                                                                                     mask.ptr<uchar>() );
             while(!it.done()) {
                 display.at<cv::Vec3b>(it.y(), it.x()) = cv::Vec3b(255,255,255);
                 std::cout << "before " << (int) *const_it << "\n";
@@ -50,12 +50,12 @@ int main(int argc, char *argv[])
             }
 
             std::size_t iterations = 0ul;
-            muse_smc::Time start = muse_smc::Time::now();
+            cslibs_time::Time start = cslibs_time::Time::now();
             while(!const_it.done()) {
                 ++const_it;
                 ++iterations;
             }
-            std::cout << "took " << (muse_smc::Time::now() - start).milliseconds() << "ms for " << iterations << " iterations" << "\n";
+            std::cout << "took " << (cslibs_time::Time::now() - start).milliseconds() << "ms for " << iterations << " iterations" << "\n";
 
             cv::imshow("display", display);
             cv::imshow("mask", mask);

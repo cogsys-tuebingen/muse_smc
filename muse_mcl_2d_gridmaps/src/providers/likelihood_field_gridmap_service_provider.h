@@ -10,8 +10,7 @@
 #include <condition_variable>
 
 #include <muse_mcl_2d/map/map_provider_2d.hpp>
-#include <muse_mcl_2d_gridmaps/static_maps/likelihood_field_gridmap.h>
-
+#include <muse_mcl_2d_gridmaps/maps/likelihood_field_gridmap.h>
 
 namespace muse_mcl_2d_gridmaps {
 class LikelihoodFieldGridmapServiceProvider : public muse_mcl_2d::MapProvider2D
@@ -27,13 +26,12 @@ protected:
     std::string                                         service_name_;
     double                                              binarization_threshold_;
     double                                              maximum_distance_;
-    double                                              z_hit_;
     double                                              sigma_hit_;
     bool                                                blocking_;
 
     mutable std::mutex                                  map_mutex_;
     mutable std::condition_variable                     map_loaded_;
-    mutable static_maps::LikelihoodFieldGridMap::Ptr    map_;
+    mutable LikelihoodFieldGridmap::Ptr                 map_;
     mutable std::atomic_bool                            loading_;
     mutable std::thread                                 worker_;
 

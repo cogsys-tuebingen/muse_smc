@@ -8,13 +8,16 @@
 #include <atomic>
 #include <condition_variable>
 
-#include <muse_mcl_2d/math/transform_2d.hpp>
-#include <muse_mcl_2d/tf/tf_provider.hpp>
-#include <muse_mcl_2d/math/convert.hpp>
+#include <cslibs_math_2d/linear/transform.hpp>
+#include <cslibs_math_ros/tf/tf_listener_2d.hpp>
+#include <cslibs_math_ros/tf/conversion_2d.hpp>
 
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
+
+#include <cslibs_math_ros/tf/tf_listener_2d.hpp>
+
 #include <ros/time.h>
 
 namespace muse_mcl_2d {
@@ -30,6 +33,7 @@ namespace muse_mcl_2d {
 class TFPublisher {
 public:
     using Ptr = std::shared_ptr<TFPublisher>;
+    using stamped_t = cslibs_time::Stamped<cslibs_math_2d::Transform2d>;
 
     /**
      * @brief TransformPublisherAnchored constructor.
@@ -38,18 +42,18 @@ public:
      * @param base_frame    - the base frame
      * @param world_frame   - the world fram
      */
-    TFPublisher(const double rate,
-                const std::string &odom_frame,
-                const std::string &base_frame,
-                const std::string &world_frame,
-                const double timeout = 0.1) :
+    inline TFPublisher(const double rate,
+                       const std::string &odom_frame,
+                       const std::string &base_frame,
+                       const std::string &world_frame,
+                       const double timeout = 0.1) :
         odom_frame_(odom_frame),
         base_frame_(base_frame),
         world_frame_(world_frame),
         timeout_(timeout),
         running_(false),
         stop_(false),
-        w_T_b_(Transform2D::identity(), muse_smc::Time(ros::Time::now().toNSec())),
+        w_T_b_(cslibs_math_2d::Transform2d::identity(), cslibs_time::Time(ros::Time::now().toNSec())),
         wait_for_transform_(true),
         tf_rate_(rate)
     {
@@ -66,7 +70,6 @@ public:
             return;
 
         worker_thread_ = std::thread([this]{loop();});
-        worker_thread_.detach();
     }
 
     inline void end()
@@ -79,15 +82,15 @@ public:
             worker_thread_.join();
     }
 
-    inline void setTransform(const StampedTransform2D &w_t_b)
+    inline void setTransform(const stamped_t &w_t_b)
     {
         std::unique_lock<std::mutex> l(tf_mutex_);
         w_T_b_ = w_t_b;
 
-        Transform2D b_T_o = Transform2D::identity();
+        cslibs_math_2d::Transform2d b_T_o = cslibs_math_2d::Transform2d::identity();
         if(tf_listener_.lookupTransform(base_frame_, odom_frame_, ros::Time(w_T_b_.stamp().seconds()), b_T_o, timeout_)) {
-            Transform2D w_T_o = w_T_b_.data() * b_T_o;
-            w_T_o_ = tf::StampedTransform(from(w_T_o), ros::Time(w_T_b_.stamp().seconds()), world_frame_, odom_frame_);
+            cslibs_math_2d::Transform2d w_T_o = w_T_b_.data() * b_T_o;
+            w_T_o_ = tf::StampedTransform( cslibs_math_ros::tf::conversion_2d::from(w_T_o), ros::Time(w_T_b_.stamp().seconds()), world_frame_, odom_frame_);
 
             tf_time_of_transform_ = w_T_o_.stamp_;
         }
@@ -113,15 +116,15 @@ private:
     std::mutex               tf_mutex_;
 
     tf::TransformBroadcaster tf_broadcaster_;
-    TFProvider               tf_listener_;
+    cslibs_math_ros::tf::TFListener2d tf_listener_;
 
     tf::StampedTransform     w_T_o_;
-    StampedTransform2D       w_T_b_;
+    stamped_t                w_T_b_;
     std::atomic_bool         wait_for_transform_;
     ros::Rate                tf_rate_;
     ros::Time                tf_time_of_transform_;
 
-    void loop()
+    inline void loop()
     {
         running_ = true;
         while(!stop_) {

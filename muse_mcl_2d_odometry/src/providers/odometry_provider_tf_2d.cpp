@@ -1,16 +1,14 @@
 #include "odometry_provider_tf_2d.h"
 
-#include <muse_mcl_2d/odometry/odometry_2d.hpp>
+#include <muse_mcl_2d/odometry/odometry_2d.h>
 #include <tf/tf.h>
 
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_odometry::OdometryProviderTF2D, muse_mcl_2d::DataProvider2D)
 
-using namespace muse_mcl_2d_odometry;
-using namespace muse_mcl_2d;
-
+namespace muse_mcl_2d_odometry {
 OdometryProviderTF2D::OdometryProviderTF2D() :
-    o_T_b1_(Transform2D(), muse_smc::Time(ros::Time::now().toNSec())),
+    o_T_b1_(cslibs_math_2d::Transform2d(), cslibs_time::Time(ros::Time::now().toNSec())),
     initialized_(false),
     rate_(60.0),
     running_(false),
@@ -38,7 +36,6 @@ void OdometryProviderTF2D::doSetup(ros::NodeHandle &nh)
     if(!running_) {
         /// fire up the thread
         worker_thread_ = std::thread([this](){loop();});
-        worker_thread_.detach();
     }
 }
 
@@ -47,10 +44,10 @@ void OdometryProviderTF2D::loop()
     running_ = true;
     while(!stop_) {
         const ros::Time now = ros::Time::now();
-        muse_mcl_2d::StampedTransform2D o_T_b2(Transform2D(), muse_smc::Time(now.toNSec()));
+        stamped_t o_T_b2(cslibs_math_2d::Transform2d(), cslibs_time::Time(now.toNSec()));
         if(tf_.lookupTransform(odom_frame_, base_frame_, now, o_T_b2, timeout_)) {
             if(initialized_) {
-                muse_smc::TimeFrame time_frame(o_T_b1_.stamp(), o_T_b2.stamp());
+                cslibs_time::TimeFrame time_frame(o_T_b1_.stamp(), o_T_b2.stamp());
                 Odometry2D::Ptr odometry(new Odometry2D(odom_frame_,
                                                         time_frame,
                                                         o_T_b1_.data(),
@@ -64,4 +61,5 @@ void OdometryProviderTF2D::loop()
         rate_.sleep();
     }
     running_ = false;
+}
 }

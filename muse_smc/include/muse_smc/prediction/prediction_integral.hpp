@@ -4,13 +4,13 @@
 #include <muse_smc/prediction/prediction_model.hpp>
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename state_space_description_t>
 class PredictionIntegral
 {
 public:
-    using Ptr = std::shared_ptr<PredictionIntegral<sample_t>>;
-    using ConstPtr = std::shared_ptr<PredictionIntegral<sample_t> const>;
-    using prediction_model_t = PredictionModel<sample_t>;
+    using Ptr                = std::shared_ptr<PredictionIntegral>;
+    using ConstPtr           = std::shared_ptr<PredictionIntegral const>;
+    using prediction_model_t = PredictionModel<state_space_description_t>;
 
     PredictionIntegral() = default;
     virtual ~PredictionIntegral() = default;

@@ -14,6 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rostest
   muse_smc
+  cslibs_math_2d
+  cslibs_math_ros
   visualization_msgs
   pluginlib
   geometry_msgs
@@ -43,9 +45,8 @@ generate_messages(
 
 catkin_package(
     INCLUDE_DIRS    include
-    LIBRARIES       ${PROJECT_NAME}_resampling ${PROJECT_NAME}_sampling
-    CATKIN_DEPENDS  muse_smc
-    DEPENDS         Eigen3
+    LIBRARIES       ${PROJECT_NAME}_resampling ${PROJECT_NAME}_sampling ${PROJECT_NAME}_odometry
+    CATKIN_DEPENDS  muse_smc cslibs_math_ros cslibs_math_2d
 )
 
 include_directories(
@@ -76,6 +77,25 @@ target_link_libraries(${PROJECT_NAME}_sampling
     ${catkin_LIBRARIES}
 )
 
+add_library(${PROJECT_NAME}_density
+    src/density/simple_sample_density_2d.cpp
+    src/density/mc_sample_density_2d.cpp
+    src/density/dual_sample_density_2d.cpp
+    src/density/md_sample_density_2d.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}_density
+    ${catkin_LIBRARIES}
+)
+
+add_library(${PROJECT_NAME}_odometry
+    src/odometry/odometry.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}_odometry
+    ${catkin_LIBRARIES}
+)
+
 add_executable(${PROJECT_NAME}_node
     src/node/muse_mcl_2d_node.cpp
     src/node/state_publisher_2d.cpp
@@ -88,20 +108,17 @@ target_link_libraries(${PROJECT_NAME}_node
     ${catkin_LIBRARIES}
 )
 
-add_unit_test_gtest(${PROJECT_NAME}_test_transform2d
-    test/test_transform2d.cpp
-    "${catkin_LIBRARIES}"
+add_executable(${PROJECT_NAME}_box_muller
+    test/test_box_muller.cpp
 )
 
-if(${MUSE_MCL_2D_PERF_TESTS})
-    message("[MuseMCL2D]: Building with performance tests!")
-    add_executable(${PROJECT_NAME}_perf_runtimes_particle_iteration
-        test/perf_runtimes_particle_iteration.cpp
-    )
+target_link_libraries(${PROJECT_NAME}_box_muller
+    ${catkin_LIBRARIES}
+)
 
-    target_link_libraries(${PROJECT_NAME}_perf_runtimes_particle_iteration
-        ${catkin_LIBRARIES}
-    )
+set(MUSE_MCL_2D_PERF_TESTS True)
+if(${MUSE_MCL_2D_PERF_TESTS})
+    message("[muse_mcl_2d]: Building with performance tests!")
     add_executable(${PROJECT_NAME}_perf_runtimes_math_operations
         test/perf_runtimes_math_operations.cpp
     )

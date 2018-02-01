@@ -5,20 +5,22 @@
 #include <muse_smc/sampling/uniform.hpp>
 #include <muse_smc/prediction/prediction_integral.hpp>
 
-#include <muse_smc/math/random.hpp>
+#include <cslibs_math/random/random.hpp>
 
 #include <memory>
 #include <vector>
+#include <iostream>
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename state_space_description_t>
 class Resampling
 {
 public:
     using Ptr = std::shared_ptr<Resampling>;
-    using sample_set_t = SampleSet<sample_t>;
-    using sample_uniform_t = UniformSampling<sample_t>;
-    using prediction_integral_t = PredictionIntegral<sample_t>;
+    using sample_t              = typename state_space_description_t::sample_t;
+    using sample_set_t          = SampleSet<state_space_description_t>;
+    using sample_uniform_t      = UniformSampling<state_space_description_t>;
+    using prediction_integral_t = PredictionIntegral<state_space_description_t>;
 
     Resampling() :
         recovery_alpha_fast_(0.0),

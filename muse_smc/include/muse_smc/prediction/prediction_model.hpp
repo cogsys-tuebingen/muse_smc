@@ -8,11 +8,12 @@
 #include <memory>
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename state_space_description_t>
 class PredictionModel {
 public:
-    using sample_set_t = SampleSet<sample_t>;
-    using Ptr = std::shared_ptr<PredictionModel<sample_t>>;
+    using Ptr           = std::shared_ptr<PredictionModel>;
+    using sample_t      = typename state_space_description_t::state_t;
+    using sample_set_t  = SampleSet<state_space_description_t>;
 
     struct Result {
         using Ptr = std::shared_ptr<Result>;
@@ -86,7 +87,7 @@ public:
     }
 
     virtual typename Result::Ptr apply(const Data::ConstPtr                    &data,
-                                       const Time                              &until,
+                                       const cslibs_time::Time                 &until,
                                        typename sample_set_t::state_iterator_t  states) = 0;
 
 protected:

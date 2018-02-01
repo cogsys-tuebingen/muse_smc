@@ -4,10 +4,11 @@
 #include <muse_smc/update/update_model.hpp>
 
 #include <muse_mcl_2d/samples/sample_2d.hpp>
-#include <muse_mcl_2d/tf/tf_provider.hpp>
+#include <cslibs_math_ros/tf/tf_listener_2d.hpp>
+#include <muse_mcl_2d/state_space/state_space_description_2d.hpp>
 
 namespace muse_mcl_2d {
-class UpdateModel2D : public muse_smc::UpdateModel<Sample2D>
+class UpdateModel2D : public muse_smc::UpdateModel<StateSpaceDescription2D>
 {
 public:
     using Ptr = std::shared_ptr<UpdateModel2D>;
@@ -17,10 +18,15 @@ public:
         return "muse_mcl_2d::UpdateModel2D";
     }
 
-    UpdateModel2D() = default;
-    virtual ~UpdateModel2D() = default;
+    inline UpdateModel2D()
+    {
+    }
 
-    inline void setup(const TFProvider::Ptr &tf,
+    virtual ~UpdateModel2D()
+    {
+    }
+
+    inline void setup(const cslibs_math_ros::tf::TFListener2d::Ptr &tf,
                       ros::NodeHandle &nh)
     {
         auto param_name = [this](const std::string &name){return name_ + "/" + name;};
@@ -33,7 +39,7 @@ public:
     }
 
 protected:
-    TFProvider::Ptr tf_;
+    cslibs_math_ros::tf::TFListener2d::Ptr tf_;
     ros::Duration   tf_timeout_;
     std::string     world_frame_;
     std::string     robot_base_frame_;

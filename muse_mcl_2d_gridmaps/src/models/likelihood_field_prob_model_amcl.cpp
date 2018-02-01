@@ -1,13 +1,13 @@
 #include "likelihood_field_prob_model_amcl.h"
 
-#include <muse_mcl_2d_laser/laser/laser_2d_scan.hpp>
-#include <muse_mcl_2d_gridmaps/static_maps//distance_gridmap.h>
+#include <muse_mcl_2d_laser/laserscan_2d.hpp>
+
+#include <muse_mcl_2d_gridmaps/maps/distance_gridmap.h>
 
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::LikelihoodFieldProbModelAMCL, muse_mcl_2d::UpdateModel2D)
 
-using namespace muse_mcl_2d_gridmaps;
-
+namespace muse_mcl_2d_gridmaps {
 LikelihoodFieldProbModelAMCL::LikelihoodFieldProbModelAMCL()
 {
 }
@@ -16,17 +16,17 @@ void LikelihoodFieldProbModelAMCL::apply(const data_t::ConstPtr          &data,
                                          const state_space_t::ConstPtr   &map,
                                          sample_set_t::weight_iterator_t set)
 {
-    if(!map->isType<static_maps::DistanceGridMap>()) {
+    if(!map->isType<DistanceGridmap>()) {
         return;
     }
 
-    const static_maps::DistanceGridMap &gridmap = map->as<static_maps::DistanceGridMap>();
-    const muse_mcl_2d_laser::LaserScan2D        &laser_data = data->as<muse_mcl_2d_laser::LaserScan2D>();
-    const muse_mcl_2d_laser::LaserScan2D::Rays  &laser_rays = laser_data.getRays();
+    const cslibs_gridmaps::static_maps::DistanceGridmap &gridmap = *(map->as<DistanceGridmap>().data());
+    const muse_mcl_2d_laser::LaserScan2D                &laser_data = data->as<muse_mcl_2d_laser::LaserScan2D>();
+    const muse_mcl_2d_laser::LaserScan2D::rays_t        &laser_rays = laser_data.getRays();
 
     /// laser to base transform
-    muse_mcl_2d::Transform2D b_T_l;
-    muse_mcl_2d::Transform2D m_T_w;
+    cslibs_math_2d::Transform2d b_T_l;
+    cslibs_math_2d::Transform2d m_T_w;
     if(!tf_->lookupTransform(robot_base_frame_,
                              laser_data.getFrame(),
                              ros::Time(laser_data.getTimeFrame().end.seconds()),
@@ -34,16 +34,16 @@ void LikelihoodFieldProbModelAMCL::apply(const data_t::ConstPtr          &data,
                              tf_timeout_))
         return;
     if(!tf_->lookupTransform(world_frame_,
-                             gridmap.getFrame(),
+                             map->getFrame(),
                              ros::Time(laser_data.getTimeFrame().end.seconds()),
                              m_T_w,
                              tf_timeout_))
         return;
 
-    const muse_mcl_2d_laser::LaserScan2D::Rays rays = laser_data.getRays();
+    const muse_mcl_2d_laser::LaserScan2D::rays_t rays = laser_data.getRays();
     const std::size_t rays_size = rays.size();
     const std::size_t ray_step  = std::max(1ul, (rays_size) / max_beams_);
-    const double range_max = laser_data.getRangeMax();
+    const double range_max = laser_data.getLinearMax();
     const double p_rand = z_rand_ * 1.0 / range_max;
 
     auto p_hit = [this] (const double z) {
@@ -53,28 +53,25 @@ void LikelihoodFieldProbModelAMCL::apply(const data_t::ConstPtr          &data,
 
     std::fill(observation_histogram_.begin(), observation_histogram_.end(), 0);
     std::fill(observation_mask_.begin(), observation_mask_.end(), 0);
-    const std::size_t sample_size = set.getData().size();
+    const std::size_t sample_size = set.size();
     const std::size_t probability_buffer_size = sample_size * max_beams_;
-    if(probability_buffer_size > observation_probability_buffer_.size()) {
+    if(probability_buffer_size != observation_probability_buffer_.size()) {
         observation_probability_buffer_.resize(probability_buffer_size, 0.0);
-    } else {
-        std::fill_n(observation_probability_buffer_.begin(),
-                    probability_buffer_size,
-                    0.0);
     }
+    std::fill(observation_probability_buffer_.begin(), observation_probability_buffer_.end(), 0.0);
 
     {   /// sensor probabilty calculation.
-        const auto end = set.getData().end();
+        const auto end = set.const_end();
         std::size_t sample_index = 0;
-        for(auto it = set.getData().begin() ; it != end ; ++it, ++sample_index) {
-            const muse_mcl_2d::Pose2D m_T_l = m_T_w * it->state * b_T_l; /// laser scanner pose in map coordinates
+        for(auto it = set.const_begin() ; it != end ; ++it, ++sample_index) {
+            const cslibs_math_2d::Pose2d m_T_l = m_T_w * it->state * b_T_l; /// laser scanner pose in map coordinates
             std::size_t observation_index = 0;
             for(std::size_t i = 0 ; i < rays_size ;  i+= ray_step, ++observation_index) {
                 const auto &ray = laser_rays[i];
                 if(!ray.valid())
                     continue;
 
-                const muse_mcl_2d::Point2D ray_end_point = m_T_l * ray.point;
+                const cslibs_math_2d::Point2d ray_end_point = m_T_l * ray.point;
                 const double distance = gridmap.at(ray_end_point);
                 const double pz = p_hit(distance) + p_rand;
 
@@ -104,7 +101,7 @@ void LikelihoodFieldProbModelAMCL::apply(const data_t::ConstPtr          &data,
             double log_p = 0.0;
             for(std::size_t i = 0 ; i < max_beams_ ; ++i) {
                 if(error || observation_mask_[i]) {
-                    log_p += std::log(observation_probability_buffer_[sample_index * max_beams_ + i]);
+                    log_p += log(observation_probability_buffer_[sample_index * max_beams_ + i]);
                 }
             }
             *it *= std::exp(log_p);
@@ -128,4 +125,6 @@ void LikelihoodFieldProbModelAMCL::doSetup(ros::NodeHandle &nh)
 
     observation_histogram_.resize(max_beams_, 0);
     observation_mask_.resize(max_beams_, 0);
+
+}
 }

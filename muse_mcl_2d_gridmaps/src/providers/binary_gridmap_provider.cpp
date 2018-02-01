@@ -1,11 +1,11 @@
 #include "binary_gridmap_provider.h"
 
+#include <cslibs_gridmaps/static_maps/conversion/convert_binary_gridmap.hpp>
+
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::BinaryGridmapProvider, muse_mcl_2d::MapProvider2D)
 
-using namespace muse_mcl_2d_gridmaps;
-using namespace muse_mcl_2d;
-
+namespace muse_mcl_2d_gridmaps {
 BinaryGridmapProvider::BinaryGridmapProvider() :
     loading_(false)
 {
@@ -34,18 +34,21 @@ void BinaryGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr &msg)
     /// conversion can take time
     /// we allow concurrent loading, this way, the front end thread is not blocking.
     if(!loading_) {
-        if(!map_ || muse_smc::Time(msg->info.map_load_time.toNSec()) > map_->getStamp()) {
+        if(!map_ || cslibs_time::Time(msg->info.map_load_time.toNSec()) > map_->getStamp()) {
             loading_ = true;
 
             auto load = [this, msg]() {
-                static_maps::BinaryGridMap::Ptr map(new static_maps::BinaryGridMap(msg, binarization_threshold_));
+                cslibs_gridmaps::static_maps::BinaryGridmap::Ptr map;
+                cslibs_gridmaps::static_maps::conversion::from(*msg, map, binarization_threshold_);
                 std::unique_lock<std::mutex>l(map_mutex_);
-                map_ = map;
+                map_.reset(new BinaryGridmap(map, msg->header.frame_id));
                 loading_ = false;
             };
             auto load_blocking = [this, msg]() {
+                cslibs_gridmaps::static_maps::BinaryGridmap::Ptr map;
+                cslibs_gridmaps::static_maps::conversion::from(*msg, map, binarization_threshold_);
                 std::unique_lock<std::mutex>l(map_mutex_);
-                map_.reset(new static_maps::BinaryGridMap(msg, binarization_threshold_));
+                map_.reset(new BinaryGridmap(map, msg->header.frame_id));
                 loading_ = false;
                 map_loaded_.notify_one();
             };
@@ -55,8 +58,7 @@ void BinaryGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr &msg)
             } else {
                 worker_ = std::thread(load);
             }
-            worker_.detach();
         }
     }
 }
-
+}

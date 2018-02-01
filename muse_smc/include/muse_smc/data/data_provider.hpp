@@ -5,16 +5,16 @@
 #include <functional>
 
 #include <muse_smc/data/data.hpp>
-#include <muse_smc/utility/signals.hpp>
-#include <muse_smc/utility/delegate.hpp>
+#include <cslibs_utility/signals/signals.hpp>
+#include <cslibs_utility/common/delegate.hpp>
 
 namespace muse_smc {
 template<typename sample_t>
 class DataProvider {
 public:
     using Ptr          = std::shared_ptr<DataProvider<sample_t>>;
-    using callback_t   = delegate<void(const Data::ConstPtr&)>;
-    using signal_t     = Signal<callback_t>;
+    using callback_t   = cslibs_utility::common::delegate<void(const Data::ConstPtr&)>;
+    using signal_t     = cslibs_utility::signals::Signal<callback_t>;
     using connection_t = signal_t::Connection;
 
     DataProvider() = default;

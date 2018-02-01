@@ -4,22 +4,23 @@
 #include <muse_mcl_2d/samples/sample_2d.hpp>
 #include <muse_mcl_2d/prediction/prediction_model_2d.hpp>
 
+
 #include <muse_smc/prediction/prediction_integral.hpp>
 
 
 namespace muse_mcl_2d {
-class PredictionIntegral2D : public muse_smc::PredictionIntegral<Sample2D>
+class PredictionIntegral2D : public muse_smc::PredictionIntegral<StateSpaceDescription2D>
 {
 public:
-    PredictionIntegral2D() :
+    inline PredictionIntegral2D() :
         linear_distance_abs_(0.0),
         angular_distance_abs_(0.0)
     {
     }
 
 
-    PredictionIntegral2D(const double linear_threshold,
-                         const double angular_threshold) :
+    inline PredictionIntegral2D(const double linear_threshold,
+                                const double angular_threshold) :
         linear_distance_abs_(0.0),
         angular_distance_abs_(0.0),
         linear_threshold_(linear_threshold),
@@ -27,7 +28,9 @@ public:
     {
     }
 
-    virtual ~PredictionIntegral2D() = default;
+    virtual ~PredictionIntegral2D()
+    {
+    }
 
     virtual void add(const typename prediction_model_t::Result::ConstPtr &step) override
     {
@@ -49,13 +52,13 @@ public:
     virtual bool thresholdExceeded() const override
     {
         return linear_distance_abs_ >= linear_threshold_
-            || angular_distance_abs_ >= angular_threshold_;
+                || angular_distance_abs_ >= angular_threshold_;
     }
 
     virtual bool isZero() const override
     {
         return linear_distance_abs_ == 0.0 &&
-               angular_distance_abs_ == 0.0;
+                angular_distance_abs_ == 0.0;
     }
 
     virtual void info() const override

@@ -1,11 +1,11 @@
 #include "distance_gridmap_provider.h"
 
+#include <cslibs_gridmaps/static_maps/conversion/convert_distance_gridmap.hpp>
+
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::DistanceGridmapProvider, muse_mcl_2d::MapProvider2D)
 
-using namespace muse_mcl_2d_gridmaps;
-using namespace muse_mcl_2d;
-
+namespace muse_mcl_2d_gridmaps {
 DistanceGridmapProvider::DistanceGridmapProvider() :
     loading_(false)
 {
@@ -37,21 +37,21 @@ void DistanceGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr &ms
     /// conversion can take time
     /// we allow concurrent loading, this way, the front end thread is not blocking.
     if(!loading_) {
-        if(!map_ || muse_smc::Time(msg->info.map_load_time.toNSec()) > map_->getStamp()) {
+        if(!map_ || cslibs_time::Time(msg->info.map_load_time.toNSec()) > map_->getStamp()) {
             loading_ = true;
 
             auto load = [this, msg]() {
-                static_maps::DistanceGridMap::Ptr map(new static_maps::DistanceGridMap(*msg, maximum_distance_, binarization_threshold_));
+                cslibs_gridmaps::static_maps::DistanceGridmap::Ptr map;
+                cslibs_gridmaps::static_maps::conversion::from(*msg, map, binarization_threshold_, maximum_distance_);
                 std::unique_lock<std::mutex>l(map_mutex_);
-                map_ = map;
+                map_.reset(new DistanceGridmap(map, msg->header.frame_id));
                 loading_ = false;
             };
             auto load_blocking = [this, msg]() {
-                std::unique_lock<std::mutex>l(map_mutex_);
-                static_maps::DistanceGridMap::Ptr map(new static_maps::DistanceGridMap(*msg, maximum_distance_, binarization_threshold_));
-                map_ = map;
+                cslibs_gridmaps::static_maps::DistanceGridmap::Ptr map;
+                cslibs_gridmaps::static_maps::conversion::from(*msg, map, binarization_threshold_, maximum_distance_);
+                map_.reset(new DistanceGridmap(map, msg->header.frame_id));
                 loading_ = false;
-
                 map_loaded_.notify_one();
             };
             if(blocking_) {
@@ -59,7 +59,7 @@ void DistanceGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr &ms
             } else {
                 worker_ = std::thread(load);
             }
-            worker_.detach();
         }
     }
+}
 }

@@ -9,8 +9,9 @@
 #include <muse_smc/samples/sample_set.hpp>
 #include <muse_smc/resampling/resampling.hpp>
 #include <muse_smc/smc/smc_state.hpp>
-#include <muse_smc/utility/synchronized_priority_queue.hpp>
-#include <muse_smc/time/rate.hpp>
+#include <muse_smc/scheduling/scheduler.hpp>
+#include <cslibs_time/rate.hpp>
+#include <cslibs_utility/synchronized/synchronized_priority_queue.hpp>
 
 
 #ifdef MUSE_SMC_USE_DOTTY
@@ -20,7 +21,7 @@
 #include <muse_smc/utility/csv_logger.hpp>
 #endif
 #ifdef MUSE_SMC_DEBUG
-#include <muse_smc/math/mean.hpp>
+#include <cslibs_math/statistics/mean.hpp>
 #endif
 
 #include <memory>
@@ -37,7 +38,7 @@
 
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename state_space_description_t>
 class SMC
 {
 public:
@@ -49,26 +50,26 @@ public:
     using atomic_bool_t         = std::atomic_bool;
 
     /// filter specific type defs
-    using sample_set_t          = SampleSet<sample_t>;
-    using update_t              = Update<sample_t>;
-    using prediction_t          = Prediction<sample_t>;
+    using sample_t              = typename state_space_description_t::sample_t;
+    using sample_set_t          = SampleSet<state_space_description_t>;
+    using state_t               = typename state_space_description_t::state_t;
+    using covariance_t          = typename state_space_description_t::covariance_t;
+    using update_t              = Update<state_space_description_t>;
+    using prediction_t          = Prediction<state_space_description_t>;
     using prediction_result_t   = typename prediction_t::predition_model_t::Result;
-    using prediction_integral_t = PredictionIntegral<sample_t>;
-    using prediction_integrals_t= PredictionIntegrals<sample_t>;
-    using normal_sampling_t     = NormalSampling<sample_t>;
-    using uniform_sampling_t    = UniformSampling<sample_t>;
-    using resampling_t          = Resampling<sample_t>;
-    using filter_state_t        = SMCState<sample_t>;
-    using update_queue_t        =
-    muse_smc::synchronized::priority_queue<typename update_t::Ptr,
-    typename update_t::Greater>;
+    using prediction_integral_t = PredictionIntegral<state_space_description_t>;
+    using prediction_integrals_t= PredictionIntegrals<state_space_description_t>;
+    using normal_sampling_t     = NormalSampling<state_space_description_t>;
+    using uniform_sampling_t    = UniformSampling<state_space_description_t>;
+    using resampling_t          = Resampling<state_space_description_t>;
+    using scheduler_t           = Scheduler<state_space_description_t>;
+    using filter_state_t        = SMCState<state_space_description_t>;
+    using update_queue_t        = cslibs_utility::synchronized::priority_queue<typename update_t::Ptr,
+                                                                               typename update_t::Greater>;
+    using prediction_queue_t    = cslibs_utility::synchronized::priority_queue<typename prediction_t::Ptr,
+                                                                               typename prediction_t::Greater>;
 
-    using prediction_queue_t  =
-    muse_smc::synchronized::priority_queue<typename prediction_t::Ptr,
-    typename prediction_t::Greater>;
-
-    SMC() :
-        updates_applied_after_resampling_(0ul),
+    inline SMC() :
         request_init_state_(false),
         request_init_uniform_(false),
         worker_thread_active_(false),
@@ -81,14 +82,13 @@ public:
         end();
     }
 
-    void setup(typename sample_set_t::Ptr            sample_set,
-               typename uniform_sampling_t::Ptr      sample_uniform,
-               typename normal_sampling_t::Ptr       sample_normal,
-               typename resampling_t::Ptr            resampling,
-               typename filter_state_t::Ptr          state_publisher,
-               typename prediction_integrals_t::Ptr  prediction_integrals,
-               const Rate                           &preferred_filter_rate,
-               const std::size_t                     minimum_update_cycles)
+    inline void setup(const typename sample_set_t::Ptr            &sample_set,
+                      const typename uniform_sampling_t::Ptr      &sample_uniform,
+                      const typename normal_sampling_t::Ptr       &sample_normal,
+                      const typename resampling_t::Ptr            &resampling,
+                      const typename filter_state_t::Ptr          &state_publisher,
+                      const typename prediction_integrals_t::Ptr  &prediction_integrals,
+                      const typename scheduler_t::Ptr             &scheduler)
     {
         sample_set_             = sample_set;
         sample_uniform_         = sample_uniform;
@@ -96,8 +96,7 @@ public:
         resampling_             = resampling;
         state_publisher_        = state_publisher;
         prediction_integrals_   = prediction_integrals;
-        preferred_filter_rate_  = preferred_filter_rate;
-        minimum_update_cycles_  = minimum_update_cycles;
+        scheduler_              = scheduler;
 
 #ifdef MUSE_SMC_USE_DOTTY
         dotty_.reset(new Dotty);
@@ -108,19 +107,18 @@ public:
 #endif
     }
 
-    bool start()
+    inline bool start()
     {
         if(!worker_thread_active_) {
             lock_t l(worker_thread_mutex_);
             worker_thread_exit_ = false;
             worker_thread_      = thread_t([this](){loop();});
-            worker_thread_.detach();
             return true;
         }
         return false;
     }
 
-    bool end()
+    inline bool end()
     {
         if(!worker_thread_active_)
             return false;
@@ -133,7 +131,7 @@ public:
         return true;
     }
 
-    void addPrediction(const typename prediction_t::Ptr &prediction)
+    inline void addPrediction(const typename prediction_t::Ptr &prediction)
     {
         prediction_queue_.emplace(prediction);
         notify_prediction_.notify_one();
@@ -142,7 +140,7 @@ public:
 #endif
     }
 
-    void addUpdate(const typename update_t::Ptr &update)
+    inline void addUpdate(const typename update_t::Ptr &update)
     {
         update_queue_.emplace(update);
         notify_event_.notify_one();
@@ -151,8 +149,8 @@ public:
 #endif
     }
 
-    void requestStateInitialization(const typename sample_t::state_t &state,
-                                    const typename sample_t::covariance_t &covariance)
+    inline void requestStateInitialization(const state_t &state,
+                                           const covariance_t &covariance)
     {
         lock_t l(init_state_mutex_);
         init_state_             = state;
@@ -167,38 +165,34 @@ public:
 
 protected:
     /// functions to apply to the sample set
-    typename sample_set_t::Ptr            sample_set_;
-    typename uniform_sampling_t::Ptr      sample_uniform_;
-    typename normal_sampling_t::Ptr       sample_normal_;
-    typename resampling_t::Ptr            resampling_;
-    typename prediction_integrals_t::Ptr  prediction_integrals_;
-
-    Rate                                  preferred_filter_rate_;
-    std::size_t                           updates_applied_after_resampling_;
-    std::size_t                           minimum_update_cycles_;
-
-    typename filter_state_t::Ptr          state_publisher_;
+    typename sample_set_t::Ptr              sample_set_;
+    typename uniform_sampling_t::Ptr        sample_uniform_;
+    typename normal_sampling_t::Ptr         sample_normal_;
+    typename resampling_t::Ptr              resampling_;
+    typename prediction_integrals_t::Ptr    prediction_integrals_;
+    typename scheduler_t::Ptr               scheduler_;
+    typename filter_state_t::Ptr            state_publisher_;
 
     /// requests
-    std::mutex                            init_state_mutex_;
-    typename sample_t::state_t            init_state_;
-    typename sample_t::covariance_t       init_state_covariance_;
-    atomic_bool_t                         request_init_state_;
-    atomic_bool_t                         request_init_uniform_;
+    std::mutex                              init_state_mutex_;
+    state_t                                 init_state_;
+    covariance_t                            init_state_covariance_;
+    atomic_bool_t                           request_init_state_;
+    atomic_bool_t                           request_init_uniform_;
 
     /// processing queues
-    update_queue_t                        update_queue_;
-    prediction_queue_t                    prediction_queue_;
+    update_queue_t                          update_queue_;
+    prediction_queue_t                      prediction_queue_;
 
     /// background thread
-    mutex_t                               worker_thread_mutex_;
-    thread_t                              worker_thread_;
-    atomic_bool_t                         worker_thread_active_;
-    atomic_bool_t                         worker_thread_exit_;
-    condition_variable_t                  notify_event_;
-    mutable mutex_t                       notify_event_mutex_;
-    condition_variable_t                  notify_prediction_;
-    mutable mutex_t                       notify_prediction_mutex_;
+    mutex_t                                 worker_thread_mutex_;
+    thread_t                                worker_thread_;
+    atomic_bool_t                           worker_thread_active_;
+    atomic_bool_t                           worker_thread_exit_;
+    condition_variable_t                    notify_event_;
+    mutable mutex_t                         notify_event_mutex_;
+    condition_variable_t                    notify_prediction_;
+    mutable mutex_t                         notify_prediction_mutex_;
 
 #ifdef MUSE_SMC_USE_DOTTY
     Dotty::Ptr                          dotty_;
@@ -213,23 +207,23 @@ protected:
     }
 #endif
 
-    bool hasUpdates()
+    inline bool hasUpdates()
     {
         return !update_queue_.empty();
     }
 
-    bool hasPredictions()
+    inline bool hasPredictions()
     {
         return !prediction_queue_.empty();
     }
 
-    void requests()
+    inline void requests()
     {
         if(request_init_state_) {
             sample_normal_->apply(init_state_,
                                   init_state_covariance_,
                                   *sample_set_);
-            state_publisher_->publishIntermidiate(sample_set_);
+            state_publisher_->publish(sample_set_);
             request_init_state_ = false;
         }
         if(request_init_uniform_) {
@@ -239,14 +233,14 @@ protected:
         }
     }
 
-    void predict(const Time &until)
+    inline void predict(const cslibs_time::Time &until)
     {
         auto wait_for_prediction = [this] () {
             lock_t l(notify_prediction_mutex_);
             notify_prediction_.wait(l);
         };
 
-        const Time &time_stamp = sample_set_->getStamp();
+        const cslibs_time::Time &time_stamp = sample_set_->getStamp();
         while(until > time_stamp) {
             if(prediction_queue_.empty())
                 wait_for_prediction();
@@ -279,7 +273,7 @@ protected:
         }
     }
 
-    void loop()
+    inline void loop()
     {
         worker_thread_active_ = true;
         lock_t notify_event_mutex_lock(notify_event_mutex_);
@@ -287,10 +281,10 @@ protected:
         sample_uniform_->apply(*sample_set_);
 
 #ifdef MUSE_SMC_DEBUG
-        Time     last = Time::now();
-        Time     now;
-        Duration dur;
-        math::statistic::Mean<1> mean_rate;
+        cslibs_time::Time     last = cslibs_time::Time::now();
+        cslibs_time::Time     now;
+        cslibs_time::Duration dur;
+        cslibs_math::statistics::Mean<1> mean_rate;
 #endif
 
         while(!worker_thread_exit_) {
@@ -306,11 +300,11 @@ protected:
                 requests();
 
                 typename update_t::Ptr u = update_queue_.pop();
-                const Time &t = u->getStamp();
-                const Time &sample_set_stamp = sample_set_->getStamp();
+                const cslibs_time::Time &t = u->getStamp();
+                const cslibs_time::Time &sample_set_stamp = sample_set_->getStamp();
 
                 if(t >= sample_set_stamp) {
-                    now = Time::now();
+                    now = cslibs_time::Time::now();
 
                     predict(t);
 
@@ -319,11 +313,10 @@ protected:
                     } else if (t == sample_set_stamp) {
                         const auto model_id = u->getModelId();
                         if(!prediction_integrals_->isZero(model_id)) {
-                            now = Time::now();
-                            u->apply(sample_set_->getWeightIterator());
+
+                            scheduler_->apply(u, sample_set_);
 
                             prediction_integrals_->reset(model_id);
-                            ++updates_applied_after_resampling_;
                             state_publisher_->publishIntermidiate(sample_set_);
 #ifdef MUSE_SMC_LOG_STATE
                             log();
@@ -337,18 +330,14 @@ protected:
                 }
 
                 if(prediction_integrals_->thresholdExceeded() &&
-                        updates_applied_after_resampling_ > minimum_update_cycles_) {
-
-                    resampling_->apply(*sample_set_);
-                    updates_applied_after_resampling_ = 0ul;
+                        scheduler_->apply(resampling_, sample_set_)) {
                     prediction_integrals_->reset();
-
                     state_publisher_->publish(sample_set_);
                     sample_set_->resetWeights();
                 }
 
 #ifdef MUSE_SMC_DEBUG
-                now = Time::now();
+                now = cslibs_time::Time::now();
                 dur = now - last;
                 if(!dur.isZero() && !prediction_integrals_->isZero()) {
                     const double rate = 1.0 / dur.seconds();

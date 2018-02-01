@@ -11,7 +11,7 @@
 #include <condition_variable>
 #include <queue>
 #include <map>
-#include <muse_smc/time/time.hpp>
+#include <cslibs_time/time.hpp>
 
 namespace muse_smc {
 class Dotty {
@@ -29,7 +29,6 @@ public:
     {
         running_ = true;
         worker_thread_ = std::thread([this]{loop();});
-        worker_thread_.detach();
     }
 
     virtual ~Dotty()

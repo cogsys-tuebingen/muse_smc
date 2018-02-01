@@ -3,45 +3,42 @@
 
 #include <memory>
 
-#include <muse_mcl_2d/math/point_2d.hpp>
-#include <muse_mcl_2d/math/pose_2d.hpp>
-#include <muse_mcl_2d/math/covariance_2d.hpp>
+#include <cslibs_math_2d/linear/point.hpp>
+#include <cslibs_math_2d/linear/pose.hpp>
+#include <cslibs_math_2d/linear/covariance.hpp>
 
 #include <memory>
 
 namespace muse_mcl_2d {
 struct Sample2D {
 public:
-    using Ptr              = std::shared_ptr<Sample2D>;
-    using allocator_t      = std::allocator<Sample2D>;
-    using state_t          = Pose2D;
-    using state_space_boundary_t = Point2D;
-    using transform_t      = Transform2D;
-    using covariance_t     = Covariance2D;
+    using Ptr                       = std::shared_ptr<Sample2D>;
+    using allocator_t               = std::allocator<Sample2D>;
+    using state_t                   = cslibs_math_2d::Pose2d;
 
-    double weight;
-    Pose2D state;
+    double       weight;
+    state_t      state;
 
-    Sample2D() :
+    inline Sample2D() :
         weight(0.0),
-        state(Pose2D(0.0,0.0))
+        state(state_t(0.0,0.0))
     {
     }
 
-    Sample2D(const Sample2D &other) :
+    inline Sample2D(const Sample2D &other) :
         weight(other.weight),
         state(other.state)
     {
     }
 
-    Sample2D(Sample2D &&other) :
+    inline Sample2D(Sample2D &&other) :
         weight(other.weight),
         state(other.state)
     {
     }
 
 
-    Sample2D& operator = (const Sample2D &other)
+    inline Sample2D& operator = (const Sample2D &other)
     {
         if(&other != this) {
             weight = other.weight;
@@ -50,7 +47,7 @@ public:
         return *this;
     }
 
-    Sample2D& operator = (Sample2D &&other)
+    inline Sample2D& operator = (Sample2D &&other)
     {
         if(&other != this) {
             weight = other.weight;

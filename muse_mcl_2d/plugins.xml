@@ -37,3 +37,14 @@
     </description>
 </class>
 </library>
+<library path="libmuse_mcl_2d_density">
+    <class type="muse_mcl_2d::SimpleSampleDensity2D" base_class_type="muse_mcl_2d::SampleDensity2D">
+    <description>Simple density grid to estimate the sample density.</description>
+    </class>
+    <class type="muse_mcl_2d::MCSampleDensity2D" base_class_type="muse_mcl_2d::SampleDensity2D">
+    <description>
+        This is an extension of the simple density estimation using
+        using the last angular mean as an offset for the next iteration.
+    </description>
+    </class>
+</library>
