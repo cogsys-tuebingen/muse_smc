@@ -69,7 +69,7 @@ public:
             return false;
         };
 
-        return time_resource > expected_duration ? do_apply() : do_not_apply();
+        return time_resource >= expected_duration ? do_apply() : do_not_apply();
     }
 
     virtual bool apply(typename resampling_t::Ptr &r,
