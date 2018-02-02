@@ -246,9 +246,15 @@ bool MuseMCL2DNode::setup()
                 return false;
             }
             const std::size_t id = update_models_[p.first]->getId();
+            if(p.second < 0.0) {
+                ROS_ERROR_STREAM("Only priorities greater zero are allowed!");
+                return false;
+            }
+
+
             scheduler_priorities[id] = p.second;
         }
-        double preferred_rate = nh_private_.param<double>("particle_filter/preferred_rate", 30.0);
+        double preferred_rate = nh_private_.param<double>("particle_filter/preferred_rate", 1.0);
         if(preferred_rate < 0.0) {
             ROS_ERROR_STREAM("Cannot use a particle filter rate smaller 0.0!");
             return false;

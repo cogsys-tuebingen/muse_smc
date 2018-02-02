@@ -31,7 +31,7 @@ public:
                const time_priority_map_t &priorities)
     {
         assert(rate.expectedCycleTime().seconds() != 0.0);
-        resampling_period_ = 1.0 / rate.cycleTime().seconds();
+        resampling_period_ = duration_t(1.0 / rate.expectedCycleTime().seconds());
 
         /// normalize the weights
         double w = 0.0;
@@ -39,15 +39,18 @@ public:
             w += p.second;
         }
         for(const auto &p : priorities) {
-            time_slice_updates_[p.first]   = resampling_period_ * (p.second / w);
+            time_slice_updates_[p.first]   = duration_t(resampling_period_ * (p.second / w));
             mean_durations_[p.first]       = mean_duration_t();
             time_resources_[p.first]       = duration_t();
         }
     }
 
+
     virtual bool apply(typename update_t::Ptr &u,
                        typename sample_set_t::Ptr &s) override
     {
+        std::cerr << "was here" << std::endl;
+
         assert(mean_durations_.find(u->getModelId()) != mean_durations_.end());
         assert(time_resources_.find(u->getModelId()) != time_resources_.end());
         assert(time_slice_updates_.find(u->getModelId()) != time_slice_updates_.end());
@@ -75,6 +78,8 @@ public:
     virtual bool apply(typename resampling_t::Ptr &r,
                        typename sample_set_t::Ptr &s) override
     {
+        std::cerr << "was here" << std::endl;
+
         const cslibs_time::Time &stamp = s->getStamp();
         auto do_apply = [&stamp, &r, &s, this] () {
             r->apply(*s);

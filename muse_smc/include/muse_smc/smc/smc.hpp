@@ -286,7 +286,6 @@ protected:
         cslibs_time::Duration dur;
         cslibs_math::statistics::Mean<1> mean_rate;
 #endif
-
         while(!worker_thread_exit_) {
             notify_event_.wait(notify_event_mutex_lock);
 

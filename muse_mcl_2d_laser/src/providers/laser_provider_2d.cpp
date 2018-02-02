@@ -18,7 +18,6 @@ void LaserProvider2D::callback(const sensor_msgs::LaserScanConstPtr &msg)
         if(msg->header.stamp <= (time_of_last_measurement_ + time_offset_))
             return;
     }
-
     muse_mcl_2d_laser::LaserScan2D::Ptr laserscan;
     if(undistortion_ &&
             !convertUndistorted(msg, linear_interval_, angular_interval_, tf_, undistortion_fixed_frame_, undistortion_tf_timeout_, laserscan)) {
