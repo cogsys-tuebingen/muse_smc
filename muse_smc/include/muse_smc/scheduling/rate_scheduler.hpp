@@ -49,8 +49,6 @@ public:
     virtual bool apply(typename update_t::Ptr &u,
                        typename sample_set_t::Ptr &s) override
     {
-        std::cerr << "was here" << std::endl;
-
         assert(mean_durations_.find(u->getModelId()) != mean_durations_.end());
         assert(time_resources_.find(u->getModelId()) != time_resources_.end());
         assert(time_slice_updates_.find(u->getModelId()) != time_slice_updates_.end());
@@ -65,29 +63,31 @@ public:
             u->apply(s->getWeightIterator());
             const duration_t dur = time_t::now() - start;
             mean_duration += dur / static_cast<double>(s->getSampleSize());
+            std::cerr << "applied" << std::endl;
+            std::cerr << "model " << u->getModelName() << " " << time_resource << " " << dur << std::endl;
             time_resource -= dur;
             return true;
         };
         auto do_not_apply = [this]() {
             return false;
         };
-
         return time_resource >= expected_duration ? do_apply() : do_not_apply();
     }
 
     virtual bool apply(typename resampling_t::Ptr &r,
                        typename sample_set_t::Ptr &s) override
     {
-        std::cerr << "was here" << std::endl;
-
         const cslibs_time::Time &stamp = s->getStamp();
         auto do_apply = [&stamp, &r, &s, this] () {
+            std::cerr << "resampling: ----" << std::endl;
             r->apply(*s);
             resampline_time_ = stamp + resampling_period_;
 
             /// book the resources for the current period
+            std::cerr << "booking: ---- " << time_slice_updates_.size() << std::endl;
             for(const auto &ts : time_slice_updates_) {
                 time_resources_[ts.first] += ts.second;
+                std::cerr << time_resources_[ts.first] << std::endl;
             }
             return true;
         };

@@ -3,7 +3,7 @@ project(muse_mcl_2d)
 
 #add_definitions("-DMUSE_SMC_USE_DOTTY")
 #add_definitions("-DMUSE_SMC_LOG_STATE")
-add_definitions("-DMUSE_SMC_DEBUG")
+#add_definitions("-DMUSE_SMC_DEBUG")
 
 find_package(catkin REQUIRED COMPONENTS
   cslibs_indexed_storage

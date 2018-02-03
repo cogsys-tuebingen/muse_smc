@@ -303,7 +303,6 @@ protected:
                 const cslibs_time::Time &sample_set_stamp = sample_set_->getStamp();
 
                 if(t >= sample_set_stamp) {
-                    now = cslibs_time::Time::now();
 
                     predict(t);
 

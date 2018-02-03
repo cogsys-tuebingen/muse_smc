@@ -250,8 +250,6 @@ bool MuseMCL2DNode::setup()
                 ROS_ERROR_STREAM("Only priorities greater zero are allowed!");
                 return false;
             }
-
-
             scheduler_priorities[id] = p.second;
         }
         double preferred_rate = nh_private_.param<double>("particle_filter/preferred_rate", 1.0);
