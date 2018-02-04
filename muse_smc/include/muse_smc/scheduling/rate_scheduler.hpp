@@ -56,22 +56,28 @@ public:
         const id_t id = u->getModelId();
         mean_duration_t &mean_duration     = mean_durations_[id];
         time_slice_t    &time_resource     = time_resources_[id];
-        const duration_t expected_duration = mean_duration.duration() * static_cast<double>(s->getSampleSize());
+        const duration_t expected_duration = mean_duration.duration();
+
+        /*
+         * Adjust the distritubion of models over time ( ....... | ........ | ........ )
+         */
+
 
         auto do_apply = [&u, &s, &mean_duration, &time_resource]() {
             const time_t start = time_t::now();
             u->apply(s->getWeightIterator());
             const duration_t dur = time_t::now() - start;
-            mean_duration += dur / static_cast<double>(s->getSampleSize());
-            std::cerr << "applied" << std::endl;
-            std::cerr << "model " << u->getModelName() << " " << time_resource << " " << dur << std::endl;
-            time_resource -= dur;
+            const duration_t dur_per_particle = dur / static_cast<double>(s->getSampleSize());
+            mean_duration += dur_per_particle;
+            std::cerr << "      " << time_resource.milliseconds() << " " << dur_per_particle.milliseconds() << std::endl;
+            time_resource -= dur_per_particle;
+            std::cerr << "      " << dur.milliseconds() << std::endl;
             return true;
         };
         auto do_not_apply = [this]() {
             return false;
         };
-        return time_resource >= expected_duration ? do_apply() : do_not_apply();
+        return time_resource >= time_duration() ? do_apply() : do_not_apply();
     }
 
     virtual bool apply(typename resampling_t::Ptr &r,
@@ -85,9 +91,12 @@ public:
 
             /// book the resources for the current period
             std::cerr << "booking: ---- " << time_slice_updates_.size() << std::endl;
+            const double sample_size = 1.0 / static_cast<double>(s->getSampleSize());
             for(const auto &ts : time_slice_updates_) {
-                time_resources_[ts.first] += ts.second;
-                std::cerr << time_resources_[ts.first] << std::endl;
+                auto dur_to_book = ts.second * sample_size;
+                std::cerr << time_resources_[ts.first].milliseconds()  << " <- " << dur_to_book.milliseconds() << std::endl;
+                time_resources_[ts.first] = ts.second * sample_size;
+                std::cerr << time_resources_[ts.first].milliseconds() << std::endl;
             }
             return true;
         };

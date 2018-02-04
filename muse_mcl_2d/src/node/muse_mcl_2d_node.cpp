@@ -252,7 +252,7 @@ bool MuseMCL2DNode::setup()
             }
             scheduler_priorities[id] = p.second;
         }
-        double preferred_rate = nh_private_.param<double>("particle_filter/preferred_rate", 1.0);
+        double preferred_rate = nh_private_.param<double>("particle_filter/preferred_rate", 0.5);
         if(preferred_rate < 0.0) {
             ROS_ERROR_STREAM("Cannot use a particle filter rate smaller 0.0!");
             return false;
