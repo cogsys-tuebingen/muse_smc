@@ -52,7 +52,6 @@ public:
                        typename sample_set_t::Ptr &s) override
     {
         assert(mean_durations_.find(u->getModelId()) != mean_durations_.end());
-        assert(time_resources_.find(u->getModelId()) != time_resources_.end());
         assert(time_slice_updates_.find(u->getModelId()) != time_slice_updates_.end());
 
         /*
