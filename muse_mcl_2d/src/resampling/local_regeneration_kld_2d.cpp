@@ -4,7 +4,7 @@
 #include <muse_mcl_2d/density/sample_density_2d.hpp>
 
 namespace muse_mcl_2d {
-class KLD2D : public Resampling2D
+class LocalRegenerationKLD2D : public Resampling2D
 {
 public:
 
@@ -29,6 +29,16 @@ protected:
         SampleDensity2D::ConstPtr density = std::dynamic_pointer_cast<SampleDensity2D const>(sample_set.getDensity());
         if(!density)
             throw std::runtime_error("[KLD2D] : Can only use 'SampleDensity2D' for adaptive sample size estimation!");
+
+        if(sample_set.getWeightSum() == 0.0) {
+            SampleDensity2D::state_t mean;
+            SampleDensity2D::covariance_t cov;
+            density->mean(mean, cov);
+            normal_pose_sampler_->apply(mean, cov, sample_set);
+            return;
+
+            /// todo: remove this and add some predefined covariance ... check the weight distribution as well
+        }
 
         const std::size_t sample_size_minimum = std::max(sample_set.getMinimumSampleSize(), 2ul);
         const std::size_t sample_size_maximum = sample_set.getMaximumSampleSize();
@@ -118,6 +128,6 @@ protected:
 };
 }
 
-CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d::KLD2D, muse_mcl_2d::Resampling2D)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d::LocalRegenerationKLD2D, muse_mcl_2d::Resampling2D)
 
 

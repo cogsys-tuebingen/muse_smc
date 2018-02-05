@@ -18,6 +18,9 @@
    <class type="muse_mcl_2d::WheelOfFortune" base_class_type="muse_mcl_2d::Resampling2D">
      <description>Systematic resampling.</description>
    </class>
+   <class type="muse_mcl_2d::LocalRegenerationKLD2D" base_class_type="muse_mcl_2d::Resampling2D">
+     <description>2D resampling with adaptive sample size and local regeneration.</description>
+   </class>
 </library>
 <library path="libmuse_mcl_2d_sampling">
     <!-- Pose Generation -->

@@ -24,7 +24,7 @@
 #include <muse_smc/prediction/prediction_relay.hpp>
 #include <muse_smc/plugins/plugin_loader.hpp>
 #include <muse_smc/plugins/plugin_factory.hpp>
-#include <muse_smc/scheduling/rate_scheduler.hpp>
+#include <muse_smc/scheduling/rate_cycle_scheduler.hpp>
 
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 
@@ -62,7 +62,7 @@ private:
     using sample_set_t           = muse_smc::SampleSet<StateSpaceDescription2D>;
     using prediction_integrals_t = muse_smc::PredictionIntegrals<StateSpaceDescription2D>;
     using scheduler_t            = muse_smc::Scheduler<StateSpaceDescription2D>;
-    using rate_scheduler_t       = muse_smc::RateScheduler<StateSpaceDescription2D>;
+    using rate_scheduler_t       = muse_smc::RateCycleScheduler<StateSpaceDescription2D>;
 
     using update_model_mapping_t = UpdateRelay2D::map_t;
 

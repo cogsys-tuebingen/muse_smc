@@ -23,10 +23,12 @@ public:
     }
 
     inline void setup(const typename sample_uniform_t::Ptr &uniform_pose_sampler,
+                      const typename sample_normal_t::Ptr  &normal_pose_sampler,
                       ros::NodeHandle &nh)
     {
         auto param_name = [this](const std::string &name){return name_ + "/" + name;};
         base_t::setup(uniform_pose_sampler,
+                      normal_pose_sampler,
                       nh.param(param_name("recovery_alpha_fast"), 0.0),
                       nh.param(param_name("recovery_alpha_slow"), 0.0));
         doSetup(nh);

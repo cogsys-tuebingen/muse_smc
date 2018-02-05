@@ -57,6 +57,7 @@ include_directories(
 
 add_library(${PROJECT_NAME}_resampling
     src/resampling/kld_2d.cpp
+    src/resampling/local_regeneration_kld_2d.cpp
     src/resampling/systematic_2d.cpp
     src/resampling/residual_2d.cpp
     src/resampling/stratified_2d.cpp

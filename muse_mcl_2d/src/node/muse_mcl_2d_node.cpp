@@ -176,7 +176,7 @@ bool MuseMCL2DNode::setup()
         }
         ROS_INFO_STREAM("Loaded gaussian sampler.");
         ROS_INFO_STREAM("[" << normal_sampling_->getName() << "]");
-        loader.load<Resampling2D, UniformSampling2D::Ptr, ros::NodeHandle&>(resampling_, uniform_sampling_, nh_private_);
+        loader.load<Resampling2D, UniformSampling2D::Ptr, NormalSampling2D::Ptr, ros::NodeHandle&>(resampling_, uniform_sampling_, normal_sampling_, nh_private_);
         if(!resampling_) {
             ROS_ERROR_STREAM("No resampling function was found!");
             ROS_ERROR_STREAM("Setup is incomplete and is aborted!");

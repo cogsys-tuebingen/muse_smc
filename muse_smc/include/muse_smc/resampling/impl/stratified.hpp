@@ -22,9 +22,7 @@ public:
         /// initalize particle new particle set
         const typename sample_set_t::sample_vector_t &p_t_1 = sample_set.getSamples();
         const std::size_t size = p_t_1.size();
-        if(size == 0) {
-            return;
-        }
+        assert(size != 0);
 
         typename sample_set_t::sample_insertion_t  i_p_t = sample_set.getInsertion();
         /// prepare ordered sequence of random numbers
