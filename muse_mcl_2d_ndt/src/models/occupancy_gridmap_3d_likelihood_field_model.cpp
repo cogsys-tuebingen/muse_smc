@@ -81,8 +81,6 @@ void OccupancyGridmap3dLikelihoodFieldModel::apply(const data_t::ConstPtr       
             const cslibs_math_3d::Point3d map_point = m_T_s_3d * point;
             p += (map_point.isNormal() ? bundle_likelihood(map_point) : 0);
         }
-        if(!std::isnormal(p))
-            std::cerr << p << std::endl;
         *it *= p;
     }
 }

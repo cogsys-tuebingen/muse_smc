@@ -8,6 +8,8 @@
 
 #include <cslibs_time/time.hpp>
 
+#include <cslibs_math/statistics/distribution.hpp>
+
 #include <muse_smc/samples/sample_density.hpp>
 #include <muse_smc/samples/sample_insertion.hpp>
 #include <muse_smc/samples/sample_weight_iterator.hpp>
@@ -25,6 +27,7 @@ public:
     using sample_insertion_t = SampleInsertion<sample_t>;
     using state_iterator_t   = StateIteration<state_space_description_t>;
     using weight_iterator_t  = WeightIteration<state_space_description_t>;
+    using weight_distribution_t = cslibs_math::statistics::Distribution<1>;
 
     using Ptr = std::shared_ptr<sample_set_t>;
     using ConstPtr = std::shared_ptr<sample_set_t const>;
@@ -41,7 +44,6 @@ public:
         minimum_sample_size_(sample_size),
         maximum_sample_size_(sample_size),
         maximum_weight_(0.0),
-        average_weight_(0.0),
         weight_sum_(0.0),
         p_t_1_(new sample_vector_t(0, maximum_sample_size_)),
         p_t_1_density_(density),
@@ -59,7 +61,6 @@ public:
         minimum_sample_size_(sample_size_minimum),
         maximum_sample_size_(sample_size_maxmimum),
         maximum_weight_(0.0),
-        average_weight_(0.0),
         weight_sum_(0.0),
         p_t_1_(new sample_vector_t(0, maximum_sample_size_)),
         p_t_1_density_(density),
@@ -100,10 +101,11 @@ public:
             return;
         }
 
+        weight_distribution_.reset();
         for(auto &s : *p_t_1_) {
             s.weight /= weight_sum_;
+            weight_distribution_.add(s.weight);
         }
-        average_weight_ /= weight_sum_;
         maximum_weight_ /= weight_sum_;
         weight_sum_ = 1.0;
     }
@@ -117,8 +119,8 @@ public:
         const double weight = set_to_one ? 1.0 : 1.0 / static_cast<double>(p_t_1_->size());
         for(auto &s : *p_t_1_) {
             s.weight = weight;
+            weight_distribution_.add(weight);
         }
-        average_weight_ = weight;
         maximum_weight_ = weight;
         weight_sum_     = weight * p_t_1_->size();
     }
@@ -160,7 +162,12 @@ public:
 
     inline double getAverageWeight() const
     {
-        return average_weight_;
+        return weight_distribution_.getMean();
+    }
+
+    inline weight_distribution_t const & getWeighDistribution() const
+    {
+        return weight_distribution_;
     }
 
     inline double getWeightSum() const
@@ -190,7 +197,7 @@ private:
     std::size_t             maximum_sample_size_;
 
     double                  maximum_weight_;
-    double                  average_weight_;
+    weight_distribution_t   weight_distribution_;
     double                  weight_sum_;
 
     std::shared_ptr<sample_vector_t> p_t_1_;
@@ -200,7 +207,7 @@ private:
     inline void weightStatisticReset()
     {
         maximum_weight_ = 0.0;
-        average_weight_ = 0.0;
+        weight_distribution_.reset();
         weight_sum_     = 0.0;
     }
 

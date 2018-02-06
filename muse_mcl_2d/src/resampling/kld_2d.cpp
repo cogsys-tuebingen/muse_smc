@@ -42,6 +42,10 @@ protected:
 
         };
 
+
+        std::cerr << sample_set.getWeighDistribution().getStandardDeviation() << std::endl;
+        std::cerr << sample_set.getWeighDistribution().getMean() << std::endl;
+
         sample_set_t::sample_insertion_t i_p_t = sample_set.getInsertion();
 
         /// prepare ordered sequence of random numbers
@@ -49,6 +53,7 @@ protected:
         for(std::size_t i = 0 ; i < size ; ++i) {
             cumsum[i+1] = cumsum[i] + p_t_1[i].weight;
         }
+
         cslibs_math::random::Uniform<1> rng(0.0, 1.0);
         for(std::size_t i = 0 ; i < sample_size_maximum ; ++i) {
             const double u = rng.get();
