@@ -56,14 +56,16 @@ public:
         const time_t stamp = s->getStamp();
         const id_t id = u->getModelId();
         if(model_update_times_[id] < stamp) {
-            std::cerr << "model " << u->getModelName() << std::endl;
-            std::cerr << model_update_times_[id] << std::endl;
-
             model_update_times_[id] = stamp + offsets_[id];
 
             mean_duration_t &expected_duration = mean_durations_[id];
             time_slice_t &time_slice = time_slices_[id];
             if(expected_duration.mean() <= time_slice) {
+#ifdef MUSE_SMC_DEBUG
+                std::cerr << "model   " << u->getModelName() << std::endl;
+                std::cerr << "offset: " << offsets_[id] << std::endl;
+                std::cerr << "slice:  " << time_slice   << std::endl;
+#endif
                 const time_t start = time_t::now();
                 u->apply(s->getWeightIterator());
                 const duration_t dur_per_particle = (time_t::now() - start) / static_cast<double>(s->getSampleSize());
@@ -83,6 +85,7 @@ public:
             r->apply(*s);
             resampline_time_ = stamp + resampling_period_;
 
+
             const double sample_size = 1.0 / static_cast<double>(s->getSampleSize());
             for(const auto &ts : time_slice_updates_) {
                 const id_t        id = ts.first;
@@ -90,9 +93,9 @@ public:
                 /// how often is our model to be called
                 const int64_t     nsecs = mean_durations_[id].mean().nanoseconds();
                 /// when should it be called, get the lin space
-                offsets_[id] = nsecs > 0 && slice > 0 ? duration_t(resampling_period_.nanoseconds() / (slice / nsecs)) : duration_t();
                 /// give it the resources
                 time_slices_[id] = slice;
+                offsets_[id] = nsecs > 0 && slice > nsecs ? duration_t(resampling_period_.nanoseconds() / (slice / nsecs)) : duration_t();
             }
             return true;
         };

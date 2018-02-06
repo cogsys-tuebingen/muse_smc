@@ -24,7 +24,7 @@
 #include <muse_smc/prediction/prediction_relay.hpp>
 #include <muse_smc/plugins/plugin_loader.hpp>
 #include <muse_smc/plugins/plugin_factory.hpp>
-#include <muse_smc/scheduling/rate_scheduler.hpp>.hpp>
+#include <muse_smc/scheduling/rate_scheduler.hpp>
 
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 
