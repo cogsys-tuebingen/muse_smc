@@ -3,7 +3,7 @@
 
 #include <muse_smc/scheduling/scheduler.hpp>
 #include <unordered_map>
-#include <cslibs_time/mean_duration.hpp>
+#include <cslibs_time/statistics/duration.hpp>
 
 namespace muse_smc {
 template<typename state_space_description_t>
@@ -15,7 +15,7 @@ public:
     using time_slice_t        = cslibs_time::Duration;
     using time_priority_map_t = std::unordered_map<id_t, double>;
     using time_slice_map_t    = std::unordered_map<id_t, time_slice_t>;
-    using mean_duration_t     = cslibs_time::MeanDuration;
+    using mean_duration_t     = cslibs_time::statistics::Duration;
     using mean_duration_map_t = std::unordered_map<id_t, mean_duration_t>;
     using sampling_map_t      = std::unordered_map<id_t, std::size_t>;
     using time_t              = cslibs_time::Time;
@@ -88,7 +88,7 @@ public:
             /// book the resources for the current period
             const double sample_size = 1.0 / static_cast<double>(s->getSampleSize());
             for(const auto &ts : time_slice_updates_) {
-                const double mean_duration  = mean_durations_[ts.first].milliseconds();
+                const double mean_duration  = mean_durations_[ts.first].mean().milliseconds();
                 sampling_periods_[ts.first] = mean_duration == 0.0 ? 1 : static_cast<std::size_t>(resampling_period_.milliseconds() * sample_size / mean_duration);
                 sampling_cycles_[ts.first]  = 0;
             }
