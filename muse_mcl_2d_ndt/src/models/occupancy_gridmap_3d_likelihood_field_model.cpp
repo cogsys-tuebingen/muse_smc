@@ -49,10 +49,13 @@ void OccupancyGridmap3dLikelihoodFieldModel::apply(const data_t::ConstPtr       
                                     static_cast<int>(std::floor(p(2) * bundle_resolution_inv))}});
     };
     auto likelihood = [this](const cslibs_math_3d::Point3d &p, const cslibs_math::statistics::Distribution<3, 3>::Ptr &d) {
-        if (!d) return 0.0;
-        const auto &q         = p.data() - d->getMean();
-        const double exponent = -0.5 * d2_ * double(q.transpose() * d->getInformationMatrix() * q);
-        return d1_ * std::exp(exponent);
+        auto apply = [&p, &d, this](){
+            const auto &q         = p.data() - d->getMean();
+            const double exponent = -0.5 * d2_ * double(q.transpose() * d->getInformationMatrix() * q);
+            const double e = d1_ * std::exp(exponent);
+            return std::isnormal(e) ? e : 0.0;
+        };
+        return !d ? 0.0 : apply();
     };
     auto occupancy_likelihood = [this, &likelihood](const cslibs_math_3d::Point3d &p, const cslibs_ndt::OccupancyDistribution<3>* d) {
         return d ? d->getOccupancy(inverse_model_) * likelihood(p, d->getDistribution()) : 0.0;
@@ -78,6 +81,8 @@ void OccupancyGridmap3dLikelihoodFieldModel::apply(const data_t::ConstPtr       
             const cslibs_math_3d::Point3d map_point = m_T_s_3d * point;
             p += (map_point.isNormal() ? bundle_likelihood(map_point) : 0);
         }
+        if(!std::isnormal(p))
+            std::cerr << p << std::endl;
         *it *= p;
     }
 }
