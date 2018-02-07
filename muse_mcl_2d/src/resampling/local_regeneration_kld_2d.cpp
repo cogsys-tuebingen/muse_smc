@@ -9,14 +9,40 @@ class LocalRegenerationKLD2D : public Resampling2D
 public:
 
 protected:
-    double  kld_error_;
-    double  kld_z_;
+    double                       kld_error_;
+    double                       kld_z_;
+    cslibs_math_2d::Covariance2d covariance_;
 
     virtual void doSetup(ros::NodeHandle &nh) override
     {
         auto param_name = [this](const std::string &name){return name_ + "/" + name;};
         kld_error_ = nh.param(param_name("kld_error"), 0.01);
         kld_z_     = nh.param(param_name("kld_z"), 0.99);
+
+        std::vector<double> c_v;
+        nh.getParam(param_name("covariance"),c_v);
+
+        if(c_v.size() != 9) {
+            ROS_ERROR_STREAM("The initialization covariance is expected to have 9 values.");
+            return;
+        }
+
+        auto get = [&c_v](std::size_t r, std::size_t c, std::size_t step)
+        {
+            return c_v[r * step + c];
+        };
+
+        covariance_(0,0) = get(0,0,3);
+        covariance_(1,0) = get(1,0,3);
+        covariance_(2,0) = get(2,0,3);
+
+        covariance_(0,1) = get(0,1,3);
+        covariance_(1,1) = get(1,1,3);
+        covariance_(2,1) = get(2,1,3);
+
+        covariance_(0,2) = get(0,2,3);
+        covariance_(1,2) = get(1,2,3);
+        covariance_(2,2) = get(2,2,3);
     }
 
     void doApply(sample_set_t &sample_set)
@@ -30,13 +56,12 @@ protected:
         if(!density)
             throw std::runtime_error("[KLD2D] : Can only use 'SampleDensity2D' for adaptive sample size estimation!");
 
-        if(sample_set.getWeightSum() == 0.0) {
+        if(sample_set.getAverageWeight() < 1.0 / static_cast<double>(sample_set.getSampleSize())) {
             SampleDensity2D::state_t mean;
             SampleDensity2D::covariance_t cov;
             density->mean(mean, cov);
-            normal_pose_sampler_->apply(mean, cov, sample_set);
+            normal_pose_sampler_->apply(mean, covariance_, sample_set);
             return;
-
             /// todo: remove this and add some predefined covariance ... check the weight distribution as well
         }
 
