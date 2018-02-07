@@ -42,7 +42,6 @@ public:
         for(const auto &p : priorities) {
             time_slice_updates_[p.first]   = duration_t(resampling_period_ * (p.second / w));
             mean_durations_[p.first]       = mean_duration_t();
-            time_slices_[p.first]          = duration_t();
         }
     }
 
@@ -51,7 +50,7 @@ public:
                        typename sample_set_t::Ptr &s) override
     {
         assert(mean_durations_.find(u->getModelId()) != mean_durations_.end());
-        assert(time_slice_updates_.find(u->getModelId()) != time_slice_updates_.end());
+        assert(offsets_.find(u->getModelId()) != offsets_.end());
 
         const time_t stamp = s->getStamp();
         const id_t id = u->getModelId();
@@ -59,18 +58,17 @@ public:
             model_update_times_[id] = stamp + offsets_[id];
 
             mean_duration_t &expected_duration = mean_durations_[id];
-            time_slice_t &time_slice = time_slices_[id];
-            if(expected_duration.mean() <= time_slice) {
+            if(expected_duration.mean() <= time_slice_) {
 #ifdef MUSE_SMC_DEBUG
                 std::cerr << "model   " << u->getModelName() << std::endl;
                 std::cerr << "offset: " << offsets_[id] << std::endl;
-                std::cerr << "slice:  " << time_slice   << std::endl;
+                std::cerr << "slice:  " << time_slice_   << std::endl;
 #endif
                 const time_t start = time_t::now();
                 u->apply(s->getWeightIterator());
                 const duration_t dur_per_particle = (time_t::now() - start) / static_cast<double>(s->getSampleSize());
                 expected_duration                += dur_per_particle;
-                time_slice                       -= dur_per_particle;
+                time_slice_                      -= dur_per_particle;
                 return true;
             }
         }
@@ -87,14 +85,14 @@ public:
 
 
             const double sample_size = 1.0 / static_cast<double>(s->getSampleSize());
+            time_slice_ = resampling_period_ * sample_size;
             for(const auto &ts : time_slice_updates_) {
                 const id_t        id = ts.first;
                 const int64_t  slice = (ts.second * sample_size).nanoseconds();
                 /// how often is our model to be called
-                const int64_t     nsecs = mean_durations_[id].mean().nanoseconds();
+                const int64_t  nsecs = mean_durations_[id].mean().nanoseconds();
                 /// when should it be called, get the lin space
                 /// give it the resources
-                time_slices_[id] = slice;
                 offsets_[id] = nsecs > 0 && slice > nsecs ? duration_t(resampling_period_.nanoseconds() / (slice / nsecs)) : duration_t();
             }
             return true;
@@ -111,7 +109,7 @@ protected:
 
     mean_duration_map_t     mean_durations_;        /// track the mean duration per particle
     time_slice_map_t        time_slice_updates_;    /// computation time available for each model
-    time_slice_map_t        time_slices_;
+    time_slice_t            time_slice_;
     time_slice_map_t        offsets_;
     time_table_t            model_update_times_;
 

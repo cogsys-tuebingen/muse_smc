@@ -43,7 +43,7 @@ protected:
         };
 
 
-        std::cerr << sample_set.getWeighDistribution().getStandardDeviation() << std::endl;
+   //    std::cerr << sample_set.getWeighDistribution().getStandardDeviation() << std::endl;
         std::cerr << sample_set.getWeighDistribution().getMean() << std::endl;
 
         sample_set_t::sample_insertion_t i_p_t = sample_set.getInsertion();
