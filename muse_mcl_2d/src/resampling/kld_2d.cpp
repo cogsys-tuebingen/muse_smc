@@ -2,6 +2,7 @@
 
 #include <muse_mcl_2d/resampling/resampling_2d.hpp>
 #include <muse_mcl_2d/density/sample_density_2d.hpp>
+#include <iomanip>
 
 namespace muse_mcl_2d {
 class KLD2D : public Resampling2D
@@ -41,10 +42,6 @@ protected:
             return current_size > std::min(n, sample_size_maximum);
 
         };
-
-
-   //    std::cerr << sample_set.getWeighDistribution().getStandardDeviation() << std::endl;
-        std::cerr << sample_set.getWeighDistribution().getMean() << std::endl;
 
         sample_set_t::sample_insertion_t i_p_t = sample_set.getInsertion();
 

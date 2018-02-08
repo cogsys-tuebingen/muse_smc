@@ -56,14 +56,28 @@ protected:
         if(!density)
             throw std::runtime_error("[KLD2D] : Can only use 'SampleDensity2D' for adaptive sample size estimation!");
 
-        if(sample_set.getAverageWeight() < 1.0 / static_cast<double>(sample_set.getSampleSize())) {
-            SampleDensity2D::state_t mean;
-            SampleDensity2D::covariance_t cov;
-            density->mean(mean, cov);
-            normal_pose_sampler_->apply(mean, covariance_, sample_set);
+
+        std::cerr << "+" << std::setprecision(20)  << sample_set.getAverageWeight() * static_cast<double>(sample_set.getSampleSize()) << std::endl;
+        std::cerr << "|" << std::setprecision(20)  << sample_set.getWeightDistribution().getVariance() << std::endl;
+        std::cerr << "|" << std::setprecision(20)  << sample_set.getWeightDistribution().getStandardDeviation() << std::endl;
+        std::cerr << "|" << std::setprecision(20)  << sample_set.getMinimumWeight() << std::endl;
+        std::cerr << "|" << std::setprecision(20)  << sample_set.getMaximumWeight() << std::endl;
+        std::cerr << "|" << std::setprecision(20)  << sample_set.getMinimumWeight() / sample_set.getMaximumWeight() << std::endl;
+        std::cerr << "--------------------------------------------" << std::endl;
+
+        if(sample_set.getWeightDistribution().getVariance() < (0.5 * 1e-6)) {
+            sample_set.updateDensity();
             return;
-            /// todo: remove this and add some predefined covariance ... check the weight distribution as well
         }
+
+//        if(sample_set.getWeightDistribution().getVariance() < 1e4) {
+
+//            SampleDensity2D::state_t mean;
+//            SampleDensity2D::covariance_t cov;
+//            density->mean(mean, cov);
+//            normal_pose_sampler_->apply(mean, covariance_, sample_set);
+//            return;
+//        }
 
         const std::size_t sample_size_minimum = std::max(sample_set.getMinimumSampleSize(), 2ul);
         const std::size_t sample_size_maximum = sample_set.getMaximumSampleSize();

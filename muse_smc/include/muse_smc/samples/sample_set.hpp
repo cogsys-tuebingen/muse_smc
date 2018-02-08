@@ -155,6 +155,11 @@ public:
         stamp_ = time;
     }
 
+    inline double getMinimumWeight() const
+    {
+        return minimum_weight_;
+    }
+
     inline double getMaximumWeight() const
     {
         return maximum_weight_;
@@ -165,7 +170,7 @@ public:
         return weight_distribution_.getMean();
     }
 
-    inline weight_distribution_t const & getWeighDistribution() const
+    inline weight_distribution_t const & getWeightDistribution() const
     {
         return weight_distribution_;
     }
@@ -190,6 +195,15 @@ public:
         return p_t_1_density_;
     }
 
+    inline void updateDensity()
+    {
+        p_t_1_density_->clear();
+        for(const auto &s : *p_t_1_) {
+            p_t_1_density_->insert(s);
+        }
+        p_t_1_density_->estimate();
+    }
+
 private:
     std::string             frame_id_;
     cslibs_time::Time       stamp_;
@@ -197,6 +211,7 @@ private:
     std::size_t             maximum_sample_size_;
 
     double                  maximum_weight_;
+    double                  minimum_weight_;
     weight_distribution_t   weight_distribution_;
     double                  weight_sum_;
 
@@ -207,6 +222,7 @@ private:
     inline void weightStatisticReset()
     {
         maximum_weight_ = 0.0;
+        minimum_weight_ = 1.0;
         weight_distribution_.reset();
         weight_sum_     = 0.0;
     }
@@ -215,6 +231,7 @@ private:
     {
         weight_sum_    += weight;
         maximum_weight_ = weight > maximum_weight_ ? weight : maximum_weight_;
+        minimum_weight_ = weight < minimum_weight_ ? weight : minimum_weight_;
     }
 
     inline void insertionUpdate(const sample_t &sample)
