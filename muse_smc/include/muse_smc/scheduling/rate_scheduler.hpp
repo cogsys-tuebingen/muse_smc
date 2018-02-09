@@ -3,7 +3,7 @@
 
 #include <muse_smc/scheduling/scheduler.hpp>
 #include <unordered_map>
-#include <cslibs_time/statistics/duration.hpp>
+#include <cslibs_time/statistics/duration_window.hpp>
 
 namespace muse_smc {
 template<typename state_space_description_t>
@@ -15,7 +15,7 @@ public:
     using time_slice_t        = cslibs_time::Duration;
     using time_priority_map_t = std::unordered_map<id_t, double>;
     using time_slice_map_t    = std::unordered_map<id_t, time_slice_t>;
-    using mean_duration_t     = cslibs_time::statistics::Duration;
+    using mean_duration_t     = cslibs_time::statistics::DurationWindow;
     using mean_duration_map_t = std::unordered_map<id_t, mean_duration_t>;
     using time_t              = cslibs_time::Time;
     using time_table_t        = std::unordered_map<id_t, time_t>;
@@ -29,7 +29,8 @@ public:
     }
 
     void setup(const cslibs_time::Rate   &rate,
-               const time_priority_map_t &priorities)
+               const time_priority_map_t &priorities,
+               const std::size_t         &window_size = 5)
     {
         assert(rate.expectedCycleTime().seconds() != 0.0);
         resampling_period_ = duration_t(rate.expectedCycleTime().seconds());
@@ -41,7 +42,7 @@ public:
         }
         for(const auto &p : priorities) {
             time_slice_updates_[p.first]   = duration_t(resampling_period_ * (p.second / w));
-            mean_durations_[p.first]       = mean_duration_t();
+            mean_durations_[p.first]       = mean_duration_t(window_size);
         }
     }
 

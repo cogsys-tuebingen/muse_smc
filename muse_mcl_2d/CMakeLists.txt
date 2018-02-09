@@ -55,6 +55,12 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
 )
 
+find_package(OpenCV QUIET)
+if(${OpenCV_FOUND})
+    add_definitions("-DPLOT_WEIGHTS")
+    include_directories(${OpenCV_INCLUDE_DIRS})
+endif()
+
 add_library(${PROJECT_NAME}_resampling
     src/resampling/kld_2d.cpp
     src/resampling/local_regeneration_kld_2d.cpp
@@ -66,6 +72,7 @@ add_library(${PROJECT_NAME}_resampling
 
 target_link_libraries(${PROJECT_NAME}_resampling
     ${catkin_LIBRARIES}
+    ${OpenCV_LIBRARIES}
 )
 
 add_library(${PROJECT_NAME}_sampling
