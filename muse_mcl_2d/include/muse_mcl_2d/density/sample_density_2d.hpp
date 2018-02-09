@@ -36,16 +36,17 @@ public:
                                                   std::hash<int>,
                                                   std::equal_to<int>,
                                                   allocator_t>;
-    using angular_mean_map_t = std::unordered_map<int, angular_mean_t>;
+    using angular_mean_map_t  = std::unordered_map<int, angular_mean_t>;
     using sample_ptr_vector_t = std::vector<const Sample2D *>;
-    using cluster_map_t = std::unordered_map<int, sample_ptr_vector_t>;
+    using cluster_map_t       = std::unordered_map<int, sample_ptr_vector_t>;
 
     virtual void setup(ros::NodeHandle &nh) = 0;
     virtual cluster_map_t const & clusters() const = 0;
     virtual distribution_map_t const & clusterDistributions() const = 0;
     virtual angular_mean_map_t const & clusterAngularMeans() const = 0;
     virtual std::size_t histogramSize() const = 0;
-    virtual bool mean(state_t &mean, covariance_t &covariance) const = 0;
+    virtual bool maxClusterMean(state_t &mean, covariance_t &covariance) const = 0;
+    virtual void mean(state_t &mean, covariance_t &covariance) const = 0;
 
 };
 }

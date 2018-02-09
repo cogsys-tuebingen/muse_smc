@@ -32,7 +32,7 @@ public:
                const time_priority_map_t &priorities)
     {
         assert(rate.expectedCycleTime().seconds() != 0.0);
-        resampling_period_ = duration_t(1.0 / rate.expectedCycleTime().seconds());
+        resampling_period_ = duration_t(rate.expectedCycleTime().seconds());
 
         /// normalize the weights
         double w = 0.0;

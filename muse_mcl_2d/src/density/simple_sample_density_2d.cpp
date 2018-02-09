@@ -17,12 +17,12 @@ public:
     using indexation_t              = SimpleSampleIndexation2D;
     using sample_data_t             = SimpleSampleDensityData2D;
     using clustering_t              = SimpleSampleClustering2D;
+    using distribution_t            = cslibs_math::statistics::WeightedDistribution<2>;
+    using angular_mean_t            = cslibs_math::statistics::WeightedAngularMean;
 
     using index_t                   = indexation_t::index_t;
 
     using cluster_map_t             = clustering_t::cluster_map_t;
-    using distribution_t            = clustering_t::distribution_t;
-    using angular_mean_t            = clustering_t::angular_mean_t;
     using distribution_map_t        = clustering_t::distribution_map_t;
     using angular_mean_map_t        = clustering_t::angular_mean_map_t;
 
@@ -49,6 +49,8 @@ public:
     {
         clustering_impl_.clear();
         kdtree_->clear();
+        global_angle_.reset();
+        global_position_.reset();
     }
 
     virtual void insert(const Sample2D &sample) override
@@ -82,7 +84,22 @@ public:
         return kdtree_->size();
     }
 
-    bool mean(state_t &mean, covariance_t &covariance) const override
+
+    void mean(state_t &mean, covariance_t &covariance) const override
+    {
+        mean.translation() = global_position_.getMean();
+        mean.setYaw(global_angle_.getMean());
+
+        const Eigen::Matrix2d  linear_covariance    = global_position_.getCovariance();
+        const double           angular_covariance   = global_angle_.getCovariance();
+        covariance(0,0) = linear_covariance(0,0);
+        covariance(0,1) = linear_covariance(0,1);
+        covariance(1,0) = linear_covariance(1,0);
+        covariance(1,1) = linear_covariance(1,1);
+        covariance(2,2) = angular_covariance;
+    }
+
+    bool maxClusterMean(state_t &mean, covariance_t &covariance) const
     {
         double max_weight = std::numeric_limits<double>::lowest();
         int    max_cluster_id = -1;
@@ -120,6 +137,9 @@ protected:
     std::shared_ptr<cis_kd_tree_buffered_t> kdtree_;
 
     clustering_t                            clustering_impl_;
+    distribution_t                          global_position_;
+    angular_mean_t                          global_angle_;
+
 };
 }
 

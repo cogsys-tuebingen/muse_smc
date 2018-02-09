@@ -40,7 +40,7 @@ void StatePublisher::publish(const sample_set_t::Ptr &sample_set)
         return;
     }
 
-    if(density->mean(latest_w_T_b_.data(), latest_w_T_b_covariance_)) {
+    if(density->maxClusterMean(latest_w_T_b_.data(), latest_w_T_b_covariance_)) {
         latest_w_T_b_.stamp() = sample_set->getStamp();
         /// make sure that TF gets published first #most important
         tf_publisher_->setTransform(latest_w_T_b_);

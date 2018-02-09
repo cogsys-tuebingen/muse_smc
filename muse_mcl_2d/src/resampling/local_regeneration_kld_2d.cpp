@@ -12,12 +12,15 @@ protected:
     double                       kld_error_;
     double                       kld_z_;
     cslibs_math_2d::Covariance2d covariance_;
+    double                       variance_threshold_;
 
     virtual void doSetup(ros::NodeHandle &nh) override
     {
         auto param_name = [this](const std::string &name){return name_ + "/" + name;};
-        kld_error_ = nh.param(param_name("kld_error"), 0.01);
-        kld_z_     = nh.param(param_name("kld_z"), 0.99);
+        kld_error_          = nh.param(param_name("kld_error"), 0.01);
+        kld_z_              = nh.param(param_name("kld_z"), 0.99);
+        variance_threshold_ = nh.param(param_name("variance_threshold"), 0.5 * 1e-6);
+
 
         std::vector<double> c_v;
         nh.getParam(param_name("covariance"),c_v);
@@ -51,33 +54,26 @@ protected:
         const std::size_t size = p_t_1.size();
         assert(size != 0);
 
-        /// build the cumulative sums
-        SampleDensity2D::ConstPtr density = std::dynamic_pointer_cast<SampleDensity2D const>(sample_set.getDensity());
-        if(!density)
-            throw std::runtime_error("[KLD2D] : Can only use 'SampleDensity2D' for adaptive sample size estimation!");
+//        std::cerr << "+" << std::setprecision(20)  << sample_set.getAverageWeight() * static_cast<double>(sample_set.getSampleSize()) << std::endl;
+          std::cerr << "|" << std::setprecision(20)  << sample_set.getWeightDistribution().getMean() << std::endl;
+//        std::cerr << "|" << std::setprecision(20)  << sample_set.getWeightDistribution().getVariance() << std::endl;
+//        std::cerr << "|" << std::setprecision(20)  << sample_set.getWeightDistribution().getStandardDeviation() << std::endl;
+//        std::cerr << "|" << std::setprecision(20)  << sample_set.getMinimumWeight() << std::endl;
+//        std::cerr << "|" << std::setprecision(20)  << sample_set.getMaximumWeight() << std::endl;
+//        std::cerr << "|" << std::setprecision(20)  << sample_set.getMinimumWeight() / sample_set.getMaximumWeight() << std::endl;
+//        std::cerr << "--------------------------------------------" << std::endl;
 
 
-        std::cerr << "+" << std::setprecision(20)  << sample_set.getAverageWeight() * static_cast<double>(sample_set.getSampleSize()) << std::endl;
-        std::cerr << "|" << std::setprecision(20)  << sample_set.getWeightDistribution().getVariance() << std::endl;
-        std::cerr << "|" << std::setprecision(20)  << sample_set.getWeightDistribution().getStandardDeviation() << std::endl;
-        std::cerr << "|" << std::setprecision(20)  << sample_set.getMinimumWeight() << std::endl;
-        std::cerr << "|" << std::setprecision(20)  << sample_set.getMaximumWeight() << std::endl;
-        std::cerr << "|" << std::setprecision(20)  << sample_set.getMinimumWeight() / sample_set.getMaximumWeight() << std::endl;
-        std::cerr << "--------------------------------------------" << std::endl;
-
-        if(sample_set.getWeightDistribution().getVariance() < (0.5 * 1e-6)) {
-            sample_set.updateDensity();
+        sample_set.updateDensity();
+        if(sample_set.getWeightDistribution().getVariance() < variance_threshold_) {
             return;
         }
-
-//        if(sample_set.getWeightDistribution().getVariance() < 1e4) {
-
-//            SampleDensity2D::state_t mean;
-//            SampleDensity2D::covariance_t cov;
-//            density->mean(mean, cov);
-//            normal_pose_sampler_->apply(mean, covariance_, sample_set);
-//            return;
-//        }
+        /// build the cumulative sums
+        SampleDensity2D::ConstPtr     density = std::dynamic_pointer_cast<SampleDensity2D const>(sample_set.getDensity());
+        SampleDensity2D::state_t      mean;
+        SampleDensity2D::covariance_t cov;
+        if(!density)
+            throw std::runtime_error("[KLD2D] : Can only use 'SampleDensity2D' for adaptive sample size estimation!");
 
         const std::size_t sample_size_minimum = std::max(sample_set.getMinimumSampleSize(), 2ul);
         const std::size_t sample_size_maximum = sample_set.getMaximumSampleSize();

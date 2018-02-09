@@ -44,7 +44,6 @@ protected:
         };
 
         sample_set_t::sample_insertion_t i_p_t = sample_set.getInsertion();
-
         /// prepare ordered sequence of random numbers
         std::vector<double> cumsum(size + 1, 0.0);
         for(std::size_t i = 0 ; i < size ; ++i) {
