@@ -1,4 +1,0 @@
-#ifndef WEIGHT_PLOT_HPP
-#define WEIGHT_PLOT_HPP
-
-#endif // WEIGHT_PLOT_HPP

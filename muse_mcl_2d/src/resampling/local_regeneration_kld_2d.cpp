@@ -3,6 +3,8 @@
 #include <muse_mcl_2d/resampling/resampling_2d.hpp>
 #include <muse_mcl_2d/density/sample_density_2d.hpp>
 
+// #include "plot_weights.hpp"
+
 namespace muse_mcl_2d {
 class LocalRegenerationKLD2D : public Resampling2D
 {
@@ -13,6 +15,7 @@ protected:
     double                       kld_z_;
     cslibs_math_2d::Covariance2d covariance_;
     double                       variance_threshold_;
+   // PlotWeights::Ptr             plot_weights_;
 
     virtual void doSetup(ros::NodeHandle &nh) override
     {
@@ -21,6 +24,7 @@ protected:
         kld_z_              = nh.param(param_name("kld_z"), 0.99);
         variance_threshold_ = nh.param(param_name("variance_threshold"), 0.5 * 1e-6);
 
+       // plot_weights_.reset(new PlotWeights(800, 1280, "weights"));
 
         std::vector<double> c_v;
         nh.getParam(param_name("covariance"),c_v);
@@ -50,6 +54,8 @@ protected:
 
     void doApply(sample_set_t &sample_set)
     {
+        ROS_ERROR_STREAM("Bullshit");
+
         const typename sample_set_t::sample_vector_t &p_t_1 = sample_set.getSamples();
         const std::size_t size = p_t_1.size();
         assert(size != 0);
@@ -65,6 +71,7 @@ protected:
 
 
         sample_set.updateDensity();
+   //     plot_weights_->plot(sample_set);
         if(sample_set.getWeightDistribution().getVariance() < variance_threshold_) {
             return;
         }
