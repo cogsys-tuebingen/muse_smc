@@ -57,8 +57,14 @@ include_directories(
 
 find_package(OpenCV QUIET)
 if(${OpenCV_FOUND})
-    add_definitions("-DPLOT_WEIGHTS")
     include_directories(${OpenCV_INCLUDE_DIRS})
+
+    add_executable(${PROJECT_NAME}_statistics_plotter
+        src/tools/statistics_plotter.cpp
+    )
+    target_link_libraries(${PROJECT_NAME}_statistics_plotter
+        ${OpenCV_LIBRARIES}
+    )
 endif()
 
 add_library(${PROJECT_NAME}_resampling

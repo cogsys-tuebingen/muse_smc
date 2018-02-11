@@ -30,7 +30,7 @@ public:
 
     void setup(const cslibs_time::Rate   &rate,
                const time_priority_map_t &priorities,
-               const std::size_t         &window_size = 5)
+               const std::size_t         &window_size = 100)
     {
         assert(rate.expectedCycleTime().seconds() != 0.0);
         resampling_period_ = duration_t(rate.expectedCycleTime().seconds());
@@ -80,6 +80,9 @@ public:
                        typename sample_set_t::Ptr &s) override
     {
         const cslibs_time::Time &stamp = s->getStamp();
+        if(resampline_time_.isZero())
+            resampline_time_ = stamp;
+
         auto do_apply = [&stamp, &r, &s, this] () {
             r->apply(*s);
             resampline_time_ = stamp + resampling_period_;

@@ -3,19 +3,25 @@
 #include <muse_mcl_2d/resampling/resampling_2d.hpp>
 #include <muse_mcl_2d/density/sample_density_2d.hpp>
 
-// #include "plot_weights.hpp"
+#include <fstream>
 
 namespace muse_mcl_2d {
 class LocalRegenerationKLD2D : public Resampling2D
 {
 public:
+    virtual ~LocalRegenerationKLD2D()
+    {
+        if(out_.is_open())
+            out_.close();
+    }
+
 
 protected:
     double                       kld_error_;
     double                       kld_z_;
     cslibs_math_2d::Covariance2d covariance_;
     double                       variance_threshold_;
-   // PlotWeights::Ptr             plot_weights_;
+    std::ofstream                out_;
 
     virtual void doSetup(ros::NodeHandle &nh) override
     {
@@ -23,8 +29,6 @@ protected:
         kld_error_          = nh.param(param_name("kld_error"), 0.01);
         kld_z_              = nh.param(param_name("kld_z"), 0.99);
         variance_threshold_ = nh.param(param_name("variance_threshold"), 0.5 * 1e-6);
-
-       // plot_weights_.reset(new PlotWeights(800, 1280, "weights"));
 
         std::vector<double> c_v;
         nh.getParam(param_name("covariance"),c_v);
@@ -50,19 +54,19 @@ protected:
         covariance_(0,2) = get(0,2,3);
         covariance_(1,2) = get(1,2,3);
         covariance_(2,2) = get(2,2,3);
+
+        out_.open("/tmp/weights.csv");
     }
 
     void doApply(sample_set_t &sample_set)
     {
-        ROS_ERROR_STREAM("Bullshit");
-
         const typename sample_set_t::sample_vector_t &p_t_1 = sample_set.getSamples();
         const std::size_t size = p_t_1.size();
         assert(size != 0);
 
 //        std::cerr << "+" << std::setprecision(20)  << sample_set.getAverageWeight() * static_cast<double>(sample_set.getSampleSize()) << std::endl;
-          std::cerr << "|" << std::setprecision(20)  << sample_set.getWeightDistribution().getMean() << std::endl;
-//        std::cerr << "|" << std::setprecision(20)  << sample_set.getWeightDistribution().getVariance() << std::endl;
+        std::cerr << "|" << std::setprecision(20)  << sample_set.getWeightDistribution().getMean() << std::endl;
+        std::cerr << "|" << std::setprecision(20)  << sample_set.getWeightDistribution().getVariance() << std::endl;
 //        std::cerr << "|" << std::setprecision(20)  << sample_set.getWeightDistribution().getStandardDeviation() << std::endl;
 //        std::cerr << "|" << std::setprecision(20)  << sample_set.getMinimumWeight() << std::endl;
 //        std::cerr << "|" << std::setprecision(20)  << sample_set.getMaximumWeight() << std::endl;
@@ -71,10 +75,9 @@ protected:
 
 
         sample_set.updateDensity();
-   //     plot_weights_->plot(sample_set);
-        if(sample_set.getWeightDistribution().getVariance() < variance_threshold_) {
-            return;
-        }
+//        if(sample_set.getWeightDistribution().getVariance() < variance_threshold_) {
+//            return;
+//        }
         /// build the cumulative sums
         SampleDensity2D::ConstPtr     density = std::dynamic_pointer_cast<SampleDensity2D const>(sample_set.getDensity());
         SampleDensity2D::state_t      mean;
@@ -100,13 +103,18 @@ protected:
         std::vector<double> cumsum(size + 1, 0.0);
         for(std::size_t i = 0 ; i < size ; ++i) {
             cumsum[i+1] = cumsum[i] + p_t_1[i].weight;
+            out_ << p_t_1[i].weight << ",";
         }
+        out_ << sample_set.getAverageWeight() << "," << sample_set.getWeightDistribution().getStandardDeviation() << "\n";
+
         cslibs_math::random::Uniform<1> rng(0.0, 1.0);
         for(std::size_t i = 0 ; i < sample_size_maximum ; ++i) {
             const double u = rng.get();
             for(std::size_t j = 0 ; j < size ; ++j) {
                 if(cumsum[j] <= u && u < cumsum[j+1]) {
-                    i_p_t.insert(p_t_1[j]);
+                    sample_t s = p_t_1[j];
+                    s.weight = 1.0;
+                    i_p_t.insert(s);
                     break;
                 }
             }
