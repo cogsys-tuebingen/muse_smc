@@ -11,6 +11,7 @@
 #include <muse_smc/smc/smc_state.hpp>
 #include <muse_smc/scheduling/scheduler.hpp>
 #include <cslibs_time/rate.hpp>
+#include <cslibs_time/statistics/duration.hpp>
 #include <cslibs_utility/synchronized/synchronized_priority_queue.hpp>
 
 
@@ -29,6 +30,7 @@
 #include <atomic>
 #include <queue>
 #include <condition_variable>
+#include <unordered_map>
 
 /***
  * Distance thresholds for resampling and update throttling are
@@ -68,6 +70,8 @@ public:
                                                                                typename update_t::Greater>;
     using prediction_queue_t    = cslibs_utility::synchronized::priority_queue<typename prediction_t::Ptr,
                                                                                typename prediction_t::Greater>;
+    using duration_t            = cslibs_time::Duration;
+    using duration_map_t        = std::unordered_map<std::size_t, cslibs_time::statistics::Duration>;
 
     inline SMC() :
         request_init_state_(false),
@@ -143,7 +147,15 @@ public:
     inline void addUpdate(const typename update_t::Ptr &update)
     {
         update_queue_.emplace(update);
-        std::cerr << "+++ " << update->getModelName() << " " << (update->getTimeReceived() - update->getStamp()).milliseconds() << std::endl;
+
+        const std::size_t id = update->getModelId();
+        cslibs_time::statistics::Duration &lag = lag_map_[id];
+        lag += (update->getTimeReceived() - update->getStamp());
+        if(lag.mean() > lag_) {
+            lag_ = lag.mean();
+            lag_source_ = id;
+            std::cerr << "+++ " << update->getModelName() << " " << lag_.milliseconds() << std::endl;
+        }
 
         notify_event_.notify_one();
 #ifdef MUSE_SMC_LOG_STATE
@@ -185,6 +197,10 @@ protected:
     /// processing queues
     update_queue_t                          update_queue_;
     prediction_queue_t                      prediction_queue_;
+    duration_map_t                          lag_map_;
+    duration_t                              lag_;
+    std::size_t                             lag_source_;
+
 
     /// background thread
     mutex_t                                 worker_thread_mutex_;
