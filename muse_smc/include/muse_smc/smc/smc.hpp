@@ -312,6 +312,7 @@ protected:
                         const auto model_id = u->getModelId();
                         if(!prediction_integrals_->isZero(model_id)) {
 
+                            std::cerr << "balls" << std::endl;
                             scheduler_->apply(u, sample_set_);
 
                             prediction_integrals_->reset(model_id);
