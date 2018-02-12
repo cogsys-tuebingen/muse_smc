@@ -143,7 +143,7 @@ public:
     inline void addUpdate(const typename update_t::Ptr &update)
     {
         update_queue_.emplace(update);
-        std::cerr << update->getModelName() << " " << (update->getTimeReceived() - update->getStamp()).milliseconds() << std::endl;
+        std::cerr << "+++ " << update->getModelName() << " " << (update->getTimeReceived() - update->getStamp()).milliseconds() << std::endl;
 
         notify_event_.notify_one();
 #ifdef MUSE_SMC_LOG_STATE
@@ -327,7 +327,7 @@ protected:
                         }
                     }
                 } else {
-                    std::cerr << "Dropped " << u->getModelName() << " " << (u->getStamp().nanoseconds() - sample_set_->getStamp().nanoseconds()) << std::endl;
+                    std::cerr << "Dropped " << u->getModelName() << " " << (sample_set_->getStamp() - u->getStamp()).milliseconds() << std::endl;
                 }
 
                 if(prediction_integrals_->thresholdExceeded() &&
