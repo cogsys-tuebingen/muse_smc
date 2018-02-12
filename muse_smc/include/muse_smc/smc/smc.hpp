@@ -148,6 +148,8 @@ public:
     {
         update_queue_.emplace(update);
 
+        /// insert by retrieval time
+
         const std::size_t id = update->getModelId();
         cslibs_time::statistics::Duration &lag = lag_map_[id];
         lag += (update->getTimeReceived() - update->getStamp());
