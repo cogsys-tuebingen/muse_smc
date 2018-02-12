@@ -70,6 +70,11 @@ public:
         return data_->getTimeFrame().end;
     }
 
+    inline cslibs_time::Time const & getTimeReceived() const
+    {
+        return data_->getTimeReceived();
+    }
+
     inline typename update_model_t::Ptr getModel() const
     {
         return model_;

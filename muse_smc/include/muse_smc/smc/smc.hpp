@@ -143,6 +143,8 @@ public:
     inline void addUpdate(const typename update_t::Ptr &update)
     {
         update_queue_.emplace(update);
+        std::cerr << update->getModelName() << " " << (update->getTimeReceived() - update->getStamp()).milliseconds() << std::endl;
+
         notify_event_.notify_one();
 #ifdef MUSE_SMC_LOG_STATE
         log();
