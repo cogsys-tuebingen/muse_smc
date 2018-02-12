@@ -3,7 +3,7 @@
 
 #include <muse_smc/scheduling/scheduler.hpp>
 #include <unordered_map>
-#include <cslibs_time/statistics/duration_window.hpp>
+#include <cslibs_time/statistics/duration.hpp>
 
 namespace muse_smc {
 template<typename state_space_description_t>
@@ -15,7 +15,7 @@ public:
     using time_slice_t        = cslibs_time::Duration;
     using time_priority_map_t = std::unordered_map<id_t, double>;
     using time_slice_map_t    = std::unordered_map<id_t, time_slice_t>;
-    using mean_duration_t     = cslibs_time::statistics::DurationWindow;
+    using mean_duration_t     = cslibs_time::statistics::Duration;
     using mean_duration_map_t = std::unordered_map<id_t, mean_duration_t>;
     using time_t              = cslibs_time::Time;
     using time_table_t        = std::unordered_map<id_t, time_t>;
@@ -29,23 +29,23 @@ public:
     }
 
     void setup(const cslibs_time::Rate   &rate,
-               const time_priority_map_t &priorities,
-               const std::size_t         &window_size = 100)
+               const time_priority_map_t &priorities)
     {
         assert(rate.expectedCycleTime().seconds() != 0.0);
+
         resampling_period_ = duration_t(rate.expectedCycleTime().seconds());
 
         /// normalize the weights
         double w = 0.0;
         for(const auto &p : priorities) {
+            assert(p.second != 0.0);
             w += p.second;
         }
         for(const auto &p : priorities) {
             time_slice_updates_[p.first]   = duration_t(resampling_period_ * (p.second / w));
-            mean_durations_[p.first]       = mean_duration_t(window_size);
+            mean_durations_[p.first]       = mean_duration_t();
         }
     }
-
 
     virtual bool apply(typename update_t::Ptr &u,
                        typename sample_set_t::Ptr &s) override
@@ -60,11 +60,6 @@ public:
 
             mean_duration_t &expected_duration = mean_durations_[id];
             if(expected_duration.mean() <= time_slice_) {
-#ifdef MUSE_SMC_DEBUG
-                std::cerr << "model   " << u->getModelName() << std::endl;
-                std::cerr << "offset: " << offsets_[id] << std::endl;
-                std::cerr << "slice:  " << time_slice_   << std::endl;
-#endif
                 const time_t start = time_t::now();
                 u->apply(s->getWeightIterator());
                 const duration_t dur_per_particle = (time_t::now() - start) / static_cast<double>(s->getSampleSize());
@@ -92,11 +87,12 @@ public:
             time_slice_ = resampling_period_ * sample_size;
             for(const auto &ts : time_slice_updates_) {
                 const id_t        id = ts.first;
-                const int64_t  slice = (ts.second * sample_size).nanoseconds();
-                /// how often is our model to be called
                 const int64_t  nsecs = mean_durations_[id].mean().nanoseconds();
+                const int64_t  slice = (ts.second * sample_size).nanoseconds() + nsecs;
+                /// how often is our model to be called
                 /// when should it be called, get the lin space
                 /// give it the resources
+                time_slice_ += nsecs;   /// execute model at least once
                 offsets_[id] = nsecs > 0 && slice > nsecs ? duration_t(resampling_period_.nanoseconds() / (slice / nsecs)) : duration_t();
             }
             return true;
