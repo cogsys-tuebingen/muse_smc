@@ -52,7 +52,7 @@ void OdometryProviderTF2D::loop()
                                                         time_frame,
                                                         o_T_b1_.data(),
                                                         o_T_b2.data(),
-                                                        cslibs_time::Time::now()));
+                                                        cslibs_time::Time(ros::Time::now().toNSec())));
                 data_received_(odometry);
             } else {
                 initialized_ = true;

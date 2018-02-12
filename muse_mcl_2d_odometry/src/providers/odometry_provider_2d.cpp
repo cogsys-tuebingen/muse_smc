@@ -22,7 +22,7 @@ void OdometryProvider2D::callback(const nav_msgs::OdometryConstPtr &msg)
                                                 time_frame,
                                                 to_pose(last_msg_),
                                                 to_pose(msg),
-                                                cslibs_time::Time::now()));
+                                                cslibs_time::Time(ros::Time::now().toNSec())));
 
         data_received_(odometry);
     }
