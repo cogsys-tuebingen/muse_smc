@@ -17,12 +17,14 @@ public:
     Odometry2D(const std::string &frame);
 
     Odometry2D(const std::string &frame,
-               const time_frame_t &time_frame);
+               const time_frame_t &time_frame,
+               const time_t &time_received);
 
     Odometry2D(const std::string &frame,
                const time_frame_t &time_frame,
                const cslibs_math_2d::Pose2d &start,
-               const cslibs_math_2d::Pose2d &end);
+               const cslibs_math_2d::Pose2d &end,
+               const time_t &time_received);
 
     double  getDeltaAngularAbs() const;
     const   cslibs_math_2d::Pose2d&   getStartPose() const;

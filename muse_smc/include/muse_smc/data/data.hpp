@@ -16,9 +16,11 @@ public:
     }
 
     Data(const std::string              &frame,
-         const cslibs_time::TimeFrame   &time_frame) :
+         const cslibs_time::TimeFrame   &time_frame,
+         const cslibs_time::Time        &time_received) :
         frame_(frame),
-        time_frame_(time_frame)
+        time_frame_(time_frame),
+        time_received_(time_received)
     {
     }
 
@@ -34,6 +36,11 @@ public:
     inline const cslibs_time::TimeFrame & getTimeFrame() const
     {
         return time_frame_;
+    }
+
+    inline cslibs_time::Time const & getTimeReceived() const
+    {
+        return time_received_;
     }
 
     template<typename T>
@@ -56,6 +63,7 @@ protected:
 
     std::string              frame_;
     cslibs_time::TimeFrame   time_frame_;
+    cslibs_time::Time        time_received_;
 };
 }
 

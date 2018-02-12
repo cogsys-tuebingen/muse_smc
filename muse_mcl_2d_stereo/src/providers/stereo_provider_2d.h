@@ -21,6 +21,8 @@ protected:
     ros::Duration   time_offset_;
     ros::Time       time_of_last_measurement_;
 
+    bool            set_time_now_;
+
     void callback(const sensor_msgs::PointCloud2ConstPtr &msg);
     virtual void doSetup(ros::NodeHandle &nh) override;
 };

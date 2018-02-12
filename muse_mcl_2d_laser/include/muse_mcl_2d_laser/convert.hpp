@@ -28,7 +28,7 @@ inline LaserScan2D::Ptr create(const sensor_msgs::LaserScanConstPtr &src,
     const int64_t end_time   = static_cast<int64_t>(std::floor(start_stamp.toNSec() + delta_stamp.toNSec() * end_off_ratio  + 0.5));
 
     const  LaserScan2D::time_frame_t time_frame(start_time, end_time);
-    return LaserScan2D::Ptr (new LaserScan2D(src->header.frame_id, time_frame, linear_interval, angular_interval));
+    return LaserScan2D::Ptr (new LaserScan2D(src->header.frame_id, time_frame, linear_interval, angular_interval, cslibs_time::Time::now()));
 }
 
 

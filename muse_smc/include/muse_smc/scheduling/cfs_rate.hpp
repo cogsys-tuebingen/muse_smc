@@ -69,18 +69,23 @@ public:
             nice_values_[p.first]     = 1.0 - (p.second / w);
             mean_durations_[p.first] = mean_duration_t();
             q_.push(Entry(p.first));
+            std::cerr << nice_values_[p.first] << std::endl;
         }
     }
 
     virtual bool apply(typename update_t::Ptr &u,
                        typename sample_set_t::Ptr &s) override
     {
-        std::cerr << "was here" << std::endl;
 
         const id_t id = u->getModelId();
         const time_t stamp = u->getStamp();
-        std::cerr << q_.top().id << " " << id << "\n";
-        std::cerr << stamp << " " << next_update_time_ << "\n";
+//        std::cerr << "got " << id  << " waits for " << q_.top().id <<  "\n";
+//        std::cerr << stamp << " " << next_update_time_ << "\n";
+
+//        for(auto entry : q_) {
+//            std::cerr << entry.id << " " << entry.vtime << "\n";
+//        }
+
 
         if(id == q_.top().id && stamp >= next_update_time_) {
             Entry entry = q_.top();

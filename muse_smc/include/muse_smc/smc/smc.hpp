@@ -311,8 +311,6 @@ protected:
                     } else if (t == sample_set_stamp) {
                         const auto model_id = u->getModelId();
                         if(!prediction_integrals_->isZero(model_id)) {
-
-                            std::cerr << "balls" << std::endl;
                             scheduler_->apply(u, sample_set_);
 
                             prediction_integrals_->reset(model_id);
@@ -326,6 +324,8 @@ protected:
 #endif
                         }
                     }
+                } else {
+                    std::cerr << "Dropped " << u->getModelName() << " " << (u->getStamp().nanoseconds() - sample_set_->getStamp().nanoseconds()) << std::endl;
                 }
 
                 if(prediction_integrals_->thresholdExceeded() &&

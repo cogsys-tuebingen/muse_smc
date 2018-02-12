@@ -70,19 +70,21 @@ public:
     using rays_t           = std::vector<Ray>;
     using const_iterator_t = rays_t::const_iterator;
 
-    LaserScan2D(const std::string &frame,
-                const time_frame_t &time_frame) :
-        Data(frame, time_frame),
+    LaserScan2D(const std::string        &frame,
+                const time_frame_t       &time_frame,
+                const cslibs_time::Time  &time_received) :
+        Data(frame, time_frame, time_received),
         linear_interval_{0.0, std::numeric_limits<double>::max()},
         angular_interval_{-M_PI, M_PI}
     {
     }
 
-    LaserScan2D(const std::string &frame,
-                const time_frame_t &time_frame,
-                const interval_t &linear_interval,
-                const interval_t &angular_interval) :
-        Data(frame, time_frame),
+    LaserScan2D(const std::string        &frame,
+                const time_frame_t       &time_frame,
+                const interval_t         &linear_interval,
+                const interval_t         &angular_interval,
+                const cslibs_time::Time  &time_received) :
+        Data(frame, time_frame, time_received),
         linear_interval_(linear_interval),
         angular_interval_(angular_interval)
     {

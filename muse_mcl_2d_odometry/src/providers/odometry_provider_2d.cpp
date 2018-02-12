@@ -21,7 +21,8 @@ void OdometryProvider2D::callback(const nav_msgs::OdometryConstPtr &msg)
         Odometry2D::Ptr odometry(new Odometry2D(msg->header.frame_id,
                                                 time_frame,
                                                 to_pose(last_msg_),
-                                                to_pose(msg)));
+                                                to_pose(msg),
+                                                cslibs_time::Time::now()));
 
         data_received_(odometry);
     }

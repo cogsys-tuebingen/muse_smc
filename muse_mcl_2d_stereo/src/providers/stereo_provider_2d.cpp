@@ -18,7 +18,10 @@ void StereoProvider2D::callback(const sensor_msgs::PointCloud2ConstPtr &msg)
             return;
     }
 
+    cslibs_time::Time start = cslibs_time::Time::now();
     muse_mcl_2d_stereo::StereoData::Ptr stereo_data(new muse_mcl_2d_stereo::StereoData(msg));
+    std::cerr << "Stereo: " << (cslibs_time::Time::now() - start).milliseconds() << std::endl;
+
     data_received_(stereo_data);
 
     time_of_last_measurement_ = msg->header.stamp;

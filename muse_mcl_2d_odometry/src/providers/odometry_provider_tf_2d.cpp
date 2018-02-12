@@ -51,7 +51,8 @@ void OdometryProviderTF2D::loop()
                 Odometry2D::Ptr odometry(new Odometry2D(odom_frame_,
                                                         time_frame,
                                                         o_T_b1_.data(),
-                                                        o_T_b2.data()));
+                                                        o_T_b2.data(),
+                                                        cslibs_time::Time::now()));
                 data_received_(odometry);
             } else {
                 initialized_ = true;

@@ -13,8 +13,9 @@ Odometry2D::Odometry2D(const std::string &frame) :
 }
 
 Odometry2D::Odometry2D(const std::string &frame,
-                       const time_frame_t &time_frame) :
-    Data(frame, time_frame),
+                       const time_frame_t &time_frame,
+                       const time_t &time_received) :
+    Data(frame, time_frame, time_received),
     start_pose_(cslibs_math_2d::Transform2d::identity()),
     end_pose_(cslibs_math_2d::Transform2d::identity()),
     delta_rel_(cslibs_math_2d::Transform2d::identity()),
@@ -26,8 +27,9 @@ Odometry2D::Odometry2D(const std::string &frame,
 Odometry2D::Odometry2D(const std::string &frame,
                        const time_frame_t &time_frame,
                        const cslibs_math_2d::Pose2d &start,
-                       const cslibs_math_2d::Pose2d &end) :
-    Data(frame, time_frame),
+                       const cslibs_math_2d::Pose2d &end,
+                       const time_t &time_received) :
+    Data(frame, time_frame, time_received),
     start_pose_(start),
     end_pose_(start),
     delta_rel_(cslibs_math_2d::Transform2d::identity())
@@ -80,8 +82,8 @@ bool Odometry2D::split(const time_t &split_time, Odometry2D::ConstPtr &a, Odomet
     const double ratio = (split_time - time_frame_.start).seconds() / time_frame_.duration().seconds();
 
     cslibs_math_2d::Pose2d split_pose = start_pose_.interpolate(end_pose_, ratio);
-    a.reset(new Odometry2D(frame_, time_frame_t(time_frame_.start, split_time), start_pose_, split_pose));
-    b.reset(new Odometry2D(frame_, time_frame_t(split_time, time_frame_.end), split_pose, end_pose_));
+    a.reset(new Odometry2D(frame_, time_frame_t(time_frame_.start, split_time), start_pose_, split_pose, time_received_));
+    b.reset(new Odometry2D(frame_, time_frame_t(split_time, time_frame_.end), split_pose, end_pose_, time_received_ + (split_time - time_frame_.start)));
 
     return true;
 }
