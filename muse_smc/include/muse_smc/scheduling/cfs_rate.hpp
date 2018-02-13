@@ -65,11 +65,12 @@ public:
         for(const auto &p : priorities) {
             w += p.second;
         }
+        std::cout << "[MuseSMC]: CFS nice values: \n";
         for(const auto &p : priorities) {
             nice_values_[p.first]     = 1.0 - (p.second / w);
             mean_durations_[p.first] = mean_duration_t();
             q_.push(Entry(p.first));
-            std::cerr << nice_values_[p.first] << std::endl;
+            std::cout << "id: " << p.first << " nice:" << nice_values_[p.first] << "\n";
         }
     }
 
@@ -81,11 +82,9 @@ public:
         const time_t stamp = u->getStamp();
 //        std::cerr << "got " << id  << " waits for " << q_.top().id <<  "\n";
 //        std::cerr << stamp << " " << next_update_time_ << "\n";
-
 //        for(auto entry : q_) {
 //            std::cerr << entry.id << " " << entry.vtime << "\n";
 //        }
-
 
         if(id == q_.top().id && stamp >= next_update_time_) {
             Entry entry = q_.top();
@@ -110,8 +109,12 @@ public:
             resampline_time_ = stamp;
 
         auto do_apply = [&stamp, &r, &s, this] () {
+            const time_t start = time_t::now();
             r->apply(*s);
-            resampline_time_ = stamp + resampling_period_;
+            const duration_t dur = (time_t::now() - start);
+                
+            resampline_time_  = stamp + resampling_period_;
+            next_update_time_ = next_update_time_ + dur;
 
             int64_t min_vtime = q_.top().vtime;
             queue_t q;

@@ -11,8 +11,8 @@ class LocalRegenerationKLD2D : public Resampling2D
 public:
     virtual ~LocalRegenerationKLD2D()
     {
-        if(out_.is_open())
-            out_.close();
+//        if(out_.is_open())
+//            out_.close();
     }
 
 
@@ -21,7 +21,7 @@ protected:
     double                       kld_z_;
     cslibs_math_2d::Covariance2d covariance_;
     double                       variance_threshold_;
-    std::ofstream                out_;
+//    std::ofstream                out_;
 
     virtual void doSetup(ros::NodeHandle &nh) override
     {
@@ -55,7 +55,7 @@ protected:
         covariance_(1,2) = get(1,2,3);
         covariance_(2,2) = get(2,2,3);
 
-        out_.open("/tmp/weights.csv");
+ //       out_.open("/tmp/weights.csv");
     }
 
     void doApply(sample_set_t &sample_set)
@@ -65,8 +65,8 @@ protected:
         assert(size != 0);
 
 //        std::cerr << "+" << std::setprecision(20)  << sample_set.getAverageWeight() * static_cast<double>(sample_set.getSampleSize()) << std::endl;
-        std::cerr << "|" << std::setprecision(20)  << sample_set.getWeightDistribution().getMean() << std::endl;
-        std::cerr << "|" << std::setprecision(20)  << sample_set.getWeightDistribution().getVariance() << std::endl;
+//        std::cerr << "|" << std::setprecision(20)  << sample_set.getWeightDistribution().getMean() << std::endl;
+//        std::cerr << "|" << std::setprecision(20)  << sample_set.getWeightDistribution().getVariance() << std::endl;
 //        std::cerr << "|" << std::setprecision(20)  << sample_set.getWeightDistribution().getStandardDeviation() << std::endl;
 //        std::cerr << "|" << std::setprecision(20)  << sample_set.getMinimumWeight() << std::endl;
 //        std::cerr << "|" << std::setprecision(20)  << sample_set.getMaximumWeight() << std::endl;
@@ -103,9 +103,9 @@ protected:
         std::vector<double> cumsum(size + 1, 0.0);
         for(std::size_t i = 0 ; i < size ; ++i) {
             cumsum[i+1] = cumsum[i] + p_t_1[i].weight;
-            out_ << p_t_1[i].weight << ",";
+//            out_ << p_t_1[i].weight << ",";
         }
-        out_ << sample_set.getAverageWeight() << "," << sample_set.getWeightDistribution().getStandardDeviation() << "\n";
+//        out_ << sample_set.getAverageWeight() << "," << sample_set.getWeightDistribution().getStandardDeviation() << "\n";
 
         cslibs_math::random::Uniform<1> rng(0.0, 1.0);
         for(std::size_t i = 0 ; i < sample_size_maximum ; ++i) {

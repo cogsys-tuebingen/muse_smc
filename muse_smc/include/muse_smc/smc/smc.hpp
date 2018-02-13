@@ -146,6 +146,7 @@ public:
 
     inline void addUpdate(const typename update_t::Ptr &update)
     {
+        std::cerr << "Adding: " << update->getModelName() << std::endl;
         const std::size_t id = update->getModelId();
         cslibs_time::statistics::Duration &lag = lag_map_[id];
         lag += (update->getTimeReceived() - update->getStamp());
