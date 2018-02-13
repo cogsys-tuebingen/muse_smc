@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <cslibs_time/time_frame.hpp>
+#include <assert.h>
 
 namespace muse_smc {
 class Data {

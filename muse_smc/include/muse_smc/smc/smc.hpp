@@ -146,10 +146,6 @@ public:
 
     inline void addUpdate(const typename update_t::Ptr &update)
     {
-        update_queue_.emplace(update);
-
-        /// insert by retrieval time
-
         const std::size_t id = update->getModelId();
         cslibs_time::statistics::Duration &lag = lag_map_[id];
         lag += (update->getTimeReceived() - update->getStamp());
@@ -159,7 +155,22 @@ public:
             std::cerr << "+++ " << update->getModelName() << " " << lag_.milliseconds() << std::endl;
         }
 
-        notify_event_.notify_one();
+        if(update->getModelId() == lag_source_) {
+            while(delayed_update_queue_.hasElements()) {
+                if(delayed_update_queue_.top()->getStamp() <= update->getStamp())
+                    update_queue_.emplace(delayed_update_queue_.pop());
+                else
+                    break;
+
+            }
+            update_queue_.emplace(update);
+            notify_event_.notify_one();
+        } else {
+            delayed_update_queue_.emplace(update);
+        }
+
+        std::cerr << "model : " << update->getModelName() << " " << delayed_update_queue_.size() << " " << update_queue_.size() <<  std::endl;
+
 #ifdef MUSE_SMC_LOG_STATE
         log();
 #endif
@@ -198,6 +209,7 @@ protected:
 
     /// processing queues
     update_queue_t                          update_queue_;
+    update_queue_t                          delayed_update_queue_;
     prediction_queue_t                      prediction_queue_;
     duration_map_t                          lag_map_;
     duration_t                              lag_;

@@ -41,6 +41,15 @@ public:
         }
     };
 
+    struct GreaterRecv
+    {
+        bool operator() (const Update::Ptr &lhs,
+                         const Update::Ptr &rhs) const
+        {
+            return lhs->getTimeReceived() > rhs->getTimeReceived();
+        }
+    };
+
     Update(const Data::ConstPtr                     &data,
            const typename state_space_t::ConstPtr   &state_space,
            const typename update_model_t::Ptr       &model) :
