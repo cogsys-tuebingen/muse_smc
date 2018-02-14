@@ -20,7 +20,11 @@ protected:
     double                       kld_error_;
     double                       kld_z_;
     cslibs_math_2d::Covariance2d covariance_;
+    double                       cov_x_;
+    double                       cov_y_;
+    double                       cov_yaw_;
     double                       variance_threshold_;
+    bool                         reset_one_;
 //    std::ofstream                out_;
 
     virtual void doSetup(ros::NodeHandle &nh) override
@@ -29,6 +33,7 @@ protected:
         kld_error_          = nh.param(param_name("kld_error"), 0.01);
         kld_z_              = nh.param(param_name("kld_z"), 0.99);
         variance_threshold_ = nh.param(param_name("variance_threshold"), 0.5 * 1e-6);
+        reset_one_          = nh.param(param_name("reset_one"), false);
 
         std::vector<double> c_v;
         nh.getParam(param_name("covariance"),c_v);
@@ -46,16 +51,18 @@ protected:
         covariance_(0,0) = get(0,0,3);
         covariance_(1,0) = get(1,0,3);
         covariance_(2,0) = get(2,0,3);
+        cov_x_ = covariance_(0,0);
 
         covariance_(0,1) = get(0,1,3);
         covariance_(1,1) = get(1,1,3);
         covariance_(2,1) = get(2,1,3);
+        cov_y_ = covariance_(1,1);
 
         covariance_(0,2) = get(0,2,3);
         covariance_(1,2) = get(1,2,3);
         covariance_(2,2) = get(2,2,3);
-
- //       out_.open("/tmp/weights.csv");
+        cov_yaw_ = covariance_(2,2);
+    
     }
 
     void doApply(sample_set_t &sample_set)
@@ -64,26 +71,21 @@ protected:
         const std::size_t size = p_t_1.size();
         assert(size != 0);
 
-//        std::cerr << "+" << std::setprecision(20)  << sample_set.getAverageWeight() * static_cast<double>(sample_set.getSampleSize()) << std::endl;
-//        std::cerr << "|" << std::setprecision(20)  << sample_set.getWeightDistribution().getMean() << std::endl;
-//        std::cerr << "|" << std::setprecision(20)  << sample_set.getWeightDistribution().getVariance() << std::endl;
-//        std::cerr << "|" << std::setprecision(20)  << sample_set.getWeightDistribution().getStandardDeviation() << std::endl;
-//        std::cerr << "|" << std::setprecision(20)  << sample_set.getMinimumWeight() << std::endl;
-//        std::cerr << "|" << std::setprecision(20)  << sample_set.getMaximumWeight() << std::endl;
-//        std::cerr << "|" << std::setprecision(20)  << sample_set.getMinimumWeight() / sample_set.getMaximumWeight() << std::endl;
-//        std::cerr << "--------------------------------------------" << std::endl;
-
-
         sample_set.updateDensity();
-//        if(sample_set.getWeightDistribution().getVariance() < variance_threshold_) {
-//            return;
-//        }
-        /// build the cumulative sums
+
+        if(sample_set.getWeightDistribution().getVariance() < variance_threshold_)
+          return;
+
         SampleDensity2D::ConstPtr     density = std::dynamic_pointer_cast<SampleDensity2D const>(sample_set.getDensity());
+        if(!density)
+            throw std::runtime_error("[LocalRegenerationKLD2D] : Can only use 'SampleDensity2D' for adaptive sample size estimation!");
+
         SampleDensity2D::state_t      mean;
         SampleDensity2D::covariance_t cov;
-        if(!density)
-            throw std::runtime_error("[KLD2D] : Can only use 'SampleDensity2D' for adaptive sample size estimation!");
+        density->mean(mean, cov);
+
+        if(!(cov(0,0) >= cov_x_ || cov(1,1) >= cov_y_ || cov(2,2) >= cov_yaw_))
+            return;
 
         const std::size_t sample_size_minimum = std::max(sample_set.getMinimumSampleSize(), 2ul);
         const std::size_t sample_size_maximum = sample_set.getMaximumSampleSize();
@@ -113,7 +115,7 @@ protected:
             for(std::size_t j = 0 ; j < size ; ++j) {
                 if(cumsum[j] <= u && u < cumsum[j+1]) {
                     sample_t s = p_t_1[j];
-                    s.weight = 1.0;
+                    s.weight = reset_one_ ? 1.0 : s.weight;
                     i_p_t.insert(s);
                     break;
                 }

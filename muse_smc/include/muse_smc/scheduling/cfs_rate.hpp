@@ -47,30 +47,26 @@ public:
     using time_priority_map_t = std::unordered_map<id_t, double>;
     using resampling_t        = Resampling<state_space_description_t>;
     using sample_set_t        = SampleSet<state_space_description_t>;
-    using priority_map_t      = std::unordered_map<id_t, double>;
     using nice_map_t          = std::unordered_map<id_t, double>;
     using time_t              = cslibs_time::Time;
     using duration_t          = cslibs_time::Duration;
 
 
     void setup(const cslibs_time::Rate  &rate,
-               const priority_map_t     &priorities)
+               const nice_map_t         &priorities)
     {
         assert(rate.expectedCycleTime().seconds() != 0.0);
 
         resampling_period_ = duration_t(rate.expectedCycleTime().seconds());
 
-        /// normalize the weights
-        double w = 0.0;
-        for(const auto &p : priorities) {
-            w += p.second;
-        }
         std::cout << "[MuseSMC]: CFS nice values: \n";
         for(const auto &p : priorities) {
-            nice_values_[p.first]     = 1.0 - (p.second / w);
-            mean_durations_[p.first] = mean_duration_t();
+            assert(p.second > 0.0);
+            assert(p.second <= 1.0);
+            nice_values_[p.first]     = p.second;
+            mean_durations_[p.first]  = mean_duration_t();
             q_.push(Entry(p.first));
-            std::cout << "id: " << p.first << " nice:" << nice_values_[p.first] << "\n";
+            std::cout << "id: " << p.first << " nice: " << nice_values_[p.first] << "\n";
         }
     }
 
@@ -80,11 +76,8 @@ public:
 
         const id_t id = u->getModelId();
         const time_t stamp = u->getStamp();
-//        std::cerr << "got " << id  << " waits for " << q_.top().id <<  "\n";
-//        std::cerr << stamp << " " << next_update_time_ << "\n";
-//        for(auto entry : q_) {
-//            std::cerr << entry.id << " " << entry.vtime << "\n";
-//        }
+        if(propagation_start_.isZero())
+            propagation_start_ = time_t::now();
 
         if(id == q_.top().id && stamp >= next_update_time_) {
             Entry entry = q_.top();
@@ -92,9 +85,12 @@ public:
             const time_t start = time_t::now();
             u->apply(s->getWeightIterator());
             const duration_t dur = (time_t::now() - start);
+            const duration_t dur_propagation = (start - propagation_start_);
+
             entry.vtime += static_cast<int64_t>(dur.nanoseconds() * nice_values_[id]);
-            next_update_time_ = u->getStamp() + dur;
+            next_update_time_ = stamp + dur;
             q_.push(entry);
+            propagation_start_ = time_t::now();
             return true;
         }
         return false;
@@ -105,16 +101,21 @@ public:
                        typename sample_set_t::Ptr &s) override
     {
         const cslibs_time::Time &stamp = s->getStamp();
-        if(resampline_time_.isZero())
-            resampline_time_ = stamp;
+       
+        if(resampling_time_.isZero())
+            resampling_time_ = stamp;
+       
+        if(propagation_start_.isZero())
+            propagation_start_ = time_t::now();
 
         auto do_apply = [&stamp, &r, &s, this] () {
             const time_t start = time_t::now();
             r->apply(*s);
             const duration_t dur = (time_t::now() - start);
-                
-            resampline_time_  = stamp + resampling_period_;
-            next_update_time_ = next_update_time_ + dur;
+            
+            resampling_time_   = stamp + resampling_period_;
+            next_update_time_  = next_update_time_ ; //+ dur;
+            propagation_start_ = propagation_start_ + dur;
 
             int64_t min_vtime = q_.top().vtime;
             queue_t q;
@@ -128,12 +129,13 @@ public:
         auto do_not_apply = [] () {
             return false;
         };
-        return resampline_time_ < stamp ? do_apply() : do_not_apply();
+        return resampling_time_ < stamp ? do_apply() : do_not_apply();
     }
 protected:
-    cslibs_time::Time       next_update_time_;
-    cslibs_time::Time       resampline_time_;
-    cslibs_time::Duration   resampling_period_;
+    time_t                  next_update_time_;
+    time_t                  propagation_start_;
+    time_t                  resampling_time_;
+    duration_t              resampling_period_;
     mean_duration_map_t     mean_durations_;        /// track the mean duration per particle
     nice_map_t              nice_values_;
     queue_t                 q_;

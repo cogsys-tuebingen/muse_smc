@@ -146,14 +146,12 @@ public:
 
     inline void addUpdate(const typename update_t::Ptr &update)
     {
-        std::cerr << "Adding: " << update->getModelName() << std::endl;
         const std::size_t id = update->getModelId();
         cslibs_time::statistics::Duration &lag = lag_map_[id];
         lag += (update->getTimeReceived() - update->getStamp());
         if(lag.mean() > lag_) {
             lag_ = lag.mean();
             lag_source_ = id;
-            std::cerr << "+++ " << update->getModelName() << " " << lag_.milliseconds() << std::endl;
         }
 
         if(update->getModelId() == lag_source_) {
@@ -169,9 +167,6 @@ public:
         } else {
             delayed_update_queue_.emplace(update);
         }
-
-        std::cerr << "model : " << update->getModelName() << " " << delayed_update_queue_.size() << " " << update_queue_.size() <<  std::endl;
-
 #ifdef MUSE_SMC_LOG_STATE
         log();
 #endif
@@ -365,7 +360,6 @@ protected:
                         scheduler_->apply(resampling_, sample_set_)) {
                     prediction_integrals_->reset();
                     state_publisher_->publish(sample_set_);
-                    sample_set_->resetWeights();
                 }
 
 #ifdef MUSE_SMC_DEBUG

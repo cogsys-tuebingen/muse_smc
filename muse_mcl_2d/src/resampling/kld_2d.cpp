@@ -63,6 +63,7 @@ protected:
                 break;
             }
         }
+        sample_set.resetWeights();
     }
 
     void doApplyRecovery(sample_set_t &sample_set)
@@ -114,6 +115,7 @@ protected:
                 break;
             }
         }
+        sample_set.resetWeights();
     }
 
 };
