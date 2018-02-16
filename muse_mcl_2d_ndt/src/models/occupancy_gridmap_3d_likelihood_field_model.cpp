@@ -3,6 +3,8 @@
 #include <muse_mcl_2d_stereo/stereo_data.hpp>
 #include <muse_mcl_2d_ndt/maps/occupancy_gridmap_3d.h>
 
+#include <cslibs_math_ros/tf/conversion_3d.hpp>
+
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_ndt::OccupancyGridmap3dLikelihoodFieldModel, muse_mcl_2d::UpdateModel2D)
 
@@ -23,8 +25,7 @@ void OccupancyGridmap3dLikelihoodFieldModel::apply(const data_t::ConstPtr       
     const cslibs_math_3d::Pointcloud3d::Ptr             &stereo_points = stereo_data.getPoints();
 
     /// stereo to base transform
-    cslibs_math_2d::Transform2d b_T_s;
-    cslibs_math_2d::Transform2d m_T_w;
+    tf::Transform b_T_s, m_T_w;
     if (!tf_->lookupTransform(robot_base_frame_,
                               stereo_data.getFrame(),
                               ros::Time(stereo_data.getTimeFrame().end.seconds()),
@@ -37,6 +38,8 @@ void OccupancyGridmap3dLikelihoodFieldModel::apply(const data_t::ConstPtr       
                               m_T_w,
                               tf_timeout_))
         return;
+    cslibs_math_3d::Transform3d b_T_s_3d = cslibs_math_ros::tf::conversion_3d::from(b_T_s);
+    cslibs_math_3d::Transform3d m_T_w_3d = cslibs_math_ros::tf::conversion_3d::from(m_T_w);
 
     const std::size_t points_size = stereo_points->size();
     const std::size_t points_step = std::max(1ul, points_size / max_points_);
@@ -48,19 +51,24 @@ void OccupancyGridmap3dLikelihoodFieldModel::apply(const data_t::ConstPtr       
                                     static_cast<int>(std::floor(p(1) * bundle_resolution_inv)),
                                     static_cast<int>(std::floor(p(2) * bundle_resolution_inv))}});
     };
-    auto likelihood = [this](const cslibs_math_3d::Point3d &p, const cslibs_math::statistics::Distribution<3, 3>::Ptr &d) {
-        auto apply = [&p, &d, this](){
+    auto likelihood = [this](const cslibs_math_3d::Point3d &p,
+                             const cslibs_math::statistics::Distribution<3, 3>::Ptr &d,
+                             const double &inv_occ) {
+        auto apply = [&p, &d, &inv_occ, this](){
             const auto &q         = p.data() - d->getMean();
-            const double exponent = -0.5 * d2_ * double(q.transpose() * d->getInformationMatrix() * q);
+            const double exponent = -0.5 * d2_ * inv_occ * double(q.transpose() * d->getInformationMatrix() * q);
             const double e = d1_ * std::exp(exponent);
             return std::isnormal(e) ? e : 0.0;
         };
         return !d ? 0.0 : apply();
     };
     auto occupancy_likelihood = [this, &likelihood](const cslibs_math_3d::Point3d &p, const cslibs_ndt::OccupancyDistribution<3>* d) {
-        return d ? d->getOccupancy(inverse_model_) * likelihood(p, d->getDistribution()) : 0.0;
+        double occ = d ? d->getOccupancy(inverse_model_) : 0.0;
+        double ndt = d ? likelihood(p, d->getDistribution(), 1.0 - occ) : 0.0;
+
+        return ndt;
     };
-    auto bundle_likelihood = [&gridmap, &to_bundle_index, &occupancy_likelihood](const cslibs_math_3d::Point3d &p) {
+    auto bundle_likelihood = [this, &gridmap, &to_bundle_index, &occupancy_likelihood](const cslibs_math_3d::Point3d &p) {
         const auto &bundle = gridmap.getDistributionBundle(to_bundle_index(p));
         return 0.125 * (occupancy_likelihood(p, bundle->at(0)) +
                         occupancy_likelihood(p, bundle->at(1)) +
@@ -72,14 +80,17 @@ void OccupancyGridmap3dLikelihoodFieldModel::apply(const data_t::ConstPtr       
                         occupancy_likelihood(p, bundle->at(7)));
     };
 
+    auto pow3 = [](const double& x) {
+        return x*x*x;
+    };
     for (auto it = set.begin() ; it != set.end() ; ++it) {
-        const cslibs_math_2d::Pose2d m_T_s = m_T_w * it.state() * b_T_s; /// stereo camera pose in map coordinates
-        const cslibs_math_3d::Pose3d m_T_s_3d(m_T_s.tx(), m_T_s.ty(), m_T_s.yaw());
-        double p = 1.0;
+        cslibs_math_3d::Transform3d it_s(it.state().tx(), it.state().ty(), 0, it.state().yaw()); /// stereo camera pose in map coordinates
+        cslibs_math_3d::Transform3d m_T_s = m_T_w_3d * it_s * b_T_s_3d;
+        double p = 1e-3;
         for (std::size_t i = 0 ; i < points_size ;  i+= points_step) {
             const auto &point = stereo_points->at(i);
-            const cslibs_math_3d::Point3d map_point = m_T_s_3d * point;
-            p += (map_point.isNormal() ? bundle_likelihood(map_point) : 0);
+            const cslibs_math_3d::Point3d map_point = m_T_s * point;
+            p += map_point.isNormal() ? pow3(bundle_likelihood(map_point)) : 0.0;
         }
         *it *= p;
     }
