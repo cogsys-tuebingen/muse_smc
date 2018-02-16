@@ -16,6 +16,7 @@
 #include <muse_mcl_2d/resampling/resampling_2d.hpp>
 #include <muse_mcl_2d/density/sample_density_2d.hpp>
 #include <muse_mcl_2d/state_space/state_space_description_2d.hpp>
+#include <muse_mcl_2d/scheduling/cfs_rate.hpp>
 
 #include "state_publisher_2d.h"
 
@@ -24,7 +25,6 @@
 #include <muse_smc/prediction/prediction_relay.hpp>
 #include <muse_smc/plugins/plugin_loader.hpp>
 #include <muse_smc/plugins/plugin_factory.hpp>
-#include <muse_smc/scheduling/cfs_rate.hpp>
 
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 
@@ -62,7 +62,7 @@ private:
     using sample_set_t           = muse_smc::SampleSet<StateSpaceDescription2D>;
     using prediction_integrals_t = muse_smc::PredictionIntegrals<StateSpaceDescription2D>;
     using scheduler_t            = muse_smc::Scheduler<StateSpaceDescription2D>;
-    using rate_scheduler_t       = muse_smc::CFSRate<StateSpaceDescription2D>;
+    using rate_scheduler_t       = muse_mcl_2d::CFSRate;
 
     using update_model_mapping_t = UpdateRelay2D::map_t;
 

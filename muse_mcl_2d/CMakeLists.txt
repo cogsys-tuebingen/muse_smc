@@ -55,7 +55,7 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
 )
 
-find_package(OpenCV 3.4 REQUIRED)
+find_package(OpenCV 3.3 REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 add_executable(${PROJECT_NAME}_statistics_plotter
