@@ -358,13 +358,13 @@ protected:
                 else {
                     std::cerr << "Dropped " << u->getModelName() << " " << (sample_set_->getStamp() - u->getStamp()).milliseconds() << std::endl;
                 }
-
+#endif
                 if(prediction_integrals_->thresholdExceeded() &&
                         scheduler_->apply(resampling_, sample_set_)) {
                     prediction_integrals_->reset();
                     state_publisher_->publish(sample_set_);
                 }
-
+#ifdef MUSE_SMC_DEBUG
                 now = cslibs_time::Time::now();
                 dur = now - last;
                 if(!dur.isZero() && !prediction_integrals_->isZero()) {
