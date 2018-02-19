@@ -84,8 +84,9 @@ protected:
         SampleDensity2D::covariance_t cov;
         density->mean(mean, cov);
 
-//        if(!(cov(0,0) >= cov_x_ || cov(1,1) >= cov_y_ || cov(2,2) >= cov_yaw_))
-//            return;
+        if(cov(0,0) < cov_x_ && cov(1,1) < cov_y_ && cov(2,2) < cov_yaw_)
+            return;
+
 
         const std::size_t sample_size_minimum = std::max(sample_set.getMinimumSampleSize(), 2ul);
         const std::size_t sample_size_maximum = sample_set.getMaximumSampleSize();

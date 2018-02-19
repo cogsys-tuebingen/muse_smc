@@ -8,6 +8,9 @@
 #include <cslibs_indexed_storage/storage.hpp>
 #include <cslibs_indexed_storage/backend/kdtree/kdtree_buffered.hpp>
 
+#include <cslibs_math/statistics/distribution.hpp>
+#include <cslibs_math/statistics/angular_mean.hpp>
+
 namespace cis = cslibs_indexed_storage;
 
 namespace muse_mcl_2d {
@@ -56,8 +59,8 @@ public:
     virtual void insert(const Sample2D &sample) override
     {
         kdtree_->insert(indexation_.create(sample), sample_data_t(sample));
-        global_position_.add(sample.state.translation(), sample.weight);
-        global_angle_.add(sample.state.yaw(), sample.weight);
+        global_position_.add(sample.state.translation());
+        global_angle_.add(sample.state.yaw());
     }
 
     virtual void estimate() override
@@ -93,7 +96,7 @@ public:
         mean.setYaw(global_angle_.getMean());
 
         const Eigen::Matrix2d  linear_covariance    = global_position_.getCovariance();
-        const double           angular_covariance   = global_angle_.getCovariance();
+        const double           angular_covariance   = global_angle_.getVariance();
         covariance(0,0) = linear_covariance(0,0);
         covariance(0,1) = linear_covariance(0,1);
         covariance(1,0) = linear_covariance(1,0);
@@ -139,8 +142,8 @@ protected:
     std::shared_ptr<cis_kd_tree_buffered_t> kdtree_;
 
     clustering_t                            clustering_impl_;
-    distribution_t                          global_position_;
-    angular_mean_t                          global_angle_;
+    cslibs_math::statistics::Distribution<2,0>  global_position_;
+    cslibs_math::statistics::AngularMean        global_angle_;
 
 };
 }
