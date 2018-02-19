@@ -146,7 +146,9 @@ public:
 
     inline void addUpdate(const typename update_t::Ptr &update)
     {
-        const std::size_t id = update->getModelId();
+        const std::size_t        id    = update->getModelId();
+        const cslibs_time::Time &stamp = update->getStamp();
+
         cslibs_time::statistics::DurationLowpass &lag = lag_map_[id];
         lag += (update->getStampReceived() - update->getStamp());
         if(lag.duration() > lag_) {
@@ -155,7 +157,7 @@ public:
         }
         if(id == lag_source_) {
             while(delayed_update_queue_.hasElements()) {
-                if(delayed_update_queue_.top()->getStamp() <= update->getStamp())
+                if(delayed_update_queue_.top()->getStamp() <= stamp)
                     update_queue_.emplace(delayed_update_queue_.pop());
                 else
                     break;
@@ -351,7 +353,9 @@ protected:
 #endif
                         }
                     }
-                } else {
+                }
+#ifdef MUSE_SMC_DEBUG
+                else {
                     std::cerr << "Dropped " << u->getModelName() << " " << (sample_set_->getStamp() - u->getStamp()).milliseconds() << std::endl;
                 }
 
@@ -361,7 +365,6 @@ protected:
                     state_publisher_->publish(sample_set_);
                 }
 
-#ifdef MUSE_SMC_DEBUG
                 now = cslibs_time::Time::now();
                 dur = now - last;
                 if(!dur.isZero() && !prediction_integrals_->isZero()) {
