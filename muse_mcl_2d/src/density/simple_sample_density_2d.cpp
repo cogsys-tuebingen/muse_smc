@@ -56,6 +56,8 @@ public:
     virtual void insert(const Sample2D &sample) override
     {
         kdtree_->insert(indexation_.create(sample), sample_data_t(sample));
+        global_position_.add(sample.state.translation(), sample.weight);
+        global_angle_.add(sample.state.yaw(), sample.weight);
     }
 
     virtual void estimate() override
