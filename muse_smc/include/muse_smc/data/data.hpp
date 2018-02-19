@@ -39,7 +39,7 @@ public:
         return time_frame_;
     }
 
-    inline cslibs_time::Time const & getTimeReceived() const
+    inline cslibs_time::Time const & getStampReceived() const
     {
         return time_received_;
     }

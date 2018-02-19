@@ -30,12 +30,18 @@ public:
         bool operator()( const Prediction& lhs,
                          const Prediction& rhs ) const
         {
-            return lhs.getStamp() > rhs.getStamp();
+            const auto &lhs_stamp = lhs.getStamp();
+            const auto &rhs_stamp = rhs.getStamp();
+            return  lhs_stamp == rhs_stamp ? lhs.getStampReceived() > rhs.getStampReceived() :
+                                             lhs_stamp > rhs_stamp;
         }
         bool operator()( const Prediction::Ptr& lhs,
                          const Prediction::Ptr& rhs ) const
         {
-            return lhs->getStamp() > rhs->getStamp();
+            const auto &lhs_stamp = lhs->getStamp();
+            const auto &rhs_stamp = rhs->getStamp();
+            return  lhs_stamp == rhs_stamp ? lhs->getStampReceived() > rhs->getStampReceived() :
+                                             lhs_stamp > rhs_stamp;
         }
     };
 
@@ -62,6 +68,11 @@ public:
     inline const cslibs_time::Time& getStamp() const
     {
         return data_->getTimeFrame().start;
+    }
+
+    inline cslibs_time::Time const & getStampReceived() const
+    {
+        return data_->getStampReceived();
     }
 
     inline const std::string& getModelName() const

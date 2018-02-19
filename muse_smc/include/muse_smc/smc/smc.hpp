@@ -11,7 +11,7 @@
 #include <muse_smc/smc/smc_state.hpp>
 #include <muse_smc/scheduling/scheduler.hpp>
 #include <cslibs_time/rate.hpp>
-#include <cslibs_time/statistics/duration.hpp>
+#include <cslibs_time/statistics/duration_lowpass.hpp>
 #include <cslibs_utility/synchronized/synchronized_priority_queue.hpp>
 
 
@@ -71,7 +71,7 @@ public:
     using prediction_queue_t    = cslibs_utility::synchronized::priority_queue<typename prediction_t::Ptr,
                                                                                typename prediction_t::Greater>;
     using duration_t            = cslibs_time::Duration;
-    using duration_map_t        = std::unordered_map<std::size_t, cslibs_time::statistics::Duration>;
+    using duration_map_t        = std::unordered_map<std::size_t, cslibs_time::statistics::DurationLowpass>;
 
     inline SMC() :
         request_init_state_(false),
@@ -147,14 +147,13 @@ public:
     inline void addUpdate(const typename update_t::Ptr &update)
     {
         const std::size_t id = update->getModelId();
-        cslibs_time::statistics::Duration &lag = lag_map_[id];
-        lag += (update->getTimeReceived() - update->getStamp());
-        if(lag.mean() > lag_) {
-            lag_ = lag.mean();
+        cslibs_time::statistics::DurationLowpass &lag = lag_map_[id];
+        lag += (update->getStampReceived() - update->getStamp());
+        if(lag.duration() > lag_) {
+            lag_ = lag.duration();
             lag_source_ = id;
         }
-
-        if(update->getModelId() == lag_source_) {
+        if(id == lag_source_) {
             while(delayed_update_queue_.hasElements()) {
                 if(delayed_update_queue_.top()->getStamp() <= update->getStamp())
                     update_queue_.emplace(delayed_update_queue_.pop());

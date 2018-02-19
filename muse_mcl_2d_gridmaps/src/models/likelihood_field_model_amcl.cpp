@@ -4,6 +4,9 @@
 
 #include <muse_mcl_2d_gridmaps/maps/distance_gridmap.h>
 
+#include <nav_msgs/OccupancyGrid.h>
+#include <tf/tf.h>
+
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::LikelihoodFieldModelAMCL, muse_mcl_2d::UpdateModel2D)
 

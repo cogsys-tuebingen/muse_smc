@@ -44,7 +44,7 @@ public:
         return index_t({
                              {static_cast<int>(std::floor(sample.state.tx()            * resolution_inv_[0])),
                               static_cast<int>(std::floor(sample.state.ty()            * resolution_inv_[0])),
-                              static_cast<int>(cslibs_math::common::angle::normalize2Pi(sample.state.yaw() + M_PI)  * resolution_inv_[1])},
+                              static_cast<int>(cslibs_math::common::angle::normalize2Pi(sample.state.yaw())  * resolution_inv_[1])},
                          });
     }
 
@@ -53,7 +53,7 @@ public:
         return index_t({
                              {static_cast<int>(std::floor(state.tx()            * resolution_inv_[0])),
                               static_cast<int>(std::floor(state.ty()            * resolution_inv_[0])),
-                              static_cast<int>(cslibs_math::common::angle::normalize2Pi(state.yaw() + M_PI)  * resolution_inv_[1])},
+                              static_cast<int>(cslibs_math::common::angle::normalize2Pi(state.yaw())  * resolution_inv_[1])},
                          });
     }
 
@@ -62,7 +62,7 @@ public:
         return index_t({
                              {static_cast<int>(std::floor(state[0] / resolution_[0])),
                               static_cast<int>(std::floor(state[1] / resolution_[0])),
-                              static_cast<int>(cslibs_math::common::angle::normalize2Pi(state[2] + M_PI)  * resolution_inv_[1])}
+                              static_cast<int>(cslibs_math::common::angle::normalize2Pi(state[2])  * resolution_inv_[1])}
                          });
     }
 

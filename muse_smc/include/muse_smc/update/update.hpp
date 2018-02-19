@@ -32,21 +32,19 @@ public:
         bool operator()( const Update& lhs,
                          const Update& rhs ) const
         {
-            return lhs.getStamp() > rhs.getStamp();
+            const auto &lhs_stamp = lhs.getStamp();
+            const auto &rhs_stamp = rhs.getStamp();
+            return  lhs_stamp == rhs_stamp ? lhs.getStampReceived() > rhs.getStampReceived() :
+                                             lhs_stamp > rhs_stamp;
+
         }
         bool operator()( const Update::Ptr &lhs,
                          const Update::Ptr &rhs ) const
         {
-            return lhs->getStamp() > rhs->getStamp();
-        }
-    };
-
-    struct GreaterRecv
-    {
-        bool operator() (const Update::Ptr &lhs,
-                         const Update::Ptr &rhs) const
-        {
-            return lhs->getTimeReceived() > rhs->getTimeReceived();
+            const auto &lhs_stamp = lhs->getStamp();
+            const auto &rhs_stamp = rhs->getStamp();
+            return  lhs_stamp == rhs_stamp ? lhs->getStampReceived() > rhs->getStampReceived() :
+                                             lhs_stamp > rhs_stamp;
         }
     };
 
@@ -54,7 +52,7 @@ public:
            const typename state_space_t::ConstPtr   &state_space,
            const typename update_model_t::Ptr       &model) :
         data_(data),
-        state_space(state_space),
+        state_space_(state_space),
         model_(model)
     {
     }
@@ -66,12 +64,12 @@ public:
     inline void operator()
         (typename sample_set_t::weight_iterator_t weights)
     {
-        model_->update(data_, state_space, weights);
+        model_->update(data_, state_space_, weights);
     }
 
     inline void apply(typename sample_set_t::weight_iterator_t weights)
     {
-        model_->apply(data_, state_space, weights);
+        model_->apply(data_, state_space_, weights);
     }
 
     inline cslibs_time::Time const & getStamp() const
@@ -79,9 +77,9 @@ public:
         return data_->getTimeFrame().end;
     }
 
-    inline cslibs_time::Time const & getTimeReceived() const
+    inline cslibs_time::Time const & getStampReceived() const
     {
-        return data_->getTimeReceived();
+        return data_->getStampReceived();
     }
 
     inline typename update_model_t::Ptr getModel() const
@@ -101,7 +99,7 @@ public:
 
 private:
     const Data::ConstPtr                    data_;
-    const typename state_space_t::ConstPtr  state_space;
+    const typename state_space_t::ConstPtr  state_space_;
     typename update_model_t::Ptr            model_;
 };
 }

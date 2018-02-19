@@ -90,7 +90,7 @@ public:
         cslibs_math_2d::Transform2d b_T_o = cslibs_math_2d::Transform2d::identity();
         if(tf_listener_.lookupTransform(base_frame_, odom_frame_, ros::Time(w_T_b_.stamp().seconds()), b_T_o, timeout_)) {
             cslibs_math_2d::Transform2d w_T_o = w_T_b_.data() * b_T_o;
-            w_T_o_ = tf::StampedTransform( cslibs_math_ros::tf::conversion_2d::from(w_T_o), ros::Time(w_T_b_.stamp().seconds()), world_frame_, odom_frame_);
+            w_T_o_ = tf::StampedTransform(cslibs_math_ros::tf::conversion_2d::from(w_T_o), ros::Time(w_T_b_.stamp().seconds()), world_frame_, odom_frame_);
 
             tf_time_of_transform_ = w_T_o_.stamp_;
         }

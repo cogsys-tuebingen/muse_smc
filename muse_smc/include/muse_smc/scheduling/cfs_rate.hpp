@@ -5,7 +5,7 @@
 
 #include <muse_smc/scheduling/scheduler.hpp>
 
-#include <cslibs_time/statistics/duration.hpp>
+#include <cslibs_time/statistics/duration_mean.hpp>
 
 namespace muse_smc {
 template<typename state_space_description_t>
