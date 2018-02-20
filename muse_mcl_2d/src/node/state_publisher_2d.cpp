@@ -42,6 +42,20 @@ void StatePublisher::publish(const sample_set_t::Ptr &sample_set)
 
     if(density->maxClusterMean(latest_w_T_b_.data(), latest_w_T_b_covariance_)) {
         latest_w_T_b_.stamp() = sample_set->getStamp();
+
+//        if(angle_stamp_.isZero()) {
+//            angle_dx_ = latest_w_T_b_.data().cos();
+//            angle_dy_ = latest_w_T_b_.data().sin();
+//        } else {
+//            const ros::Time now = ros::Time::now();
+//            const double dt = (now - angle_stamp_).seconds();
+//            const double alpha = dt / (dt + 0.1);
+//            angle_dx_ = alpha * latest_w_T_b_.data().cos() + (1 - alpha) * angle_dx_;
+//            angle_dy_ = alpha * latest_w_T_b_.data().sin() + (1 - alpha) * angle_dy_;
+//            angle_stamp_ = now;
+//        }
+
+
         /// make sure that TF gets published first #most important
         tf_publisher_->setTransform(latest_w_T_b_);
     }

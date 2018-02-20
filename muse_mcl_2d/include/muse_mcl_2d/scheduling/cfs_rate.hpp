@@ -128,7 +128,6 @@ public:
         if(resampling_time_.isZero())
             resampling_time_ = stamp;
 
-
         auto do_apply = [&stamp, &r, &s, &now, this] () {
 //            const time_t start = now();
             r->apply(*s);

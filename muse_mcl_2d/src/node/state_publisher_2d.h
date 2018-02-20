@@ -35,6 +35,9 @@ private:
 
     stamped_t                             latest_w_T_b_;
     cslibs_math_2d::Covariance2d          latest_w_T_b_covariance_;
+    double                                angle_dx_;
+    double                                angle_dy_;
+    cslibs_time::Time                     angle_stamp_;
 
     void publishState(const typename sample_set_t::Ptr &sample_set);
 

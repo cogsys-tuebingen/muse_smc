@@ -73,8 +73,9 @@ protected:
 
         sample_set.updateDensity();
 
-        if(sample_set.getWeightDistribution().getVariance() < variance_threshold_)
-          return;
+        if(variance_threshold_ != 0.0 && sample_set.getWeightDistribution().getVariance() < variance_threshold_) {
+            return;
+        }
 
         SampleDensity2D::ConstPtr     density = std::dynamic_pointer_cast<SampleDensity2D const>(sample_set.getDensity());
         if(!density)

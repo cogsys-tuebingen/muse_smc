@@ -154,6 +154,7 @@ public:
         if(lag.duration() > lag_) {
             lag_ = lag.duration();
             lag_source_ = id;
+            std::cerr << "lag " << id << " " << lag.duration() << " " << (update->getStampReceived() - update->getStamp()) << "\n";
         }
         if(id == lag_source_) {
             while(delayed_update_queue_.hasElements()) {
