@@ -154,7 +154,9 @@ public:
         if(lag.duration() > lag_) {
             lag_ = lag.duration();
             lag_source_ = id;
+#ifdef MUSE_SMC_DEBUG
             std::cerr << "lag " << id << " " << lag.duration() << " " << (update->getStampReceived() - update->getStamp()) << "\n";
+#endif
         }
         if(id == lag_source_) {
             while(delayed_update_queue_.hasElements()) {
