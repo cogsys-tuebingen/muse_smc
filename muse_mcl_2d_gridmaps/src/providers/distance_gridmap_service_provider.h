@@ -28,11 +28,10 @@ protected:
     bool                                        blocking_;
 
     mutable std::mutex                          map_mutex_;
-    mutable std::condition_variable             map_loaded_;
     mutable DistanceGridmap::Ptr                map_;
-    mutable std::atomic_bool                    loading_;
+    mutable std::mutex                          map_load_mutex_;
     mutable std::thread                         worker_;
-
+    mutable std::condition_variable             notify_;
 
 };
 }

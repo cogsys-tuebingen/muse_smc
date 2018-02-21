@@ -27,10 +27,10 @@ protected:
     bool                                                blocking_;
 
     mutable std::mutex                                  map_mutex_;
-    mutable std::condition_variable                     map_loaded_;
     muse_mcl_2d_gridmaps::BinaryGridmap::Ptr            map_;
-    std::atomic_bool                                    loading_;
+    mutable std::mutex                                  map_load_mutex_;
     std::thread                                         worker_;
+    mutable std::condition_variable                     notify_;
 
     void callback(const nav_msgs::OccupancyGridConstPtr &msg);
 
