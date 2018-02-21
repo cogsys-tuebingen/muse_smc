@@ -31,13 +31,7 @@ protected:
     std::thread                     worker_;
     mutable std::condition_variable notify_;
 
-    mutable ros::Publisher          pub_;
-    double                          threshold_;
-    cslibs_gridmaps::utility::InverseModel::Ptr inverse_model_;
-    mutable sensor_msgs::PointCloud2::Ptr msg_;
-
     void loadMap();
-    void publishMap() const;
 };
 }
 

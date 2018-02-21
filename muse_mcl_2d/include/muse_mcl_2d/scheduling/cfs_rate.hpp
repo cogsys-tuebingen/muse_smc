@@ -105,7 +105,7 @@ public:
             const time_t start = now();
             u->apply(s->getWeightIterator());
             const duration_t dur = (now() - start);
-            entry.vtime += static_cast<int64_t>(dur.nanoseconds() * nice_values_[id]);
+            entry.vtime += static_cast<int64_t>(static_cast<double>(dur.nanoseconds()) * nice_values_[id] / static_cast<double>(s->getSampleSize()));
             next_update_time_ = stamp + dur;
 
             q_.push(entry);
@@ -129,12 +129,12 @@ public:
             resampling_time_ = stamp;
 
         auto do_apply = [&stamp, &r, &s, &now, this] () {
-//            const time_t start = now();
+            const time_t start = now();
             r->apply(*s);
-//            const duration_t dur = (now() - start);
+            const duration_t dur = (now() - start);
 
             resampling_time_   = stamp + resampling_period_;
-            next_update_time_  = next_update_time_ ; //+ dur;
+            next_update_time_  = next_update_time_; // + dur;
 
             int64_t min_vtime = q_.top().vtime;
             queue_t q;

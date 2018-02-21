@@ -28,12 +28,21 @@ void ProbabilityGridmapProvider::setup(ros::NodeHandle &nh)
 
 void ProbabilityGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr &msg)
 {
+    if(!msg) {
+        ROS_ERROR_STREAM("[" << name_ << "]: Received nullptr from ros!");
+        return;
+    }
+    if(msg->info.height == 0 || msg->info.width == 0 || msg->info.resolution == 0) {
+        ROS_ERROR_STREAM("[" << name_ << "]: Received empty map from ros!");
+        return;
+    }
+
     /// conversion can take time
     /// we allow concurrent loading, this way, the front end thread is not blocking.
-    auto load = [this, &msg]() {
+    auto load = [this, msg]() {
         if(map_load_mutex_.try_lock()) {
             if(!map_ || cslibs_time::Time(msg->info.map_load_time.toNSec()) > map_->getStamp()) {
-                ROS_INFO_STREAM("[" << name_ << "]: Loading map.");
+                ROS_INFO_STREAM("[" << name_ << "]: Loading map [" << msg->info.width << " x " << msg->info.height << "]");
                 cslibs_gridmaps::static_maps::ProbabilityGridmap::Ptr map;
                 cslibs_gridmaps::static_maps::conversion::from(*msg, map);
                 std::unique_lock<std::mutex> l(map_mutex_);
@@ -44,11 +53,11 @@ void ProbabilityGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr 
             notify_.notify_one();
         }
     };
-    auto load_blocking = [this, &msg]() {
+    auto load_blocking = [this, msg]() {
         if(map_load_mutex_.try_lock()) {
             if(!map_ || cslibs_time::Time(msg->info.map_load_time.toNSec()) > map_->getStamp()) {
                 std::unique_lock<std::mutex> l(map_mutex_);
-                ROS_INFO_STREAM("[" << name_ << "]: Loading map.");
+                ROS_INFO_STREAM("[" << name_ << "]: Loading map [" << msg->info.width << " x " << msg->info.height << "]");
                 cslibs_gridmaps::static_maps::ProbabilityGridmap::Ptr map;
                 cslibs_gridmaps::static_maps::conversion::from(*msg, map);
                 map_.reset(new ProbabilityGridmap(map, msg->header.frame_id));

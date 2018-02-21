@@ -33,12 +33,22 @@ void LikelihoodFieldGridmapProvider::setup(ros::NodeHandle &nh_private)
 
 void LikelihoodFieldGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr &msg)
 {
+    if(!msg) {
+        ROS_ERROR_STREAM("[" << name_ << "]: Received nullptr from ros!");
+        return;
+    }
+    if(msg->info.height == 0 || msg->info.width == 0 || msg->info.resolution == 0) {
+        ROS_ERROR_STREAM("[" << name_ << "]: Received empty map from ros!");
+        return;
+    }
+
+
     /// conversion can take time
     /// we allow concurrent loading, this way, the front end thread is not blocking.
-    auto load = [this, &msg]() {
+    auto load = [this, msg]() {
         if(map_load_mutex_.try_lock()) {
             if(!map_ || cslibs_time::Time(msg->info.map_load_time.toNSec()) > map_->getStamp()) {
-                ROS_INFO_STREAM("[" << name_ << "]: Loading map.");
+                ROS_INFO_STREAM("[" << name_ << "]: Loading map [" << msg->info.width << " x " << msg->info.height << "]");
                 cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr map;
                 cslibs_gridmaps::static_maps::conversion::from(*msg, map, maximum_distance_, sigma_hit_, binarization_threshold_);
                 std::unique_lock<std::mutex> l(map_mutex_);
@@ -49,11 +59,11 @@ void LikelihoodFieldGridmapProvider::callback(const nav_msgs::OccupancyGridConst
             notify_.notify_one();
         }
     };
-    auto load_blocking = [this, &msg]() {
+    auto load_blocking = [this, msg]() {
         if(map_load_mutex_.try_lock()) {
             if(!map_ || cslibs_time::Time(msg->info.map_load_time.toNSec()) > map_->getStamp()) {
                 std::unique_lock<std::mutex> l(map_mutex_);
-                ROS_INFO_STREAM("[" << name_ << "]: Loading map.");
+                ROS_INFO_STREAM("[" << name_ << "]: Loading map [" << msg->info.width << " x " << msg->info.height << "]");
                 cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr map;
                 cslibs_gridmaps::static_maps::conversion::from(*msg, map, maximum_distance_, sigma_hit_, binarization_threshold_);
                 map_.reset(new LikelihoodFieldGridmap(map, msg->header.frame_id));

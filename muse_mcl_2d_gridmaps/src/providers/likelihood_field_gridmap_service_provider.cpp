@@ -28,7 +28,7 @@ LikelihoodFieldGridmapServiceProvider::state_space_t::ConstPtr LikelihoodFieldGr
     if(source_.call(req)) {
         /// conversion can take time
         /// we allow concurrent loading, this way, the front end thread is not blocking.
-        auto load = [this, &req]() {
+        auto load = [this, req]() {
             if(map_load_mutex_.try_lock()) {
                 if(!map_ || cslibs_time::Time(req.response.map.info.map_load_time.toNSec()) > map_->getStamp()) {
                     ROS_INFO_STREAM("[" << name_ << "]: Loading map.");
@@ -42,7 +42,7 @@ LikelihoodFieldGridmapServiceProvider::state_space_t::ConstPtr LikelihoodFieldGr
                 notify_.notify_one();
             }
         };
-        auto load_blocking = [this, &req]() {
+        auto load_blocking = [this, req]() {
             if(map_load_mutex_.try_lock()) {
                 if(!map_ || cslibs_time::Time(req.response.map.info.map_load_time.toNSec()) > map_->getStamp()) {
                     std::unique_lock<std::mutex> l(map_mutex_);

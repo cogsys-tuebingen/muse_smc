@@ -85,9 +85,8 @@ public:
             const time_t start = time_t::now();
             u->apply(s->getWeightIterator());
             const duration_t dur = (time_t::now() - start);
-            const duration_t dur_propagation = (start - propagation_start_);
 
-            entry.vtime += static_cast<int64_t>(dur.nanoseconds() * nice_values_[id]);
+            entry.vtime += static_cast<int64_t>(static_cast<double>(dur.nanoseconds()) * nice_values_[id] / static_cast<double>(s->getSampleSize()));
             next_update_time_ = stamp + dur;
             q_.push(entry);
             propagation_start_ = time_t::now();
@@ -114,7 +113,7 @@ public:
             const duration_t dur = (time_t::now() - start);
             
             resampling_time_   = stamp + resampling_period_;
-            next_update_time_  = next_update_time_ ; //+ dur;
+            next_update_time_  = next_update_time_ + dur;
             propagation_start_ = propagation_start_ + dur;
 
             int64_t min_vtime = q_.top().vtime;
