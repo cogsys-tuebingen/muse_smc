@@ -55,15 +55,16 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
 )
 
-find_package(OpenCV 3.3 REQUIRED)
+find_package(OpenCV 3.4 QUIET)
+if(${OpenCV_FOUND})
 include_directories(${OpenCV_INCLUDE_DIRS})
-
 add_executable(${PROJECT_NAME}_statistics_plotter
     src/tools/statistics_plotter.cpp
 )
 target_link_libraries(${PROJECT_NAME}_statistics_plotter
     ${OpenCV_LIBRARIES}
 )
+endif()
 
 add_library(${PROJECT_NAME}_resampling
     src/resampling/kld_2d.cpp

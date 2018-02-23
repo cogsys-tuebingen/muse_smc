@@ -28,7 +28,7 @@ DifferentialDrive::Result::Ptr DifferentialDrive::apply(const muse_smc::Data::Co
     double delta_rot1 = 0.0;
     if(delta_trans >= 0.01) {
        delta_rot1  = cslibs_math::common::angle::difference(odometry.getDeltaAngularAbs(),
-                                                       odometry.getStartPose().yaw());
+                                                            odometry.getStartPose().yaw());
     }
     const double delta_rot2 = cslibs_math::common::angle::difference(odometry.getDeltaAngular(), delta_rot1);
 
