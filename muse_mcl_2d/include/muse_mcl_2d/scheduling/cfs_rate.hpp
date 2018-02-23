@@ -105,7 +105,7 @@ public:
             const time_t start = now();
             u->apply(s->getWeightIterator());
             const duration_t dur = (now() - start);
-            entry.vtime += static_cast<int64_t>(static_cast<double>(dur.nanoseconds()) * nice_values_[id] / static_cast<double>(s->getSampleSize()));
+            entry.vtime += static_cast<int64_t>(static_cast<double>(dur.nanoseconds()) * nice_values_[id]);
             next_update_time_ = stamp + dur;
 
             q_.push(entry);
