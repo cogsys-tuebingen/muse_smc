@@ -2,8 +2,8 @@
 #include <unordered_map>
 
 #include <muse_mcl_2d/density/sample_density_2d.hpp>
-#include "simple_sample_indexation_2d.hpp"
-#include "simple_sample_clustering_2d.hpp"
+#include "sample_indexation_2d.hpp"
+#include "sample_clustering_2d.hpp"
 
 #include <cslibs_indexed_storage/storage.hpp>
 #include <cslibs_indexed_storage/backend/kdtree/kdtree_buffered.hpp>
@@ -22,9 +22,9 @@ class MCSampleDensity2D : public muse_mcl_2d::SampleDensity2D
 {
 public:
 public:
-    using indexation_t              = SimpleSampleIndexation2D;
-    using sample_data_t             = SimpleSampleDensityData2D;
-    using clustering_t              = SimpleSampleClustering2D;
+    using indexation_t              = SampleIndexation2D;
+    using sample_data_t             = SampleDensityData2D;
+    using clustering_t              = SampleClustering2D;
 
     using index_t                   = indexation_t::index_t;
 
@@ -39,18 +39,16 @@ public:
 
     virtual void setup(ros::NodeHandle &nh) override
     {
-        auto param_name = [this](const std::string &name){return name_ + "/" + name;};
-
-        const double resolution_linear  = nh.param<double>(param_name("resolution_linear"), 0.1);
-        const double resolution_angular = cslibs_math::common::angle::toRad(nh.param<double>(param_name("resolution_angular"), 5.0));
-        const std::size_t maximum_sample_size = static_cast<std::size_t>(nh.param<int>(param_name("maximum_sample_size"), 0));
-
-        indexation_ = {{resolution_linear, resolution_angular}};
+        auto param_name                         = [this](const std::string &name){return name_ + "/" + name;};
+        const double resolution_linear          = nh.param<double>(param_name("resolution_linear"), 0.1);
+        const double resolution_angular         = cslibs_math::common::angle::toRad(nh.param<double>(param_name("resolution_angular"), 5.0));
+        const std::size_t maximum_sample_size   = static_cast<std::size_t>(nh.param<int>(param_name("maximum_sample_size"), 0));
+        indexation_                             = {{resolution_linear, resolution_angular}};
         kdtree_.reset(new cis_kd_tree_buffered_t);
         kdtree_->set<cis::option::tags::node_allocator_chunk_size>(2 * maximum_sample_size + 1);
 
-        clustering_impl_ = clustering_t(indexation_);
-
+        clustering_impl_                        = clustering_t(indexation_);
+        ignore_weight_                          = nh.param<double>(param_name("ignore_weight"), false);
     }
 
     virtual void clear() override
@@ -64,7 +62,7 @@ public:
     virtual void insert(const Sample2D &sample) override
     {
         state_t state = offset_ * sample.state;
-        kdtree_->insert(indexation_.create(state), sample_data_t(sample));
+        kdtree_->insert(indexation_.create(state), sample_data_t(sample, ignore_weight_));
         global_position_.add(sample.state.translation());
         global_angle_.add(sample.state.yaw());
     }
@@ -109,7 +107,7 @@ public:
         covariance(2,2) = angular_covariance;
     }
 
-    bool maxClusterMean(state_t &mean, covariance_t &covariance) const
+    bool maxClusterMean(state_t &mean, covariance_t &covariance) const override
     {
         double max_weight = std::numeric_limits<double>::lowest();
         int    max_cluster_id = -1;
@@ -153,6 +151,7 @@ protected:
     clustering_t                                clustering_impl_;
     cslibs_math::statistics::Distribution<2,0>  global_position_;
     cslibs_math::statistics::AngularMean        global_angle_;
+    bool                                        ignore_weight_;
 };
 }
 

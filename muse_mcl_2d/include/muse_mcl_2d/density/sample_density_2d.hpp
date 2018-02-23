@@ -28,7 +28,7 @@ public:
         return "muse_mcl_2d::SampleDensity2D";
     }
 
-    using distribution_t      = cslibs_math::statistics::WeightedDistribution<2>;
+    using distribution_t      = cslibs_math::statistics::WeightedDistribution<2,0>;
     using angular_mean_t      = cslibs_math::statistics::WeightedAngularMean;
     using allocator_t         = Eigen::aligned_allocator<std::pair<const int, distribution_t>>;
     using distribution_map_t  = std::unordered_map<int,

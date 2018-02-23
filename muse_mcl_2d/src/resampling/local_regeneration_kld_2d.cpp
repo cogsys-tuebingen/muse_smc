@@ -118,9 +118,7 @@ protected:
             const double u = rng.get();
             for(std::size_t j = 0 ; j < size ; ++j) {
                 if(cumsum[j] <= u && u < cumsum[j+1]) {
-                    sample_t s = p_t_1[j];
-                    s.weight = reset_one_ ? 1.0 : s.weight;
-                    i_p_t.insert(s);
+                    i_p_t.insert(p_t_1[j]);
                     break;
                 }
             }

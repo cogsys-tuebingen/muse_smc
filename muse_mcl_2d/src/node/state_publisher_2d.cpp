@@ -29,7 +29,7 @@ void StatePublisher::setup(ros::NodeHandle &nh)
     tf_publisher_->start();
 }
 
-void StatePublisher::publish(const sample_set_t::Ptr &sample_set)
+void StatePublisher::publish(const sample_set_t::ConstPtr &sample_set)
 {
     /// calculate the latest transformation
     SampleDensity2D::ConstPtr density =
@@ -42,21 +42,6 @@ void StatePublisher::publish(const sample_set_t::Ptr &sample_set)
 
     if(density->maxClusterMean(latest_w_T_b_.data(), latest_w_T_b_covariance_)) {
         latest_w_T_b_.stamp() = sample_set->getStamp();
-
-//        const ros::Time now = ros::Time::now();
-//        if(angle_stamp_.isZero()) {
-//            angle_stamp_ = now;
-//            angle_dx_ = latest_w_T_b_.data().cos();
-//            angle_dy_ = latest_w_T_b_.data().sin();
-//        } else {
-//            const double dt = (now - angle_stamp_).toSec();
-//            const double alpha = dt / (dt + 0.1);
-//            angle_dx_ = alpha * latest_w_T_b_.data().cos() + (1 - alpha) * angle_dx_;
-//            angle_dy_ = alpha * latest_w_T_b_.data().sin() + (1 - alpha) * angle_dy_;
-//            angle_stamp_ = now;
-//            latest_w_T_b_.data().setYaw(std::atan2(angle_dy_, angle_dx_));
-//        }
-
         /// make sure that TF gets published first #most important
         tf_publisher_->setTransform(latest_w_T_b_);
     }
@@ -64,12 +49,12 @@ void StatePublisher::publish(const sample_set_t::Ptr &sample_set)
     publishState(sample_set);
 }
 
-void StatePublisher::publishIntermidiate(const sample_set_t::Ptr &sample_set)
+void StatePublisher::publishIntermidiate(const sample_set_t::ConstPtr &sample_set)
 {
     publishState(sample_set);
 }
 
-void StatePublisher::publishState(const sample_set_t::Ptr &sample_set)
+void StatePublisher::publishState(const sample_set_t::ConstPtr &sample_set)
 {
     sample_publisher_->set(sample_set->getSamples(),
                            sample_set->getMaximumWeight(),

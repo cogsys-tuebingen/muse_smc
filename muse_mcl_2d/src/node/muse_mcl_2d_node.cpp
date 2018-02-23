@@ -215,9 +215,12 @@ bool MuseMCL2DNode::setup()
                                        u.second->getId());
         }
 
-        const std::size_t sample_size = nh_private_.param<int>(param_name("sample_size"), 0);
-        const std::size_t minimum_sample_size = sample_size == 0 ? nh_private_.param<int>(param_name("minimum_sample_size"), 0) : sample_size;
-        const std::size_t maximum_sample_size = sample_size == 0 ? nh_private_.param<int>(param_name("maximum_sample_size"), 0) : sample_size;
+        const std::size_t sample_size                   = nh_private_.param<int>(param_name("sample_size"), 0);
+        const std::size_t minimum_sample_size           = sample_size == 0 ? nh_private_.param<int>(param_name("minimum_sample_size"), 0) : sample_size;
+        const std::size_t maximum_sample_size           = sample_size == 0 ? nh_private_.param<int>(param_name("maximum_sample_size"), 0) : sample_size;
+        const bool        reset_weights_after_insertion = nh_private_.param<bool>(param_name("reset_weights_after_insertion"), true);
+        const bool        reset_weights_to_one          = nh_private_.param<bool>(param_name("reset_weights_to_one"), true);
+
         if(minimum_sample_size == 0) {
             ROS_ERROR_STREAM("Minimum sample size cannot be zero!");
             return false;
@@ -231,7 +234,9 @@ bool MuseMCL2DNode::setup()
                                            cslibs_time::Time(ros::Time::now().toNSec()),
                                            minimum_sample_size,
                                            maximum_sample_size,
-                                           sample_density_));
+                                           sample_density_,
+                                           reset_weights_after_insertion,
+                                           reset_weights_to_one));
         state_publisher_.reset(new StatePublisher);
         state_publisher_->setup(nh_private_);
 

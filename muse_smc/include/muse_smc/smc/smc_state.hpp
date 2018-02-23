@@ -13,8 +13,8 @@ public:
     using sample_t      = typename state_space_description_t::sample_t;
     using sample_set_t  = SampleSet<state_space_description_t>;
 
-    virtual void publish(const typename sample_set_t::Ptr &sample_set) = 0;
-    virtual void publishIntermidiate(const typename sample_set_t::Ptr &sample_set) = 0;
+    virtual void publish(const typename sample_set_t::ConstPtr &sample_set) = 0;
+    virtual void publishIntermidiate(const typename sample_set_t::ConstPtr &sample_set) = 0;
 
 };
 }

@@ -22,8 +22,8 @@ public:
 
     void setup(ros::NodeHandle &nh);
 
-    virtual void publish(const typename sample_set_t::Ptr &sample_set) override;
-    virtual void publishIntermidiate(const typename sample_set_t::Ptr &sample_set) override;
+    virtual void publish(const typename sample_set_t::ConstPtr &sample_set) override;
+    virtual void publishIntermidiate(const typename sample_set_t::ConstPtr &sample_set) override;
 
 private:
     TFPublisher::Ptr            tf_publisher_;
@@ -35,11 +35,8 @@ private:
 
     stamped_t                             latest_w_T_b_;
     cslibs_math_2d::Covariance2d          latest_w_T_b_covariance_;
-    double                                angle_dx_;
-    double                                angle_dy_;
-    ros::Time                             angle_stamp_;
 
-    void publishState(const typename sample_set_t::Ptr &sample_set);
+    void publishState(const sample_set_t::ConstPtr &sample_set);
 
 };
 }

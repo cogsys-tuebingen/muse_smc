@@ -15,7 +15,6 @@ protected:
     virtual void doApply(sample_set_t &sample_set) override
     {
         muse_smc::impl::WheelOfFortune<StateSpaceDescription2D>::apply(sample_set);
-        sample_set.resetWeights();
     }
 
     virtual void doApplyRecovery(sample_set_t &sample_set) override
@@ -23,7 +22,6 @@ protected:
         muse_smc::impl::WheelOfFortune<StateSpaceDescription2D>::applyRecovery(uniform_pose_sampler_,
                                                                                recovery_random_pose_probability_,
                                                                                sample_set);
-        sample_set.resetWeights();
     }
 };
 }

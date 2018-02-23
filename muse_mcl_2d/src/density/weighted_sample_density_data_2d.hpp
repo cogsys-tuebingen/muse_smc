@@ -1,5 +1,5 @@
-#ifndef SAMPLE_DENSITY_DATA_2D_HPP
-#define SAMPLE_DENSITY_DATA_2D_HPP
+#ifndef WEIGHTED_SAMPLE_DENSITY_DATA_2D_HPP
+#define WEIGHTED_SAMPLE_DENSITY_DATA_2D_HPP
 
 #include <muse_mcl_2d/samples/sample_2d.hpp>
 
@@ -9,7 +9,7 @@
 #include <vector>
 
 namespace muse_mcl_2d {
-struct SimpleSampleDensityData2D {
+struct WeightedSampleDensityData2D {
     using sample_ptr_vector_t = std::vector<const Sample2D *>;
 
     using distribution_t      = cslibs_math::statistics::WeightedDistribution<2>;
@@ -20,11 +20,11 @@ struct SimpleSampleDensityData2D {
     distribution_t      distribution;
     angular_mean_t      angular_mean;
 
-    inline SimpleSampleDensityData2D()
+    inline WeightedSampleDensityData2D()
     {
     }
 
-    inline SimpleSampleDensityData2D(const SimpleSampleDensityData2D &other) :
+    inline WeightedSampleDensityData2D(const WeightedSampleDensityData2D &other) :
         cluster(other.cluster),
         samples((other.samples)),
         distribution((other.distribution)),
@@ -33,7 +33,7 @@ struct SimpleSampleDensityData2D {
     }
 
 
-    inline SimpleSampleDensityData2D(SimpleSampleDensityData2D &&other) :
+    inline WeightedSampleDensityData2D(WeightedSampleDensityData2D &&other) :
         cluster(other.cluster),
         samples(std::move(other.samples)),
         distribution(std::move(other.distribution)),
@@ -41,7 +41,7 @@ struct SimpleSampleDensityData2D {
     {
     }
 
-    inline SimpleSampleDensityData2D& operator = (const SimpleSampleDensityData2D &other)
+    inline WeightedSampleDensityData2D& operator = (const WeightedSampleDensityData2D &other)
     {
         cluster         = (other.cluster);
         samples         = ((other.samples));
@@ -50,19 +50,19 @@ struct SimpleSampleDensityData2D {
         return *this;
     }
 
-    virtual ~SimpleSampleDensityData2D()
+    virtual ~WeightedSampleDensityData2D()
     {
     }
 
 
-    inline SimpleSampleDensityData2D(const Sample2D &sample)
+    inline WeightedSampleDensityData2D(const Sample2D &sample)
     {
         samples.emplace_back(&sample);
         distribution.add(sample.state.translation(), sample.weight);
         angular_mean.add(sample.state.yaw(), sample.weight);
      }
 
-    inline void merge(const SimpleSampleDensityData2D &other)
+    inline void merge(const WeightedSampleDensityData2D &other)
     {
         samples.insert(samples.end(), other.samples.begin(), other.samples.end());
         distribution += other.distribution;
@@ -72,4 +72,4 @@ struct SimpleSampleDensityData2D {
 };
 }
 
-#endif // SAMPLE_DENSITY_DATA_2D_HPP
+#endif // WEIGHTED_SAMPLE_DENSITY_DATA_2D_HPP
