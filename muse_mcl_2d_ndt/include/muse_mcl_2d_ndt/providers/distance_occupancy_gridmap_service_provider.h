@@ -25,7 +25,6 @@ protected:
     std::string                                         service_name_;
     std::string                                         path_;
     std::string                                         frame_id_;
-    bool                                                blocking_;
 
     double                                              sampling_resolution_;
     double                                              maximum_distance_;
@@ -33,14 +32,11 @@ protected:
     cslibs_gridmaps::utility::InverseModel::Ptr         inverse_model_;
 
     mutable std::mutex                                  map_mutex_;
-    mutable std::condition_variable                     map_loaded_;
+    mutable std::condition_variable                     map_notify_;
     mutable muse_mcl_2d_gridmaps::DistanceGridmap::Ptr  map_;
-    mutable std::atomic_bool                            loading_;
     mutable std::thread                                 worker_;
-    mutable ros::Publisher                              pub_;
 
     void loadMap() const;
-    void publishMap() const;
 };
 }
 

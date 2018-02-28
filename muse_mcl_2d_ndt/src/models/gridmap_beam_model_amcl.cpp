@@ -1,7 +1,7 @@
 #include <muse_mcl_2d_ndt/models/gridmap_beam_model_amcl.h>
 
 #include <muse_mcl_2d_laser/laserscan_2d.hpp>
-#include <muse_mcl_2d_ndt/maps/gridmap.h>
+#include <muse_mcl_2d_ndt/maps/gridmap_2d.h>
 
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_ndt::GridmapBeamModelAMCL, muse_mcl_2d::UpdateModel2D)
@@ -15,10 +15,10 @@ void GridmapBeamModelAMCL::apply(const data_t::ConstPtr          &data,
                                  const state_space_t::ConstPtr   &map,
                                  sample_set_t::weight_iterator_t set)
 {
-    if (!map->isType<Gridmap>() || !data->isType<muse_mcl_2d_laser::LaserScan2D>())
+    if (!map->isType<Gridmap2d>() || !data->isType<muse_mcl_2d_laser::LaserScan2D>())
         return;
 
-    const cslibs_ndt_2d::dynamic_maps::Gridmap   &gridmap    = *(map->as<Gridmap>().data());
+    const cslibs_ndt_2d::dynamic_maps::Gridmap   &gridmap    = *(map->as<Gridmap2d>().data());
     const muse_mcl_2d_laser::LaserScan2D         &laser_data = data->as<muse_mcl_2d_laser::LaserScan2D>();
     const muse_mcl_2d_laser::LaserScan2D::rays_t &laser_rays = laser_data.getRays();
 

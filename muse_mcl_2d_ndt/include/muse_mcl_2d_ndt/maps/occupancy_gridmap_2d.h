@@ -1,16 +1,16 @@
-#ifndef MUSE_MCL_2D_NDT_OCCUPANCY_GRIDMAP_H
-#define MUSE_MCL_2D_NDT_OCCUPANCY_GRIDMAP_H
+#ifndef MUSE_MCL_2D_NDT_OCCUPANCY_GRIDMAP_2D_H
+#define MUSE_MCL_2D_NDT_OCCUPANCY_GRIDMAP_2D_H
 
 #include <muse_mcl_2d/map/map_2d.hpp>
 #include <cslibs_ndt_2d/dynamic_maps/occupancy_gridmap.hpp>
 
 namespace muse_mcl_2d_ndt {
-class OccupancyGridmap : public muse_mcl_2d::Map2D
+class OccupancyGridmap2d : public muse_mcl_2d::Map2D
 {
 public:
-    using Ptr = std::shared_ptr<OccupancyGridmap>;
+    using Ptr = std::shared_ptr<OccupancyGridmap2d>;
 
-    OccupancyGridmap(const cslibs_ndt_2d::dynamic_maps::OccupancyGridmap::Ptr &map,
+    OccupancyGridmap2d(const cslibs_ndt_2d::dynamic_maps::OccupancyGridmap::Ptr &map,
                      const std::string frame_id);
 
     state_space_boundary_t getMin() const override;
@@ -25,4 +25,4 @@ private:
 };
 }
 
-#endif // MUSE_MCL_2D_NDT_OCCUPANCY_GRIDMAP_H
+#endif // MUSE_MCL_2D_NDT_OCCUPANCY_GRIDMAP_2D_H

@@ -34,8 +34,8 @@ include_directories(
 link_directories(${PCL_LIBRARY_DIRS})
 
 add_library(${PROJECT_NAME}_maps SHARED
-  src/maps/gridmap.cpp
-  src/maps/occupancy_gridmap.cpp
+  src/maps/gridmap_2d.cpp
+  src/maps/occupancy_gridmap_2d.cpp
   src/maps/gridmap_3d.cpp
   src/maps/occupancy_gridmap_3d.cpp
 )
@@ -45,10 +45,10 @@ target_link_libraries(${PROJECT_NAME}_maps
 )
 
 add_library(${PROJECT_NAME}_providers SHARED
-  src/providers/ndt_gridmap_provider.cpp
-  src/providers/ndt_occupancy_gridmap_provider.cpp
-  src/providers/ndt_gridmap_service_provider.cpp
-  src/providers/ndt_occupancy_gridmap_service_provider.cpp
+  src/providers/ndt_gridmap_2d_provider.cpp
+  src/providers/ndt_occupancy_gridmap_2d_provider.cpp
+  src/providers/ndt_gridmap_2d_service_provider.cpp
+  src/providers/ndt_occupancy_gridmap_2d_service_provider.cpp
   src/providers/ndt_gridmap_3d_provider.cpp
   src/providers/ndt_occupancy_gridmap_3d_provider.cpp
   src/providers/ndt_gridmap_3d_service_provider.cpp

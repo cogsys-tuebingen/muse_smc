@@ -23,19 +23,15 @@ public:
 protected:
     std::string                                     path_;
     std::string                                     frame_id_;
-    bool                                            blocking_;
     double                                          sampling_resolution_;
     cslibs_gridmaps::utility::InverseModel::Ptr     inverse_model_;
 
     mutable std::mutex                              map_mutex_;
-    mutable std::condition_variable                 map_loaded_;
+    mutable std::condition_variable                 map_notify_;
     muse_mcl_2d_gridmaps::ProbabilityGridmap::Ptr   map_;
-    std::atomic_bool                                loading_;
     std::thread                                     worker_;
-    mutable ros::Publisher                          pub_;
 
     void loadMap();
-    void publishMap() const;
 };
 }
 

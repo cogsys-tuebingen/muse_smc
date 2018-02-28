@@ -1,21 +1,22 @@
-#include <muse_mcl_2d_ndt/providers/ndt_gridmap_3d_service_provider.h>
+#include <muse_mcl_2d_ndt/providers/ndt_gridmap_2d_service_provider.h>
 
-#include <cslibs_ndt_3d/serialization/dynamic_maps/gridmap.hpp>
-#include <cslibs_ndt_3d/conversion/pointcloud.hpp>
-#include <pcl_conversions/pcl_conversions.h>
+#include <cslibs_ndt_2d/serialization/dynamic_maps/gridmap.hpp>
+#include <cslibs_ndt_2d/conversion/probability_gridmap.hpp>
+#include <cslibs_gridmaps/static_maps/conversion/convert_probability_gridmap.hpp>
+#include <cslibs_gridmaps/static_maps/algorithms/normalize.hpp>
 #include <yaml-cpp/yaml.h>
 #include <fstream>
 #include <nav_msgs/GetMap.h>
 
 #include <class_loader/class_loader_register_macro.h>
-CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_ndt::NDTGridmap3dServiceProvider, muse_mcl_2d::MapProvider2D)
+CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_ndt::NDTGridmap2dServiceProvider, muse_mcl_2d::MapProvider2D)
 
 namespace muse_mcl_2d_ndt {
-NDTGridmap3dServiceProvider::NDTGridmap3dServiceProvider()
+NDTGridmap2dServiceProvider::NDTGridmap2dServiceProvider()
 {
 }
 
-NDTGridmap3dServiceProvider::state_space_t::ConstPtr NDTGridmap3dServiceProvider::getStateSpace() const
+NDTGridmap2dServiceProvider::state_space_t::ConstPtr NDTGridmap2dServiceProvider::getStateSpace() const
 {
     nav_msgs::GetMap req;
     if (source_.call(req))
@@ -28,7 +29,7 @@ NDTGridmap3dServiceProvider::state_space_t::ConstPtr NDTGridmap3dServiceProvider
     return map_;
 }
 
-void NDTGridmap3dServiceProvider::setup(ros::NodeHandle &nh)
+void NDTGridmap2dServiceProvider::setup(ros::NodeHandle &nh)
 {
     auto param_name = [this](const std::string &name){return name_ + "/" + name;};
 
@@ -39,14 +40,14 @@ void NDTGridmap3dServiceProvider::setup(ros::NodeHandle &nh)
     source_ = nh.serviceClient<nav_msgs::GetMap>(service_name_);
 }
 
-void NDTGridmap3dServiceProvider::loadMap() const
-{    
+void NDTGridmap2dServiceProvider::loadMap() const
+{
     auto load_blocking = [this]() {
         std::unique_lock<std::mutex> l(map_mutex_);
         ROS_INFO_STREAM("Loading file '" << path_ << "'...");
-        cslibs_ndt_3d::dynamic_maps::Gridmap::Ptr map;
-        if (cslibs_ndt_3d::dynamic_maps::loadBinary(path_, map)) {
-            map_.reset(new Gridmap3d(map, frame_id_));
+        cslibs_ndt_2d::dynamic_maps::Gridmap::Ptr map;
+        if (cslibs_ndt_2d::dynamic_maps::loadBinary(path_, map)) {
+            map_.reset(new Gridmap2d(map, frame_id_));
             ROS_INFO_STREAM("Successfully loaded file '" << path_ << "'!");
         } else
             ROS_INFO_STREAM("Could not load file '" << path_ << "'!");

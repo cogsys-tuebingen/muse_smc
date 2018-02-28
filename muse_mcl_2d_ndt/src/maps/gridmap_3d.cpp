@@ -22,8 +22,8 @@ Gridmap3d::state_space_boundary_t Gridmap3d::getMax() const
 
 Gridmap3d::state_space_transform_t Gridmap3d::getOrigin() const
 {
-    const typename cslibs_ndt_3d::dynamic_maps::Gridmap::pose_t &origin = data_->getOrigin();
-    return cslibs_math_2d::Pose2d(origin.tx(), origin.ty(), origin.yaw());  // TODO: initial origin?
+    const typename cslibs_ndt_3d::dynamic_maps::Gridmap::pose_t &origin = data_->getInitialOrigin();
+    return cslibs_math_2d::Pose2d(origin.tx(), origin.ty(), origin.yaw());
 }
 
 bool Gridmap3d::validate(const cslibs_math_2d::Pose2d &p) const

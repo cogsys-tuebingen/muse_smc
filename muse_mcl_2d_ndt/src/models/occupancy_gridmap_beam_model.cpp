@@ -1,7 +1,7 @@
 #include <muse_mcl_2d_ndt/models/occupancy_gridmap_beam_model.h>
 
 #include <muse_mcl_2d_laser/laserscan_2d.hpp>
-#include <muse_mcl_2d_ndt/maps/occupancy_gridmap.h>
+#include <muse_mcl_2d_ndt/maps/occupancy_gridmap_2d.h>
 
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_ndt::OccupancyGridmapBeamModel, muse_mcl_2d::UpdateModel2D)
@@ -15,10 +15,10 @@ void OccupancyGridmapBeamModel::apply(const data_t::ConstPtr          &data,
                                       const state_space_t::ConstPtr   &map,
                                       sample_set_t::weight_iterator_t set)
 {
-    if (!map->isType<OccupancyGridmap>() || !data->isType<muse_mcl_2d_laser::LaserScan2D>() || !inverse_model_)
+    if (!map->isType<OccupancyGridmap2d>() || !data->isType<muse_mcl_2d_laser::LaserScan2D>() || !inverse_model_)
         return;
 
-    const cslibs_ndt_2d::dynamic_maps::OccupancyGridmap &gridmap    = *(map->as<OccupancyGridmap>().data());
+    const cslibs_ndt_2d::dynamic_maps::OccupancyGridmap &gridmap    = *(map->as<OccupancyGridmap2d>().data());
     const muse_mcl_2d_laser::LaserScan2D                &laser_data = data->as<muse_mcl_2d_laser::LaserScan2D>();
     const muse_mcl_2d_laser::LaserScan2D::rays_t        &laser_rays = laser_data.getRays();
 

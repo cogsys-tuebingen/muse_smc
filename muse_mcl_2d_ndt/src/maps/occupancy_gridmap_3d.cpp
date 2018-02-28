@@ -22,8 +22,8 @@ OccupancyGridmap3d::state_space_boundary_t OccupancyGridmap3d::getMax() const
 
 OccupancyGridmap3d::state_space_transform_t OccupancyGridmap3d::getOrigin() const
 {
-    const typename cslibs_ndt_3d::dynamic_maps::OccupancyGridmap::pose_t &origin = data_->getOrigin();
-    return cslibs_math_2d::Pose2d(origin.tx(), origin.ty(), origin.yaw());  // TODO: initial origin?
+    const typename cslibs_ndt_3d::dynamic_maps::OccupancyGridmap::pose_t &origin = data_->getInitialOrigin();
+    return cslibs_math_2d::Pose2d(origin.tx(), origin.ty(), origin.yaw());
 }
 
 bool OccupancyGridmap3d::validate(const cslibs_math_2d::Pose2d &p) const

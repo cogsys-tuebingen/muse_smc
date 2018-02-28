@@ -5,7 +5,10 @@
   <description>The muse_mcl_2d_ndt package</description>
 
   <maintainer email="richard.hanten@uni-tuebingen.de">Richard Hanten</maintainer>
+  <maintainer email="cornelia.schulz@uni-tuebingen.de">Cornelia Schulz</maintainer>
+
   <author email="richard.hanten@uni-tuebingen.de">Richard Hanten</author>
+  <author email="cornelia.schulz@uni-tuebingen.de">Cornelia Schulz</author>
 
   <license>BSD</license>
 
