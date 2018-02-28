@@ -1,23 +1,20 @@
 #include "likelihood_field_gridmap_provider.h"
 
+#include <cslibs_gridmaps/static_maps/conversion/convert_likelihood_field_gridmap.hpp>
+
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_gridmaps::LikelihoodFieldGridmapProvider, muse_mcl_2d::MapProvider2D)
 
-using namespace muse_mcl_2d_gridmaps;
-using namespace muse_mcl_2d;
-
-LikelihoodFieldGridmapProvider::LikelihoodFieldGridmapProvider() :
-    loading_(false)
+namespace muse_mcl_2d_gridmaps {
+LikelihoodFieldGridmapProvider::LikelihoodFieldGridmapProvider()
 {
 }
 
 LikelihoodFieldGridmapProvider::state_space_t::ConstPtr LikelihoodFieldGridmapProvider::getStateSpace() const
 {
     std::unique_lock<std::mutex> l(map_mutex_);
-    if(!map_ && blocking_) {
-        map_loaded_.wait(l);
-    }
-
+    if(!map_)
+        notify_.wait(l);
     return map_;
 }
 
@@ -36,32 +33,49 @@ void LikelihoodFieldGridmapProvider::setup(ros::NodeHandle &nh_private)
 
 void LikelihoodFieldGridmapProvider::callback(const nav_msgs::OccupancyGridConstPtr &msg)
 {
+    if(!msg) {
+        ROS_ERROR_STREAM("[" << name_ << "]: Received nullptr from ros!");
+        return;
+    }
+    if(msg->info.height == 0 || msg->info.width == 0 || msg->info.resolution == 0) {
+        ROS_ERROR_STREAM("[" << name_ << "]: Received empty map from ros!");
+        return;
+    }
+
+
     /// conversion can take time
     /// we allow concurrent loading, this way, the front end thread is not blocking.
-    if(!loading_) {
-        if(!map_ || muse_smc::Time(msg->info.map_load_time.toNSec()) > map_->getStamp()) {
-            loading_ = true;
-
-            auto load = [this, msg]() {
-                static_maps::LikelihoodFieldGridMap::Ptr map(new static_maps::LikelihoodFieldGridMap(*msg, sigma_hit_, z_hit_, maximum_distance_, binarization_threshold_));
-                std::unique_lock<std::mutex>l(map_mutex_);
-                map_ = map;
-                loading_ = false;
-            };
-            auto load_blocking = [this, msg]() {
-                std::unique_lock<std::mutex>l(map_mutex_);
-                static_maps::LikelihoodFieldGridMap::Ptr map(new static_maps::LikelihoodFieldGridMap(*msg, sigma_hit_, z_hit_, maximum_distance_, binarization_threshold_));
-                map_ = map;
-                loading_ = false;
-
-                map_loaded_.notify_one();
-            };
-            if(blocking_) {
-                worker_ = std::thread(load_blocking);
-            } else {
-                worker_ = std::thread(load);
+    auto load = [this, msg]() {
+        if(map_load_mutex_.try_lock()) {
+            if(!map_ || cslibs_time::Time(msg->info.map_load_time.toNSec()) > map_->getStamp()) {
+                ROS_INFO_STREAM("[" << name_ << "]: Loading map [" << msg->info.width << " x " << msg->info.height << "]");
+                cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr map;
+                cslibs_gridmaps::static_maps::conversion::from(*msg, map, maximum_distance_, sigma_hit_, binarization_threshold_);
+                std::unique_lock<std::mutex> l(map_mutex_);
+                map_.reset(new LikelihoodFieldGridmap(map, msg->header.frame_id));
+                ROS_INFO_STREAM("[" << name_ << "]: Loaded map.");
             }
-            worker_.detach();
+            map_load_mutex_.unlock();
+            notify_.notify_one();
         }
-    }
+    };
+    auto load_blocking = [this, msg]() {
+        if(map_load_mutex_.try_lock()) {
+            if(!map_ || cslibs_time::Time(msg->info.map_load_time.toNSec()) > map_->getStamp()) {
+                std::unique_lock<std::mutex> l(map_mutex_);
+                ROS_INFO_STREAM("[" << name_ << "]: Loading map [" << msg->info.width << " x " << msg->info.height << "]");
+                cslibs_gridmaps::static_maps::LikelihoodFieldGridmap::Ptr map;
+                cslibs_gridmaps::static_maps::conversion::from(*msg, map, maximum_distance_, sigma_hit_, binarization_threshold_);
+                map_.reset(new LikelihoodFieldGridmap(map, msg->header.frame_id));
+                ROS_INFO_STREAM("[" << name_ << "]: Loaded map.");
+            }
+            map_load_mutex_.unlock();
+            notify_.notify_one();
+        }
+    };
+    if(blocking_)
+        worker_ = std::thread(load_blocking);
+    else
+        worker_ = std::thread(load);
+}
 }

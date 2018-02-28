@@ -6,12 +6,12 @@
 #include <muse_smc/prediction/prediction_model.hpp>
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename state_space_description_t>
 class Prediction {
 public:
     using Ptr = std::shared_ptr<Prediction>;
-    using predition_model_t = PredictionModel<sample_t>;
-    using sample_set_t = SampleSet<sample_t>;
+    using predition_model_t = PredictionModel<state_space_description_t>;
+    using sample_set_t = SampleSet<state_space_description_t>;
 
     struct Less {
         bool operator()( const Prediction& lhs,
@@ -30,12 +30,18 @@ public:
         bool operator()( const Prediction& lhs,
                          const Prediction& rhs ) const
         {
-            return lhs.getStamp() > rhs.getStamp();
+            const auto &lhs_stamp = lhs.getStamp();
+            const auto &rhs_stamp = rhs.getStamp();
+            return  lhs_stamp == rhs_stamp ? lhs.getStampReceived() > rhs.getStampReceived() :
+                                             lhs_stamp > rhs_stamp;
         }
         bool operator()( const Prediction::Ptr& lhs,
                          const Prediction::Ptr& rhs ) const
         {
-            return lhs->getStamp() > rhs->getStamp();
+            const auto &lhs_stamp = lhs->getStamp();
+            const auto &rhs_stamp = rhs->getStamp();
+            return  lhs_stamp == rhs_stamp ? lhs->getStampReceived() > rhs->getStampReceived() :
+                                             lhs_stamp > rhs_stamp;
         }
     };
 
@@ -48,20 +54,25 @@ public:
     }
 
     inline typename predition_model_t::Result operator ()
-        (const Time &until, typename sample_set_t::state_iterator_t states)
+        (const cslibs_time::Time &until, typename sample_set_t::state_iterator_t states)
     {
         return model_->apply(data_, until, states);
     }
 
-    inline typename predition_model_t::Result::Ptr apply(const Time  &until,
+    inline typename predition_model_t::Result::Ptr apply(const cslibs_time::Time  &until,
                                                          typename sample_set_t::state_iterator_t states)
     {
         return model_->apply(data_, until, states);
     }
 
-    inline const Time& getStamp() const
+    inline const cslibs_time::Time& getStamp() const
     {
         return data_->getTimeFrame().start;
+    }
+
+    inline cslibs_time::Time const & getStampReceived() const
+    {
+        return data_->getStampReceived();
     }
 
     inline const std::string& getModelName() const

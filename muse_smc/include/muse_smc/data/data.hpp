@@ -2,7 +2,8 @@
 #define DATA_HPP
 
 #include <memory>
-#include <muse_smc/time/time_frame.hpp>
+#include <cslibs_time/time_frame.hpp>
+#include <assert.h>
 
 namespace muse_smc {
 class Data {
@@ -15,10 +16,12 @@ public:
     {
     }
 
-    Data(const std::string &frame,
-         const TimeFrame   &time_frame) :
+    Data(const std::string              &frame,
+         const cslibs_time::TimeFrame   &time_frame,
+         const cslibs_time::Time        &time_received) :
         frame_(frame),
-        time_frame_(time_frame)
+        time_frame_(time_frame),
+        time_received_(time_received)
     {
     }
 
@@ -31,9 +34,14 @@ public:
         return frame_;
     }
 
-    inline const TimeFrame & getTimeFrame() const
+    inline const cslibs_time::TimeFrame & getTimeFrame() const
     {
         return time_frame_;
+    }
+
+    inline cslibs_time::Time const & getStampReceived() const
+    {
+        return time_received_;
     }
 
     template<typename T>
@@ -50,12 +58,13 @@ public:
     }
 
 protected:
-    Data() = delete;
+    Data()                  = delete;
     Data(const Data &other) = default;
-    Data(Data &&other) = default;
+    Data(Data &&other)      = default;
 
-    std::string frame_;
-    TimeFrame   time_frame_;
+    std::string              frame_;
+    cslibs_time::TimeFrame   time_frame_;
+    cslibs_time::Time        time_received_;
 };
 }
 

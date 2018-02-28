@@ -9,7 +9,7 @@
 #include <condition_variable>
 
 #include <muse_mcl_2d/map/map_provider_2d.hpp>
-#include <muse_mcl_2d_gridmaps/static_maps/probability_gridmap.h>
+#include <muse_mcl_2d_gridmaps/maps/probability_gridmap.h>
 
 namespace muse_mcl_2d_gridmaps {
 class ProbabilityGridmapServiceProvider : public muse_mcl_2d::MapProvider2D
@@ -21,15 +21,15 @@ public:
     void setup(ros::NodeHandle &nh) override;
 
 protected:
-    mutable ros::ServiceClient source_;
-    std::string                service_name_;
-    bool                       blocking_;
+    mutable ros::ServiceClient                              source_;
+    std::string                                             service_name_;
+    bool                                                    blocking_;
 
-    mutable std::mutex                    map_mutex_;
-    mutable std::condition_variable       map_loaded_;
-    mutable static_maps::ProbabilityGridMap::Ptr map_;
-    mutable std::atomic_bool              loading_;
-    mutable std::thread                   worker_;
+    mutable std::mutex                                      map_mutex_;
+    mutable muse_mcl_2d_gridmaps::ProbabilityGridmap::Ptr   map_;
+    mutable std::mutex                                      map_load_mutex_;
+    mutable std::thread                                     worker_;
+    mutable std::condition_variable                         notify_;
 
 };
 }

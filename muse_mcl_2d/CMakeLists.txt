@@ -3,7 +3,7 @@ project(muse_mcl_2d)
 
 #add_definitions("-DMUSE_SMC_USE_DOTTY")
 #add_definitions("-DMUSE_SMC_LOG_STATE")
-add_definitions("-DMUSE_SMC_DEBUG")
+#add_definitions("-DMUSE_SMC_DEBUG")
 
 find_package(catkin REQUIRED COMPONENTS
   cslibs_indexed_storage
@@ -14,6 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rostest
   muse_smc
+  cslibs_math_2d
+  cslibs_math_ros
   visualization_msgs
   pluginlib
   geometry_msgs
@@ -43,9 +45,8 @@ generate_messages(
 
 catkin_package(
     INCLUDE_DIRS    include
-    LIBRARIES       ${PROJECT_NAME}_resampling ${PROJECT_NAME}_sampling
-    CATKIN_DEPENDS  muse_smc
-    DEPENDS         Eigen3
+    LIBRARIES       ${PROJECT_NAME}_resampling ${PROJECT_NAME}_sampling ${PROJECT_NAME}_odometry
+    CATKIN_DEPENDS  muse_smc cslibs_math_ros cslibs_math_2d
 )
 
 include_directories(
@@ -54,8 +55,20 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
 )
 
+find_package(OpenCV 3.4 QUIET)
+if(${OpenCV_FOUND})
+include_directories(${OpenCV_INCLUDE_DIRS})
+add_executable(${PROJECT_NAME}_statistics_plotter
+    src/tools/statistics_plotter.cpp
+)
+target_link_libraries(${PROJECT_NAME}_statistics_plotter
+    ${OpenCV_LIBRARIES}
+)
+endif()
+
 add_library(${PROJECT_NAME}_resampling
     src/resampling/kld_2d.cpp
+    src/resampling/local_regeneration_kld_2d.cpp
     src/resampling/systematic_2d.cpp
     src/resampling/residual_2d.cpp
     src/resampling/stratified_2d.cpp
@@ -64,6 +77,7 @@ add_library(${PROJECT_NAME}_resampling
 
 target_link_libraries(${PROJECT_NAME}_resampling
     ${catkin_LIBRARIES}
+    ${OpenCV_LIBRARIES}
 )
 
 add_library(${PROJECT_NAME}_sampling
@@ -73,6 +87,24 @@ add_library(${PROJECT_NAME}_sampling
 )
 
 target_link_libraries(${PROJECT_NAME}_sampling
+    ${catkin_LIBRARIES}
+)
+
+add_library(${PROJECT_NAME}_density
+    src/density/simple_sample_density_2d.cpp
+    src/density/mean_centered_sample_density_2d.cpp
+    src/density/dual_sample_density_2d.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}_density
+    ${catkin_LIBRARIES}
+)
+
+add_library(${PROJECT_NAME}_odometry
+    src/odometry/odometry.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}_odometry
     ${catkin_LIBRARIES}
 )
 
@@ -88,20 +120,17 @@ target_link_libraries(${PROJECT_NAME}_node
     ${catkin_LIBRARIES}
 )
 
-add_unit_test_gtest(${PROJECT_NAME}_test_transform2d
-    test/test_transform2d.cpp
-    "${catkin_LIBRARIES}"
+add_executable(${PROJECT_NAME}_box_muller
+    test/test_box_muller.cpp
 )
 
-if(${MUSE_MCL_2D_PERF_TESTS})
-    message("[MuseMCL2D]: Building with performance tests!")
-    add_executable(${PROJECT_NAME}_perf_runtimes_particle_iteration
-        test/perf_runtimes_particle_iteration.cpp
-    )
+target_link_libraries(${PROJECT_NAME}_box_muller
+    ${catkin_LIBRARIES}
+)
 
-    target_link_libraries(${PROJECT_NAME}_perf_runtimes_particle_iteration
-        ${catkin_LIBRARIES}
-    )
+set(MUSE_MCL_2D_PERF_TESTS True)
+if(${MUSE_MCL_2D_PERF_TESTS})
+    message("[muse_mcl_2d]: Building with performance tests!")
     add_executable(${PROJECT_NAME}_perf_runtimes_math_operations
         test/perf_runtimes_math_operations.cpp
     )

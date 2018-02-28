@@ -12,9 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package(
   INCLUDE_DIRS include
-#  LIBRARIES muse_mcl_2d_laser
-#  CATKIN_DEPENDS muse_mcl pluginlib roscpp rostest sensor_msgs
-#  DEPENDS system_lib
+  LIBRARIES ${PROJECT_NAME}
+  CATKIN_DEPENDS muse_mcl_2d
 )
 
 include_directories(

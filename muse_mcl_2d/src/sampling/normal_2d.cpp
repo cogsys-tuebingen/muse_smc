@@ -3,16 +3,15 @@
 
 #include <ros/time.h>
 
-#include <muse_smc/state_space_samplers/normal.hpp>
+#include <cslibs_math/sampling/normal.hpp>
 
 #include <muse_mcl_2d/sampling/normal_2d.hpp>
-#include <muse_mcl_2d/math/convert.hpp>
+#include <cslibs_math_ros/tf/conversion_2d.hpp>
 
 namespace muse_mcl_2d {
-using Metric              = muse_smc::state_space_samplers::Metric;
-using Radian              = muse_smc::state_space_samplers::Radian;
-using RandomPoseGenerator = muse_smc::state_space_samplers::Normal<Metric, Metric, Radian>;
-
+using Metric    = muse_smc::state_space_samplers::Metric;
+using Radian    = muse_smc::state_space_samplers::Radian;
+using rng_t     = muse_smc::state_space_samplers::Normal<Metric, Metric, Radian>;
 
 class Normal2D : public NormalSampling2D
 {
@@ -21,42 +20,42 @@ public:
     {
         const ros::Time   now   = ros::Time::now();
 
-        Point2D min(std::numeric_limits<double>::max(),
-                    std::numeric_limits<double>::max());
-        Point2D max(std::numeric_limits<double>::lowest(),
-                    std::numeric_limits<double>::lowest());
+        cslibs_math_2d::Point2d min(std::numeric_limits<double>::max(),
+                          std::numeric_limits<double>::max());
+        cslibs_math_2d::Point2d max(std::numeric_limits<double>::lowest(),
+                          std::numeric_limits<double>::lowest());
 
         for(auto &m : map_providers_) {
             tf::Transform tf_map_T_w;
-            Transform2D map_t_w;
+            cslibs_math_2d::Transform2d map_t_w;
             Map2D::ConstPtr map = m->getStateSpace();
             if(!map) {
                 throw std::runtime_error("[Normal2D] : map was null!");
             }
 
             if(tf_->lookupTransform(map->getFrame(), frame, now, tf_map_T_w, tf_timeout_)) {
-                map_t_w = from(tf_map_T_w);
+                map_t_w =  cslibs_math_ros::tf::conversion_2d::from(tf_map_T_w);
 
                 maps_.emplace_back(map);
                 maps_T_w_.emplace_back(map_t_w);
 
-                Transform2D w_T_map = map_t_w.inverse();
-                min = min.min(w_T_map * map->getMin());
-                max = max.max(w_T_map * map->getMax());
+                cslibs_math_2d::Transform2d w_T_map = map_t_w.inverse();
+                min = cslibs_math::linear::min(w_T_map * map->getMin(), min);
+                max = cslibs_math::linear::max(w_T_map * map->getMax(), max);
 
             }
         }
     }
 
-    virtual void apply(const Pose2D       &pose,
-                       const Covariance2D &covariance,
+    virtual void apply(const cslibs_math_2d::Pose2d       &pose,
+                       const cslibs_math_2d::Covariance2d &covariance,
                        sample_set_t &sample_set) override
     {
         update(sample_set.getFrame());
 
-        RandomPoseGenerator::Ptr rng(new RandomPoseGenerator(pose.toEigen(), covariance.toEigen()));
+        rng_t::Ptr rng(new rng_t(pose.toEigen(), covariance));
         if(random_seed_ >= 0) {
-            rng.reset(new RandomPoseGenerator(pose.toEigen(), covariance.toEigen(), random_seed_));
+            rng.reset(new rng_t(pose.toEigen(), covariance, random_seed_));
         }
 
         if(sample_size_ < sample_set.getMinimumSampleSize() &&
@@ -90,10 +89,9 @@ public:
     }
 
 protected:
-
-    int random_seed_;
+    int                             random_seed_;
     std::vector<Map2D::ConstPtr>    maps_;
-    std::vector<Transform2D>        maps_T_w_;
+    std::vector<cslibs_math_2d::Transform2d>  maps_T_w_;
     std::vector<MapProvider2D::Ptr> map_providers_;
 
     virtual void doSetup(const std::map<std::string, MapProvider2D::Ptr> &map_providers,

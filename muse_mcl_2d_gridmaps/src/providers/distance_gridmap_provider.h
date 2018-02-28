@@ -9,7 +9,7 @@
 #include <condition_variable>
 
 #include <muse_mcl_2d/map/map_provider_2d.hpp>
-#include <muse_mcl_2d_gridmaps/static_maps/distance_gridmap.h>
+#include <muse_mcl_2d_gridmaps/maps/distance_gridmap.h>
 
 
 namespace muse_mcl_2d_gridmaps {
@@ -29,10 +29,10 @@ protected:
     bool                                blocking_;
 
     mutable std::mutex                  map_mutex_;
-    mutable std::condition_variable     map_loaded_;
-    static_maps::DistanceGridMap::Ptr   map_;
-    std::atomic_bool                    loading_;
+    DistanceGridmap::Ptr                map_;
+    mutable std::mutex                  map_load_mutex_;
     std::thread                         worker_;
+    mutable std::condition_variable     notify_;
 
     void callback(const nav_msgs::OccupancyGridConstPtr &msg);
 

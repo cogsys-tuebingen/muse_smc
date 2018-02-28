@@ -1,36 +1,41 @@
-## use with gtest
 # add_unit_test_gtest is a wrapper function for catkin_add_gtest
 #   UNIT_TEST_NAME : is the name for the test
 #   UNIT_TEST_SRCS : a list of sources - make sure to wrap into quotes
 #   UNIT_TEST_LIBS : a list of libraries to link - make sure to wrap into quotes
 #                    and use semicoli as delimiters.
-function(add_unit_test_gtest UNIT_TEST_NAME UNIT_TEST_SRCS UNIT_TEST_LIBS)
-    find_package(Boost REQUIRED COMPONENTS system)
+function(${PROJECT_NAME}_add_unit_test_gtest)
+    set(unit_test_NAME ${PROJECT_NAME}_${ARGV0})
+    cmake_parse_arguments(unit_test
+        ""          # list of names of the boolean arguments (only defined ones will be true)
+        ""          # list of names of mono-valued arguments
+        "SRCS;LIBS" # list of names of multi-valued arguments (output variables are lists)
+        ${ARGN}     # arguments of the function to parse, here we take the all original ones
+    )
 
-    catkin_add_gtest(${UNIT_TEST_NAME}
-        ${UNIT_TEST_SRCS}
-    )
-    target_link_libraries(${UNIT_TEST_NAME}
-        ${UNIT_TEST_LIBS}
-        ${GTEST_LIBRARIES}
-        ${Boost_LIBRARIES}
-    )
+    if(${catkin_FOUND})
+        find_package(Boost REQUIRED COMPONENTS system)
+
+        add_definitions(-pthread)
+
+        catkin_add_gtest(${unit_test_NAME}
+            ${unit_test_SRCS}
+        )
+        target_link_libraries(${unit_test_NAME}
+            ${unit_test_LIBS}
+            ${GTEST_LIBRARIES}
+            ${Boost_LIBRARIES}
+            -lpthread
+        )
+    else()
+        enable_testing()
+        add_executable(${unit_test_NAME}
+            ${unit_test_SRCS}
+        )
+        target_link_libraries(${unit_test_NAME}
+            ${unit_test_LIBS}
+            ${GTEST_LIBRARIES}
+        )
+        add_test(AllTestsIn${unit_test_NAME} ${unit_test_NAME})
+        add_definitions(-lpthread)
+    endif()
 endfunction()
-
-## use with gtest
-# add_unit_test_gtest is a wrapper function for catkin_add_gtest
-#   UNIT_TEST_NAME : is the name for the test
-#   UNIT_TEST_SRCS : a list of sources - make sure to wrap into quotes
-function(add_unit_test_gtest UNIT_TEST_NAME UNIT_TEST_SRCS)
-    find_package(Boost REQUIRED COMPONENTS system)
-
-    catkin_add_gtest(${UNIT_TEST_NAME}
-        ${UNIT_TEST_SRCS}
-    )
-    target_link_libraries(${UNIT_TEST_NAME}
-        ${UNIT_TEST_LIBS}
-        ${GTEST_LIBRARIES}
-        ${Boost_LIBRARIES}
-    )
-endfunction()
-

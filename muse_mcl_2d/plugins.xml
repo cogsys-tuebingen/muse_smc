@@ -18,6 +18,9 @@
    <class type="muse_mcl_2d::WheelOfFortune" base_class_type="muse_mcl_2d::Resampling2D">
      <description>Systematic resampling.</description>
    </class>
+   <class type="muse_mcl_2d::LocalRegenerationKLD2D" base_class_type="muse_mcl_2d::Resampling2D">
+     <description>2D resampling with adaptive sample size and local regeneration.</description>
+   </class>
 </library>
 <library path="libmuse_mcl_2d_sampling">
     <!-- Pose Generation -->
@@ -36,4 +39,15 @@
        bounding rectangle of the main map. All other maps are used for validation.
     </description>
 </class>
+</library>
+<library path="libmuse_mcl_2d_density">
+    <class type="muse_mcl_2d::SimpleSampleDensity2D" base_class_type="muse_mcl_2d::SampleDensity2D">
+    <description>Simple density grid to estimate the sample density.</description>
+    </class>
+    <class type="muse_mcl_2d::MCSampleDensity2D" base_class_type="muse_mcl_2d::SampleDensity2D">
+    <description>
+        This is an extension of the simple density estimation using
+        using the last angular mean as an offset for the next iteration.
+    </description>
+    </class>
 </library>

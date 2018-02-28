@@ -14,14 +14,14 @@ protected:
 
     virtual void doApply(sample_set_t &sample_set) override
     {
-        muse_smc::impl::Stratified<Sample2D>::apply(sample_set);
+        muse_smc::impl::Stratified<StateSpaceDescription2D>::apply(sample_set);
     }
 
     virtual void doApplyRecovery(sample_set_t &sample_set) override
     {
-        muse_smc::impl::Stratified<Sample2D>::applyRecovery(uniform_pose_sampler_,
-                                                            recovery_random_pose_probability_,
-                                                            sample_set);
+        muse_smc::impl::Stratified<StateSpaceDescription2D>::applyRecovery(uniform_pose_sampler_,
+                                                                           recovery_random_pose_probability_,
+                                                                           sample_set);
     }
 };
 }

@@ -7,7 +7,7 @@
 #include <muse_smc/data/data_provider.hpp>
 
 #include <muse_mcl_2d/samples/sample_2d.hpp>
-#include <muse_mcl_2d/tf/tf_provider.hpp>
+#include <cslibs_math_ros/tf/tf_listener_2d.hpp>
 
 namespace muse_mcl_2d {
 class DataProvider2D : public muse_smc::DataProvider<Sample2D>
@@ -20,8 +20,8 @@ public:
         return "muse_mcl_2d::DataProvider2D";
     }
 
-    void setup(const TFProvider::Ptr &tf,
-               ros::NodeHandle       &nh)
+    inline void setup(const cslibs_math_ros::tf::TFListener2d::Ptr &tf,
+                      ros::NodeHandle       &nh)
     {
         auto param_name = [this](const std::string &name){return name_ + "/" + name;};
         tf_ = tf;
@@ -30,7 +30,7 @@ public:
     }
 
 protected:
-    TFProvider::Ptr tf_;
+    cslibs_math_ros::tf::TFListener2d::Ptr tf_;
     ros::Duration   tf_timeout_;
 
     virtual void doSetup(ros::NodeHandle &nh) = 0;

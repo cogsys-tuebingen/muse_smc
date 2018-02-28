@@ -5,8 +5,7 @@
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <visualization_msgs/MarkerArray.h>
 
-using namespace muse_mcl_2d;
-
+namespace muse_mcl_2d {
 namespace color {
 #define __HSV2RGB__(H, S, V, R, G, B) \
 { \
@@ -91,7 +90,6 @@ bool SampleSetPublisher2D::start()
     if(!running_) {
         stop_ = false;
         worker_thread_ = std::thread([this](){loop();});
-        worker_thread_.detach();
         return true;
     }
     return false;
@@ -111,8 +109,8 @@ bool SampleSetPublisher2D::end()
 
 void SampleSetPublisher2D::set(const sample_vector_t &sample_vector,
                                const double maximum_weight,
-                               const Pose2D &mean,
-                               const Covariance2D &covariance,
+                               const cslibs_math_2d::Pose2d &mean,
+                               const cslibs_math_2d::Covariance2d &covariance,
                                const time_t &stamp)
 {
     lock_t lock(data_mutex_);
@@ -145,8 +143,7 @@ void SampleSetPublisher2D::loop()
         return marker;
     };
 
-    auto create_pose = []
-            (const Pose2D &pose)
+    auto create_pose = [](const cslibs_math_2d::Pose2d &pose)
     {
         geometry_msgs::Pose p;
         p.position.x = pose.tx();
@@ -182,11 +179,11 @@ void SampleSetPublisher2D::loop()
     running_ = true;
     lock_t notify_lock(notify_mutex_);
 
-    time_t               stamp;
-    sample_vector_t::Ptr samples;
-    Pose2D               mean;
-    Covariance2D         covariance;
-    double               maximum_weight = 0.0;
+    time_t                         stamp;
+    sample_vector_t::Ptr           samples;
+    cslibs_math_2d::Pose2d         mean;
+    cslibs_math_2d::Covariance2d   covariance;
+    double                         maximum_weight = 0.0;
 
     while(!stop_) {
         notify_.wait(notify_lock);
@@ -220,7 +217,7 @@ void SampleSetPublisher2D::loop()
         if(publish_markers_) {
             marker_array_msg.reset(new visualization_msgs::MarkerArray);
 
-#if ROS_VERSION_MAJOR >= 1 && ROS_VERSION_MINOR >= 11
+#if ROS_VERSION_MAJOR >= 1 && ROS_VERSION_MINOR > 11
             {
                 visualization_msgs::Marker m = create_empty_marker();
                 m.id = -1;
@@ -287,4 +284,5 @@ void SampleSetPublisher2D::loop()
     }
 
     running_ = false;
+}
 }

@@ -3,22 +3,26 @@
 
 #include <muse_smc/samples/sample_set.hpp>
 #include <muse_smc/sampling/uniform.hpp>
+#include <muse_smc/sampling/normal.hpp>
 #include <muse_smc/prediction/prediction_integral.hpp>
 
-#include <muse_smc/math/random.hpp>
+#include <cslibs_math/random/random.hpp>
 
 #include <memory>
 #include <vector>
+#include <iostream>
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename state_space_description_t>
 class Resampling
 {
 public:
     using Ptr = std::shared_ptr<Resampling>;
-    using sample_set_t = SampleSet<sample_t>;
-    using sample_uniform_t = UniformSampling<sample_t>;
-    using prediction_integral_t = PredictionIntegral<sample_t>;
+    using sample_t              = typename state_space_description_t::sample_t;
+    using sample_set_t          = SampleSet<state_space_description_t>;
+    using sample_uniform_t      = UniformSampling<state_space_description_t>;
+    using sample_normal_t       = NormalSampling<state_space_description_t>;
+    using prediction_integral_t = PredictionIntegral<state_space_description_t>;
 
     Resampling() :
         recovery_alpha_fast_(0.0),
@@ -58,10 +62,12 @@ public:
     }
 
     virtual inline void setup(const typename sample_uniform_t::Ptr &uniform_pose_sampler,
+                              const typename sample_normal_t::Ptr  &normal_pose_sampler,
                               const double                          recovery_alpha_fast = 0.0,
                               const double                          recovery_alpha_slow = 0.0)
     {
         uniform_pose_sampler_ = uniform_pose_sampler;
+        normal_pose_sampler_ = normal_pose_sampler;
         recovery_alpha_fast_  = recovery_alpha_fast;
         recovery_alpha_slow_  = recovery_alpha_slow;
     }
@@ -69,15 +75,16 @@ public:
     inline void apply(sample_set_t &sample_set)
     {
         if(sample_set.getWeightSum() == 0.0) {
-            std::cerr << "[MuseSMC]: Cannot resample if all weights are zero! \n";
-            return;
+            std::cerr << "[MuseSMC]: All particle weights are zero. \n";
         }
-
         updateRecovery(sample_set);
-        if(recovery_random_pose_probability_ == 0.0)
+        auto do_apply = [&sample_set, this] () {
             doApply(sample_set);
-        else
+        };
+        auto do_apply_recovery = [&sample_set, this] () {
             doApplyRecovery(sample_set);
+        };
+        return recovery_random_pose_probability_ == 0.0 ? do_apply() : do_apply_recovery();
     }
 
     inline void resetRecovery()
@@ -95,6 +102,7 @@ protected:
     double                          recovery_slow_;
     double                          recovery_random_pose_probability_;
     typename sample_uniform_t::Ptr  uniform_pose_sampler_;
+    typename sample_normal_t::Ptr   normal_pose_sampler_;
 
     virtual void doApply(sample_set_t &sample_set) = 0;
     virtual void doApplyRecovery(sample_set_t &sample_set) = 0;

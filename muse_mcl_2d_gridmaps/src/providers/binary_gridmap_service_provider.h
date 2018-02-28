@@ -9,7 +9,7 @@
 #include <condition_variable>
 
 #include <muse_mcl_2d/map/map_provider_2d.hpp>
-#include <muse_mcl_2d_gridmaps/static_maps/binary_gridmap.h>
+#include <muse_mcl_2d_gridmaps/maps/binary_gridmap.h>
 
 namespace muse_mcl_2d_gridmaps {
 class BinaryGridmapServiceProvider : public muse_mcl_2d::MapProvider2D
@@ -26,12 +26,11 @@ protected:
     double                              binarization_threshold_;
     bool                                blocking_;
 
-    mutable std::mutex                  map_mutex_;
-    mutable std::condition_variable     map_loaded_;
-    mutable static_maps::BinaryGridMap::Ptr    map_;
-    mutable std::atomic_bool            loading_;
-    mutable std::thread                 worker_;
-
+    mutable std::mutex                                  map_mutex_;
+    mutable muse_mcl_2d_gridmaps::BinaryGridmap::Ptr    map_;
+    mutable std::mutex                                  map_load_mutex_;
+    mutable std::thread                                 worker_;
+    mutable std::condition_variable                     notify_;
 
 };
 }

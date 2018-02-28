@@ -3,16 +3,17 @@
 
 #include <muse_smc/update/update_model.hpp>
 #include <muse_smc/samples/sample_set.hpp>
-#include <muse_smc/time/time_frame.hpp>
+#include <cslibs_time/time_frame.hpp>
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename state_space_description_t>
 class Update {
 public:
-    using Ptr = std::shared_ptr<Update>;
-    using update_model_t = UpdateModel<sample_t>;
-    using sample_set_t   = SampleSet<sample_t>;
-    using state_space_t  = StateSpace<sample_t>;
+    using Ptr            = std::shared_ptr<Update>;
+    using sample_t       = typename state_space_description_t::sample_t;
+    using update_model_t = UpdateModel<state_space_description_t>;
+    using sample_set_t   = SampleSet<state_space_description_t>;
+    using state_space_t  = StateSpace<state_space_description_t>;
 
     struct Less {
         bool operator()( const Update& lhs,
@@ -31,12 +32,19 @@ public:
         bool operator()( const Update& lhs,
                          const Update& rhs ) const
         {
-            return lhs.getStamp() > rhs.getStamp();
+            const auto &lhs_stamp = lhs.getStamp();
+            const auto &rhs_stamp = rhs.getStamp();
+            return  lhs_stamp == rhs_stamp ? lhs.getStampReceived() > rhs.getStampReceived() :
+                                             lhs_stamp > rhs_stamp;
+
         }
         bool operator()( const Update::Ptr &lhs,
                          const Update::Ptr &rhs ) const
         {
-            return lhs->getStamp() > rhs->getStamp();
+            const auto &lhs_stamp = lhs->getStamp();
+            const auto &rhs_stamp = rhs->getStamp();
+            return  lhs_stamp == rhs_stamp ? lhs->getStampReceived() > rhs->getStampReceived() :
+                                             lhs_stamp > rhs_stamp;
         }
     };
 
@@ -44,7 +52,7 @@ public:
            const typename state_space_t::ConstPtr   &state_space,
            const typename update_model_t::Ptr       &model) :
         data_(data),
-        state_space(state_space),
+        state_space_(state_space),
         model_(model)
     {
     }
@@ -56,17 +64,22 @@ public:
     inline void operator()
         (typename sample_set_t::weight_iterator_t weights)
     {
-        model_->update(data_, state_space, weights);
+        model_->update(data_, state_space_, weights);
     }
 
     inline void apply(typename sample_set_t::weight_iterator_t weights)
     {
-        model_->apply(data_, state_space, weights);
+        model_->apply(data_, state_space_, weights);
     }
 
-    inline Time const & getStamp() const
+    inline cslibs_time::Time const & getStamp() const
     {
         return data_->getTimeFrame().end;
+    }
+
+    inline cslibs_time::Time const & getStampReceived() const
+    {
+        return data_->getStampReceived();
     }
 
     inline typename update_model_t::Ptr getModel() const
@@ -86,7 +99,7 @@ public:
 
 private:
     const Data::ConstPtr                    data_;
-    const typename state_space_t::ConstPtr  state_space;
+    const typename state_space_t::ConstPtr  state_space_;
     typename update_model_t::Ptr            model_;
 };
 }

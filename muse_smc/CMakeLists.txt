@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(muse_smc)
 
-set(OpenMP true)
 include(cmake/muse_smc_enable_c++11.cmake)
 include(cmake/muse_smc_extras.cmake)
 include(cmake/muse_smc_openmp.cmake)
@@ -15,15 +14,20 @@ find_package(TinyXML REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   pluginlib
+  cslibs_math
+  cslibs_time
+  cslibs_utility
 )
 
 catkin_package(
     INCLUDE_DIRS    include
-    DEPENDS         TinyXML Eigen3
+    CATKIN_DEPENDS  cslibs_time cslibs_math cslibs_utility
+    DEPENDS         TinyXML
     CFG_EXTRAS      muse_smc_extras.cmake
                     muse_smc_enable_c++11.cmake
                     muse_smc_add_unit_test_gtest.cmake
                     muse_smc_show_headers.cmake
+                    muse_smc_openmp.cmake
 )
 
 # add_definitions("-DMUSE_SMC_USE_DOTTY")
@@ -31,7 +35,7 @@ catkin_package(
 
 include_directories(
   include
-  ${Eigen3_INCLUDE_DIRS}
+  ${Eigen3_INCLUDE_DIR}
   ${catkin_INCLUDE_DIRS}
 )
 

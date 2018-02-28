@@ -13,15 +13,16 @@
 
 #include <muse_mcl_2d/samples/sample_2d.hpp>
 #include <muse_mcl_2d/SampleSetMsg.h>
+#include <muse_mcl_2d/state_space/state_space_description_2d.hpp>
 
 namespace muse_mcl_2d {
 class SampleSetPublisher2D
 {
 public:
     using Ptr = std::shared_ptr<SampleSetPublisher2D>;
-    using sample_set_t    = muse_smc::SampleSet<Sample2D>;
+    using sample_set_t    = muse_smc::SampleSet<StateSpaceDescription2D>;
     using sample_vector_t = sample_set_t::sample_vector_t;
-    using time_t          = muse_smc::Time;
+    using time_t          = cslibs_time::Time;
     using lock_t          = std::unique_lock<std::mutex>;
 
     SampleSetPublisher2D();
@@ -31,11 +32,11 @@ public:
     bool start();
     bool end();
 
-    void set(const sample_vector_t &sample_vector,
-             const double           weight_maximum,
-             const Pose2D          &mean,
-             const Covariance2D    &covariance,
-             const time_t          &stamp);
+    void set(const sample_vector_t                   &sample_vector,
+             const double                             weight_maximum,
+             const cslibs_math_2d::Pose2d          &mean,
+             const cslibs_math_2d::Covariance2d    &covariance,
+             const time_t                            &stamp);
 
 private:
     std::atomic_bool                    running_;
@@ -47,8 +48,8 @@ private:
     std::mutex                          data_mutex_;
     sample_vector_t::Ptr                sample_;
     double                              maximum_weight_;
-    Pose2D                              mean_;
-    Covariance2D                        covariance_;
+    cslibs_math_2d::Pose2d            mean_;
+    cslibs_math_2d::Covariance2d      covariance_;
     time_t                              stamp_;
 
     ros::Publisher                      pub_markers_;

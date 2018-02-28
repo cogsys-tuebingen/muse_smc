@@ -1,12 +1,11 @@
 #include "state_publisher_2d.h"
 
-#include <muse_mcl_2d/samples/sample_density_2d.hpp>
+#include <muse_mcl_2d/density/sample_density_2d.hpp>
 
-using namespace muse_mcl_2d;
-
+namespace muse_mcl_2d {
 StatePublisher::StatePublisher() :
-    latest_w_T_b_(Transform2D(),
-                  muse_smc::Time(ros::Time::now().toNSec()))
+    latest_w_T_b_(cslibs_math_2d::Transform2d(),
+                  cslibs_time::Time(ros::Time::now().toNSec()))
 {
 }
 
@@ -30,7 +29,7 @@ void StatePublisher::setup(ros::NodeHandle &nh)
     tf_publisher_->start();
 }
 
-void StatePublisher::publish(const sample_set_t::Ptr &sample_set)
+void StatePublisher::publish(const sample_set_t::ConstPtr &sample_set)
 {
     /// calculate the latest transformation
     SampleDensity2D::ConstPtr density =
@@ -41,36 +40,8 @@ void StatePublisher::publish(const sample_set_t::Ptr &sample_set)
         return;
     }
 
-    const SampleDensity2D::cluster_map_t      &clusters      = density->clusters();
-    const SampleDensity2D::distribution_map_t &distributions = density->clusterDistributions();
-    const SampleDensity2D::angular_mean_map_t &angular_means = density->clusterAngularMeans();
-
-    double max_weight = std::numeric_limits<double>::lowest();
-    int    max_cluster_id = -1;
-    for(const auto &cluster : clusters) {
-        const int cluster_id = cluster.first;
-        const auto &distribution = distributions.at(cluster_id);
-        const auto weight = distribution.getWeight();
-        if(weight > max_weight) {
-            max_cluster_id = cluster_id;
-            max_weight = weight;
-        }
-    }
-    if(max_cluster_id != -1) {
-        const Eigen::Vector2d  position_mean = distributions.at(max_cluster_id).getMean();
-        const Eigen::Matrix2d  position_covariance = distributions.at(max_cluster_id).getCovariance();
-        const double           angular_mean  = angular_means.at(max_cluster_id).getMean();
-        const double           angular_covariance = angular_means.at(max_cluster_id).getCovariance();
-        latest_w_T_b_.data().tx() = position_mean(0);
-        latest_w_T_b_.data().ty() = position_mean(1);
-        latest_w_T_b_.data().setYaw(angular_mean);
+    if(density->maxClusterMean(latest_w_T_b_.data(), latest_w_T_b_covariance_)) {
         latest_w_T_b_.stamp() = sample_set->getStamp();
-        latest_w_T_b_covariance_(0,0) = position_covariance(0,0);
-        latest_w_T_b_covariance_(0,1) = position_covariance(0,1);
-        latest_w_T_b_covariance_(1,0) = position_covariance(1,0);
-        latest_w_T_b_covariance_(1,1) = position_covariance(1,1);
-        latest_w_T_b_covariance_(2,2) = angular_covariance;
-
         /// make sure that TF gets published first #most important
         tf_publisher_->setTransform(latest_w_T_b_);
     }
@@ -78,16 +49,17 @@ void StatePublisher::publish(const sample_set_t::Ptr &sample_set)
     publishState(sample_set);
 }
 
-void StatePublisher::publishIntermidiate(const sample_set_t::Ptr &sample_set)
+void StatePublisher::publishIntermidiate(const sample_set_t::ConstPtr &sample_set)
 {
     publishState(sample_set);
 }
 
-void StatePublisher::publishState(const sample_set_t::Ptr &sample_set)
+void StatePublisher::publishState(const sample_set_t::ConstPtr &sample_set)
 {
     sample_publisher_->set(sample_set->getSamples(),
                            sample_set->getMaximumWeight(),
                            latest_w_T_b_,
                            latest_w_T_b_covariance_,
                            sample_set->getStamp());
+}
 }

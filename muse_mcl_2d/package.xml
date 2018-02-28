@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>muse_mcl_2d</name>
-  <version>0.0.1</version>
+  <version>0.0.3</version>
   <description>The muse_mcl_2d package</description>
 
   <maintainer email="richard.hanten@uni-tuebingen.de">Richard Hanten</maintainer>
@@ -10,37 +10,23 @@
   <license>BSD</license>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>cslibs_boost_geometry</build_depend>
-  <build_depend>cslibs_indexed_storage</build_depend>
-  <build_depend>cslibs_vectormaps</build_depend>
-  <build_depend>nav_msgs</build_depend>
-  <build_depend>pcl_ros</build_depend>
-  <build_depend>pluginlib</build_depend>
-  <build_depend>roscpp</build_depend>
-  <build_depend>rostest</build_depend>
-  <build_depend>sensor_msgs</build_depend>
-  <build_depend>muse_smc</build_depend>
-  <build_depend>visualization_msgs</build_depend>
-  <build_depend>geometry_msgs</build_depend>
-  <build_depend>message_runtime</build_depend>
-  <build_depend>std_msgs</build_depend>
-  <build_depend>Eigen3</build_depend>
-
-  <run_depend>cslibs_boost_geometry</run_depend>
-  <run_depend>cslibs_indexed_storage</run_depend>
-  <run_depend>cslibs_vectormaps</run_depend>
-  <run_depend>nav_msgs</run_depend>
-  <run_depend>pcl_ros</run_depend>
-  <run_depend>pluginlib</run_depend>
-  <run_depend>roscpp</run_depend>
-  <run_depend>rostest</run_depend>
-  <run_depend>sensor_msgs</run_depend>
-  <run_depend>muse_smc</run_depend>
-  <run_depend>visualization_msgs</run_depend>
-  <run_depend>geometry_msgs</run_depend>
-  <run_depend>message_runtime</run_depend>
-  <run_depend>std_msgs</run_depend>
-  <run_depend>Eigen3</run_depend>
+  <depend>cslibs_boost_geometry</depend>
+  <depend>cslibs_indexed_storage</depend>
+  <depend>cslibs_vectormaps</depend>
+  <depend>cslibs_math_2d</depend>
+  <depend>cslibs_math_ros</depend>
+  <depend>nav_msgs</depend>
+  <depend>pcl_ros</depend>
+  <depend>pluginlib</depend>
+  <depend>roscpp</depend>
+  <depend>rostest</depend>
+  <depend>sensor_msgs</depend>
+  <depend>muse_smc</depend>
+  <depend>visualization_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>message_runtime</depend>
+  <depend>std_msgs</depend>
+  <depend>Eigen3</depend>
 
   <export>
     <muse_mcl_2d plugin="${prefix}/plugins.xml" />

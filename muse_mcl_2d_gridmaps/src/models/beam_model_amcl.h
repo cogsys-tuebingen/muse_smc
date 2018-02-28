@@ -21,9 +21,8 @@ protected:
     double      z_max_;
     double      z_rand_;
     double      sigma_hit_;
-    double      denominator_hit_;
+    double      denominator_exponent_hit_;
     double      lambda_short_;
-    double      chi_outlier_;
 
     ros::Publisher  pub_points_;
 
