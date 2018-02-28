@@ -13,7 +13,7 @@ OccupancyGridmap3dLikelihoodFieldModel::OccupancyGridmap3dLikelihoodFieldModel()
 {
 }
 
-void OccupancyGridmap3dLikelihoodFieldModel::apply(const data_t::ConstPtr          &data,
+void OccupancyGridmap3dLikelihoodFieldModel::apply(const data_t::ConstPtr &data,
                                           const state_space_t::ConstPtr   &map,
                                           sample_set_t::weight_iterator_t set)
 {
@@ -57,12 +57,13 @@ void OccupancyGridmap3dLikelihoodFieldModel::apply(const data_t::ConstPtr       
         auto apply = [&p, &d, &inv_occ, this](){
             const auto &q         = p.data() - d->getMean();
             const double exponent = -0.5 * d2_ * inv_occ * double(q.transpose() * d->getInformationMatrix() * q);
-            const double e = d1_ * std::exp(exponent);
+            const double e        = d1_ * std::exp(exponent);
             return std::isnormal(e) ? e : 0.0;
         };
         return !d ? 0.0 : apply();
     };
-    auto occupancy_likelihood = [this, &likelihood](const cslibs_math_3d::Point3d &p, const cslibs_ndt::OccupancyDistribution<3>* d) {
+    auto occupancy_likelihood = [this, &likelihood](const cslibs_math_3d::Point3d &p,
+                                                    const cslibs_ndt::OccupancyDistribution<3>* d) {
         double occ = d ? d->getOccupancy(inverse_model_) : 0.0;
         double ndt = d ? likelihood(p, d->getDistribution(), 1.0 - occ) : 0.0;
 
@@ -86,7 +87,7 @@ void OccupancyGridmap3dLikelihoodFieldModel::apply(const data_t::ConstPtr       
     for (auto it = set.begin() ; it != set.end() ; ++it) {
         cslibs_math_3d::Transform3d it_s(it.state().tx(), it.state().ty(), 0, it.state().yaw()); /// stereo camera pose in map coordinates
         cslibs_math_3d::Transform3d m_T_s = m_T_w_3d * it_s * b_T_s_3d;
-        double p = 1e-3;
+        double p = 1.0;
         for (std::size_t i = 0 ; i < points_size ;  i+= points_step) {
             const auto &point = stereo_points->at(i);
             const cslibs_math_3d::Point3d map_point = m_T_s * point;
@@ -100,8 +101,8 @@ void OccupancyGridmap3dLikelihoodFieldModel::doSetup(ros::NodeHandle &nh)
 {
     auto param_name = [this](const std::string &name){return name_ + "/" + name;};
 
-    max_points_ = nh.param(param_name("max_points"), 30);
-    d1_         = nh.param(param_name("d1"), 0.9);
+    max_points_ = nh.param(param_name("max_points"), 100);
+    d1_         = nh.param(param_name("d1"), 0.95);
     d2_         = nh.param(param_name("d2"), 0.05);
 
     occupied_threshold_         = nh.param(param_name("occupied_threshold"), 0.196);

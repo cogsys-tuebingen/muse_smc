@@ -1,14 +1,14 @@
-#ifndef MUSE_MCL_2D_OCCUPANCY_GRIDMAP_3D_NDT_LIKELIHOOD_FIELD_MODEL_H
-#define MUSE_MCL_2D_OCCUPANCY_GRIDMAP_3D_NDT_LIKELIHOOD_FIELD_MODEL_H
+#ifndef MUSE_MCL_2D_OCCUPANCY_GRIDMAP_2D_LIKELIHOOD_FIELD_MODEL_H
+#define MUSE_MCL_2D_OCCUPANCY_GRIDMAP_2D_LIKELIHOOD_FIELD_MODEL_H
 
 #include <muse_mcl_2d/update/update_model_2d.hpp>
 #include <cslibs_gridmaps/utility/inverse_model.hpp>
 
 namespace muse_mcl_2d_ndt {
-class OccupancyGridmap3dNDTLikelihoodFieldModel : public muse_mcl_2d::UpdateModel2D
+class OccupancyGridmap2dLikelihoodFieldModel : public muse_mcl_2d::UpdateModel2D
 {
 public:
-    OccupancyGridmap3dNDTLikelihoodFieldModel();
+    OccupancyGridmap2dLikelihoodFieldModel();
 
     virtual void apply(const data_t::ConstPtr         &data,
                        const state_space_t::ConstPtr  &map,
@@ -25,4 +25,4 @@ protected:
 };
 }
 
-#endif // MUSE_MCL_2D_OCCUPANCY_GRIDMAP_3D_NDT_LIKELIHOOD_FIELD_MODEL_H
+#endif // MUSE_MCL_2D_OCCUPANCY_GRIDMAP_2D_LIKELIHOOD_FIELD_MODEL_H

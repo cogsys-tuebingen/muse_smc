@@ -79,18 +79,10 @@ target_link_libraries(${PROJECT_NAME}_providers
 )
 
 add_library(${PROJECT_NAME}_models SHARED
-  src/models/gridmap_beam_model.cpp
-  src/models/gridmap_beam_model_amcl.cpp
-  src/models/occupancy_gridmap_beam_model.cpp
-  src/models/occupancy_gridmap_beam_model_amcl.cpp
+  src/models/gridmap_2d_likelihood_field_model.cpp
+  src/models/occupancy_gridmap_2d_likelihood_field_model.cpp
   src/models/gridmap_3d_likelihood_field_model.cpp
-  src/models/gridmap_3d_likelihood_field_model_normalized.cpp
   src/models/occupancy_gridmap_3d_likelihood_field_model.cpp
-  src/models/occupancy_gridmap_3d_likelihood_field_model_normalized.cpp
-  src/models/gridmap_3d_ndt_likelihood_field_model.cpp
-  src/models/gridmap_3d_ndt_likelihood_field_model_normalized.cpp
-  src/models/occupancy_gridmap_3d_ndt_likelihood_field_model.cpp
-  src/models/occupancy_gridmap_3d_ndt_likelihood_field_model_normalized.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}_models

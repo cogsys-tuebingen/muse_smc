@@ -3,6 +3,8 @@
 #include <muse_mcl_2d_stereo/stereo_data.hpp>
 #include <muse_mcl_2d_ndt/maps/gridmap_3d.h>
 
+#include <cslibs_math_ros/tf/conversion_3d.hpp>
+
 #include <class_loader/class_loader_register_macro.h>
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_ndt::Gridmap3dLikelihoodFieldModel, muse_mcl_2d::UpdateModel2D)
 
@@ -23,8 +25,7 @@ void Gridmap3dLikelihoodFieldModel::apply(const data_t::ConstPtr          &data,
     const cslibs_math_3d::Pointcloud3d::Ptr    &stereo_points = stereo_data.getPoints();
 
     /// stereo to base transform
-    cslibs_math_2d::Transform2d b_T_s;
-    cslibs_math_2d::Transform2d m_T_w;
+    tf::Transform b_T_s, m_T_w;
     if (!tf_->lookupTransform(robot_base_frame_,
                               stereo_data.getFrame(),
                               ros::Time(stereo_data.getTimeFrame().end.seconds()),
@@ -37,6 +38,8 @@ void Gridmap3dLikelihoodFieldModel::apply(const data_t::ConstPtr          &data,
                               m_T_w,
                               tf_timeout_))
         return;
+    cslibs_math_3d::Transform3d b_T_s_3d = cslibs_math_ros::tf::conversion_3d::from(b_T_s);
+    cslibs_math_3d::Transform3d m_T_w_3d = cslibs_math_ros::tf::conversion_3d::from(m_T_w);
 
     const std::size_t points_size = stereo_points->size();
     const std::size_t points_step = std::max(1ul, points_size / max_points_);
@@ -48,10 +51,12 @@ void Gridmap3dLikelihoodFieldModel::apply(const data_t::ConstPtr          &data,
                                     static_cast<int>(std::floor(p(1) * bundle_resolution_inv)),
                                     static_cast<int>(std::floor(p(2) * bundle_resolution_inv))}});
     };
-    auto likelihood = [this](const cslibs_math_3d::Point3d &p, const cslibs_math::statistics::Distribution<3, 3> &d) {
+    auto likelihood = [this](const cslibs_math_3d::Point3d &p,
+                             const cslibs_math::statistics::Distribution<3, 3> &d) {
         const auto &q         = p.data() - d.getMean();
         const double exponent = -0.5 * d2_ * double(q.transpose() * d.getInformationMatrix() * q);
-        return d1_ * std::exp(exponent);
+        const double e        = d1_ * std::exp(exponent);
+        return std::isnormal(e) ? e : 0.0;
     };
     auto bundle_likelihood = [&gridmap, &to_bundle_index, &likelihood](const cslibs_math_3d::Point3d &p) {
         const auto &bundle = gridmap.getDistributionBundle(to_bundle_index(p));
@@ -65,14 +70,17 @@ void Gridmap3dLikelihoodFieldModel::apply(const data_t::ConstPtr          &data,
                         likelihood(p, bundle->at(7)->getHandle()->data()));
     };
 
+    auto pow3 = [](const double& x) {
+        return x*x*x;
+    };
     for (auto it = set.begin() ; it != set.end() ; ++it) {
-        const cslibs_math_2d::Pose2d m_T_s = m_T_w * it.state() * b_T_s; /// stereo camera pose in map coordinates
-        const cslibs_math_3d::Pose3d m_T_s_3d(m_T_s.tx(), m_T_s.ty(), m_T_s.yaw());
-        double p = 0.0;
+        cslibs_math_3d::Transform3d it_s(it.state().tx(), it.state().ty(), 0, it.state().yaw()); /// stereo camera pose in map coordinates
+        cslibs_math_3d::Transform3d m_T_s = m_T_w_3d * it_s * b_T_s_3d;
+        double p = 1.0;
         for (std::size_t i = 0 ; i < points_size ;  i+= points_step) {
             const auto &point = stereo_points->at(i);
-            const cslibs_math_3d::Point3d map_point = m_T_s_3d * point;
-            p += map_point.isNormal() ? bundle_likelihood(map_point) : 0;
+            const cslibs_math_3d::Point3d map_point = m_T_s * point;
+            p += map_point.isNormal() ? pow3(bundle_likelihood(map_point)) : 0.0;
         }
         *it *= p;
     }
@@ -82,8 +90,8 @@ void Gridmap3dLikelihoodFieldModel::doSetup(ros::NodeHandle &nh)
 {
     auto param_name = [this](const std::string &name){return name_ + "/" + name;};
 
-    max_points_ = nh.param(param_name("max_points"), 30);
-    d1_         = nh.param(param_name("d1"), 0.9);
+    max_points_ = nh.param(param_name("max_points"), 100);
+    d1_         = nh.param(param_name("d1"), 0.95);
     d2_         = nh.param(param_name("d2"), 0.05);
 }
 }

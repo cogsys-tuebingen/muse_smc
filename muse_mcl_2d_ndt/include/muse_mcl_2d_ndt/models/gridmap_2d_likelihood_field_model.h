@@ -1,13 +1,13 @@
-#ifndef MUSE_MCL_2D_GRIDMAP_3D_NDT_LIKELIHOOD_FIELD_MODEL_H
-#define MUSE_MCL_2D_GRIDMAP_3D_NDT_LIKELIHOOD_FIELD_MODEL_H
+#ifndef MUSE_MCL_2D_GRIDMAP_2D_LIKELIHOOD_FIELD_MODEL_H
+#define MUSE_MCL_2D_GRIDMAP_2D_LIKELIHOOD_FIELD_MODEL_H
 
 #include <muse_mcl_2d/update/update_model_2d.hpp>
 
 namespace muse_mcl_2d_ndt {
-class Gridmap3dNDTLikelihoodFieldModel : public muse_mcl_2d::UpdateModel2D
+class Gridmap2dLikelihoodFieldModel : public muse_mcl_2d::UpdateModel2D
 {
 public:
-    Gridmap3dNDTLikelihoodFieldModel();
+    Gridmap2dLikelihoodFieldModel();
 
     virtual void apply(const data_t::ConstPtr         &data,
                        const state_space_t::ConstPtr  &map,
@@ -22,4 +22,4 @@ protected:
 };
 }
 
-#endif // MUSE_MCL_2D_GRIDMAP_3D_NDT_LIKELIHOOD_FIELD_MODEL_H
+#endif // MUSE_MCL_2D_GRIDMAP_2D_LIKELIHOOD_FIELD_MODEL_H
