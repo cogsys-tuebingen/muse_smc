@@ -15,6 +15,8 @@
   <depend>cslibs_vectormaps</depend>
   <depend>cslibs_math_2d</depend>
   <depend>cslibs_math_ros</depend>
+  <depend>cslibs_plugins</depend>
+  <depend>cslibs_plugins_data</depend>
   <depend>nav_msgs</depend>
   <depend>pcl_ros</depend>
   <depend>pluginlib</depend>

@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include <muse_smc/data/data.hpp>
+#include <cslibs_plugins_data/data.hpp>
 #include <muse_smc/state_space/state_space.hpp>
 #include <muse_smc/samples/sample_set.hpp>
 
@@ -15,7 +15,7 @@ public:
     using sample_t      = typename state_space_description_t::sample_t;
     using sample_set_t  = SampleSet<state_space_description_t>;
     using state_space_t = StateSpace<state_space_description_t>;
-    using data_t        = Data;
+    using data_t        = cslibs_plugins_data::Data;
 
     UpdateModel()
     {
@@ -48,7 +48,7 @@ public:
         id_ = id;
     }
 
-    virtual void apply(const Data::ConstPtr &data,
+    virtual void apply(const data_t::ConstPtr &data,
                        const typename state_space_t::ConstPtr &state_space,
                        typename sample_set_t::weight_iterator_t weights) = 0;
 

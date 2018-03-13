@@ -1,6 +1,0 @@
-<library path="libmuse_mcl_2d_stereo">
-   <!-- Data Providers -->
-   <class type="muse_mcl_2d_stereo::StereoProvider2D" base_class_type="muse_mcl_2d::DataProvider2D">
-      <description>Provides 3D Stereo Data for Sampling with 2D Poses.</description>
-   </class>
-</library>

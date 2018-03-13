@@ -3,9 +3,9 @@ project(muse_mcl_2d_gridmaps)
 
 find_package(catkin REQUIRED COMPONENTS
   muse_mcl_2d
-  muse_mcl_2d_laser
   cslibs_gridmaps
   cslibs_math_2d
+  cslibs_plugins_data
   nav_msgs
   pluginlib
   roscpp
@@ -21,7 +21,7 @@ catkin_package(
   LIBRARIES ${PROJECT_NAME}_providers
             ${PROJECT_NAME}_models
             ${PROJECT_NAME}_maps
-  CATKIN_DEPENDS muse_mcl_2d cslibs_math_2d cslibs_gridmaps
+  CATKIN_DEPENDS muse_mcl_2d cslibs_math_2d cslibs_gridmaps cslibs_plugins_data
 )
 
 include_directories(

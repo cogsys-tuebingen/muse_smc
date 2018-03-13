@@ -6,22 +6,23 @@
 CLASS_LOADER_REGISTER_CLASS(muse_mcl_2d_odometry::OmniDrive, muse_mcl_2d::PredictionModel2D)
 
 namespace muse_mcl_2d_odometry {
-OmniDrive::Result::Ptr OmniDrive::apply(const muse_smc::Data::ConstPtr &data,
-                                        const cslibs_time::Time           &until,
-                                        sample_set_t::state_iterator_t  states)
+OmniDrive::Result::Ptr OmniDrive::apply(const cslibs_plugins_data::Data::ConstPtr &data,
+                                        const cslibs_time::Time                   &until,
+                                        sample_set_t::state_iterator_t             states)
 {
-    Odometry2D::ConstPtr apply;
-    Odometry2D::ConstPtr leave;
+    cslibs_plugins_data::types::Odometry2D::ConstPtr apply;
+    cslibs_plugins_data::types::Odometry2D::ConstPtr leave;
     if(until < data->getTimeFrame().end) {
-        Odometry2D::ConstPtr original = std::dynamic_pointer_cast<Odometry2D const>(data);
+        cslibs_plugins_data::types::Odometry2D::ConstPtr original =
+            std::dynamic_pointer_cast<cslibs_plugins_data::types::Odometry2D const>(data);
         if(!original->split(until, apply, leave)) {
             apply = original;
         }
     } else {
-        apply = std::dynamic_pointer_cast<Odometry2D const>(data);
+        apply = std::dynamic_pointer_cast<cslibs_plugins_data::types::Odometry2D const>(data);
     }
 
-    const Odometry2D &odometry = *apply;
+    const cslibs_plugins_data::types::Odometry2D &odometry = *apply;
 
     const double delta_trans = odometry.getDeltaLinear();
     const double delta_rot   = odometry.getDeltaAngular();

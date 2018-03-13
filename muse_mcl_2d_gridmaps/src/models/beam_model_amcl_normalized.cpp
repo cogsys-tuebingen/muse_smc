@@ -1,6 +1,7 @@
 #include "beam_model_amcl_normalized.h"
 
-#include <muse_mcl_2d_laser/laserscan_2d.hpp>
+
+#include <cslibs_plugins_data/types/laserscan.hpp>
 
 #include <muse_mcl_2d_gridmaps/maps/binary_gridmap.h>
 
@@ -21,8 +22,8 @@ void BeamModelAMCLNormalized::apply(const data_t::ConstPtr &data,
     }
 
     const cslibs_gridmaps::static_maps::BinaryGridmap &gridmap    = *(map->as<BinaryGridmap>().data());
-    const muse_mcl_2d_laser::LaserScan2D              &laser_data = data->as<muse_mcl_2d_laser::LaserScan2D>();
-    const muse_mcl_2d_laser::LaserScan2D::rays_t      &laser_rays = laser_data.getRays();
+    const cslibs_plugins_data::types::Laserscan              &laser_data = data->as<cslibs_plugins_data::types::Laserscan>();
+    const cslibs_plugins_data::types::Laserscan::rays_t      &laser_rays = laser_data.getRays();
 
     /// laser to base transform
     cslibs_math_2d::Transform2d b_T_l;
@@ -40,7 +41,7 @@ void BeamModelAMCLNormalized::apply(const data_t::ConstPtr &data,
                              tf_timeout_))
         return;
 
-    const muse_mcl_2d_laser::LaserScan2D::rays_t rays = laser_data.getRays();
+    const cslibs_plugins_data::types::Laserscan::rays_t rays = laser_data.getRays();
     const auto end = set.end();
     const auto const_end = set.const_end();
     const std::size_t rays_size = rays.size();
@@ -72,7 +73,7 @@ void BeamModelAMCLNormalized::apply(const data_t::ConstPtr &data,
         return ray_range < range_max ? p_rand : 0.0;
     };
     auto probability = [&gridmap, &p_hit, &p_short, &p_max, &p_random]
-            (const muse_mcl_2d_laser::LaserScan2D::Ray &ray, const cslibs_math_2d::Pose2d &m_T_l)
+            (const cslibs_plugins_data::types::Laserscan::Ray &ray, const cslibs_math_2d::Pose2d &m_T_l)
     {
 
         const double ray_range = ray.range;

@@ -48,9 +48,9 @@ public:
         }
     };
 
-    Update(const Data::ConstPtr                     &data,
-           const typename state_space_t::ConstPtr   &state_space,
-           const typename update_model_t::Ptr       &model) :
+    Update(const cslibs_plugins_data::Data::ConstPtr &data,
+           const typename state_space_t::ConstPtr    &state_space,
+           const typename update_model_t::Ptr        &model) :
         data_(data),
         state_space_(state_space),
         model_(model)
@@ -98,9 +98,9 @@ public:
     }
 
 private:
-    const Data::ConstPtr                    data_;
-    const typename state_space_t::ConstPtr  state_space_;
-    typename update_model_t::Ptr            model_;
+    const cslibs_plugins_data::Data::ConstPtr data_;
+    const typename state_space_t::ConstPtr    state_space_;
+    typename update_model_t::Ptr              model_;
 };
 }
 

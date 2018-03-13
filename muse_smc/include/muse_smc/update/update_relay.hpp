@@ -3,7 +3,7 @@
 
 #include <map>
 
-#include <muse_smc/data/data_provider.hpp>
+#include <cslibs_plugins_data/data_provider.hpp>
 #include <muse_smc/state_space/state_space_provider.hpp>
 #include <muse_smc/update/update.hpp>
 #include <muse_smc/smc/smc.hpp>
@@ -18,8 +18,8 @@ public:
     using smc_t                     = SMC<state_space_description_t>;
     using update_t                  = Update<state_space_description_t>;
     using update_model_t            = UpdateModel<state_space_description_t>;
-    using data_provider_t           = DataProvider<sample_t>;
-    using data_t                    = Data;
+    using data_provider_t           = cslibs_plugins_data::DataProvider;
+    using data_t                    = cslibs_plugins_data::Data;
     using state_space_provider_t    = StateSpaceProvider<state_space_description_t>;
     using state_space_t             = StateSpace<state_space_description_t>;
     using arguments_t               = std::pair<typename data_provider_t::Ptr,
@@ -39,7 +39,7 @@ public:
             const auto &d = e.second.first;
             const auto &s = e.second.second;
 
-            auto callback = [this, u, s](const typename Data::ConstPtr &data) {
+            auto callback = [this, u, s](const typename cslibs_plugins_data::Data::ConstPtr &data) {
                 typename state_space_t::ConstPtr ss = s->getStateSpace();
                 if(ss) {
                     typename update_t::Ptr up(new update_t(data, ss, u));

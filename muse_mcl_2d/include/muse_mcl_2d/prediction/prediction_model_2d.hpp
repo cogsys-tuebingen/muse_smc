@@ -5,7 +5,7 @@
 
 #include <muse_mcl_2d/samples/sample_2d.hpp>
 #include <cslibs_math_ros/tf/tf_listener_2d.hpp>
-#include <muse_mcl_2d/odometry/odometry_2d.h>
+#include <cslibs_plugins_data/types/odometry_2d.hpp>
 #include <muse_mcl_2d/state_space/state_space_description_2d.hpp>
 
 namespace muse_mcl_2d {
@@ -18,8 +18,8 @@ public:
     {
         inline Result2D(const double linear_distance_abs,
                         const double angular_distance_abs,
-                        const muse_mcl_2d_odometry::Odometry2D::ConstPtr &applied,
-                        const muse_mcl_2d_odometry::Odometry2D::ConstPtr &left_to_apply) :
+                        const cslibs_plugins_data::types::Odometry2D::ConstPtr &applied,
+                        const cslibs_plugins_data::types::Odometry2D::ConstPtr &left_to_apply) :
             Result(applied, left_to_apply),
             linear_distance_abs(linear_distance_abs),
             angular_distance_abs(angular_distance_abs)

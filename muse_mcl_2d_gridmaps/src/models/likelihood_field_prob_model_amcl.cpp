@@ -1,6 +1,7 @@
 #include "likelihood_field_prob_model_amcl.h"
 
-#include <muse_mcl_2d_laser/laserscan_2d.hpp>
+
+#include <cslibs_plugins_data/types/laserscan.hpp>
 
 #include <muse_mcl_2d_gridmaps/maps/distance_gridmap.h>
 
@@ -21,8 +22,8 @@ void LikelihoodFieldProbModelAMCL::apply(const data_t::ConstPtr          &data,
     }
 
     const cslibs_gridmaps::static_maps::DistanceGridmap &gridmap = *(map->as<DistanceGridmap>().data());
-    const muse_mcl_2d_laser::LaserScan2D                &laser_data = data->as<muse_mcl_2d_laser::LaserScan2D>();
-    const muse_mcl_2d_laser::LaserScan2D::rays_t        &laser_rays = laser_data.getRays();
+    const cslibs_plugins_data::types::Laserscan                &laser_data = data->as<cslibs_plugins_data::types::Laserscan>();
+    const cslibs_plugins_data::types::Laserscan::rays_t        &laser_rays = laser_data.getRays();
 
     /// laser to base transform
     cslibs_math_2d::Transform2d b_T_l;
@@ -40,7 +41,7 @@ void LikelihoodFieldProbModelAMCL::apply(const data_t::ConstPtr          &data,
                              tf_timeout_))
         return;
 
-    const muse_mcl_2d_laser::LaserScan2D::rays_t rays = laser_data.getRays();
+    const cslibs_plugins_data::types::Laserscan::rays_t rays = laser_data.getRays();
     const std::size_t rays_size = rays.size();
     const std::size_t ray_step  = std::max(1ul, (rays_size) / max_beams_);
     const double range_max = laser_data.getLinearMax();

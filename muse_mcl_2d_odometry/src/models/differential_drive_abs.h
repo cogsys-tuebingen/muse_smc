@@ -12,7 +12,7 @@ class DifferentialDriveAbs : public muse_mcl_2d::PredictionModel2D
 public:
     DifferentialDriveAbs() = default;
 
-    virtual Result::Ptr apply(const muse_smc::Data::ConstPtr          &data,
+    virtual Result::Ptr apply(const cslibs_plugins_data::Data::ConstPtr          &data,
                               const cslibs_time::Time                    &until,
                               sample_set_t::state_iterator_t  states) override;
 

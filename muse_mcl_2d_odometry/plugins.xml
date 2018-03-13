@@ -1,13 +1,3 @@
-<library path="libmuse_mcl_2d_odometry_providers">
-<!-- Data Providers -->
-<class type="muse_mcl_2d_odometry::OdometryProvider2D" base_class_type="muse_mcl_2d::DataProvider2D">
-   <description>Data provider for standard odmetry messages.</description>
-</class>
-<class type="muse_mcl_2d_odometry::OdometryProviderTF2D" base_class_type="muse_mcl_2d::DataProvider2D">
-   <description>Data provider for odometry input based on TF.</description>
-</class>
-</library>
-
 <library path="libmuse_mcl_2d_odometry_models">
 <!-- Propagation Functions -->
 <class type="muse_mcl_2d_odometry::DifferentialDrive" base_class_type="muse_mcl_2d::PredictionModel2D">

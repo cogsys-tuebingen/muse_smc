@@ -16,6 +16,8 @@ find_package(catkin REQUIRED COMPONENTS
   muse_smc
   cslibs_math_2d
   cslibs_math_ros
+  cslibs_plugins
+  cslibs_plugins_data
   visualization_msgs
   pluginlib
   geometry_msgs
@@ -45,8 +47,8 @@ generate_messages(
 
 catkin_package(
     INCLUDE_DIRS    include
-    LIBRARIES       ${PROJECT_NAME}_resampling ${PROJECT_NAME}_sampling ${PROJECT_NAME}_odometry
-    CATKIN_DEPENDS  muse_smc cslibs_math_ros cslibs_math_2d
+    LIBRARIES       ${PROJECT_NAME}_resampling ${PROJECT_NAME}_sampling
+    CATKIN_DEPENDS  muse_smc cslibs_math_ros cslibs_math_2d cslibs_plugins cslibs_plugins_data
 )
 
 include_directories(
@@ -100,13 +102,6 @@ target_link_libraries(${PROJECT_NAME}_density
     ${catkin_LIBRARIES}
 )
 
-add_library(${PROJECT_NAME}_odometry
-    src/odometry/odometry.cpp
-)
-
-target_link_libraries(${PROJECT_NAME}_odometry
-    ${catkin_LIBRARIES}
-)
 
 add_executable(${PROJECT_NAME}_node
     src/node/muse_mcl_2d_node.cpp

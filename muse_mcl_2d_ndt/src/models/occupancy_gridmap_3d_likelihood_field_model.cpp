@@ -1,6 +1,6 @@
 #include <muse_mcl_2d_ndt/models/occupancy_gridmap_3d_likelihood_field_model.h>
 
-#include <muse_mcl_2d_stereo/stereo_data.hpp>
+#include <cslibs_plugins_data/types/pointcloud.hpp>
 #include <muse_mcl_2d_ndt/maps/occupancy_gridmap_3d.h>
 
 #include <cslibs_math_ros/tf/conversion_3d.hpp>
@@ -17,11 +17,11 @@ void OccupancyGridmap3dLikelihoodFieldModel::apply(const data_t::ConstPtr &data,
                                           const state_space_t::ConstPtr   &map,
                                           sample_set_t::weight_iterator_t set)
 {
-    if (!map->isType<OccupancyGridmap3d>() || !data->isType<muse_mcl_2d_stereo::StereoData>())
+    if (!map->isType<OccupancyGridmap3d>() || !data->isType<cslibs_plugins_data::types::Pointcloud>())
         return;
 
     const cslibs_ndt_3d::dynamic_maps::OccupancyGridmap &gridmap       = *(map->as<OccupancyGridmap3d>().data());
-    const muse_mcl_2d_stereo::StereoData                &stereo_data   = data->as<muse_mcl_2d_stereo::StereoData>();
+    const cslibs_plugins_data::types::Pointcloud                &stereo_data   = data->as<cslibs_plugins_data::types::Pointcloud>();
     const cslibs_math_3d::Pointcloud3d::Ptr             &stereo_points = stereo_data.getPoints();
 
     /// stereo to base transform

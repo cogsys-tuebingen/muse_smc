@@ -1,6 +1,7 @@
 #include <muse_mcl_2d_ndt/models/occupancy_gridmap_2d_likelihood_field_model.h>
 
-#include <muse_mcl_2d_laser/laserscan_2d.hpp>
+
+#include <cslibs_plugins_data/types/laserscan.hpp>
 #include <muse_mcl_2d_ndt/maps/occupancy_gridmap_2d.h>
 
 #include <class_loader/class_loader_register_macro.h>
@@ -15,12 +16,12 @@ void OccupancyGridmap2dLikelihoodFieldModel::apply(const data_t::ConstPtr &data,
                                       const state_space_t::ConstPtr       &map,
                                       sample_set_t::weight_iterator_t     set)
 {
-    if (!map->isType<OccupancyGridmap2d>() || !data->isType<muse_mcl_2d_laser::LaserScan2D>() || !inverse_model_)
+    if (!map->isType<OccupancyGridmap2d>() || !data->isType<cslibs_plugins_data::types::Laserscan>() || !inverse_model_)
         return;
 
     const cslibs_ndt_2d::dynamic_maps::OccupancyGridmap &gridmap    = *(map->as<OccupancyGridmap2d>().data());
-    const muse_mcl_2d_laser::LaserScan2D                &laser_data = data->as<muse_mcl_2d_laser::LaserScan2D>();
-    const muse_mcl_2d_laser::LaserScan2D::rays_t        &laser_rays = laser_data.getRays();
+    const cslibs_plugins_data::types::Laserscan                &laser_data = data->as<cslibs_plugins_data::types::Laserscan>();
+    const cslibs_plugins_data::types::Laserscan::rays_t        &laser_rays = laser_data.getRays();
 
     /// laser to base transform
     cslibs_math_2d::Transform2d b_T_l, m_T_w;
@@ -37,7 +38,7 @@ void OccupancyGridmap2dLikelihoodFieldModel::apply(const data_t::ConstPtr &data,
                               tf_timeout_))
         return;
 
-    const muse_mcl_2d_laser::LaserScan2D::rays_t rays = laser_data.getRays();
+    const cslibs_plugins_data::types::Laserscan::rays_t rays = laser_data.getRays();
     const std::size_t rays_size = rays.size();
     const std::size_t ray_step  = std::max(1ul, rays_size / max_points_);
 

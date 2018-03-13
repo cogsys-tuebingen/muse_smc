@@ -3,8 +3,8 @@ project(muse_mcl_2d_vectormaps)
 
 find_package(catkin REQUIRED COMPONENTS
   muse_mcl_2d
-  muse_mcl_2d_laser
   cslibs_vectormaps
+  cslibs_plugins_data
   pluginlib
   roscpp
   rostest
@@ -13,7 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
     INCLUDE_DIRS include
     LIBRARIES ${PROJECT_NAME}
-    CATKIN_DEPENDS muse_mcl_2d cslibs_vectormaps
+    CATKIN_DEPENDS muse_mcl_2d cslibs_vectormaps cslibs_plugins_data
 )
 
 include_directories(

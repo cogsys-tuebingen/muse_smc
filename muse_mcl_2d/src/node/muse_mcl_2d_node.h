@@ -7,7 +7,7 @@
 
 #include <muse_mcl_2d/prediction/prediction_integral_2d.hpp>
 #include <cslibs_math_ros/tf/tf_listener_2d.hpp>
-#include <muse_mcl_2d/data/data_provider_2d.hpp>
+#include <cslibs_plugins_data/data_provider_2d.hpp>
 #include <muse_mcl_2d/map/map_provider_2d.hpp>
 #include <muse_mcl_2d/update/update_model_2d.hpp>
 #include <muse_mcl_2d/prediction/prediction_model_2d.hpp>
@@ -23,8 +23,8 @@
 #include <muse_smc/smc/smc.hpp>
 #include <muse_smc/update/update_relay.hpp>
 #include <muse_smc/prediction/prediction_relay.hpp>
-#include <muse_smc/plugins/plugin_loader.hpp>
-#include <muse_smc/plugins/plugin_factory.hpp>
+#include <cslibs_plugins/plugin_loader.hpp>
+#include <cslibs_plugins/plugin_factory.hpp>
 
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 
@@ -53,7 +53,7 @@ public:
 
 private:
     using map_provider_map_t     = std::map<std::string, MapProvider2D::Ptr>;
-    using data_provider_map_t    = std::map<std::string, DataProvider2D::Ptr>;
+    using data_provider_map_t    = std::map<std::string, cslibs_plugins_data::DataProvider2D::Ptr>;
     using update_model_map_t     = std::map<std::string, UpdateModel2D::Ptr>;
 
     using UpdateRelay2D          = muse_smc::UpdateRelay<StateSpaceDescription2D>;
@@ -101,10 +101,7 @@ private:
 
     void checkPoseInitialization();
     bool getUpdateModelProviderMapping(update_model_mapping_t &update_mapping);
-    bool getPredictionProvider(DataProvider2D::Ptr &prediction_provider);
-
-
-
+    bool getPredictionProvider(cslibs_plugins_data::DataProvider2D::Ptr &prediction_provider);
 };
 }
 

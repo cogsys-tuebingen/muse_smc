@@ -1,9 +1,8 @@
 #ifndef PREDICTION_MODEL_HPP
 #define PREDICTION_MODEL_HPP
 
-#include <muse_smc/data/data.hpp>
+#include <cslibs_plugins_data/data.hpp>
 #include <muse_smc/samples/sample_set.hpp>
-
 
 #include <memory>
 
@@ -22,13 +21,13 @@ public:
         Result() = default;
         virtual ~Result() = default;
 
-        Result(const Data::ConstPtr &applied) :
+        Result(const cslibs_plugins_data::Data::ConstPtr &applied) :
             applied(applied)
         {
         }
 
-        Result(const Data::ConstPtr &applied,
-               const Data::ConstPtr &left_to_apply) :
+        Result(const cslibs_plugins_data::Data::ConstPtr &applied,
+               const cslibs_plugins_data::Data::ConstPtr &left_to_apply) :
             applied(applied),
             left_to_apply(left_to_apply)
         {
@@ -52,8 +51,8 @@ public:
             return dynamic_cast<const T&>(*this);
         }
 
-        const Data::ConstPtr applied;
-        const Data::ConstPtr left_to_apply;
+        const cslibs_plugins_data::Data::ConstPtr applied;
+        const cslibs_plugins_data::Data::ConstPtr left_to_apply;
 
     };
 
@@ -86,9 +85,9 @@ public:
         id_ = id;
     }
 
-    virtual typename Result::Ptr apply(const Data::ConstPtr                    &data,
-                                       const cslibs_time::Time                 &until,
-                                       typename sample_set_t::state_iterator_t  states) = 0;
+    virtual typename Result::Ptr apply(const cslibs_plugins_data::Data::ConstPtr &data,
+                                       const cslibs_time::Time                   &until,
+                                       typename sample_set_t::state_iterator_t    states) = 0;
 
 protected:
     std::string         name_;

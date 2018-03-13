@@ -3,14 +3,13 @@ project(muse_mcl_2d_ndt)
 
 find_package(catkin REQUIRED COMPONENTS
   muse_mcl_2d
-  muse_mcl_2d_laser
   muse_mcl_2d_gridmaps
-  muse_mcl_2d_stereo
   cslibs_ndt_2d
   cslibs_math_2d
   cslibs_ndt_3d
   cslibs_math_3d
   cslibs_gridmaps
+  cslibs_plugins_data
   pluginlib
   roscpp
   rostest
@@ -23,7 +22,8 @@ catkin_package(
   LIBRARIES ${PROJECT_NAME}_providers
             ${PROJECT_NAME}_models
             ${PROJECT_NAME}_maps
-  CATKIN_DEPENDS muse_mcl_2d cslibs_math_2d cslibs_ndt_2d cslibs_math_3d cslibs_ndt_3d cslibs_gridmaps
+  CATKIN_DEPENDS muse_mcl_2d cslibs_math_2d cslibs_ndt_2d cslibs_math_3d
+                 cslibs_ndt_3d cslibs_gridmaps cslibs_plugins_data
 )
 
 include_directories(

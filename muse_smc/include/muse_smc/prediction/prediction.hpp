@@ -1,7 +1,7 @@
 #ifndef PREDICTION_HPP
 #define PREDICTION_HPP
 
-#include <muse_smc/data/data.hpp>
+#include <cslibs_plugins_data/data.hpp>
 #include <muse_smc/samples/sample_set.hpp>
 #include <muse_smc/prediction/prediction_model.hpp>
 
@@ -46,8 +46,8 @@ public:
     };
 
 
-    Prediction(const Data::ConstPtr                  &data,
-               const typename predition_model_t::Ptr &model) :
+    Prediction(const cslibs_plugins_data::Data::ConstPtr &data,
+               const typename predition_model_t::Ptr     &model) :
         data_(data),
         model_(model)
     {
@@ -86,8 +86,8 @@ public:
     }
 
 private:
-    Data::ConstPtr                     data_;
-    typename predition_model_t::Ptr    model_;
+    cslibs_plugins_data::Data::ConstPtr data_;
+    typename predition_model_t::Ptr     model_;
 };
 }
 

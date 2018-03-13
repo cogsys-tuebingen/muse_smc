@@ -1,6 +1,7 @@
 #include "likelihood_field_model_vector.h"
 
-#include <muse_mcl_2d_laser/laserscan_2d.hpp>
+
+#include <cslibs_plugins_data/types/laserscan.hpp>
 
 #include <muse_mcl_2d_vectormaps/static_maps/vectormap.h>
 #include <cslibs_vectormaps/maps/oriented_grid_vector_map.h>
@@ -25,8 +26,8 @@ void LikelihoodFieldModelVector::apply(const data_t::ConstPtr          &data,
     const static_maps::VectorMap &vectormap = map->as<static_maps::VectorMap>();
     const cslibs_vectormaps::OrientedGridVectorMap &oriented_grid_vector_map =
         dynamic_cast<cslibs_vectormaps::OrientedGridVectorMap&>(vectormap.getMap());
-    const muse_mcl_2d_laser::LaserScan2D       &laser_data = data->as<muse_mcl_2d_laser::LaserScan2D>();
-    const muse_mcl_2d_laser::LaserScan2D::rays_t &laser_rays = laser_data.getRays();
+    const cslibs_plugins_data::types::Laserscan       &laser_data = data->as<cslibs_plugins_data::types::Laserscan>();
+    const cslibs_plugins_data::types::Laserscan::rays_t &laser_rays = laser_data.getRays();
 
     /// laser to base transform
     cslibs_math_2d::Transform2d b_T_l;
@@ -44,7 +45,7 @@ void LikelihoodFieldModelVector::apply(const data_t::ConstPtr          &data,
                              tf_timeout_))
         return;
 
-    const muse_mcl_2d_laser::LaserScan2D::rays_t rays = laser_data.getRays();
+    const cslibs_plugins_data::types::Laserscan::rays_t rays = laser_data.getRays();
     const auto end = set.end();
     const std::size_t rays_size = rays.size();
     const std::size_t ray_step  = std::max(1ul, rays_size / max_beams_);

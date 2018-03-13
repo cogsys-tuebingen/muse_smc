@@ -103,7 +103,7 @@ void MuseMCL2DNode::poseInitialization(const geometry_msgs::PoseWithCovarianceSt
 bool MuseMCL2DNode::setup()
 {
     /// load all plugins
-    muse_smc::PluginLoader loader("muse_mcl_2d", nh_private_);
+    cslibs_plugins::PluginLoader loader("muse_mcl_2d", nh_private_);
 
     {   /// Update Models
         loader.load<UpdateModel2D, cslibs_math_ros::tf::TFListener2d::Ptr, ros::NodeHandle&>(update_models_, tf_provider_backend_, nh_private_);
@@ -146,7 +146,9 @@ bool MuseMCL2DNode::setup()
         ROS_INFO_STREAM(map_provider_list);
     }
     {   /// Data Providers
-        loader.load<DataProvider2D, cslibs_math_ros::tf::TFListener2d::Ptr, ros::NodeHandle&>(data_providers_, tf_provider_frontend_, nh_private_);
+        /// load data plugins
+        cslibs_plugins::PluginLoader data_loader("cslibs_plugins_data", nh_private_);
+        data_loader.load<cslibs_plugins_data::DataProvider2D, cslibs_math_ros::tf::TFListener2d::Ptr, ros::NodeHandle&>(data_providers_, tf_provider_frontend_, nh_private_);
         if(data_providers_.empty()) {
             ROS_ERROR_STREAM("No data provider was found!");
             return false;
@@ -282,7 +284,7 @@ bool MuseMCL2DNode::setup()
     }
 
     predicition_forwarder_.reset(new PredictionRelay2D(particle_filter_));
-    DataProvider2D::Ptr prediction_provider;
+    cslibs_plugins_data::DataProvider2D::Ptr prediction_provider;
     if(!getPredictionProvider(prediction_provider)) {
         ROS_ERROR_STREAM("Setup is incomplete and is aborted!");
         return false;
@@ -376,13 +378,13 @@ bool MuseMCL2DNode::getUpdateModelProviderMapping(update_model_mapping_t &update
         }
 
         MapProvider2D::Ptr map_provider = map_providers_.at(map_provider_name);
-        DataProvider2D::Ptr data_provider = data_providers_.at(data_provider_name);
+        cslibs_plugins_data::DataProvider2D::Ptr data_provider = data_providers_.at(data_provider_name);
         update_mapping[update_model] = std::make_pair(data_provider, map_provider);
     }
     return true;
 }
 
-bool MuseMCL2DNode::getPredictionProvider(DataProvider2D::Ptr &prediction_provider)
+bool MuseMCL2DNode::getPredictionProvider(cslibs_plugins_data::DataProvider2D::Ptr &prediction_provider)
 {
     const std::string param_name = prediction_model_->getName() + "/data_provider";
     const std::string provider_name =  nh_private_.param<std::string>(param_name, "");

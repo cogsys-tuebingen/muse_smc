@@ -1,7 +1,7 @@
 #ifndef PREDICTION_RELAY_HPP
 #define PREDICTION_RELAY_HPP
 
-#include <muse_smc/data/data_provider.hpp>
+#include <cslibs_plugins_data/data_provider.hpp>
 #include <muse_smc/smc/smc.hpp>
 
 namespace muse_smc {
@@ -12,10 +12,10 @@ public:
     using Ptr                   = std::shared_ptr<PredictionRelay>;
     using smc_t                 = SMC<state_space_description_t>;
     using sample_t              = typename state_space_description_t::sample_t;
-    using data_provider_t       = DataProvider<sample_t>;
+    using data_provider_t       = cslibs_plugins_data::DataProvider;
     using prediction_t          = Prediction<state_space_description_t>;
     using prediction_model_t    = PredictionModel<state_space_description_t>;
-    using data_t                = Data;
+    using data_t                = cslibs_plugins_data::Data;
     using map_t                 = std::pair<typename prediction_model_t::Ptr,
                                             typename data_provider_t::Ptr>;
 

@@ -27,7 +27,6 @@ protected:
 
     virtual void doSetup(ros::NodeHandle &nh) override;
 };
-
 }
 
 #endif // BEAM_MODEL_VECTOR_H
