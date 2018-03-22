@@ -32,6 +32,7 @@ before_script:
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_ndt.git -b devel cslibs_ndt
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_math.git -b devel cslibs_math
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_utility.git -b devel cslibs_utility
+  - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_plugins.git -b devel cslibs_plugins
   - cd /build/ws/
 
 stages:
