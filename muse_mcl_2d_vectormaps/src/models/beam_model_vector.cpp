@@ -4,7 +4,7 @@
 #include <cslibs_plugins_data/types/laserscan.hpp>
 
 #include <muse_mcl_2d_vectormaps/static_maps/vectormap.h>
-#include <cslibs_vectormaps/maps/oriented_grid_vector_map.h>
+#include <cslibs_vectormaps/maps/vector_map.h>
 #include <cmath>
 
 #include <class_loader/class_loader_register_macro.h>
@@ -25,9 +25,8 @@ void BeamModelVector::apply(const data_t::ConstPtr          &data,
     }
 
     const static_maps::VectorMap &vectormap = map->as<static_maps::VectorMap>();
-    const cslibs_vectormaps::OrientedGridVectorMap &oriented_grid_vector_map =
-        dynamic_cast<cslibs_vectormaps::OrientedGridVectorMap&>(vectormap.getMap());
-    const cslibs_plugins_data::types::Laserscan       &laser_data = data->as<cslibs_plugins_data::types::Laserscan>();
+    const cslibs_vectormaps::VectorMap &cslibs_vectormap = vectormap.getMap();
+    const cslibs_plugins_data::types::Laserscan &laser_data = data->as<cslibs_plugins_data::types::Laserscan>();
     const cslibs_plugins_data::types::Laserscan::rays_t &laser_rays = laser_data.getRays();
 
     /// laser to base transform
@@ -72,17 +71,17 @@ void BeamModelVector::apply(const data_t::ConstPtr          &data,
     {
         return ray_range < range_max ? p_rand : 0.0;
     };
-    auto probability = [&oriented_grid_vector_map, &p_hit, &p_short, &p_max, &p_random, range_max]
+    auto probability = [&cslibs_vectormap, &p_hit, &p_short, &p_max, &p_random, range_max]
             (const cslibs_plugins_data::types::Laserscan::Ray &ray, const cslibs_math_2d::Pose2d &m_T_l,
-            cslibs_vectormaps::VectorMap::Vector &vectormap_ray, unsigned int vrow, unsigned int vcol)
+            cslibs_vectormaps::VectorMap::Vector &vectormap_ray, const void* cell)
     {
         /// <--- vectormap specific
         const double ray_angle = m_T_l.yaw() + ray.angle; // ray angle in map coordinates
         vectormap_ray.second.x(m_T_l.tx() + std::cos(ray_angle) * range_max);
         vectormap_ray.second.y(m_T_l.ty() + std::sin(ray_angle) * range_max);
         /// default range calculation
-        const double map_range = oriented_grid_vector_map.intersectScanRay(
-            vectormap_ray, vrow, vcol, ray_angle, range_max);
+        const double map_range = cslibs_vectormap.intersectScanRay(
+            vectormap_ray, cell, ray_angle, range_max);
         /// <--- vectormap specific
 
         const double ray_range = ray.range;
@@ -94,16 +93,15 @@ void BeamModelVector::apply(const data_t::ConstPtr          &data,
         double p = 1.0;
 
         /// <--- vectormap specific
-        unsigned int vrow, vcol;
         cslibs_vectormaps::VectorMap::Vector vectormap_ray;
         vectormap_ray.first.x(m_T_l.tx());
         vectormap_ray.first.y(m_T_l.ty());
-        oriented_grid_vector_map.cellIndices(vectormap_ray.first, vrow, vcol);
+        const void* cell = cslibs_vectormap.cell(vectormap_ray.first);
         /// <--- vectormap specific
 
         for(std::size_t i = 0; i < rays_size; i += ray_step) {
             const auto &ray = laser_rays[i];
-            p *= ray.valid() ? probability(ray, m_T_l, vectormap_ray, vrow, vcol) : z_max_;
+            p *= ray.valid() ? probability(ray, m_T_l, vectormap_ray, cell) : z_max_;
         }
         *it *= p;
     }

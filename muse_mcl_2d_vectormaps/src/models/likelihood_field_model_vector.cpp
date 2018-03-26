@@ -4,7 +4,7 @@
 #include <cslibs_plugins_data/types/laserscan.hpp>
 
 #include <muse_mcl_2d_vectormaps/static_maps/vectormap.h>
-#include <cslibs_vectormaps/maps/oriented_grid_vector_map.h>
+#include <cslibs_vectormaps/maps/vector_map.h>
 
 #include <class_loader/class_loader_register_macro.h>
 
@@ -24,9 +24,8 @@ void LikelihoodFieldModelVector::apply(const data_t::ConstPtr          &data,
     }
 
     const static_maps::VectorMap &vectormap = map->as<static_maps::VectorMap>();
-    const cslibs_vectormaps::OrientedGridVectorMap &oriented_grid_vector_map =
-        dynamic_cast<cslibs_vectormaps::OrientedGridVectorMap&>(vectormap.getMap());
-    const cslibs_plugins_data::types::Laserscan       &laser_data = data->as<cslibs_plugins_data::types::Laserscan>();
+    const cslibs_vectormaps::VectorMap &cslibs_vectormap = vectormap.getMap();
+    const cslibs_plugins_data::types::Laserscan &laser_data = data->as<cslibs_plugins_data::types::Laserscan>();
     const cslibs_plugins_data::types::Laserscan::rays_t &laser_rays = laser_data.getRays();
 
     /// laser to base transform
@@ -63,8 +62,7 @@ void LikelihoodFieldModelVector::apply(const data_t::ConstPtr          &data,
         double p = 1.0;
 
         /// <--- vectormap specific
-        unsigned int vrow, vcol;
-        oriented_grid_vector_map.cellIndices(m_T_l.tx(), m_T_l.ty(), vrow, vcol);
+        const void* cell = cslibs_vectormap.cell({m_T_l.tx(), m_T_l.ty()});
         /// <--- vectormap specific
 
         for(std::size_t i = 0; i < rays_size; i += ray_step) {
@@ -77,7 +75,7 @@ void LikelihoodFieldModelVector::apply(const data_t::ConstPtr          &data,
             /// <--- vectormap specific
             const double ray_angle = m_T_l.yaw() + ray.angle; // ray angle in map coordinates
             const cslibs_vectormaps::VectorMap::Point vp(ray_end_point.tx(), ray_end_point.ty());
-            const double zz = oriented_grid_vector_map.minSquaredDistanceNearbyStructure(vp, vrow, vcol, ray_angle);
+            const double zz = cslibs_vectormap.minSquaredDistanceNearbyStructure(vp, cell, ray_angle);
             /// <--- vectormap specific
 
             const double pz = p_hit(zz) + p_rand;
