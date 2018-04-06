@@ -1,8 +1,4 @@
-# add_unit_test_gtest is a wrapper function for catkin_add_gtest
-#   UNIT_TEST_NAME : is the name for the test
-#   UNIT_TEST_SRCS : a list of sources - make sure to wrap into quotes
-#   UNIT_TEST_LIBS : a list of libraries to link - make sure to wrap into quotes
-#                    and use semicoli as delimiters.
+# ${PROJECT_NAME}_add_unit_test_gtest(<NAME_OF_THE_TEST> [<SRCS> ...] [<LIBS> ...]) 
 function(${PROJECT_NAME}_add_unit_test_gtest)
     set(unit_test_NAME ${PROJECT_NAME}_${ARGV0})
     cmake_parse_arguments(unit_test
