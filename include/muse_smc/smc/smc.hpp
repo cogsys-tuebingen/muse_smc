@@ -117,6 +117,9 @@ public:
             lock_t l(worker_thread_mutex_);
             worker_thread_exit_ = false;
             worker_thread_      = thread_t([this](){loop();});
+#ifdef MUSE_SMC_DEBUG
+        std::cerr << "Started filter core! \n";
+#endif
             return true;
         }
         return false;
@@ -132,6 +135,9 @@ public:
         if(worker_thread_.joinable()) {
             worker_thread_.join();
         }
+#ifdef MUSE_SMC_DEBUG
+        std::cerr << "Ended filter core! \n";
+#endif
         return true;
     }
 
@@ -141,6 +147,9 @@ public:
         notify_prediction_.notify_one();
 #ifdef MUSE_SMC_LOG_STATE
         log();
+#endif
+#ifdef MUSE_SMC_DEBUG
+        std::cerr << "Added prediction! \n";
 #endif
     }
 
@@ -156,6 +165,9 @@ public:
             lag_source_ = id;
 #ifdef MUSE_SMC_DEBUG
             std::cerr << "lag " << id << " " << lag.duration() << " " << (update->getStampReceived() - update->getStamp()) << "\n";
+#endif
+#ifdef MUSE_SMC_DEBUG
+        std::cerr << "Added update! \n";
 #endif
         }
         if(id == lag_source_) {
@@ -183,11 +195,17 @@ public:
         init_state_             = state;
         init_state_covariance_  = covariance;
         request_init_state_     = true;
+#ifdef MUSE_SMC_DEBUG
+        std::cerr << "State initialization requested! \n";
+#endif
     }
 
     void requestUniformInitialization()
     {
         request_init_uniform_   = true;
+#ifdef MUSE_SMC_DEBUG
+        std::cerr << "Uniform initialization requested! \n";
+#endif
     }
 
 protected:
