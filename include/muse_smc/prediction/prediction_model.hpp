@@ -2,7 +2,9 @@
 #define PREDICTION_MODEL_HPP
 
 #include <cslibs_plugins_data/data.hpp>
+
 #include <muse_smc/samples/sample_set.hpp>
+#include <muse_smc/state_space/state_space.hpp>
 
 #include <memory>
 
@@ -13,6 +15,7 @@ public:
     using Ptr           = std::shared_ptr<PredictionModel>;
     using sample_t      = typename state_space_description_t::state_t;
     using sample_set_t  = SampleSet<state_space_description_t>;
+    using state_space_t = StateSpace<state_space_description_t>;
 
     struct Result {
         using Ptr = std::shared_ptr<Result>;
@@ -88,6 +91,14 @@ public:
     virtual typename Result::Ptr apply(const cslibs_plugins_data::Data::ConstPtr &data,
                                        const cslibs_time::Time                   &until,
                                        typename sample_set_t::state_iterator_t    states) = 0;
+
+    virtual typename Result::Ptr apply(const cslibs_plugins_data::Data::ConstPtr &data,
+                                       const typename state_space_t::ConstPtr    &state_space,
+                                       const cslibs_time::Time                   &until,
+                                       typename sample_set_t::state_iterator_t    states)
+    {
+        return apply(data, until, states);
+    }
 
 protected:
     std::string         name_;

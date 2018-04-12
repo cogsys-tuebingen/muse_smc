@@ -39,6 +39,7 @@ public:
             const auto &d = e.second.first;
             const auto &s = e.second.second;
 
+            /// By design, we do not allow updates to be bound with empty maps.
             auto callback = [this, u, s](const typename cslibs_plugins_data::Data::ConstPtr &data) {
                 typename state_space_t::ConstPtr ss = s->getStateSpace();
                 if(ss) {

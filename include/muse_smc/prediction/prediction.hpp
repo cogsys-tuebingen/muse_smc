@@ -4,14 +4,16 @@
 #include <cslibs_plugins_data/data.hpp>
 #include <muse_smc/samples/sample_set.hpp>
 #include <muse_smc/prediction/prediction_model.hpp>
+#include <muse_smc/state_space/state_space.hpp>
 
 namespace muse_smc {
 template<typename state_space_description_t>
 class Prediction {
 public:
-    using Ptr = std::shared_ptr<Prediction>;
+    using Ptr               = std::shared_ptr<Prediction>;
     using predition_model_t = PredictionModel<state_space_description_t>;
-    using sample_set_t = SampleSet<state_space_description_t>;
+    using sample_set_t      = SampleSet<state_space_description_t>;
+    using state_space_t     = StateSpace<state_space_description_t>;
 
     struct Less {
         bool operator()( const Prediction& lhs,
@@ -53,16 +55,29 @@ public:
     {
     }
 
+    Prediction(const cslibs_plugins_data::Data::ConstPtr &data,
+               const typename state_space_t::ConstPtr    &state_space,
+               const typename predition_model_t::Ptr     &model) :
+        data_(data),
+        state_space_(state_space),
+        model_(model)
+    {
+    }
+
     inline typename predition_model_t::Result operator ()
         (const cslibs_time::Time &until, typename sample_set_t::state_iterator_t states)
     {
-        return model_->apply(data_, until, states);
+        return state_space_ ?
+                    model_->apply(data_, state_space_, until, states) :
+                    model_->apply(data_, until, states);
     }
 
     inline typename predition_model_t::Result::Ptr apply(const cslibs_time::Time  &until,
                                                          typename sample_set_t::state_iterator_t states)
     {
-        return model_->apply(data_, until, states);
+        return state_space_ ?
+                    model_->apply(data_, state_space_, until, states) :
+                    model_->apply(data_, until, states);
     }
 
     inline const cslibs_time::Time& getStamp() const
@@ -87,6 +102,7 @@ public:
 
 private:
     cslibs_plugins_data::Data::ConstPtr data_;
+    typename state_space_t::ConstPtr    state_space_;
     typename predition_model_t::Ptr     model_;
 };
 }
