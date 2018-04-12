@@ -269,17 +269,17 @@ protected:
 
     inline void requests()
     {
+        if(request_init_uniform_) {
+            sample_uniform_->apply(*sample_set_);
+            state_publisher_->publishIntermidiate(sample_set_);
+            request_init_uniform_ = false;
+        }
         if(request_init_state_) {
             sample_normal_->apply(init_state_,
                                   init_state_covariance_,
                                   *sample_set_);
             state_publisher_->publish(sample_set_);
             request_init_state_ = false;
-        }
-        if(request_init_uniform_) {
-            sample_uniform_->apply(*sample_set_);
-            state_publisher_->publishIntermidiate(sample_set_);
-            request_init_uniform_ = false;
         }
     }
 
@@ -328,6 +328,7 @@ protected:
         worker_thread_active_ = true;
         lock_t notify_event_mutex_lock(notify_event_mutex_);
 
+        request_init_uniform_   = true;
 #ifdef MUSE_SMC_DEBUG
         cslibs_time::Time     last = cslibs_time::Time::now();
         cslibs_time::Time     now;
