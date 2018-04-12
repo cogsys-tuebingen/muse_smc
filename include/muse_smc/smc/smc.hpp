@@ -328,8 +328,6 @@ protected:
         worker_thread_active_ = true;
         lock_t notify_event_mutex_lock(notify_event_mutex_);
 
-        sample_uniform_->apply(*sample_set_);
-
 #ifdef MUSE_SMC_DEBUG
         cslibs_time::Time     last = cslibs_time::Time::now();
         cslibs_time::Time     now;
