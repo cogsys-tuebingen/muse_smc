@@ -84,5 +84,4 @@ private:
 };
 }
 
-
 #endif // SAMPLE_STATE_ITERATOR_HPP

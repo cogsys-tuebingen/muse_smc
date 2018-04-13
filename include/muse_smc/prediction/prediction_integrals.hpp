@@ -5,16 +5,15 @@
 #include <unordered_map>
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename sample_t, typename data_t>
 class PredictionIntegrals
 {
 public:
     using Ptr                   = std::shared_ptr<PredictionIntegrals>;
-    using prediction_model_t    = PredictionModel<sample_t>;
-    using prediction_integral_t = PredictionIntegral<sample_t>;
+    using prediction_model_t    = PredictionModel<sample_t, data_t>;
+    using prediction_integral_t = PredictionIntegral<sample_t, data_t>;
     using id_t                  = std::size_t;
-    using map_t = std::unordered_map<id_t, typename prediction_integral_t::Ptr>;
-
+    using map_t                 = std::unordered_map<id_t, typename prediction_integral_t::Ptr>;
 
     PredictionIntegrals(const typename prediction_integral_t::Ptr &global_integral) :
         global_accumulator_(global_integral)
@@ -95,6 +94,5 @@ protected:
     map_t                               accumulators_;
 };
 }
-
 
 #endif // PREDICTION_INTEGRALS_HPP

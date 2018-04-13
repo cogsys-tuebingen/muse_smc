@@ -19,7 +19,6 @@ public:
     CycleScheduler() :
         updates_applied_(0)
     {
-
     }
 
     void setup(const std::size_t &resampling_cycle_period,
@@ -37,7 +36,6 @@ public:
     {
         assert(update_cycles_.find(u->getModelId()) != update_cycles_.end());
         assert(update_cycle_periods_.find(u->getModelId()) != update_cycle_periods_.end());
-
 
         const id_t id                     = u->getModelId();
         const cycle_t update_cycle_period = update_cycle_periods_[id];
@@ -83,6 +81,5 @@ protected:
     cycle_map_t update_cycle_periods_;
 };
 }
-
 
 #endif // MUSE_SMC_CYCLE_SCHEDULER_HPP

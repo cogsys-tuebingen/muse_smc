@@ -1,15 +1,13 @@
 #ifndef PREDICTION_MODEL_HPP
 #define PREDICTION_MODEL_HPP
 
-#include <cslibs_plugins_data/data.hpp>
-
 #include <muse_smc/samples/sample_set.hpp>
 #include <muse_smc/state_space/state_space.hpp>
 
 #include <memory>
 
 namespace muse_smc {
-template<typename state_space_description_t>
+template<typename state_space_description_t, typename data_t>
 class PredictionModel {
 public:
     using Ptr           = std::shared_ptr<PredictionModel>;
@@ -18,19 +16,19 @@ public:
     using state_space_t = StateSpace<state_space_description_t>;
 
     struct Result {
-        using Ptr = std::shared_ptr<Result>;
+        using Ptr      = std::shared_ptr<Result>;
         using ConstPtr = std::shared_ptr<Result const>;
 
         Result() = default;
         virtual ~Result() = default;
 
-        Result(const cslibs_plugins_data::Data::ConstPtr &applied) :
+        Result(const typename data_t::ConstPtr &applied) :
             applied(applied)
         {
         }
 
-        Result(const cslibs_plugins_data::Data::ConstPtr &applied,
-               const cslibs_plugins_data::Data::ConstPtr &left_to_apply) :
+        Result(const typename data_t::ConstPtr &applied,
+               const typename data_t::ConstPtr &left_to_apply) :
             applied(applied),
             left_to_apply(left_to_apply)
         {
@@ -54,9 +52,8 @@ public:
             return dynamic_cast<const T&>(*this);
         }
 
-        const cslibs_plugins_data::Data::ConstPtr applied;
-        const cslibs_plugins_data::Data::ConstPtr left_to_apply;
-
+        const typename data_t::ConstPtr applied;
+        const typename data_t::ConstPtr left_to_apply;
     };
 
     PredictionModel() = default;
@@ -88,14 +85,14 @@ public:
         id_ = id;
     }
 
-    virtual typename Result::Ptr apply(const cslibs_plugins_data::Data::ConstPtr &data,
-                                       const cslibs_time::Time                   &until,
-                                       typename sample_set_t::state_iterator_t    states) = 0;
+    virtual typename Result::Ptr apply(const typename data_t::ConstPtr          &data,
+                                       const cslibs_time::Time                  &until,
+                                       typename sample_set_t::state_iterator_t   states) = 0;
 
-    virtual typename Result::Ptr apply(const cslibs_plugins_data::Data::ConstPtr &data,
-                                       const typename state_space_t::ConstPtr    &state_space,
-                                       const cslibs_time::Time                   &until,
-                                       typename sample_set_t::state_iterator_t    states)
+    virtual typename Result::Ptr apply(const typename data_t::ConstPtr          &data,
+                                       const typename state_space_t::ConstPtr   &state_space,
+                                       const cslibs_time::Time                  &until,
+                                       typename sample_set_t::state_iterator_t   states)
     {
         return apply(data, until, states);
     }
@@ -103,7 +100,6 @@ public:
 protected:
     std::string         name_;
     std::size_t         id_;
-
 };
 }
 

@@ -215,4 +215,5 @@ private:
     }
 };
 }
+
 #endif // DOTTY_HPP

@@ -1,17 +1,16 @@
 #ifndef PREDICTION_HPP
 #define PREDICTION_HPP
 
-#include <cslibs_plugins_data/data.hpp>
 #include <muse_smc/samples/sample_set.hpp>
 #include <muse_smc/prediction/prediction_model.hpp>
 #include <muse_smc/state_space/state_space.hpp>
 
 namespace muse_smc {
-template<typename state_space_description_t>
+template<typename state_space_description_t, typename data_t>
 class Prediction {
 public:
     using Ptr               = std::shared_ptr<Prediction>;
-    using predition_model_t = PredictionModel<state_space_description_t>;
+    using predition_model_t = PredictionModel<state_space_description_t, data_t>;
     using sample_set_t      = SampleSet<state_space_description_t>;
     using state_space_t     = StateSpace<state_space_description_t>;
 
@@ -34,30 +33,29 @@ public:
         {
             const auto &lhs_stamp = lhs.getStamp();
             const auto &rhs_stamp = rhs.getStamp();
-            return  lhs_stamp == rhs_stamp ? lhs.getStampReceived() > rhs.getStampReceived() :
-                                             lhs_stamp > rhs_stamp;
+            return lhs_stamp == rhs_stamp ? lhs.getStampReceived() > rhs.getStampReceived() :
+                                            lhs_stamp > rhs_stamp;
         }
         bool operator()( const Prediction::Ptr& lhs,
                          const Prediction::Ptr& rhs ) const
         {
             const auto &lhs_stamp = lhs->getStamp();
             const auto &rhs_stamp = rhs->getStamp();
-            return  lhs_stamp == rhs_stamp ? lhs->getStampReceived() > rhs->getStampReceived() :
-                                             lhs_stamp > rhs_stamp;
+            return lhs_stamp == rhs_stamp ? lhs->getStampReceived() > rhs->getStampReceived() :
+                                            lhs_stamp > rhs_stamp;
         }
     };
 
-
-    Prediction(const cslibs_plugins_data::Data::ConstPtr &data,
-               const typename predition_model_t::Ptr     &model) :
+    Prediction(const typename data_t::ConstPtr       &data,
+               const typename predition_model_t::Ptr &model) :
         data_(data),
         model_(model)
     {
     }
 
-    Prediction(const cslibs_plugins_data::Data::ConstPtr &data,
-               const typename state_space_t::ConstPtr    &state_space,
-               const typename predition_model_t::Ptr     &model) :
+    Prediction(const typename data_t::ConstPtr        &data,
+               const typename state_space_t::ConstPtr &state_space,
+               const typename predition_model_t::Ptr  &model) :
         data_(data),
         state_space_(state_space),
         model_(model)
@@ -101,11 +99,10 @@ public:
     }
 
 private:
-    cslibs_plugins_data::Data::ConstPtr data_;
-    typename state_space_t::ConstPtr    state_space_;
-    typename predition_model_t::Ptr     model_;
+    typename data_t::ConstPtr        data_;
+    typename state_space_t::ConstPtr state_space_;
+    typename predition_model_t::Ptr  model_;
 };
 }
-
 
 #endif // PREDICTION_HPP

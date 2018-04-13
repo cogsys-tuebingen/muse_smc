@@ -38,9 +38,8 @@
  * thresholds respectively rates can be used instead.
  */
 
-
 namespace muse_smc {
-template<typename state_space_description_t>
+template<typename state_space_description_t, typename data_t>
 class SMC
 {
 public:
@@ -56,15 +55,15 @@ public:
     using sample_set_t          = SampleSet<state_space_description_t>;
     using state_t               = typename state_space_description_t::state_t;
     using covariance_t          = typename state_space_description_t::covariance_t;
-    using update_t              = Update<state_space_description_t>;
-    using prediction_t          = Prediction<state_space_description_t>;
+    using update_t              = Update<state_space_description_t, data_t>;
+    using prediction_t          = Prediction<state_space_description_t, data_t>;
     using prediction_result_t   = typename prediction_t::predition_model_t::Result;
-    using prediction_integral_t = PredictionIntegral<state_space_description_t>;
-    using prediction_integrals_t= PredictionIntegrals<state_space_description_t>;
+    using prediction_integral_t = PredictionIntegral<state_space_description_t, data_t>;
+    using prediction_integrals_t= PredictionIntegrals<state_space_description_t, data_t>;
     using normal_sampling_t     = NormalSampling<state_space_description_t>;
     using uniform_sampling_t    = UniformSampling<state_space_description_t>;
-    using resampling_t          = Resampling<state_space_description_t>;
-    using scheduler_t           = Scheduler<state_space_description_t>;
+    using resampling_t          = Resampling<state_space_description_t, data_t>;
+    using scheduler_t           = Scheduler<state_space_description_t, data_t>;
     using filter_state_t        = SMCState<state_space_description_t>;
     using update_queue_t        = cslibs_utility::synchronized::priority_queue<typename update_t::Ptr,
                                                                                typename update_t::Greater>;

@@ -15,7 +15,6 @@ public:
 
     virtual void publish(const typename sample_set_t::ConstPtr &sample_set) = 0;
     virtual void publishIntermidiate(const typename sample_set_t::ConstPtr &sample_set) = 0;
-
 };
 }
 

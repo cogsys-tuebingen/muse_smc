@@ -9,17 +9,15 @@ template<typename state_space_description_t>
 class WeightIterator : public std::iterator<std::random_access_iterator_tag, double>
 {
 public:
-    using state_t   = typename state_space_description_t::state_t;
-    using sample_t  = typename state_space_description_t::sample_t;
-    using parent    = std::iterator<std::random_access_iterator_tag, double>;
-    using iterator  = typename parent::iterator;
-    using reference = typename parent::reference;
-
+    using state_t       = typename state_space_description_t::state_t;
+    using sample_t      = typename state_space_description_t::sample_t;
+    using parent        = std::iterator<std::random_access_iterator_tag, double>;
+    using iterator      = typename parent::iterator;
+    using reference     = typename parent::reference;
     using notify_update = cslibs_utility::common::delegate<void(const double &)>;
 
-
-    inline explicit WeightIterator(sample_t        *begin,
-                                   notify_update    update) :
+    inline explicit WeightIterator(sample_t      *begin,
+                                   notify_update  update) :
         data_(begin),
         update_(update)
     {
@@ -128,7 +126,6 @@ private:
     notify_update    update_;
     notify_finished  finish_;
     bool             untouched_;
-
 };
 }
 

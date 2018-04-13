@@ -269,5 +269,4 @@ private:
 };
 }
 
-
 #endif // SAMPLE_SET_HPP

@@ -13,6 +13,4 @@
   <depend>cslibs_math</depend>
   <depend>cslibs_time</depend>
   <depend>cslibs_utility</depend>
-  <depend>cslibs_plugins</depend>
-  <depend>cslibs_plugins_data</depend>
 </package>

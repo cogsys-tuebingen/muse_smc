@@ -113,5 +113,4 @@ public:
 }
 }
 
-
 #endif // MULTINOMIAL_HPP

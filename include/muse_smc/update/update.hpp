@@ -6,12 +6,12 @@
 #include <cslibs_time/time_frame.hpp>
 
 namespace muse_smc {
-template<typename state_space_description_t>
+template<typename state_space_description_t, typename data_t>
 class Update {
 public:
     using Ptr            = std::shared_ptr<Update>;
     using sample_t       = typename state_space_description_t::sample_t;
-    using update_model_t = UpdateModel<state_space_description_t>;
+    using update_model_t = UpdateModel<state_space_description_t, data_t>;
     using sample_set_t   = SampleSet<state_space_description_t>;
     using state_space_t  = StateSpace<state_space_description_t>;
 
@@ -48,9 +48,9 @@ public:
         }
     };
 
-    Update(const cslibs_plugins_data::Data::ConstPtr &data,
-           const typename state_space_t::ConstPtr    &state_space,
-           const typename update_model_t::Ptr        &model) :
+    Update(const typename data_t::ConstPtr        &data,
+           const typename state_space_t::ConstPtr &state_space,
+           const typename update_model_t::Ptr     &model) :
         data_(data),
         state_space_(state_space),
         model_(model)
@@ -98,10 +98,10 @@ public:
     }
 
 private:
-    const cslibs_plugins_data::Data::ConstPtr data_;
-    const typename state_space_t::ConstPtr    state_space_;
-    typename update_model_t::Ptr              model_;
+    const typename data_t::ConstPtr        data_;
+    const typename state_space_t::ConstPtr state_space_;
+    typename update_model_t::Ptr           model_;
 };
 }
 
-#endif /* UPDATE_HPP */
+#endif // UPDATE_HPP

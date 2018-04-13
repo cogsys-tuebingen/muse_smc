@@ -51,7 +51,6 @@ public:
     using time_t              = cslibs_time::Time;
     using duration_t          = cslibs_time::Duration;
 
-
     void setup(const cslibs_time::Rate  &rate,
                const nice_map_t         &priorities)
     {
@@ -130,14 +129,16 @@ public:
         };
         return resampling_time_ < stamp ? do_apply() : do_not_apply();
     }
+
 protected:
-    time_t                  next_update_time_;
-    time_t                  propagation_start_;
-    time_t                  resampling_time_;
-    duration_t              resampling_period_;
-    mean_duration_map_t     mean_durations_;        /// track the mean duration per particle
-    nice_map_t              nice_values_;
-    queue_t                 q_;
+    time_t               next_update_time_;
+    time_t               propagation_start_;
+    time_t               resampling_time_;
+    duration_t           resampling_period_;
+    mean_duration_map_t  mean_durations_;        /// track the mean duration per particle
+    nice_map_t           nice_values_;
+    queue_t              q_;
 };
 }
+
 #endif // MUSE_SMC_CFS_RATE_HPP

@@ -13,16 +13,16 @@
 #include <iostream>
 
 namespace muse_smc {
-template<typename state_space_description_t>
+template<typename state_space_description_t, typename data_t>
 class Resampling
 {
 public:
-    using Ptr = std::shared_ptr<Resampling>;
+    using Ptr                   = std::shared_ptr<Resampling>;
     using sample_t              = typename state_space_description_t::sample_t;
     using sample_set_t          = SampleSet<state_space_description_t>;
     using sample_uniform_t      = UniformSampling<state_space_description_t>;
     using sample_normal_t       = NormalSampling<state_space_description_t>;
-    using prediction_integral_t = PredictionIntegral<state_space_description_t>;
+    using prediction_integral_t = PredictionIntegral<state_space_description_t, data_t>;
 
     Resampling() :
         recovery_alpha_fast_(0.0),
@@ -34,31 +34,6 @@ public:
 
     virtual ~Resampling()
     {
-    }
-
-    inline const static std::string Type()
-    {
-        return "muse_smc::Resampling";
-    }
-
-    inline void setName(const std::string &name)
-    {
-        name_ = name;
-    }
-
-    inline std::string getName() const
-    {
-        return name_;
-    }
-
-    inline std::size_t getId() const
-    {
-        return id_;
-    }
-
-    inline void setId(const std::size_t id)
-    {
-        id_ = id;
     }
 
     virtual inline void setup(const typename sample_uniform_t::Ptr &uniform_pose_sampler,
@@ -94,8 +69,6 @@ public:
     }
 
 protected:
-    std::string                     name_;
-    std::size_t                     id_;
     double                          recovery_alpha_fast_;
     double                          recovery_alpha_slow_;
     double                          recovery_fast_;
@@ -126,4 +99,4 @@ protected:
 };
 }
 
-#endif /* RESAMPLING_HPP */
+#endif // RESAMPLING_HPP

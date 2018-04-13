@@ -18,7 +18,6 @@ struct Sample
     using transform_t      = state_t;
     using state_covariance = std::vector<double>;
 
-
     state_t state;
     double weight;
 
@@ -52,7 +51,5 @@ struct Sample
     }
 };
 }
-
-
 
 #endif // SAMPLE_HPP

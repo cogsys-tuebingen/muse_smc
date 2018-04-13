@@ -80,7 +80,7 @@ private:
     bool             open_;       /// indicator if insertion is still open
     notify_update    update_;     /// on update callback
     notify_closed    close_;      /// on close / finish callback
-
 };
 }
+
 #endif // SAMPLE_INSERTION_HPP

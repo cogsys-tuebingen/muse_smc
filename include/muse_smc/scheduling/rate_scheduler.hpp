@@ -112,7 +112,6 @@ protected:
     time_slice_t            time_slice_;
     time_slice_map_t        offsets_;
     time_table_t            model_update_times_;
-
 };
 }
 
