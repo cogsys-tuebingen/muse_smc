@@ -60,31 +60,6 @@ public:
 
     virtual ~PredictionModel() = default;
 
-    inline static const std::string Type()
-    {
-        return "muse_smc::PredictionModel";
-    }
-
-    inline const std::string& getName() const
-    {
-        return name_;
-    }
-
-    inline void setName(const std::string  &name)
-    {
-        name_ = name;
-    }
-
-    inline std::size_t getId() const
-    {
-        return id_;
-    }
-
-    inline void setId(const std::size_t id)
-    {
-        id_ = id;
-    }
-
     virtual typename Result::Ptr apply(const typename data_t::ConstPtr          &data,
                                        const cslibs_time::Time                  &until,
                                        typename sample_set_t::state_iterator_t   states) = 0;
@@ -96,10 +71,6 @@ public:
     {
         return apply(data, until, states);
     }
-
-protected:
-    std::string         name_;
-    std::size_t         id_;
 };
 }
 
