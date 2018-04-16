@@ -21,38 +21,10 @@ public:
 
     virtual ~UpdateModel() = default;
 
-    inline const static std::string Type()
-    {
-        return "muse_smc::UpdateModel";
-    }
-
-    inline const std::string& getName() const
-    {
-        return name_;
-    }
-
-    inline void setName(const std::string &name)
-    {
-        name_ = name;
-    }
-
-    inline std::size_t getId() const
-    {
-        return id_;
-    }
-
-    inline void setId(const std::size_t id)
-    {
-        id_ = id;
-    }
-
+    virtual std::size_t getId() const = 0;
     virtual void apply(const typename data_t::ConstPtr          &data,
                        const typename state_space_t::ConstPtr   &state_space,
                        typename sample_set_t::weight_iterator_t  weights) = 0;
-
-protected:
-    std::string name_;
-    std::size_t id_;
 };
 }
 
