@@ -80,7 +80,7 @@ public:
 
     inline const cslibs_time::Time& getStamp() const
     {
-        return data_->getTimeFrame().start;
+        return data_->getTimeFrame().end;
     }
 
     inline cslibs_time::Time const & getStampReceived() const
