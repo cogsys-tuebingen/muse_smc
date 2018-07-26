@@ -89,7 +89,7 @@ public:
 
     inline state_iterator_t getStateIterator()
     {
-        return state_iterator_t(*p_t_1_);
+        return state_iterator_t(stamp_, *p_t_1_);
     }
 
     inline sample_insertion_t getInsertion()

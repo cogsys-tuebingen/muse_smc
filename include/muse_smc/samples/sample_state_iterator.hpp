@@ -2,6 +2,7 @@
 #define SAMPLE_STATE_ITERATOR_HPP
 
 #include <cslibs_utility/buffered/buffered_vector.hpp>
+#include <cslibs_time/time.hpp>
 
 namespace muse_smc {
 template<typename state_space_description_t>
@@ -55,8 +56,11 @@ public:
     using sample_t          = typename state_space_description_t::sample_t;
     using sample_vector_t   = cslibs_utility::buffered::buffered_vector<sample_t, typename sample_t::allocator_t>;
     using iterator_t        = StateIterator<state_space_description_t>;
+    using time_t            = cslibs_time::Time;
 
-    inline StateIteration(sample_vector_t &data) :
+    inline StateIteration(const time_t &stamp,
+                          sample_vector_t &data) :
+        stamp_(stamp),
         data_(data)
     {
     }
@@ -79,8 +83,16 @@ public:
         return data_;
     }
 
+    inline const time_t &getStamp() const
+    {
+        return stamp_;
+    }
+
 private:
+    const time_t     stamp_;
     sample_vector_t &data_;
+
+
 };
 }
 
