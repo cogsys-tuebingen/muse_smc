@@ -57,9 +57,7 @@ public:
     {
     }
 
-    virtual ~Update()
-    {
-    }
+    virtual ~Update() = default;
 
     inline void operator()
         (typename sample_set_t::weight_iterator_t weights)

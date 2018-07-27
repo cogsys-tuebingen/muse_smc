@@ -62,6 +62,8 @@ public:
     {
     }
 
+    virtual ~Prediction() = default;
+
     inline typename predition_model_t::Result operator ()
         (const cslibs_time::Time &until, typename sample_set_t::state_iterator_t states)
     {
