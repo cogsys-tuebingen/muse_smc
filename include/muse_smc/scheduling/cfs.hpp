@@ -8,48 +8,63 @@
 #include <cslibs_time/statistics/duration_mean.hpp>
 
 namespace muse_smc {
-template<typename state_space_description_t>
-class CFSRate : public Scheduler<state_space_description_t>
+template<typename state_space_description_t, typename data_t>
+class CFS : public muse_smc::Scheduler<state_space_description_t, data_t>
 {
 public:
     struct Entry {
         int64_t     vtime;
         std::size_t id;
 
-        Entry(const std::size_t id) :
+        inline explicit Entry(const std::size_t id) :
             vtime(0),
             id(id)
         {
         }
 
-        Entry(const int64_t     vtime,
-              const std::size_t id) :
+        inline explicit Entry(const int64_t     vtime,
+                              const std::size_t id) :
             vtime(vtime),
             id(id)
         {
         }
 
+        inline Entry(const Entry &other) :
+            vtime(other.vtime),
+            id(other.id)
+
+        {
+        }
+
+        inline Entry & operator = (const Entry &other)
+        {
+            vtime = other.vtime;
+            id = other.id;
+            return *this;
+        }
+
         struct Greater {
-            bool operator()( const Entry& lhs,
-                             const Entry& rhs ) const
+            inline bool operator()( const Entry& lhs,
+                                    const Entry& rhs ) const
             {
-                return lhs.vtime > rhs.vtime;
+                return (lhs.vtime == rhs.vtime) ? (lhs.id > rhs.id) : (lhs.vtime > rhs.vtime);
             }
         };
     };
 
-    using Ptr                 = std::shared_ptr<CFSRate>;
+    using Ptr                 = std::shared_ptr<CFS>;
     using rate_t              = cslibs_time::Rate;
-    using update_t            = Update<state_space_description_t>;
+    using update_t            = muse_smc::Update<state_space_description_t, data_t>;
     using queue_t             = __gnu_pbds::priority_queue<Entry, typename Entry::Greater, __gnu_pbds::rc_binomial_heap_tag>;
-    using mean_duration_t     = cslibs_time::statistics::Duration;
+    using mean_duration_t     = cslibs_time::statistics::DurationMean;
     using mean_duration_map_t = std::unordered_map<id_t, mean_duration_t>;
     using time_priority_map_t = std::unordered_map<id_t, double>;
-    using resampling_t        = Resampling<state_space_description_t>;
-    using sample_set_t        = SampleSet<state_space_description_t>;
+    using resampling_t        = muse_smc::Resampling<state_space_description_t, data_t>;
+    using sample_set_t        = muse_smc::SampleSet<state_space_description_t>;
     using nice_map_t          = std::unordered_map<id_t, double>;
     using time_t              = cslibs_time::Time;
     using duration_t          = cslibs_time::Duration;
+
 
     void setup(const cslibs_time::Rate  &rate,
                const nice_map_t         &priorities)
@@ -58,7 +73,7 @@ public:
 
         resampling_period_ = duration_t(rate.expectedCycleTime().seconds());
 
-        std::cout << "[MuseSMC]: CFS nice values: \n";
+        std::cout << "[CFS]: Nice values: \n";
         for(const auto &p : priorities) {
             assert(p.second > 0.0);
             assert(p.second <= 1.0);
@@ -69,26 +84,28 @@ public:
         }
     }
 
-    virtual bool apply(typename update_t::Ptr &u,
+    virtual bool apply(typename update_t::Ptr     &u,
                        typename sample_set_t::Ptr &s) override
     {
+        auto now = []()
+        {
+            return time_t(ros::Time::now().toNSec());
+        };
 
-        const id_t id = u->getModelId();
+        const id_t   id    = u->getModelId();
         const time_t stamp = u->getStamp();
-        if(propagation_start_.isZero())
-            propagation_start_ = time_t::now();
 
         if(id == q_.top().id && stamp >= next_update_time_) {
             Entry entry = q_.top();
             q_.pop();
-            const time_t start = time_t::now();
-            u->apply(s->getWeightIterator());
-            const duration_t dur = (time_t::now() - start);
 
-            entry.vtime += static_cast<int64_t>(static_cast<double>(dur.nanoseconds()) * nice_values_[id] / static_cast<double>(s->getSampleSize()));
+            const time_t start = now();
+            u->apply(s->getWeightIterator());
+            const duration_t dur = (now() - start);
+            entry.vtime += static_cast<int64_t>(static_cast<double>(dur.nanoseconds()) * nice_values_[id]);
             next_update_time_ = stamp + dur;
+
             q_.push(entry);
-            propagation_start_ = time_t::now();
             return true;
         }
         return false;
@@ -99,21 +116,22 @@ public:
                        typename sample_set_t::Ptr &s) override
     {
         const cslibs_time::Time &stamp = s->getStamp();
-       
+
+        auto now = []()
+        {
+            return time_t(ros::Time::now().toNSec());
+        };
+
         if(resampling_time_.isZero())
             resampling_time_ = stamp;
-       
-        if(propagation_start_.isZero())
-            propagation_start_ = time_t::now();
 
-        auto do_apply = [&stamp, &r, &s, this] () {
-            const time_t start = time_t::now();
+        auto do_apply = [&stamp, &r, &s, &now, this] () {
+            const time_t start = now();
             r->apply(*s);
-            const duration_t dur = (time_t::now() - start);
-            
+            const duration_t dur = (now() - start);
+
             resampling_time_   = stamp + resampling_period_;
             next_update_time_  = next_update_time_ + dur;
-            propagation_start_ = propagation_start_ + dur;
 
             int64_t min_vtime = q_.top().vtime;
             queue_t q;
@@ -131,13 +149,12 @@ public:
     }
 
 protected:
-    time_t               next_update_time_;
-    time_t               propagation_start_;
-    time_t               resampling_time_;
-    duration_t           resampling_period_;
-    mean_duration_map_t  mean_durations_;        /// track the mean duration per particle
-    nice_map_t           nice_values_;
-    queue_t              q_;
+    time_t              next_update_time_;
+    time_t              resampling_time_;
+    duration_t          resampling_period_;
+    mean_duration_map_t mean_durations_;        /// track the mean duration per particle
+    nice_map_t          nice_values_;
+    queue_t             q_;
 };
 }
 
