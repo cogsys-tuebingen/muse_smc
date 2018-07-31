@@ -18,8 +18,6 @@ public:
     using resampling_t = Resampling<state_space_description_t, data_t>;
     using sample_set_t = SampleSet<state_space_description_t>;
 
-    virtual ~Scheduler() = default;
-
     virtual bool apply(typename update_t::Ptr     &u,
                        typename sample_set_t::Ptr &s) = 0;
 

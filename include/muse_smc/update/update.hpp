@@ -72,7 +72,7 @@ public:
 
     inline cslibs_time::Time const & getStamp() const
     {
-        return data_->getTimeFrame().end;
+        return data_->getTimeFrame().end; // TODO: start?
     }
 
     inline cslibs_time::Time const & getStampReceived() const

@@ -158,8 +158,9 @@ public:
         const cslibs_time::Time &stamp = update->getStamp();
 
         cslibs_time::statistics::DurationLowpass &lag = lag_map_[id];
-        lag += (update->getStampReceived() - update->getStamp());
-        if(lag.duration() > lag_) {
+        lag += cslibs_time::Duration(
+                    static_cast<int64_t>(std::max(0L, update->getStampReceived().nanoseconds() - update->getStamp().nanoseconds())));
+        if (lag.duration() >= lag_) {
             lag_ = lag.duration();
             lag_source_ = id;
 #ifdef MUSE_SMC_DEBUG
@@ -169,9 +170,9 @@ public:
         std::cerr << "Added update! \n";
 #endif
         }
-        if(id == lag_source_) {
-            while(delayed_update_queue_.hasElements()) {
-                if(delayed_update_queue_.top()->getStamp() <= stamp)
+        if (id == lag_source_) {
+            while (delayed_update_queue_.hasElements()) {
+                if (delayed_update_queue_.top()->getStamp() <= stamp)
                     update_queue_.emplace(delayed_update_queue_.pop());
                 else
                     break;
@@ -335,21 +336,23 @@ protected:
         cslibs_math::statistics::Mean<1> mean_rate;
 #endif
         while(!worker_thread_exit_) {
-            notify_event_.wait(notify_event_mutex_lock);
+            requests();
 
+            notify_event_.wait(notify_event_mutex_lock);
             if(worker_thread_exit_)
                 break;
 
-            while(update_queue_.hasElements()) {
+            update_queue_t q;
+            while (update_queue_.hasElements()) {
                 if(worker_thread_exit_)
                     break;
 
                 requests();
 
-                typename update_t::Ptr u = update_queue_.pop();
+                typename update_t::Ptr   u = update_queue_.pop();
                 const cslibs_time::Time &t = u->getStamp();
                 const cslibs_time::Time &sample_set_stamp = sample_set_->getStamp();
-
+std::cout << update_queue_.size() << std::endl;
                 if(t >= sample_set_stamp) {
 
                     predict(t);
