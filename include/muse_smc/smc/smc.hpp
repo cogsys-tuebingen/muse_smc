@@ -342,7 +342,6 @@ protected:
             if(worker_thread_exit_)
                 break;
 
-            update_queue_t q;
             while (update_queue_.hasElements()) {
                 if(worker_thread_exit_)
                     break;
@@ -352,7 +351,7 @@ protected:
                 typename update_t::Ptr   u = update_queue_.pop();
                 const cslibs_time::Time &t = u->getStamp();
                 const cslibs_time::Time &sample_set_stamp = sample_set_->getStamp();
-std::cout << update_queue_.size() << std::endl;
+std::cout << "Update Queue: " << update_queue_.size() << std::endl;
                 if(t >= sample_set_stamp) {
 
                     predict(t);
