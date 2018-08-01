@@ -18,9 +18,7 @@ public:
     {
     }
 
-    virtual ~UniformSampling()
-    {
-    }
+    virtual ~UniformSampling() = default;
 
     virtual void apply(sample_set_t &sample_set) = 0;
     virtual void apply(sample_t &sample) = 0;

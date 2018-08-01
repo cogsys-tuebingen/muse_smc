@@ -31,9 +31,7 @@ public:
     {
     }
 
-    virtual ~StateSpace()
-    {
-    }
+    virtual ~StateSpace() = default;
 
     virtual bool validate(const state_t&)       const = 0;
     virtual state_space_boundary_t  getMin()    const = 0;

@@ -12,6 +12,7 @@ public:
     using Ptr               = std::shared_ptr<sample_density_t>;
     using ConstPtr          = std::shared_ptr<sample_density_t const>;
 
+    virtual ~SampleDensity() = default;
     virtual void clear() = 0;
     virtual void insert(const sample_t &sample) = 0;
     virtual void estimate() = 0;

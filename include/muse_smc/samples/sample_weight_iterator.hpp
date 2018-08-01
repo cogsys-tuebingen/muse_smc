@@ -23,6 +23,8 @@ public:
     {
     }
 
+    virtual ~WeightIterator() = default;
+
     inline iterator& operator++()
     {
         update_(data_->weight);

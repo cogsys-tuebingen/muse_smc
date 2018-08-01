@@ -49,6 +49,8 @@ struct Sample
         weight(other.weight)
     {
     }
+
+    virtual ~Sample() = default;
 };
 }
 

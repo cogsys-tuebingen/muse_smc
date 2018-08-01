@@ -85,7 +85,7 @@ public:
         return model_;
     }
 
-    inline const std::string& getModelName() const
+    inline const std::string getModelName() const
     {
         return model_->getName();
     }
