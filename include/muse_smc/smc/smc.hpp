@@ -271,7 +271,7 @@ protected:
     {
         if(request_init_uniform_) {
             sample_uniform_->apply(*sample_set_);
-            state_publisher_->publishIntermidiate(sample_set_);
+            state_publisher_->publishIntermediate(sample_set_);
             request_init_uniform_ = false;
         }
         if(request_init_state_) {
@@ -364,7 +364,7 @@ std::cout << "Update Queue: " << update_queue_.size() << std::endl;
                             scheduler_->apply(u, sample_set_);
 
                             prediction_integrals_->reset(model_id);
-                            state_publisher_->publishIntermidiate(sample_set_);
+                            state_publisher_->publishIntermediate(sample_set_);
 #ifdef MUSE_SMC_LOG_STATE
                             log();
 #endif
