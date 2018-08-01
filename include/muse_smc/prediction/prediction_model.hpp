@@ -57,7 +57,6 @@ public:
     };
 
     PredictionModel() = default;
-
     virtual ~PredictionModel() = default;
 
     virtual typename Result::Ptr apply(const typename data_t::ConstPtr          &data,

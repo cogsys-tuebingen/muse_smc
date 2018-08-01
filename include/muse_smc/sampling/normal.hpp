@@ -22,9 +22,7 @@ public:
     {
     }
 
-    virtual ~NormalSampling()
-    {
-    }
+    virtual ~NormalSampling() = default;
 
     virtual void apply(const state_t             &state,
                        const covariance_t        &covariance,

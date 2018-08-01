@@ -22,6 +22,8 @@ public:
     {
     }
 
+    virtual ~PredictionRelay() = default;
+
     inline void relay(const typename prediction_model_t::Ptr &p,
                       const typename data_provider_t::Ptr &d)
     {

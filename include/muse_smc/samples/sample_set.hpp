@@ -76,8 +76,9 @@ public:
     {
     }
 
-    inline SampleSet& operator = (SampleSet &&other) = default;
+    virtual ~SampleSet() = default;
 
+    inline SampleSet& operator = (SampleSet &&other) = default;
 
     inline weight_iterator_t getWeightIterator()
     {

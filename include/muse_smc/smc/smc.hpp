@@ -91,7 +91,8 @@ public:
                       const typename resampling_t::Ptr            &resampling,
                       const typename filter_state_t::Ptr          &state_publisher,
                       const typename prediction_integrals_t::Ptr  &prediction_integrals,
-                      const typename scheduler_t::Ptr             &scheduler)
+                      const typename scheduler_t::Ptr             &scheduler,
+                      const bool                                  &enable_lag_correction)
     {
         sample_set_             = sample_set;
         sample_uniform_         = sample_uniform;
@@ -100,6 +101,7 @@ public:
         state_publisher_        = state_publisher;
         prediction_integrals_   = prediction_integrals;
         scheduler_              = scheduler;
+        enable_lag_correction_  = enable_lag_correction;
 
 #ifdef MUSE_SMC_USE_DOTTY
         dotty_.reset(new Dotty);
@@ -154,38 +156,43 @@ public:
 
     inline void addUpdate(const typename update_t::Ptr &update)
     {
-        const std::size_t        id    = update->getModelId();
-        const cslibs_time::Time &stamp = update->getStamp();
+        if (enable_lag_correction_) {
+            const std::size_t        id    = update->getModelId();
+            const cslibs_time::Time &stamp = update->getStamp();
 
-        cslibs_time::statistics::DurationLowpass &lag = lag_map_[id];
-        lag += cslibs_time::Duration(
-                    static_cast<int64_t>(std::max(0L, update->getStampReceived().nanoseconds() - update->getStamp().nanoseconds())));
-        if (lag.duration() >= lag_) {
-            lag_ = lag.duration();
-            lag_source_ = id;
+            cslibs_time::statistics::DurationLowpass &lag = lag_map_[id];
+            lag += cslibs_time::Duration(
+                        static_cast<int64_t>(std::max(0L, update->getStampReceived().nanoseconds() - update->getStamp().nanoseconds())));
+            if (lag.duration() >= lag_) {
+                lag_ = lag.duration();
+                lag_source_ = id;
 #ifdef MUSE_SMC_DEBUG
-            std::cerr << "lag " << id << " " << lag.duration() << " " << (update->getStampReceived() - update->getStamp()) << "\n";
+                std::cerr << "lag " << id << " " << lag.duration() << " " << (update->getStampReceived() - update->getStamp()) << "\n";
 #endif
 #ifdef MUSE_SMC_DEBUG
-        std::cerr << "Added update! \n";
+            std::cerr << "Added update! \n";
 #endif
-        }
-        if (id == lag_source_) {
-            while (delayed_update_queue_.hasElements()) {
-                if (delayed_update_queue_.top()->getStamp() <= stamp)
-                    update_queue_.emplace(delayed_update_queue_.pop());
-                else
-                    break;
-
             }
+            if (id == lag_source_) {
+                while (delayed_update_queue_.hasElements()) {
+                    if (delayed_update_queue_.top()->getStamp() <= stamp)
+                        update_queue_.emplace(delayed_update_queue_.pop());
+                    else
+                        break;
+
+                }
+                update_queue_.emplace(update);
+                notify_event_.notify_one();
+            } else {
+                delayed_update_queue_.emplace(update);
+            }
+#ifdef MUSE_SMC_LOG_STATE
+            log();
+#endif
+        } else {
             update_queue_.emplace(update);
             notify_event_.notify_one();
-        } else {
-            delayed_update_queue_.emplace(update);
         }
-#ifdef MUSE_SMC_LOG_STATE
-        log();
-#endif
     }
 
     inline void requestStateInitialization(const state_t &state,
@@ -232,7 +239,7 @@ protected:
     duration_map_t                          lag_map_;
     duration_t                              lag_;
     std::size_t                             lag_source_;
-
+    bool                                    enable_lag_correction_;
 
     /// background thread
     mutex_t                                 worker_thread_mutex_;

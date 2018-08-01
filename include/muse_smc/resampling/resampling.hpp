@@ -32,9 +32,7 @@ public:
     {
     }
 
-    virtual ~Resampling()
-    {
-    }
+    virtual ~Resampling() = default;
 
     virtual inline void setup(const typename sample_uniform_t::Ptr &uniform_pose_sampler,
                               const typename sample_normal_t::Ptr  &normal_pose_sampler,

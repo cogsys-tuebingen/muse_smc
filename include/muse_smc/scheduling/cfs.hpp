@@ -65,6 +65,7 @@ public:
     using time_t              = cslibs_time::Time;
     using duration_t          = cslibs_time::Duration;
 
+    virtual ~CFS() = default;
 
     void setup(const cslibs_time::Rate  &rate,
                const nice_map_t         &priorities)

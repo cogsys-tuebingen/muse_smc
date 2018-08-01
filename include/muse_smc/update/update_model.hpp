@@ -22,6 +22,7 @@ public:
     virtual ~UpdateModel() = default;
 
     virtual std::size_t getId() const = 0;
+    virtual const std::string getName() const = 0;
     virtual void apply(const typename data_t::ConstPtr          &data,
                        const typename state_space_t::ConstPtr   &state_space,
                        typename sample_set_t::weight_iterator_t  weights) = 0;

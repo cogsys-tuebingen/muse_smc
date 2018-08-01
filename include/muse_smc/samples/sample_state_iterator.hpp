@@ -19,6 +19,8 @@ public:
     {
     }
 
+    virtual ~StateIterator() = default;
+
     inline iterator& operator++()
     {
         ++data_;
