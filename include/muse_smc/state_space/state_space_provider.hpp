@@ -11,11 +11,12 @@ public:
     using Ptr           = std::shared_ptr<StateSpaceProvider>;
     using state_space_t = StateSpace<state_space_description_t>;
 
-    StateSpaceProvider() = default;
     virtual ~StateSpaceProvider() = default;
 
     virtual const std::string getName() const = 0;
-    virtual typename state_space_t::ConstPtr getStateSpace() const = 0;
+    virtual typename state_space_t::ConstPtr getStateSpace() const = 0;     /// can return a state space
+    virtual void  waitForStateSpace() const {}                              /// wait for state space to be avaliable
+
 };
 }
 
