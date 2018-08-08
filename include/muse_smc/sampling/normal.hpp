@@ -24,10 +24,10 @@ public:
 
     virtual ~NormalSampling() = default;
 
-    virtual void apply(const state_t             &state,
+    virtual bool apply(const state_t             &state,
                        const covariance_t        &covariance,
                        sample_set_t              &sample_set) = 0;
-    virtual void update(const std::string &frame) = 0;
+    virtual bool update(const std::string &frame) = 0;
 };
 }
 

@@ -75,6 +75,7 @@ public:
     inline SMC() :
         request_init_state_(false),
         request_init_uniform_(false),
+        request_update_uniform_(false),
         worker_thread_active_(false),
         worker_thread_exit_(false)
     {
@@ -231,6 +232,7 @@ protected:
     covariance_t                            init_state_covariance_;
     atomic_bool_t                           request_init_state_;
     atomic_bool_t                           request_init_uniform_;
+    atomic_bool_t                           request_update_uniform_;
 
     /// processing queues
     update_queue_t                          update_queue_;
@@ -276,17 +278,25 @@ protected:
 
     inline void requests()
     {
-        if(request_init_uniform_) {
-            sample_uniform_->apply(*sample_set_);
-            state_publisher_->publishIntermediate(sample_set_);
-            request_init_uniform_ = false;
+        if (request_update_uniform_)
+            if (sample_uniform_->update(sample_set_->getFrame()))
+                request_update_uniform_ = false;
+
+        if (request_init_uniform_) {
+            if (sample_uniform_->apply(*sample_set_)) {
+                state_publisher_->publishIntermediate(sample_set_);
+                request_init_uniform_   = false;
+                request_update_uniform_ = false;
+            }
         }
-        if(request_init_state_) {
-            sample_normal_->apply(init_state_,
-                                  init_state_covariance_,
-                                  *sample_set_);
-            state_publisher_->publish(sample_set_);
-            request_init_state_ = false;
+
+        if (request_init_state_) {
+            if (sample_normal_->apply(init_state_,
+                                      init_state_covariance_,
+                                      *sample_set_)) {
+                state_publisher_->publish(sample_set_);
+                request_init_state_  = false;
+            }
         }
     }
 
@@ -298,19 +308,19 @@ protected:
         };
 
         const cslibs_time::Time &time_stamp = sample_set_->getStamp();
-        while(until > time_stamp) {
-            if(prediction_queue_.empty())
+        while (until > time_stamp) {
+            if (prediction_queue_.empty())
                 wait_for_prediction();
 
             typename prediction_t::Ptr prediction = prediction_queue_.pop();
-            if(prediction->getStamp() < time_stamp) {
+            if (prediction->getStamp() < time_stamp) {
                 /// drop odometry messages which are too old
                 continue;
             }
 
             /// mutate time stamp
             typename prediction_result_t::Ptr prediction_result = prediction->apply(until, sample_set_->getStateIterator());
-            if(prediction_result->success()) {
+            if (prediction_result->success()) {
                 prediction_integrals_->add(prediction_result);
                 sample_set_->setStamp(prediction_result->applied->getTimeFrame().end);
 
@@ -318,7 +328,7 @@ protected:
                 dotty_->addPrediction(prediction_result->applied->getTimeFrame().end, static_cast<bool>(prediction_result->left_to_apply));
 #endif
 
-                if(prediction_result->left_to_apply) {
+                if (prediction_result->left_to_apply) {
                     typename prediction_t::Ptr prediction_left_to_apply
                             (new prediction_t(prediction_result->left_to_apply, prediction->getModel()));
                     prediction_queue_.emplace(prediction_left_to_apply);
@@ -335,22 +345,23 @@ protected:
         worker_thread_active_ = true;
         lock_t notify_event_mutex_lock(notify_event_mutex_);
 
-        request_init_uniform_   = true;
+        request_update_uniform_  = true;
+
 #ifdef MUSE_SMC_DEBUG
         cslibs_time::Time     last = cslibs_time::Time::now();
         cslibs_time::Time     now;
         cslibs_time::Duration dur;
         cslibs_math::statistics::Mean<1> mean_rate;
 #endif
-        while(!worker_thread_exit_) {
+        while (!worker_thread_exit_) {
             requests();
 
             notify_event_.wait(notify_event_mutex_lock);
-            if(worker_thread_exit_)
+            if (worker_thread_exit_)
                 break;
 
             while (update_queue_.hasElements()) {
-                if(worker_thread_exit_)
+                if (worker_thread_exit_)
                     break;
 
                 requests();
@@ -359,16 +370,17 @@ protected:
                 const cslibs_time::Time &t = u->getStamp();
                 const cslibs_time::Time &sample_set_stamp = sample_set_->getStamp();
 
-                if(t >= sample_set_stamp) {
+                if (t >= sample_set_stamp) {
 
                     predict(t);
 
-                    if(t > sample_set_stamp) {
+                    if (t > sample_set_stamp) {
                         update_queue_.emplace(u);
                     } else if (t == sample_set_stamp) {
                         const auto model_id = u->getModelId();
-                        if(!prediction_integrals_->isZero(model_id)) {
+                        if (!prediction_integrals_->isZero(model_id)) {
                             scheduler_->apply(u, sample_set_);
+                            resampling_->updateRecovery(*sample_set_);
 
                             prediction_integrals_->reset(model_id);
                             state_publisher_->publishIntermediate(sample_set_);
@@ -387,7 +399,7 @@ protected:
                     std::cerr << "Dropped " << u->getModelName() << " " << (sample_set_->getStamp() - u->getStamp()).milliseconds() << std::endl;
                 }
 #endif
-                if(prediction_integrals_->thresholdExceeded() &&
+                if (prediction_integrals_->thresholdExceeded() &&
                         scheduler_->apply(resampling_, sample_set_)) {
                     prediction_integrals_->reset();
                     state_publisher_->publish(sample_set_);

@@ -20,7 +20,7 @@ public:
 
     virtual ~UniformSampling() = default;
 
-    virtual void apply(sample_set_t &sample_set) = 0;
+    virtual bool apply(sample_set_t &sample_set) = 0;
     virtual void apply(sample_t &sample) = 0;
     virtual bool update(const std::string &frame) = 0;
 };

@@ -105,17 +105,17 @@ public:
                                   sample_insertion_t::notify_closed::template from<sample_set_t, &sample_set_t::insertionClosedNormalize>(this));
     }
 
-
     inline void normalizeWeights()
     {
-        if(p_t_1_->size() == 0 || weight_sum_ == 0.0) {
+        if (p_t_1_->size() == 0)
             return;
-        }
+        if (weight_sum_ == 0.0)
+            resetWeights(reset_weights_to_one_);
 
         weight_distribution_.reset();
-        for(auto &s : *p_t_1_) {
-            s.weight /= weight_sum_;
+        for (auto &s : *p_t_1_) {
             weight_distribution_.add(s.weight);
+            s.weight /= weight_sum_;
         }
         maximum_weight_ /= weight_sum_;
         weight_sum_ = 1.0;
@@ -123,14 +123,13 @@ public:
 
     inline void resetWeights(const bool set_to_one = false)
     {
-        if(p_t_1_->size() == 0) {
+        if (p_t_1_->size() == 0)
             return;
-        }
 
         const double weight = set_to_one ? 1.0 : 1.0 / static_cast<double>(p_t_1_->size());
-        for(auto &s : *p_t_1_) {
-            s.weight = weight;
+        for (auto &s : *p_t_1_) {
             weight_distribution_.add(weight);
+            s.weight = weight;
         }
         maximum_weight_ = weight;
         weight_sum_     = weight * p_t_1_->size();
@@ -209,9 +208,8 @@ public:
     inline void updateDensity()
     {
         p_t_1_density_->clear();
-        for(const auto &s : *p_t_1_) {
+        for (const auto &s : *p_t_1_)
             p_t_1_density_->insert(s);
-        }
         p_t_1_density_->estimate();
     }
 
