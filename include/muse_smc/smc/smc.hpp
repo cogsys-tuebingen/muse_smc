@@ -379,10 +379,10 @@ protected:
                     } else if (t == sample_set_stamp) {
                         const auto model_id = u->getModelId();
                         if (!prediction_integrals_->isZero(model_id)) {
-                            scheduler_->apply(u, sample_set_);
-                            resampling_->updateRecovery(*sample_set_);
-
-                            prediction_integrals_->reset(model_id);
+                            if (scheduler_->apply(u, sample_set_)) {
+                                resampling_->updateRecovery(*sample_set_);
+                                prediction_integrals_->reset(model_id);
+                            }
                             state_publisher_->publishIntermediate(sample_set_);
 #ifdef MUSE_SMC_LOG_STATE
                             log();
