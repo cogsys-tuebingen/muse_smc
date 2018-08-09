@@ -114,8 +114,8 @@ public:
 
         weight_distribution_.reset();
         for (auto &s : *p_t_1_) {
-            weight_distribution_.add(s.weight);
             s.weight /= weight_sum_;
+            weight_distribution_.add(s.weight);
         }
         maximum_weight_ /= weight_sum_;
         weight_sum_ = 1.0;
@@ -128,8 +128,8 @@ public:
 
         const double weight = set_to_one ? 1.0 : 1.0 / static_cast<double>(p_t_1_->size());
         for (auto &s : *p_t_1_) {
-            weight_distribution_.add(weight);
             s.weight = weight;
+            weight_distribution_.add(weight);
         }
         maximum_weight_ = weight;
         weight_sum_     = weight * p_t_1_->size();
