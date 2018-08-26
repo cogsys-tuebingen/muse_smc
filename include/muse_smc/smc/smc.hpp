@@ -286,6 +286,7 @@ protected:
         if (request_update_uniform_)
             if (sample_uniform_->update(sample_set_->getFrame()))
                 request_update_uniform_ = false;
+#pragma message "Add a valid time stamp here as well!!"
 
         if (request_init_uniform_) {
             if (sample_uniform_->apply(*sample_set_)) {
