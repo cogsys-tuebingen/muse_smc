@@ -53,6 +53,7 @@ public:
     /// filter specific type defs
     using sample_t              = typename state_space_description_t::sample_t;
     using sample_set_t          = SampleSet<state_space_description_t>;
+    using time_t                = cslibs_time::Time;
     using state_t               = typename state_space_description_t::state_t;
     using covariance_t          = typename state_space_description_t::covariance_t;
     using update_t              = Update<state_space_description_t, data_t>;
@@ -197,20 +198,23 @@ public:
     }
 
     inline void requestStateInitialization(const state_t &state,
-                                           const covariance_t &covariance)
+                                           const covariance_t &covariance,
+                                           const time_t &time)
     {
         lock_t l(init_state_mutex_);
         init_state_             = state;
         init_state_covariance_  = covariance;
+        init_time_        = time;
         request_init_state_     = true;
 #ifdef MUSE_SMC_DEBUG
         std::cerr << "State initialization requested! \n";
 #endif
     }
 
-    void requestUniformInitialization()
+    void requestUniformInitialization(const time_t &time)
     {
         request_init_uniform_   = true;
+        init_time_ = time;
 #ifdef MUSE_SMC_DEBUG
         std::cerr << "Uniform initialization requested! \n";
 #endif
@@ -230,6 +234,7 @@ protected:
     std::mutex                              init_state_mutex_;
     state_t                                 init_state_;
     covariance_t                            init_state_covariance_;
+    time_t                                  init_time_;
     atomic_bool_t                           request_init_state_;
     atomic_bool_t                           request_init_uniform_;
     atomic_bool_t                           request_update_uniform_;
@@ -285,6 +290,7 @@ protected:
         if (request_init_uniform_) {
             if (sample_uniform_->apply(*sample_set_)) {
                 state_publisher_->publishIntermediate(sample_set_);
+                sample_set_->setStamp(init_time_);
                 request_init_uniform_   = false;
                 request_update_uniform_ = false;
             }
@@ -294,6 +300,7 @@ protected:
             if (sample_normal_->apply(init_state_,
                                       init_state_covariance_,
                                       *sample_set_)) {
+                sample_set_->setStamp(init_time_);
                 state_publisher_->publish(sample_set_);
                 request_init_state_  = false;
             }
