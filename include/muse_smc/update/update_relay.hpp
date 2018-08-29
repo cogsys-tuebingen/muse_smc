@@ -39,7 +39,7 @@ public:
             /// By design, we do not allow updates to be bound with empty maps.
             auto callback = [this, u, s](const typename data_t::ConstPtr &data) {
                 typename state_space_t::ConstPtr ss = s->getStateSpace();
-                if(ss) {
+                if (ss) {
                     typename update_t::Ptr up(new update_t(data, ss, u));
                     smc_->addUpdate(up);
                 } else {

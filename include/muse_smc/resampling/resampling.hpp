@@ -80,7 +80,8 @@ public:
         else
             recovery_fast_ += recovery_alpha_fast_ * (weight_average - recovery_fast_);
 
-        recovery_random_pose_probability_ = std::max(0.0, 1.0 - recovery_fast_ / recovery_slow_);
+        if (recovery_slow_ != 0.0)
+            recovery_random_pose_probability_ = std::max(0.0, 1.0 - recovery_fast_ / recovery_slow_);
     }
 
 protected:

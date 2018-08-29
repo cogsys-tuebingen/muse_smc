@@ -43,7 +43,7 @@ public:
         auto callback = [this, p, s](const typename data_t::ConstPtr &data)
         {
             typename state_space_t::ConstPtr ss = s->getStateSpace();
-            if(ss) {
+            if (ss) {
                 typename prediction_t::Ptr prediction(new prediction_t(data, ss, p));
                 smc_->addPrediction(prediction);
             } else {
