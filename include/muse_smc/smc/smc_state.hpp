@@ -16,6 +16,7 @@ public:
     virtual ~SMCState() = default;
     virtual void publish(const typename sample_set_t::ConstPtr &sample_set) = 0;
     virtual void publishIntermediate(const typename sample_set_t::ConstPtr &sample_set) = 0;
+    virtual void publishConstant(const typename sample_set_t::ConstPtr &sample_set) = 0;
 };
 }
 

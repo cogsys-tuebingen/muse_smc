@@ -74,6 +74,7 @@ public:
     using duration_map_t        = std::unordered_map<std::size_t, cslibs_time::statistics::DurationLowpass>;
 
     inline SMC() :
+        sent_valid_state_(false),
         request_init_state_(false),
         request_init_uniform_(false),
         request_update_uniform_(false),
@@ -247,6 +248,7 @@ protected:
     duration_t                              lag_;
     std::size_t                             lag_source_;
     bool                                    enable_lag_correction_;
+    bool                                    sent_valid_state_;
 
     /// background thread
     mutex_t                                 worker_thread_mutex_;
@@ -283,10 +285,10 @@ protected:
 
     inline void requests()
     {
-        if (request_update_uniform_)
-            if (sample_uniform_->update(sample_set_->getFrame()))
-                request_update_uniform_ = false;
-#pragma message "Add a valid time stamp here as well!!"
+//        if (request_update_uniform_)
+//            if (sample_uniform_->update(sample_set_->getFrame()))
+//                request_update_uniform_ = false;
+//#pragma message "Add a valid time stamp here as well!!"
 
         if (request_init_uniform_) {
             if (sample_uniform_->apply(*sample_set_)) {
@@ -411,6 +413,9 @@ protected:
                         scheduler_->apply(resampling_, sample_set_)) {
                     prediction_integrals_->reset();
                     state_publisher_->publish(sample_set_);
+                    sent_valid_state_ = true;
+                } else if( prediction_integrals_->isZero() && sent_valid_state_ ){
+                    state_publisher_->publishConstant(sample_set_);
                 }
 #ifdef MUSE_SMC_DEBUG
                 now = cslibs_time::Time::now();
