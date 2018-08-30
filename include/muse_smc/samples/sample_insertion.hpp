@@ -35,7 +35,8 @@ public:
     virtual ~SampleInsertion()
     {
         if(open_) {
-            close_();
+            if(touched_)
+                close_();
         }
     }
 
@@ -43,6 +44,8 @@ public:
     {
         if(!open_)
             return;
+
+        touched_ = true;
 
         data_.emplace_back(std::move(sample));
         update_(data_.back());
@@ -52,6 +55,9 @@ public:
     {
         if(!open_)
             return;
+
+        touched_ = true;
+
         data_.push_back(sample);
         update_(data_.back());
     }
@@ -65,7 +71,9 @@ public:
     {
         if(open_) {
             open_ = false;
-            close_();
+
+            if(touched_)
+                close_();
         }
     }
 
@@ -78,6 +86,7 @@ private:
     sample_vector_t &data_;       /// the data container
 
     bool             open_;       /// indicator if insertion is still open
+    bool             touched_;    /// indicator if something was inserted
     notify_update    update_;     /// on update callback
     notify_closed    close_;      /// on close / finish callback
 };

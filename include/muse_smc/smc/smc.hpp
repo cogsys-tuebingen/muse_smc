@@ -205,7 +205,7 @@ public:
         lock_t l(init_state_mutex_);
         init_state_             = state;
         init_state_covariance_  = covariance;
-        init_time_        = time;
+        init_time_              = time;
         request_init_state_     = true;
 #ifdef MUSE_SMC_DEBUG
         std::cerr << "State initialization requested! \n";
@@ -414,7 +414,7 @@ protected:
                     prediction_integrals_->reset();
                     state_publisher_->publish(sample_set_);
                     sent_valid_state_ = true;
-                } else if( prediction_integrals_->isZero() && sent_valid_state_ ){
+                } else if( sent_valid_state_ && prediction_integrals_->isZero() ){
                     state_publisher_->publishConstant(sample_set_);
                 }
 #ifdef MUSE_SMC_DEBUG

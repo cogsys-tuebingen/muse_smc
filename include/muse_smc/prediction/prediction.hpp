@@ -5,6 +5,8 @@
 #include <muse_smc/prediction/prediction_model.hpp>
 #include <muse_smc/state_space/state_space.hpp>
 
+#include <cslibs_time/time_frame.hpp>
+
 namespace muse_smc {
 template<typename state_space_description_t, typename data_t>
 class Prediction {
@@ -83,6 +85,11 @@ public:
     inline const cslibs_time::Time& getStamp() const
     {
         return data_->getTimeFrame().end;
+    }
+
+    inline const cslibs_time::TimeFrame &getTimeFrame() const
+    {
+        return data_->getTimeFrame();
     }
 
     inline cslibs_time::Time const & getStampReceived() const
