@@ -190,6 +190,11 @@ public:
         return weight_sum_;
     }
 
+    inline double getWeightVariance() const
+    {
+        return weight_distribution_.getVariance();
+    }
+
     inline bool isNormalized() const
     {
         return weight_sum_ == 1.0;

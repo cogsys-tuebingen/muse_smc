@@ -28,7 +28,8 @@ public:
         recovery_alpha_fast_(0.0),
         recovery_alpha_slow_(0.0),
         recovery_fast_(0.0),
-        recovery_slow_(0.0)
+        recovery_slow_(0.0),
+        variance_treshold_(0.0)
     {
     }
 
@@ -37,17 +38,19 @@ public:
     virtual inline void setup(const typename sample_uniform_t::Ptr &uniform_pose_sampler,
                               const typename sample_normal_t::Ptr  &normal_pose_sampler,
                               const double                          recovery_alpha_fast = 0.0,
-                              const double                          recovery_alpha_slow = 0.0)
+                              const double                          recovery_alpha_slow = 0.0,
+                              const double                          variance_threshold = 0.0)
     {
         uniform_pose_sampler_ = uniform_pose_sampler;
         normal_pose_sampler_  = normal_pose_sampler;
         recovery_alpha_fast_  = recovery_alpha_fast;
         recovery_alpha_slow_  = recovery_alpha_slow;
+        variance_treshold_    = variance_threshold;
     }
 
     inline void apply(sample_set_t &sample_set)
     {
-        if (sample_set.getWeightSum() == 0.0)
+        if (sample_set.getWeightSum() == 0.0 || sample_set.getWeightVariance() >= variance_treshold_)
             std::cerr << "[MuseSMC]: All particle weights are zero. \n";
 
         auto do_apply = [&sample_set, this] () {
@@ -90,6 +93,7 @@ protected:
     double                          recovery_fast_;
     double                          recovery_slow_;
     double                          recovery_random_pose_probability_;
+    double                          variance_treshold_;
     typename sample_uniform_t::Ptr  uniform_pose_sampler_;
     typename sample_normal_t::Ptr   normal_pose_sampler_;
 
