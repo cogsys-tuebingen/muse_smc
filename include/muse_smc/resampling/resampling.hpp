@@ -50,8 +50,16 @@ public:
 
     inline void apply(sample_set_t &sample_set)
     {
-        if (sample_set.getWeightSum() == 0.0 || sample_set.getWeightVariance() >= variance_treshold_)
+        if (sample_set.getWeightSum() == 0.0) {
             std::cerr << "[MuseSMC]: All particle weights are zero. \n";
+            return;
+        }
+
+        if(sample_set.getWeightVariance() < variance_treshold_) {
+//            std::cerr << "[MuseSMC]: Variance not high enough for resampling. \n";
+            return;
+        }
+
 
         auto do_apply = [&sample_set, this] () {
             doApply(sample_set);

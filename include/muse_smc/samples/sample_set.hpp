@@ -17,9 +17,12 @@
 
 namespace muse_smc {
 template<typename state_space_description_t>
-class SampleSet
+class EIGEN_ALIGN16 SampleSet
 {
 public:
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     using sample_t              = typename state_space_description_t::sample_t;
     using sample_set_t          = SampleSet<state_space_description_t>;
     using sample_vector_t       = cslibs_utility::buffered::buffered_vector<sample_t, typename sample_t::allocator_t>;
