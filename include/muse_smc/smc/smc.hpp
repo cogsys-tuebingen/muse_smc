@@ -296,6 +296,7 @@ protected:
                 sample_set_->setStamp(init_time_);
                 request_init_uniform_   = false;
                 request_update_uniform_ = false;
+                sent_valid_state_       = false;
             }
         }
 
@@ -306,6 +307,7 @@ protected:
                 sample_set_->setStamp(init_time_);
                 state_publisher_->publish(sample_set_);
                 request_init_state_  = false;
+                sent_valid_state_    = true;
             }
         }
     }
