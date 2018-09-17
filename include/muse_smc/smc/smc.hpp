@@ -74,9 +74,10 @@ public:
     using duration_map_t        = std::unordered_map<std::size_t, cslibs_time::statistics::DurationLowpass>;
 
     inline SMC() :
-        has_valid_state_(false),
         request_init_state_(false),
         request_init_uniform_(false),
+        enable_lag_correction_(false),
+        has_valid_state_(false),
         worker_thread_active_(false),
         worker_thread_exit_(false)
     {
