@@ -56,7 +56,7 @@ public:
         }
 
         if(sample_set.getWeightVariance() < variance_treshold_) {
-//            std::cerr << "[MuseSMC]: Variance not high enough for resampling. \n";
+            std::cerr << "[MuseSMC]: Variance not high enough for resampling. \n";
             return;
         }
 

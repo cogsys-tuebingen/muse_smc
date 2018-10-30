@@ -67,9 +67,9 @@ public:
     using scheduler_t           = Scheduler<state_space_description_t, data_t>;
     using filter_state_t        = SMCState<state_space_description_t>;
     using update_queue_t        = cslibs_utility::synchronized::priority_queue<typename update_t::Ptr,
-                                                                               typename update_t::Greater>;
+    typename update_t::Greater>;
     using prediction_queue_t    = cslibs_utility::synchronized::priority_queue<typename prediction_t::Ptr,
-                                                                               typename prediction_t::Greater>;
+    typename prediction_t::Greater>;
     using duration_t            = cslibs_time::Duration;
     using duration_map_t        = std::unordered_map<std::size_t, cslibs_time::statistics::DurationLowpass>;
 
@@ -105,14 +105,6 @@ public:
         prediction_integrals_   = prediction_integrals;
         scheduler_              = scheduler;
         enable_lag_correction_  = enable_lag_correction;
-
-#ifdef MUSE_SMC_USE_DOTTY
-        dotty_.reset(new Dotty);
-#endif
-#ifdef MUSE_SMC_LOG_STATE
-        SMCFilterStateLogger::Header log_header = {"predictions, updates, time_ratio"};
-        log_.reset(new SMCFilterStateLogger(log_header));
-#endif
     }
 
     inline bool start()
@@ -121,9 +113,6 @@ public:
             lock_t l(worker_thread_mutex_);
             worker_thread_exit_ = false;
             worker_thread_      = thread_t([this](){loop();});
-#ifdef MUSE_SMC_DEBUG
-        std::cerr << "Started filter core! \n";
-#endif
             return true;
         }
         return false;
@@ -139,9 +128,6 @@ public:
         if(worker_thread_.joinable()) {
             worker_thread_.join();
         }
-#ifdef MUSE_SMC_DEBUG
-        std::cerr << "Ended filter core! \n";
-#endif
         return true;
     }
 
@@ -149,12 +135,6 @@ public:
     {
         prediction_queue_.emplace(prediction);
         notify_prediction_.notify_one();
-#ifdef MUSE_SMC_LOG_STATE
-        log();
-#endif
-#ifdef MUSE_SMC_DEBUG
-        std::cerr << "Added prediction! \n";
-#endif
     }
 
     inline void addUpdate(const typename update_t::Ptr &update)
@@ -169,12 +149,6 @@ public:
             if (lag.duration() >= lag_) {
                 lag_ = lag.duration();
                 lag_source_ = id;
-#ifdef MUSE_SMC_DEBUG
-                std::cerr << "lag " << id << " " << lag.duration() << " " << (update->getStampReceived() - update->getStamp()) << "\n";
-#endif
-#ifdef MUSE_SMC_DEBUG
-            std::cerr << "Added update! \n";
-#endif
             }
             if (id == lag_source_) {
                 while (delayed_update_queue_.hasElements()) {
@@ -189,9 +163,6 @@ public:
             } else {
                 delayed_update_queue_.emplace(update);
             }
-#ifdef MUSE_SMC_LOG_STATE
-            log();
-#endif
         } else {
             update_queue_.emplace(update);
             notify_event_.notify_one();
@@ -207,18 +178,12 @@ public:
         init_state_covariance_  = covariance;
         init_time_              = time;
         request_init_state_     = true;
-#ifdef MUSE_SMC_DEBUG
-        std::cerr << "State initialization requested! \n";
-#endif
     }
 
     void requestUniformInitialization(const time_t &time)
     {
         request_init_uniform_   = true;
         init_time_ = time;
-#ifdef MUSE_SMC_DEBUG
-        std::cerr << "Uniform initialization requested! \n";
-#endif
     }
 
 protected:
@@ -258,19 +223,6 @@ protected:
     mutable mutex_t                         notify_event_mutex_;
     condition_variable_t                    notify_prediction_;
     mutable mutex_t                         notify_prediction_mutex_;
-
-#ifdef MUSE_SMC_USE_DOTTY
-    Dotty::Ptr                          dotty_;
-#endif
-#ifdef MUSE_SMC_LOG_STATE
-    SMCFilterStateLogger::Ptr           log_;
-    void log()
-    {
-        log_->log(prediction_queue_.size(),
-                  update_queue_.size(),
-                  sample_set_->getStamp().seconds() / ros::Time::now().toSec());
-    }
-#endif
 
     inline bool hasUpdates()
     {
@@ -329,10 +281,6 @@ protected:
                 prediction_integrals_->add(prediction_result);
                 sample_set_->setStamp(prediction_result->applied->getTimeFrame().end);
 
-#ifdef MUSE_SMC_USE_DOTTY
-                dotty_->addPrediction(prediction_result->applied->getTimeFrame().end, static_cast<bool>(prediction_result->left_to_apply));
-#endif
-
                 if (prediction_result->left_to_apply) {
                     typename prediction_t::Ptr prediction_left_to_apply
                             (new prediction_t(prediction_result->left_to_apply, prediction->getModel()));
@@ -350,12 +298,6 @@ protected:
         worker_thread_active_ = true;
         lock_t notify_event_mutex_lock(notify_event_mutex_);
 
-#ifdef MUSE_SMC_DEBUG
-        cslibs_time::Time     last = cslibs_time::Time::now();
-        cslibs_time::Time     now;
-        cslibs_time::Duration dur;
-        cslibs_math::statistics::Mean<1> mean_rate;
-#endif
         while (!worker_thread_exit_) {
             requests();
 
@@ -387,21 +329,9 @@ protected:
                                 prediction_integrals_->reset(model_id);
                             }
                             state_publisher_->publishIntermediate(sample_set_);
-#ifdef MUSE_SMC_LOG_STATE
-                            log();
-#endif
-#ifdef MUSE_SMC_USE_DOTTY
-                            dotty_->addState(sample_set_stamp);
-                            dotty_->addUpdate(u->getStamp(), u->getModelName());
-#endif
                         }
                     }
                 }
-#ifdef MUSE_SMC_DEBUG
-                else {
-                    std::cerr << "Dropped " << u->getModelName() << " " << (sample_set_->getStamp() - u->getStamp()).milliseconds() << std::endl;
-                }
-#endif
                 if (prediction_integrals_->thresholdExceeded() &&
                         scheduler_->apply(resampling_, sample_set_)) {
                     prediction_integrals_->reset();
@@ -410,21 +340,6 @@ protected:
                 } else if( has_valid_state_ && prediction_integrals_->isZero() ){
                     state_publisher_->publishConstant(sample_set_);
                 }
-#ifdef MUSE_SMC_DEBUG
-                now = cslibs_time::Time::now();
-                dur = now - last;
-                if(!dur.isZero() && !prediction_integrals_->isZero()) {
-                    const double rate = 1.0 / dur.seconds();
-                    mean_rate.add(rate);
-                    std::cout << "[MuseSMC]: \n"
-                              << " Mean rate   : " << mean_rate.get() << "Hz \n"
-                              << " current rate: " << rate << "Hz \n"
-                              << " sample size : " << sample_set_->getSampleSize() << "\n"
-                              << " update queue: " << update_queue_.size() << "\n"
-                              << " pred. queue : " << prediction_queue_.size() << "\n";
-                }
-                last = now;
-#endif
             }
         }
         worker_thread_active_ = false;
