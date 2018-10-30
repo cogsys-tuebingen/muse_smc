@@ -1,6 +1,7 @@
-#ifndef FILTER_HPP
-#define FILTER_HPP
+#ifndef MUSE_SMC_HPP
+#define MUSE_SMC_HPP
 
+/// PROJECT
 #include <muse_smc/prediction/prediction_integrals.hpp>
 #include <muse_smc/prediction/prediction.hpp>
 #include <muse_smc/update/update.hpp>
@@ -10,21 +11,13 @@
 #include <muse_smc/resampling/resampling.hpp>
 #include <muse_smc/smc/smc_state.hpp>
 #include <muse_smc/scheduling/scheduler.hpp>
+
+/// CSLIBS
 #include <cslibs_time/rate.hpp>
 #include <cslibs_time/statistics/duration_lowpass.hpp>
 #include <cslibs_utility/synchronized/synchronized_priority_queue.hpp>
 
-
-#ifdef MUSE_SMC_USE_DOTTY
-#include <muse_smc/utility/dotty.hpp>
-#endif
-#ifdef MUSE_SMC_LOG_STATE
-#include <muse_smc/utility/csv_logger.hpp>
-#endif
-#ifdef MUSE_SMC_DEBUG
-#include <cslibs_math/statistics/mean.hpp>
-#endif
-
+/// SYSTEM
 #include <memory>
 #include <thread>
 #include <atomic>
@@ -73,6 +66,9 @@ public:
     using duration_t            = cslibs_time::Duration;
     using duration_map_t        = std::unordered_map<std::size_t, cslibs_time::statistics::DurationLowpass>;
 
+    /**
+     * @brief SMC default constructor.
+     */
     inline SMC() :
         request_init_state_(false),
         request_init_uniform_(false),
@@ -83,11 +79,25 @@ public:
     {
     }
 
+    /**
+     * @brief ~SMC default destructor.
+     */
     virtual ~SMC()
     {
         end();
     }
 
+    /**
+     * @brief Setup the filter with every function that is required for sampling, scheduling and so on.
+     * @param sample_set                - the sample set to apply the filter to
+     * @param sample_uniform            - the uniform sampler
+     * @param sample_normal             - the normally distributed sampler
+     * @param resampling                - the resampling scheme to be used
+     * @param state_publisher           - the state publisher, which communicates the filter state to the outside world
+     * @param prediction_integrals      - the prediction integrals, which accumulate if the samples were moved
+     * @param scheduler                 - the scheduling scheme
+     * @param enable_lag_correction     - lag correction for delayed update inputs
+     */
     inline void setup(const typename sample_set_t::Ptr            &sample_set,
                       const typename uniform_sampling_t::Ptr      &sample_uniform,
                       const typename normal_sampling_t::Ptr       &sample_normal,
@@ -107,6 +117,10 @@ public:
         enable_lag_correction_  = enable_lag_correction;
     }
 
+    /**
+     * @brief   Start the filter.
+     * @return  true if start was possible, false if filter is already running
+     */
     inline bool start()
     {
         if(!worker_thread_active_) {
@@ -118,6 +132,10 @@ public:
         return false;
     }
 
+    /**
+     * @brief Request that the background thread is stopped.
+     * @return  true if ending the filter was possible, false if filter is already stopped
+     */
     inline bool end()
     {
         if(!worker_thread_active_)
@@ -131,12 +149,20 @@ public:
         return true;
     }
 
+    /**
+     * @brief Add a new prediction to the filter for sample propagation.
+     * @param prediction - the prediction or control function applied to the samples
+     */
     inline void addPrediction(const typename prediction_t::Ptr &prediction)
     {
         prediction_queue_.emplace(prediction);
         notify_prediction_.notify_one();
     }
 
+    /**
+     * @brief Add an measurement update from some channel to the filter to weight the samples
+     * @param update    - the update function applied to the sample set
+     */
     inline void addUpdate(const typename update_t::Ptr &update)
     {
         if (enable_lag_correction_) {
@@ -169,6 +195,12 @@ public:
         }
     }
 
+    /**
+     * @brief Request a state based initialization, meaning that normal sampling occurs around a prior estimate.
+     * @param state         - the state / the sample around which sampling occurs
+     * @param covariance    - the covariance used for sampling around a state
+     * @param time          - the time at which sampling should be executed
+     */
     inline void requestStateInitialization(const state_t &state,
                                            const covariance_t &covariance,
                                            const time_t &time)
@@ -180,6 +212,10 @@ public:
         request_init_state_     = true;
     }
 
+    /**
+     * @brief Request a uniform initalization of the sample set.
+     * @param time          - time at which the sampling should be executed
+     */
     void requestUniformInitialization(const time_t &time)
     {
         request_init_uniform_   = true;
@@ -223,16 +259,6 @@ protected:
     mutable mutex_t                         notify_event_mutex_;
     condition_variable_t                    notify_prediction_;
     mutable mutex_t                         notify_prediction_mutex_;
-
-    inline bool hasUpdates()
-    {
-        return !update_queue_.empty();
-    }
-
-    inline bool hasPredictions()
-    {
-        return !prediction_queue_.empty();
-    }
 
     inline void requests()
     {
@@ -347,4 +373,4 @@ protected:
 };
 }
 
-#endif // FILTER_HPP
+#endif // MUSE_SMC_HPP
