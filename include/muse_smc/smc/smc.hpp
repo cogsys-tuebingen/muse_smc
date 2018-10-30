@@ -171,7 +171,7 @@ public:
 
             cslibs_time::statistics::DurationLowpass &lag = lag_map_[id];
             lag += cslibs_time::Duration(
-                        static_cast<int64_t>(std::max(0L, update->getStampReceived().nanoseconds() - update->getStamp().nanoseconds())));
+                        static_cast<int64_t>(std::max(0L, update->stampReceived().nanoseconds() - update->getStamp().nanoseconds())));
             if (lag.duration() >= lag_) {
                 lag_ = lag.duration();
                 lag_source_ = id;
@@ -305,7 +305,7 @@ protected:
             typename prediction_result_t::Ptr prediction_result = prediction->apply(until, sample_set_->getStateIterator());
             if (prediction_result->success()) {
                 prediction_integrals_->add(prediction_result);
-                sample_set_->setStamp(prediction_result->applied->getTimeFrame().end);
+                sample_set_->setStamp(prediction_result->applied->timeFrame().end);
 
                 if (prediction_result->left_to_apply) {
                     typename prediction_t::Ptr prediction_left_to_apply

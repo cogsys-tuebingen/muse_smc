@@ -34,7 +34,7 @@ public:
         {
             const auto &lhs_stamp = lhs.getStamp();
             const auto &rhs_stamp = rhs.getStamp();
-            return  lhs_stamp == rhs_stamp ? lhs.getStampReceived() > rhs.getStampReceived() :
+            return  lhs_stamp == rhs_stamp ? lhs.stampReceived() > rhs.stampReceived() :
                                              lhs_stamp > rhs_stamp;
 
         }
@@ -43,7 +43,7 @@ public:
         {
             const auto &lhs_stamp = lhs->getStamp();
             const auto &rhs_stamp = rhs->getStamp();
-            return  lhs_stamp == rhs_stamp ? lhs->getStampReceived() > rhs->getStampReceived() :
+            return  lhs_stamp == rhs_stamp ? lhs->stampReceived() > rhs->stampReceived() :
                                              lhs_stamp > rhs_stamp;
         }
     };
@@ -72,12 +72,12 @@ public:
 
     inline cslibs_time::Time const & getStamp() const
     {
-        return data_->getTimeFrame().end; // TODO: start?
+        return data_->timeFrame().end; // TODO: start?
     }
 
-    inline cslibs_time::Time const & getStampReceived() const
+    inline cslibs_time::Time const & stampReceived() const
     {
-        return data_->getStampReceived();
+        return data_->stampReceived();
     }
 
     inline typename update_model_t::Ptr getModel() const

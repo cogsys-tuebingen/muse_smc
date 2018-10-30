@@ -35,7 +35,7 @@ public:
         {
             const auto &lhs_stamp = lhs.getStamp();
             const auto &rhs_stamp = rhs.getStamp();
-            return lhs_stamp == rhs_stamp ? lhs.getStampReceived() > rhs.getStampReceived() :
+            return lhs_stamp == rhs_stamp ? lhs.stampReceived() > rhs.stampReceived() :
                                             lhs_stamp > rhs_stamp;
         }
         bool operator()( const Prediction::Ptr& lhs,
@@ -43,7 +43,7 @@ public:
         {
             const auto &lhs_stamp = lhs->getStamp();
             const auto &rhs_stamp = rhs->getStamp();
-            return lhs_stamp == rhs_stamp ? lhs->getStampReceived() > rhs->getStampReceived() :
+            return lhs_stamp == rhs_stamp ? lhs->stampReceived() > rhs->stampReceived() :
                                             lhs_stamp > rhs_stamp;
         }
     };
@@ -84,17 +84,17 @@ public:
 
     inline const cslibs_time::Time& getStamp() const
     {
-        return data_->getTimeFrame().end;
+        return data_->timeFrame().end;
     }
 
-    inline const cslibs_time::TimeFrame &getTimeFrame() const
+    inline const cslibs_time::TimeFrame &timeFrame() const
     {
-        return data_->getTimeFrame();
+        return data_->timeFrame();
     }
 
-    inline cslibs_time::Time const & getStampReceived() const
+    inline cslibs_time::Time const & stampReceived() const
     {
-        return data_->getStampReceived();
+        return data_->stampReceived();
     }
 
     inline const std::string& getModelName() const
