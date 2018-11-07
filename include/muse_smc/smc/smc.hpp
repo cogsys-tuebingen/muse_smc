@@ -56,7 +56,7 @@ public:
     using prediction_integrals_t= PredictionIntegrals<state_space_description_t, data_t>;
     using normal_sampling_t     = NormalSampling<state_space_description_t>;
     using uniform_sampling_t    = UniformSampling<state_space_description_t>;
-    using resampling_t          = Resampling<state_space_description_t, data_t>;
+    using resampling_t          = Resampling<state_space_description_t>;
     using scheduler_t           = Scheduler<state_space_description_t, data_t>;
     using filter_state_t        = SMCState<state_space_description_t>;
     using update_queue_t        = cslibs_utility::synchronized::priority_queue<typename update_t::Ptr,

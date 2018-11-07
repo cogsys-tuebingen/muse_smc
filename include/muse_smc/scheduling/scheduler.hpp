@@ -15,7 +15,7 @@ public:
 
     using id_t         = std::size_t;
     using update_t     = Update<state_space_description_t, data_t>;
-    using resampling_t = Resampling<state_space_description_t, data_t>;
+    using resampling_t = Resampling<state_space_description_t>;
     using sample_set_t = SampleSet<state_space_description_t>;
 
     virtual inline ~Scheduler() = default;

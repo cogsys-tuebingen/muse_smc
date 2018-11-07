@@ -13,7 +13,7 @@
 #include <iostream>
 
 namespace muse_smc {
-template<typename state_space_description_t, typename data_t>
+template<typename state_space_description_t>
 class Resampling
 {
 public:
@@ -22,7 +22,6 @@ public:
     using sample_set_t          = SampleSet<state_space_description_t>;
     using sample_uniform_t      = UniformSampling<state_space_description_t>;
     using sample_normal_t       = NormalSampling<state_space_description_t>;
-    using prediction_integral_t = PredictionIntegral<state_space_description_t, data_t>;
 
     Resampling() :
         recovery_alpha_fast_(0.0),
