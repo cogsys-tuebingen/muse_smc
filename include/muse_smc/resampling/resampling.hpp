@@ -65,10 +65,10 @@ public:
         };
         auto do_apply_recovery = [&sample_set, this] () {
             doApplyRecovery(sample_set);
+            resetRecovery();
         };
 
         recovery_random_pose_probability_ == 0.0 ? do_apply() : do_apply_recovery();
-        resetRecovery();
     }
 
     inline void resetRecovery()
