@@ -129,6 +129,7 @@ public:
         if (p_t_1_->size() == 0)
             return;
 
+        weight_distribution_.reset();
         const double weight = set_to_one ? 1.0 : 1.0 / static_cast<double>(p_t_1_->size());
         for (auto &s : *p_t_1_) {
             s.weight = weight;
