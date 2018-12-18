@@ -349,7 +349,7 @@ protected:
                         update_queue_.emplace(u);
                     } else if (t == sample_set_stamp) {
                         const auto model_id = u->getModelId();
-                        if (!prediction_integrals_->isZero(model_id)) {
+                        if (!prediction_integrals_->isZero(model_id) && prediction_integrals_->updateThresholdExceeded()) {
                             if (scheduler_->apply(u, sample_set_)) {
                                 resampling_->updateRecovery(*sample_set_);
                                 prediction_integrals_->reset(model_id);
@@ -358,12 +358,12 @@ protected:
                         }
                     }
                 }
-                if (prediction_integrals_->thresholdExceeded() &&
+                if (prediction_integrals_->resamplingThresholdExceeded() &&
                         scheduler_->apply(resampling_, sample_set_)) {
                     prediction_integrals_->reset();
                     state_publisher_->publish(sample_set_);
                     has_valid_state_ = true;
-                } else if( has_valid_state_ && prediction_integrals_->isZero() ){
+                } else if (has_valid_state_ && prediction_integrals_->isZero()) {
                     state_publisher_->publishConstant(sample_set_);
                 }
             }

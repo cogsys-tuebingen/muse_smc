@@ -53,9 +53,14 @@ public:
         return accumulators_.at(id)->isZero();
     }
 
-    inline bool thresholdExceeded() const
+    inline bool updateThresholdExceeded() const
     {
-        return global_accumulator_->thresholdExceeded();
+        return global_accumulator_->updateThresholdExceeded();
+    }
+
+    inline bool resamplingThresholdExceeded() const
+    {
+        return global_accumulator_->resamplingThresholdExceeded();
     }
 
     inline bool isZero() const

@@ -17,7 +17,8 @@ public:
 
     virtual void add(const typename prediction_model_t::Result::ConstPtr &step) = 0;
     virtual void reset() = 0;
-    virtual bool thresholdExceeded() const = 0;
+    virtual bool updateThresholdExceeded() const = 0;
+    virtual bool resamplingThresholdExceeded() const = 0;
     virtual bool isZero() const = 0;
     virtual void info() const = 0;
 };
