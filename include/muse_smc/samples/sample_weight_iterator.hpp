@@ -95,7 +95,7 @@ public:
 
     inline const_iterator_t const_end() const
     {
-        return data_.begin();
+        return data_.end();
     }
 
     inline iterator_t begin()

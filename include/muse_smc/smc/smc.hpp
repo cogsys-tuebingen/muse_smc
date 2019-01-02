@@ -357,7 +357,7 @@ protected:
                         update_queue_.emplace(u);
                     } else if (t == sample_set_stamp) {
                         const auto model_id = u->getModelId();
-                        if (!prediction_integrals_->thresholdExceeded(model_id)) {
+                        if (prediction_integrals_->thresholdExceeded(model_id)) {
                             if (scheduler_->apply(u, sample_set_)) {
                                 resampling_->updateRecovery(*sample_set_);
                                 if(reset_all_accumulators_)
