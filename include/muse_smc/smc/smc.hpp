@@ -74,6 +74,7 @@ public:
         request_init_uniform_(false),
         enable_lag_correction_(false),
         has_valid_state_(false),
+        reset_all_accumulators_(false),
         worker_thread_active_(false),
         worker_thread_exit_(false)
     {
@@ -105,7 +106,8 @@ public:
                       const typename filter_state_t::Ptr          &state_publisher,
                       const typename prediction_integrals_t::Ptr  &prediction_integrals,
                       const typename scheduler_t::Ptr             &scheduler,
-                      const bool                                  &enable_lag_correction)
+                      const bool                                   reset_all_model_accumulators_on_update,
+                      const bool                                   enable_lag_correction)
     {
         sample_set_             = sample_set;
         sample_uniform_         = sample_uniform;
@@ -115,6 +117,7 @@ public:
         prediction_integrals_   = prediction_integrals;
         scheduler_              = scheduler;
         enable_lag_correction_  = enable_lag_correction;
+        reset_all_accumulators_ = reset_all_model_accumulators_on_update;
     }
 
     /**
@@ -249,6 +252,7 @@ protected:
     std::size_t                             lag_source_;
     bool                                    enable_lag_correction_;
     bool                                    has_valid_state_;
+    bool                                    reset_all_accumulators_;
 
     /// background thread
     mutex_t                                 worker_thread_mutex_;
@@ -268,6 +272,8 @@ protected:
                 sample_set_->setStamp(init_time_);
                 request_init_uniform_   = false;
                 has_valid_state_        = false;
+                prediction_integrals_->resetAll();
+                prediction_integrals_->reset();
             }
         }
 
@@ -279,6 +285,8 @@ protected:
                 state_publisher_->publish(sample_set_);
                 request_init_state_  = false;
                 has_valid_state_     = true;
+                prediction_integrals_->resetAll();
+                prediction_integrals_->reset();
             }
         }
     }
@@ -349,18 +357,22 @@ protected:
                         update_queue_.emplace(u);
                     } else if (t == sample_set_stamp) {
                         const auto model_id = u->getModelId();
-                        if (!prediction_integrals_->isZero(model_id) && prediction_integrals_->updateThresholdExceeded()) {
+                        if (!prediction_integrals_->thresholdExceeded(model_id)) {
                             if (scheduler_->apply(u, sample_set_)) {
                                 resampling_->updateRecovery(*sample_set_);
-                                prediction_integrals_->reset(model_id);
+                                if(reset_all_accumulators_)
+                                    prediction_integrals_->resetAll();
+                                else
+                                    prediction_integrals_->reset(model_id);
                             }
                             state_publisher_->publishIntermediate(sample_set_);
                         }
                     }
                 }
-                if (prediction_integrals_->resamplingThresholdExceeded() &&
+                if (prediction_integrals_->thresholdExceeded() &&
                         scheduler_->apply(resampling_, sample_set_)) {
                     prediction_integrals_->reset();
+                    prediction_integrals_->resetAll();
                     state_publisher_->publish(sample_set_);
                     has_valid_state_ = true;
                 } else if (has_valid_state_ && prediction_integrals_->isZero()) {

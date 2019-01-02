@@ -45,22 +45,20 @@ public:
 
     inline bool thresholdExceeded(const id_t id) const
     {
-        return accumulators_.at(id)->thresholdExceeded();
+        auto acc = accumulators_.at(id);
+        return acc->thresholdExceeded() &&
+                !acc->isZero();
+    }
+
+    inline bool thresholdExceeded() const
+    {
+        return   global_accumulator_->thresholdExceeded() &&
+                !global_accumulator_->isZero();
     }
 
     inline bool isZero(const id_t id) const
     {
         return accumulators_.at(id)->isZero();
-    }
-
-    inline bool updateThresholdExceeded() const
-    {
-        return global_accumulator_->updateThresholdExceeded();
-    }
-
-    inline bool resamplingThresholdExceeded() const
-    {
-        return global_accumulator_->resamplingThresholdExceeded();
     }
 
     inline bool isZero() const
@@ -83,7 +81,6 @@ public:
         for(auto &a : accumulators_) {
             a.second->reset();
         }
-        global_accumulator_->reset();
     }
 
     inline void add(const typename prediction_model_t::Result::ConstPtr &step)
