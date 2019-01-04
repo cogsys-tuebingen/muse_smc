@@ -375,7 +375,7 @@ protected:
                     prediction_integrals_->resetAll();
                     state_publisher_->publish(sample_set_);
                     has_valid_state_ = true;
-                } else if (has_valid_state_ && prediction_integrals_->isZero()) {
+                } else if (has_valid_state_) {
                     state_publisher_->publishConstant(sample_set_);
                 }
             }
