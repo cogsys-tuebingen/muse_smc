@@ -74,7 +74,8 @@ public:
         request_init_uniform_(false),
         enable_lag_correction_(false),
         has_valid_state_(false),
-        reset_all_accumulators_(false),
+        reset_all_accumulators_after_update_(false),
+        reset_model_accumulators_after_resampling_(false),
         worker_thread_active_(false),
         worker_thread_exit_(false)
     {
@@ -90,14 +91,16 @@ public:
 
     /**
      * @brief Setup the filter with every function that is required for sampling, scheduling and so on.
-     * @param sample_set                - the sample set to apply the filter to
-     * @param sample_uniform            - the uniform sampler
-     * @param sample_normal             - the normally distributed sampler
-     * @param resampling                - the resampling scheme to be used
-     * @param state_publisher           - the state publisher, which communicates the filter state to the outside world
-     * @param prediction_integrals      - the prediction integrals, which accumulate if the samples were moved
-     * @param scheduler                 - the scheduling scheme
-     * @param enable_lag_correction     - lag correction for delayed update inputs
+     * @param sample_set                                - the sample set to apply the filter to
+     * @param sample_uniform                            - the uniform sampler
+     * @param sample_normal                             - the normally distributed sampler
+     * @param resampling                                - the resampling scheme to be used
+     * @param state_publisher                           - the state publisher, which communicates the filter state to the outside world
+     * @param prediction_integrals                      - the prediction integrals, which accumulate if the samples were moved
+     * @param scheduler                                 - the scheduling scheme
+     * @param reset_all_model_accumulators_on_update    - reset all model accumulators when an update is carried out
+     * @param reset_model_accumulators_after_resampling - reset all model accumlators after resampling is carried out
+     * @param enable_lag_correction                     - lag correction for delayed update inputs
      */
     inline void setup(const typename sample_set_t::Ptr            &sample_set,
                       const typename uniform_sampling_t::Ptr      &sample_uniform,
@@ -107,17 +110,19 @@ public:
                       const typename prediction_integrals_t::Ptr  &prediction_integrals,
                       const typename scheduler_t::Ptr             &scheduler,
                       const bool                                   reset_all_model_accumulators_on_update,
+                      const bool                                   reset_model_accumulators_after_resampling,
                       const bool                                   enable_lag_correction)
     {
-        sample_set_             = sample_set;
-        sample_uniform_         = sample_uniform;
-        sample_normal_          = sample_normal;
-        resampling_             = resampling;
-        state_publisher_        = state_publisher;
-        prediction_integrals_   = prediction_integrals;
-        scheduler_              = scheduler;
-        enable_lag_correction_  = enable_lag_correction;
-        reset_all_accumulators_ = reset_all_model_accumulators_on_update;
+        sample_set_                                 = sample_set;
+        sample_uniform_                             = sample_uniform;
+        sample_normal_                              = sample_normal;
+        resampling_                                 = resampling;
+        state_publisher_                            = state_publisher;
+        prediction_integrals_                       = prediction_integrals;
+        scheduler_                                  = scheduler;
+        enable_lag_correction_                      = enable_lag_correction;
+        reset_all_accumulators_after_update_        = reset_all_model_accumulators_on_update;
+        reset_model_accumulators_after_resampling_  = reset_model_accumulators_after_resampling;
     }
 
     /**
@@ -252,7 +257,8 @@ protected:
     std::size_t                             lag_source_;
     bool                                    enable_lag_correction_;
     bool                                    has_valid_state_;
-    bool                                    reset_all_accumulators_;
+    bool                                    reset_all_accumulators_after_update_;
+    bool                                    reset_model_accumulators_after_resampling_;
 
     /// background thread
     mutex_t                                 worker_thread_mutex_;
@@ -360,7 +366,7 @@ protected:
                         if (prediction_integrals_->thresholdExceeded(model_id)) {
                             if (scheduler_->apply(u, sample_set_)) {
                                 resampling_->updateRecovery(*sample_set_);
-                                if(reset_all_accumulators_)
+                                if(reset_all_accumulators_after_update_)
                                     prediction_integrals_->resetAll();
                                 else
                                     prediction_integrals_->reset(model_id);
@@ -371,8 +377,13 @@ protected:
                 }
                 if (prediction_integrals_->thresholdExceeded() &&
                         scheduler_->apply(resampling_, sample_set_)) {
+
                     prediction_integrals_->reset();
-                    prediction_integrals_->resetAll();
+
+                    if(reset_model_accumulators_after_resampling_)
+                        prediction_integrals_->resetAll();
+
+
                     state_publisher_->publish(sample_set_);
                     has_valid_state_ = true;
                 } else if (has_valid_state_) {
