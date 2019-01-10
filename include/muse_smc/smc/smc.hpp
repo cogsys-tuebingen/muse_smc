@@ -339,9 +339,10 @@ protected:
         lock_t notify_event_mutex_lock(notify_event_mutex_);
 
         while (!worker_thread_exit_) {
+            notify_event_.wait(notify_event_mutex_lock);
+
             requests();
 
-            notify_event_.wait(notify_event_mutex_lock);
             if (worker_thread_exit_)
                 break;
 
