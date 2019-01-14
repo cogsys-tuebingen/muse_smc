@@ -2,7 +2,13 @@ before_script:
   # Install ssh-agent if not already installed, it is required by Docker.
   # (change apt-get to yum if you use a CentOS-based image)
   - 'apt-get -qq update -y'
-  - 'apt-get -qq install build-essential openssh-client libeigen3-dev libyaml-cpp-dev libtbb-dev libopencv-dev libgdal-dev libpcl-dev sudo -y'
+  - 'apt-get -qq install build-essential
+                 openssh-client libeigen3-dev
+                 libyaml-cpp-dev
+                 libtbb-dev
+                 libopencv-dev
+                 libgdal-dev
+                 libpcl1-dev sudo -y'
 
   # Run ssh-agent (inside the build environment)
   - eval $(ssh-agent -s)
@@ -33,6 +39,7 @@ before_script:
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_ndt.git -b devel cslibs_ndt
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_math.git -b devel cslibs_math
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_utility.git -b devel cslibs_utility
+  - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_plugins.git -b devel cslibs_plugins
   - cd /build/ws/
 
 stages:
