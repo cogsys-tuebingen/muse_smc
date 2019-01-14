@@ -202,7 +202,12 @@ public:
             notify_event_.notify_one();
         }
     }
-
+     
+    void triggerEvent() 
+    {
+	 notify_event_.notify_one();      
+    }
+    
     /**
      * @brief Request a state based initialization, meaning that normal sampling occurs around a prior estimate.
      * @param state         - the state / the sample around which sampling occurs
