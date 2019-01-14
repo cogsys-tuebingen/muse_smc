@@ -149,6 +149,8 @@ public:
         if(!worker_thread_active_)
             return false;
 
+        update_queue_.clear();
+        prediction_queue_.clear();
         worker_thread_exit_ = true;
         notify_event_.notify_one();
         if(worker_thread_.joinable()) {
