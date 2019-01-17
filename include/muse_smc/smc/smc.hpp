@@ -149,6 +149,8 @@ public:
         if(!worker_thread_active_)
             return false;
 
+        update_queue_.clear();
+        prediction_queue_.clear();
         worker_thread_exit_ = true;
         notify_event_.notify_one();
         if(worker_thread_.joinable()) {
@@ -202,7 +204,12 @@ public:
             notify_event_.notify_one();
         }
     }
-
+     
+    void triggerEvent() 
+    {
+        notify_event_.notify_one();
+    }
+    
     /**
      * @brief Request a state based initialization, meaning that normal sampling occurs around a prior estimate.
      * @param state         - the state / the sample around which sampling occurs
@@ -239,6 +246,8 @@ protected:
     typename prediction_integrals_t::Ptr    prediction_integrals_;
     typename scheduler_t::Ptr               scheduler_;
     typename filter_state_t::Ptr            state_publisher_;
+
+    enum class Publication {None = 0, Intermediate = 1, Constant = 2, Resampling = 4};
 
     /// requests
     std::mutex                              init_state_mutex_;
@@ -357,6 +366,8 @@ protected:
                 const cslibs_time::Time &t = u->getStamp();
                 const cslibs_time::Time &sample_set_stamp = sample_set_->getStamp();
 
+                int8_t publication = has_valid_state_ ?  static_cast<int8_t>(Publication::Constant) : static_cast<int8_t>(Publication::None);
+
                 if (t >= sample_set_stamp) {
 
                     predict(t);
@@ -373,7 +384,7 @@ protected:
                                 else
                                     prediction_integrals_->reset(model_id);
                             }
-                            state_publisher_->publishIntermediate(sample_set_);
+                            publication |= static_cast<int8_t>(Publication::Intermediate);
                         }
                     }
                 }
@@ -385,12 +396,16 @@ protected:
                     if(reset_model_accumulators_after_resampling_)
                         prediction_integrals_->resetAll();
 
-
-                    state_publisher_->publish(sample_set_);
+                    publication |= static_cast<int8_t>(Publication::Resampling);
                     has_valid_state_ = true;
-                } else if (has_valid_state_) {
-                    state_publisher_->publishConstant(sample_set_);
                 }
+
+                if(publication >= static_cast<int8_t>(Publication::Resampling))
+                    state_publisher_->publish(sample_set_);
+                else if(publication >= static_cast<int8_t>(Publication::Constant))
+                    state_publisher_->publishConstant(sample_set_);
+                else if(publication >= static_cast<int8_t>(Publication::Intermediate))
+                    state_publisher_->publishIntermediate(sample_set_);
             }
         }
         worker_thread_active_ = false;
