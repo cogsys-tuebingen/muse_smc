@@ -48,7 +48,10 @@ public:
         touched_ = true;
 
         data_.emplace_back(std::move(sample));
-        update_(data_.back());
+
+        sample_t &inserted = data_.back();
+        inserted.weight = 1.0;                /// after insertion each particle is equally likely
+        update_(inserted);
     }
 
     inline void insert(const sample_t &sample)
@@ -59,7 +62,10 @@ public:
         touched_ = true;
 
         data_.push_back(sample);
-        update_(data_.back());
+
+        sample_t &inserted = data_.back();
+        inserted.weight = 1.0;                  /// after insertion each particle is equally likely
+        update_(inserted);
     }
 
     inline bool canInsert() const
