@@ -58,7 +58,8 @@ public:
     SampleSet(const std::string                    &frame_id,
               const cslibs_time::Time              &time_stamp,
               const std::size_t                     sample_size,
-              const typename sample_density_t::Ptr &density) :
+              const typename sample_density_t::Ptr &density,
+              const bool keep_weights_after_resampling = false) :
         frame_id_(frame_id),
         stamp_(time_stamp),
         minimum_sample_size_(sample_size),
@@ -67,7 +68,8 @@ public:
         weight_sum_(0.0),
         p_t_1_(new sample_vector_t(0, maximum_sample_size_)),
         p_t_1_density_(density),
-        p_t_(new sample_vector_t(0, maximum_sample_size_))
+        p_t_(new sample_vector_t(0, maximum_sample_size_)),
+        keep_weights_after_insertion_(keep_weights_after_resampling)
     {
     }
 
@@ -84,7 +86,8 @@ public:
               const cslibs_time::Time              &time_stamp,
               const std::size_t                     sample_size_minimum,
               const std::size_t                     sample_size_maxmimum,
-              const typename sample_density_t::Ptr &density) :
+              const typename sample_density_t::Ptr &density,
+              const bool keep_weights_after_insertion = false) :
         frame_id_(frame_id),
         stamp_(time_stamp),
         minimum_sample_size_(sample_size_minimum),
@@ -93,7 +96,8 @@ public:
         weight_sum_(0.0),
         p_t_1_(new sample_vector_t(0, maximum_sample_size_)),
         p_t_1_density_(density),
-        p_t_(new sample_vector_t(0, maximum_sample_size_))
+        p_t_(new sample_vector_t(0, maximum_sample_size_)),
+        keep_weights_after_insertion_(keep_weights_after_insertion)
     {
     }
 
@@ -128,7 +132,8 @@ public:
         p_t_->clear();
         return sample_insertion_t(*p_t_,
                                   sample_insertion_t::notify_update::template from<sample_set_t, &sample_set_t::insertionUpdate>(this),
-                                  sample_insertion_t::notify_closed::template from<sample_set_t, &sample_set_t::insertionClosedReset>(this));
+                                  sample_insertion_t::notify_closed::template from<sample_set_t, &sample_set_t::insertionClosedReset>(this),
+                                  keep_weights_after_insertion_);
     }
 
     inline void normalizeWeights()
@@ -260,6 +265,8 @@ private:
     mutable typename sample_density_t::Ptr      p_t_1_density_;
     std::shared_ptr<sample_vector_t>            p_t_;
 
+    bool                                        keep_weights_after_insertion_;
+
     inline void weightStatisticReset()
     {
         maximum_weight_ = 0.0;
@@ -285,6 +292,8 @@ private:
     {
         std::swap(p_t_, p_t_1_);
         p_t_1_density_->estimate();
+        if(keep_weights_after_insertion_)
+            normalizeWeights();
     }
 };
 }

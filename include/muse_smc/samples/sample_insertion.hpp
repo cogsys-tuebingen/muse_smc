@@ -24,7 +24,8 @@ public:
      */
     inline SampleInsertion(sample_vector_t &data,
                            notify_update    update,
-                           notify_closed    close) :
+                           notify_closed    close,
+                           bool keep_weights) :
         data_(data),
         open_(true),
         update_(update),
@@ -50,7 +51,8 @@ public:
         data_.emplace_back(std::move(sample));
 
         sample_t &inserted = data_.back();
-        inserted.weight = 1.0;                /// after insertion each particle is equally likely
+        /// after insertion each particle is equally likely
+        inserted.weight = keep_weights_ ?  inserted.weight : 1.0;
         update_(inserted);
     }
 
@@ -64,7 +66,8 @@ public:
         data_.push_back(sample);
 
         sample_t &inserted = data_.back();
-        inserted.weight = 1.0;                  /// after insertion each particle is equally likely
+        /// after insertion each particle is equally likely
+        inserted.weight = keep_weights_ ?  inserted.weight : 1.0;
         update_(inserted);
     }
 
@@ -95,6 +98,7 @@ private:
     bool             touched_;    /// indicator if something was inserted
     notify_update    update_;     /// on update callback
     notify_closed    close_;      /// on close / finish callback
+    bool             keep_weights_;
 };
 }
 
