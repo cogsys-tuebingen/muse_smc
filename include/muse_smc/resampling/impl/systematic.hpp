@@ -28,7 +28,7 @@ public:
         /// prepare ordered sequence of random numbers
         std::vector<double> u(size);
         {
-            cslibs_math::random::Uniform<1> rng(0.0, 1.0);
+            cslibs_math::random::Uniform<double,1> rng(0.0, 1.0);
             double u_static = rng.get();
 
             for(std::size_t i = 0 ; i < size ; ++i) {
@@ -75,7 +75,7 @@ public:
         const std::size_t size = p_t_1.size();
         std::vector<double> u(size);
         {
-            cslibs_math::random::Uniform<1> rng(0.0, 1.0);
+            cslibs_math::random::Uniform<double,1> rng(0.0, 1.0);
             double u_static = rng.get();
 
             for(std::size_t i = 0 ; i < size ; ++i) {
@@ -84,7 +84,7 @@ public:
         }
         /// draw samples
         {
-            cslibs_math::random::Uniform<1> rng_recovery(0.0, 1.0);
+            cslibs_math::random::Uniform<double,1> rng_recovery(0.0, 1.0);
             auto p_t_1_it = p_t_1.begin();
             double cumsum_last = 0.0;
             double cumsum = p_t_1_it->weight;

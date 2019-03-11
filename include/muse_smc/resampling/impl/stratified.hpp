@@ -26,7 +26,7 @@ public:
 
         typename sample_set_t::sample_insertion_t  i_p_t = sample_set.getInsertion();
         /// prepare ordered sequence of random numbers
-        cslibs_math::random::Uniform<1> rng(0.0, 1.0);
+        cslibs_math::random::Uniform<double,1> rng(0.0, 1.0);
         std::vector<double> u(size);
         {
 
@@ -73,7 +73,7 @@ public:
         const std::size_t size = p_t_1.size();
 
         /// prepare ordered sequence of random numbers
-        cslibs_math::random::Uniform<1> rng(0.0, 1.0);
+        cslibs_math::random::Uniform<double,1> rng(0.0, 1.0);
         std::vector<double> u(size);
         {
 
@@ -83,7 +83,7 @@ public:
         }
         /// draw samples
         {
-            cslibs_math::random::Uniform<1> rng_recovery(0.0, 1.0);
+            cslibs_math::random::Uniform<double,1> rng_recovery(0.0, 1.0);
             auto p_t_1_it = p_t_1.begin();
             double cumsum_last = 0.0;
             double cumsum = p_t_1_it->weight;
