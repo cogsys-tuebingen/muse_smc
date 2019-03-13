@@ -20,7 +20,6 @@ template<typename state_space_description_t>
 class EIGEN_ALIGN16 SampleSet
 {
 public:
-
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     using sample_t              = typename state_space_description_t::sample_t;
@@ -30,7 +29,7 @@ public:
     using sample_insertion_t    = SampleInsertion<sample_t>;
     using state_iterator_t      = StateIteration<state_space_description_t>;
     using weight_iterator_t     = WeightIteration<state_space_description_t>;
-    using weight_distribution_t = cslibs_math::statistics::Distribution<1>;
+    using weight_distribution_t = cslibs_math::statistics::Distribution<double,1>;
 
     using Ptr = std::shared_ptr<sample_set_t>;
     using ConstPtr = std::shared_ptr<sample_set_t const>;

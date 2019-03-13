@@ -26,7 +26,7 @@ public:
         const double w_max = sample_set.getMaximumWeight();
         typename sample_set_t::sample_insertion_t  i_p_t = sample_set.getInsertion();
 
-        cslibs_math::random::Uniform<1> rng(0.0, 1.0);
+        cslibs_math::random::Uniform<double,1> rng(0.0, 1.0);
         double beta = 0.0;
         std::size_t index = (std::size_t(rng.get() * size)) % size;
 
@@ -56,8 +56,8 @@ public:
         typename sample_set_t::sample_insertion_t  i_p_t = sample_set.getInsertion();
         const std::size_t size = p_t_1.size();
 
-        cslibs_math::random::Uniform<1> rng(0.0, 1.0);
-        cslibs_math::random::Uniform<1> rng_recovery(0.0, 1.0);
+        cslibs_math::random::Uniform<double,1> rng(0.0, 1.0);
+        cslibs_math::random::Uniform<double,1> rng_recovery(0.0, 1.0);
         double beta = 0.0;
         std::size_t index = (std::size_t(rng.get() * size)) % size;
         sample_t sample;
