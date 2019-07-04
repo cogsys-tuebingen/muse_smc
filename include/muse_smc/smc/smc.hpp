@@ -11,6 +11,7 @@
 #include <muse_smc/resampling/resampling.hpp>
 #include <muse_smc/smc/smc_state.hpp>
 #include <muse_smc/scheduling/scheduler.hpp>
+#include <muse_smc/smc/smc_traits.hpp>
 
 /// CSLIBS
 #include <cslibs_time/rate.hpp>
@@ -32,10 +33,11 @@
  */
 
 namespace muse_smc {
-template<typename state_space_description_t, typename data_t>
+template<typename sample_t>
 class SMC
 {
 public:
+    /// utility typedefs
     using Ptr                   = std::shared_ptr<SMC>;
     using mutex_t               = std::mutex;
     using condition_variable_t  = std::condition_variable;
@@ -44,25 +46,22 @@ public:
     using atomic_bool_t         = std::atomic_bool;
 
     /// filter specific type defs
-    using sample_t              = typename state_space_description_t::sample_t;
-    using sample_set_t          = SampleSet<state_space_description_t>;
+    using sample_set_t          = SampleSet<sample_t>;
     using time_t                = cslibs_time::Time;
-    using state_t               = typename state_space_description_t::state_t;
-    using covariance_t          = typename state_space_description_t::covariance_t;
-    using update_t              = Update<state_space_description_t, data_t>;
-    using prediction_t          = Prediction<state_space_description_t, data_t>;
+    using state_t               = typename traits::State<sample_t>::type;
+    using covariance_t          = typename traits::Covariance<sample_t>::type;
+    using update_t              = Update<sample_t>;
+    using prediction_t          = Prediction<sample_t>;
     using prediction_result_t   = typename prediction_t::predition_model_t::Result;
-    using prediction_integral_t = PredictionIntegral<state_space_description_t, data_t>;
-    using prediction_integrals_t= PredictionIntegrals<state_space_description_t, data_t>;
-    using normal_sampling_t     = NormalSampling<state_space_description_t>;
-    using uniform_sampling_t    = UniformSampling<state_space_description_t>;
-    using resampling_t          = Resampling<state_space_description_t>;
-    using scheduler_t           = Scheduler<state_space_description_t, data_t>;
-    using filter_state_t        = SMCState<state_space_description_t>;
-    using update_queue_t        = cslibs_utility::synchronized::priority_queue<typename update_t::Ptr,
-    typename update_t::Greater>;
-    using prediction_queue_t    = cslibs_utility::synchronized::priority_queue<typename prediction_t::Ptr,
-    typename prediction_t::Greater>;
+    using prediction_integral_t = PredictionIntegral<sample_t>;
+    using prediction_integrals_t= PredictionIntegrals<sample_t>;
+    using normal_sampling_t     = NormalSampling<sample_t>;
+    using uniform_sampling_t    = UniformSampling<sample_t>;
+    using resampling_t          = Resampling<sample_t>;
+    using scheduler_t           = Scheduler<sample_t>;
+    using filter_state_t        = SMCState<sample_t>;
+    using update_queue_t        = cslibs_utility::synchronized::priority_queue<typename update_t::Ptr, typename update_t::Greater>;
+    using prediction_queue_t    = cslibs_utility::synchronized::priority_queue<typename prediction_t::Ptr, typename prediction_t::Greater>;
     using duration_t            = cslibs_time::Duration;
     using duration_map_t        = std::unordered_map<std::size_t, cslibs_time::statistics::DurationLowpass>;
 

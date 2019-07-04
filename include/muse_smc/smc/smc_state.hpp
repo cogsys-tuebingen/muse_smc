@@ -13,13 +13,12 @@ namespace muse_smc {
  *        E.g. for the ROS use case one would publish the sample set and the mean.
  * @brief state_space_description_t     - the state space description applying to a given problem.
  */
-template<typename state_space_description_t>
+template<typename sample_t>
 class SMCState
 {
 public:
     using Ptr           = std::shared_ptr<SMCState>;
-    using sample_t      = typename state_space_description_t::sample_t;
-    using sample_set_t  = SampleSet<state_space_description_t>;
+    using sample_set_t  = SampleSet<sample_t>;
     /**
      * @brief Default desctructor.
      */

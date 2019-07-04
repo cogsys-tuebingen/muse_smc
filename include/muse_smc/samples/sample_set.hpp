@@ -15,24 +15,24 @@
 #include <muse_smc/samples/sample_weight_iterator.hpp>
 #include <muse_smc/samples/sample_state_iterator.hpp>
 
+#include <muse_smc/smc/smc_traits.hpp>
+
 namespace muse_smc {
-template<typename state_space_description_t>
+template<typename sample_t>
 class EIGEN_ALIGN16 SampleSet
 {
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    using sample_t              = typename state_space_description_t::sample_t;
-    using sample_set_t          = SampleSet<state_space_description_t>;
     using sample_vector_t       = cslibs_utility::buffered::buffered_vector<sample_t, typename sample_t::allocator_t>;
     using sample_density_t      = SampleDensity<sample_t>;
     using sample_insertion_t    = SampleInsertion<sample_t>;
-    using state_iterator_t      = StateIteration<state_space_description_t>;
-    using weight_iterator_t     = WeightIteration<state_space_description_t>;
+    using state_iterator_t      = StateIteration<sample_t>;
+    using weight_iterator_t     = WeightIteration<sample_t>;
     using weight_distribution_t = cslibs_math::statistics::Distribution<double,1>;
 
-    using Ptr = std::shared_ptr<sample_set_t>;
-    using ConstPtr = std::shared_ptr<sample_set_t const>;
+    using Ptr = std::shared_ptr<SampleSet>;
+    using ConstPtr = std::shared_ptr<SampleSet const>;
 
     /**
      * @brief SampleSet deleted - non-copyable
@@ -131,8 +131,7 @@ public:
         p_t_->clear();
         return sample_insertion_t(*p_t_,
                                   sample_insertion_t::notify_update::template from<sample_set_t, &sample_set_t::insertionUpdate>(this),
-                                  sample_insertion_t::notify_closed::template from<sample_set_t, &sample_set_t::insertionClosedReset>(this),
-                                  keep_weights_after_insertion_);
+                                  sample_insertion_t::notify_closed::template from<sample_set_t, &sample_set_t::insertionClosedReset>(this));
     }
 
     inline void normalizeWeights()

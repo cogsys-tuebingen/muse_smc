@@ -24,8 +24,7 @@ public:
      */
     inline SampleInsertion(sample_vector_t &data,
                            notify_update    update,
-                           notify_closed    close,
-                           bool keep_weights) :
+                           notify_closed    close) :
         data_(data),
         open_(true),
         update_(update),
