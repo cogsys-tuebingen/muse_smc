@@ -8,20 +8,16 @@
 #include <muse_smc/samples/sample_set.hpp>
 
 namespace muse_smc {
-template<typename state_space_description_t>
+template<typename sample_t>
 class NormalSampling
 {
 public:
     using Ptr          = std::shared_ptr<NormalSampling>;
-    using sample_t     = typename state_space_description_t::sample_t;
-    using state_t      = typename state_space_description_t::state_t;
-    using covariance_t = typename state_space_description_t::covariance_t;
-    using sample_set_t = SampleSet<state_space_description_t>;
+    using state_t      = typename traits::State<sample_t>::type;
+    using covariance_t = typename traits::Covariance<sample_t>::type;
+    using sample_set_t = SampleSet<sample_t>;
 
-    inline NormalSampling()
-    {
-    }
-
+    inline NormalSampling() = default;
     virtual ~NormalSampling() = default;
 
     virtual bool apply(const state_t             &state,

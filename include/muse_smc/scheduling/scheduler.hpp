@@ -8,17 +8,20 @@
 #include <memory>
 
 namespace muse_smc {
-template<typename state_space_description_t, typename data_t>
+template<typename sample_t>
 class Scheduler {
 public:
     using Ptr = std::shared_ptr<Scheduler>;
 
     using id_t         = std::size_t;
-    using update_t     = Update<state_space_description_t, data_t>;
-    using resampling_t = Resampling<state_space_description_t>;
-    using sample_set_t = SampleSet<state_space_description_t>;
+    using update_t     = Update<sample_t>;
+    using resampling_t = Resampling<sample_t>;
+    using sample_set_t = SampleSet<sample_t>;
+    using data_t       = typename traits::Data<sample_t>::type;
 
-    virtual inline ~Scheduler() = default;
+    Scheduler() = delete;
+
+    virtual ~Scheduler() = delete;
 
     virtual bool apply(typename update_t::Ptr     &u,
                        typename sample_set_t::Ptr &s) = 0;

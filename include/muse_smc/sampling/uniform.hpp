@@ -7,17 +7,13 @@
 #include <muse_smc/samples/sample_set.hpp>
 
 namespace muse_smc {
-template<typename state_space_description_t>
+template<typename sample_t>
 class UniformSampling {
 public:
     using Ptr          = std::shared_ptr<UniformSampling>;
-    using sample_t     = typename state_space_description_t::sample_t;
-    using sample_set_t = SampleSet<state_space_description_t>;
+    using sample_set_t = SampleSet<sample_t>;
 
-    inline UniformSampling()
-    {
-    }
-
+    inline UniformSampling() = default;
     virtual ~UniformSampling() = default;
 
     virtual bool apply(sample_set_t &sample_set) = 0;

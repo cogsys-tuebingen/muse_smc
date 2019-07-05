@@ -5,23 +5,26 @@
 
 #include <cslibs_time/statistics/duration_mean.hpp>
 
+#include <utility>
+
 namespace muse_smc {
-template<typename state_space_description_t, typename data_t>
-class Rate : public muse_smc::Scheduler<state_space_description_t, data_t>
+template<typename sample_t>
+class Rate : public muse_smc::Scheduler<sample_t>
 {
 public:
     using Ptr                 = std::shared_ptr<Rate>;
     using rate_t              = cslibs_time::Rate;
-    using update_t            = muse_smc::Update<state_space_description_t, data_t>;
+    using update_t            = muse_smc::Update<sample_t>;
     using queue_t             = __gnu_pbds::priority_queue<Entry, typename Entry::Greater, __gnu_pbds::rc_binomial_heap_tag>;
     using mean_duration_t     = cslibs_time::statistics::DurationMean;
     using mean_duration_map_t = std::unordered_map<id_t, mean_duration_t>;
     using time_priority_map_t = std::unordered_map<id_t, double>;
-    using resampling_t        = muse_smc::Resampling<state_space_description_t, data_t>;
-    using sample_set_t        = muse_smc::SampleSet<state_space_description_t>;
+    using resampling_t        = muse_smc::Resampling<sample_t>;
+    using sample_set_t        = muse_smc::SampleSet<sample_t>;
     using nice_map_t          = std::unordered_map<id_t, double>;
     using time_t              = cslibs_time::Time;
     using duration_t          = cslibs_time::Duration;
+    using data_t              = traits::Data<sample_t>::type;
 
     virtual ~Rate() = default;
 

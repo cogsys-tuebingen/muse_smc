@@ -19,10 +19,13 @@ class SMCState
 public:
     using Ptr           = std::shared_ptr<SMCState>;
     using sample_set_t  = SampleSet<sample_t>;
+
+    SMCState() = delete;
+
     /**
      * @brief Default desctructor.
      */
-    virtual ~SMCState() = default;
+    virtual ~SMCState() = delete;
     /**
      * @brief Publish a valid belief state, after resampling.
      * @param sample_set

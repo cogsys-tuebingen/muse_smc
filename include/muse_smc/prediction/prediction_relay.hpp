@@ -5,17 +5,17 @@
 #include <muse_smc/smc/smc.hpp>
 
 namespace muse_smc {
-template<typename state_space_description_t, typename data_t, typename data_provider_t>
+template<typename sample_t>
 class PredictionRelay
 {
 public:
     using Ptr                     = std::shared_ptr<PredictionRelay>;
-    using smc_t                   = SMC<state_space_description_t, data_t>;
-    using sample_t                = typename state_space_description_t::sample_t;
-    using prediction_t            = Prediction<state_space_description_t, data_t>;
-    using prediction_model_t      = PredictionModel<state_space_description_t, data_t>;
-    using state_space_provider_t  = StateSpaceProvider<state_space_description_t>;
-    using state_space_t           = StateSpace<state_space_description_t>;
+    using smc_t                   = SMC<sample_t>;
+    using prediction_t            = Prediction<sample_t>;
+    using prediction_model_t      = PredictionModel<sample_t>;
+    using state_space_provider_t  = StateSpaceProvider<sample_t>;
+    using state_space_t           = StateSpace<sample_t>;
+    using data_provider_t         = muse_smc::traits::DataProvider<sample_t>;
 
     PredictionRelay(const typename smc_t::Ptr &smc) :
         smc_(smc)

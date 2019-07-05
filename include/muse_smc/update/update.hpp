@@ -6,14 +6,14 @@
 #include <cslibs_time/time_frame.hpp>
 
 namespace muse_smc {
-template<typename state_space_description_t, typename data_t>
+template<typename sample_t>
 class Update {
 public:
     using Ptr            = std::shared_ptr<Update>;
-    using sample_t       = typename state_space_description_t::sample_t;
-    using update_model_t = UpdateModel<state_space_description_t, data_t>;
-    using sample_set_t   = SampleSet<state_space_description_t>;
-    using state_space_t  = StateSpace<state_space_description_t>;
+    using update_model_t = UpdateModel<sample_t>;
+    using sample_set_t   = SampleSet<sample_t>;
+    using state_space_t  = StateSpace<sample_t>;
+    using data_t         = typename traits::Data<sample_t>::type;
 
     struct Less {
         bool operator()( const Update& lhs,

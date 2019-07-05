@@ -7,13 +7,13 @@
 #include <memory>
 
 namespace muse_smc {
-template<typename state_space_description_t, typename data_t>
+template<typename sample_t>
 class PredictionModel {
 public:
     using Ptr           = std::shared_ptr<PredictionModel>;
     using sample_t      = typename state_space_description_t::state_t;
-    using sample_set_t  = SampleSet<state_space_description_t>;
-    using state_space_t = StateSpace<state_space_description_t>;
+    using sample_set_t  = SampleSet<sample_t>;
+    using state_space_t = StateSpace<sample_t>;
 
     struct Result {
         using Ptr      = std::shared_ptr<Result>;

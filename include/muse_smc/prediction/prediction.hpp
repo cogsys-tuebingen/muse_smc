@@ -8,13 +8,13 @@
 #include <cslibs_time/time_frame.hpp>
 
 namespace muse_smc {
-template<typename state_space_description_t, typename data_t>
+template<typename sample_t>
 class Prediction {
 public:
     using Ptr               = std::shared_ptr<Prediction>;
-    using predition_model_t = PredictionModel<state_space_description_t, data_t>;
-    using sample_set_t      = SampleSet<state_space_description_t>;
-    using state_space_t     = StateSpace<state_space_description_t>;
+    using predition_model_t = PredictionModel<sample_t>;
+    using sample_set_t      = SampleSet<sample_t>;
+    using state_space_t     = StateSpace<sample_t>;
 
     struct Less {
         bool operator()( const Prediction& lhs,

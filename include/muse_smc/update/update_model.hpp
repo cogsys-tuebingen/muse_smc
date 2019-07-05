@@ -7,19 +7,18 @@
 #include <muse_smc/samples/sample_set.hpp>
 
 namespace muse_smc {
-template<typename state_space_description_t, typename data_t>
+template<typename sample_t>
 class UpdateModel {
 public:
     using Ptr           = std::shared_ptr<UpdateModel>;
-    using sample_t      = typename state_space_description_t::sample_t;
-    using sample_set_t  = SampleSet<state_space_description_t>;
-    using state_space_t = StateSpace<state_space_description_t>;
+    using sample_set_t  = SampleSet<sample_t>;
+    using state_space_t = StateSpace<sample_t>;
 
-    UpdateModel()
-    {
-    }
+    using data_t        = typename traits::Data<sample_t>::type;
+    using covariance_t  = typename traits::Covariance<sample_t>::type;
 
-    virtual ~UpdateModel() = default;
+    UpdateModel() = delete;
+    virtual ~UpdateModel() = delete;
 
     virtual std::size_t getId() const = 0;
     virtual const std::string getName() const = 0;

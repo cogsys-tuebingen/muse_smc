@@ -12,6 +12,16 @@ struct Data {
     static_assert(false, "Data type trait not defined!");
 };
 
+
+/**
+ * @brief Defines the data provider type the filter is working with.
+ * @tparam SampleType   sample type to set the trait for
+ */
+template<typename SampleType>
+struct DataProvider {
+    static_assert(false, "Data type trait not defined!");
+};
+
 /**
  * @brief Defines the state type the filter is working with.
  * @tparam SampleType   sample type to set the trait for
