@@ -19,15 +19,15 @@ public:
     using sample_set_t = SampleSet<sample_t>;
     using data_t       = typename traits::Data<sample_t>::type;
 
-    Scheduler() = delete;
-
-    virtual ~Scheduler() = delete;
-
     virtual bool apply(typename update_t::Ptr     &u,
                        typename sample_set_t::Ptr &s) = 0;
 
     virtual bool apply(typename resampling_t::Ptr &r,
                        typename sample_set_t::Ptr &s) = 0;
+
+protected:
+    Scheduler() = default;
+    virtual ~Scheduler() = default;
 };
 }
 

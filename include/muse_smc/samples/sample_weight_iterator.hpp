@@ -13,7 +13,7 @@ template<typename sample_t>
 class WeightIterator : public std::iterator<std::random_access_iterator_tag, double>
 {
 public:
-    using state_t       = traits::State<sample_t>::type;
+    using state_t       = typename traits::State<sample_t>::type;
     using parent        = std::iterator<std::random_access_iterator_tag, double>;
     using iterator      = typename parent::iterator;
     using reference     = typename parent::reference;

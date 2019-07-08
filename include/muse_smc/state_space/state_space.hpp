@@ -5,17 +5,17 @@
 #include <chrono>
 
 #include <cslibs_time/time.hpp>
+#include <muse_smc/smc/smc_traits.hpp>
 
 namespace muse_smc {
-template<typename state_space_description_t>
+template<typename sample_t>
 class StateSpace {
 public:
     using Ptr                     = std::shared_ptr<StateSpace>;
     using ConstPtr                = std::shared_ptr<StateSpace const>;
-    using sample_t                = typename state_space_description_t::sample_t;
-    using state_t                 = typename state_space_description_t::state_t;
-    using state_space_transform_t = typename state_space_description_t::transform_t;
-    using state_space_boundary_t  = typename state_space_description_t::state_space_boundary_t;
+    using state_t                 = typename traits::State<sample_t>::type;
+    using state_space_transform_t = typename traits::Transform<sample_t>::type;
+    using state_space_boundary_t  = typename traits::StateSpaceBoundary<sample_t>::type;
 
 
     StateSpace(const std::string &frame) :

@@ -23,7 +23,7 @@ class EIGEN_ALIGN16 SampleSet
 {
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
+    using sample_set_t          = SampleSet<sample_t>;
     using sample_vector_t       = cslibs_utility::buffered::buffered_vector<sample_t, typename sample_t::allocator_t>;
     using sample_density_t      = SampleDensity<sample_t>;
     using sample_insertion_t    = SampleInsertion<sample_t>;
