@@ -15,6 +15,7 @@ public:
     using predition_model_t = PredictionModel<sample_t>;
     using sample_set_t      = SampleSet<sample_t>;
     using state_space_t     = StateSpace<sample_t>;
+    using data_t            = typename muse_smc::traits::Data<sample_t>::type;
 
     struct Less {
         bool operator()( const Prediction& lhs,

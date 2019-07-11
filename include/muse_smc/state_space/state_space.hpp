@@ -17,7 +17,6 @@ public:
     using state_space_transform_t = typename traits::Transform<sample_t>::type;
     using state_space_boundary_t  = typename traits::StateSpaceBoundary<sample_t>::type;
 
-
     StateSpace(const std::string &frame) :
         frame_(frame),
         stamp_(cslibs_time::Time::now())

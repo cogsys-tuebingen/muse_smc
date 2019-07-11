@@ -23,6 +23,7 @@ public:
                                              typename state_space_provider_t::Ptr>;
     using map_t                  = std::map<typename update_model_t::Ptr,
                                             arguments_t>;
+    using data_t                 = typename muse_smc::traits::Data<sample_t>::type;
 
     inline UpdateRelay(const typename smc_t::Ptr &smc) :
         smc_(smc)

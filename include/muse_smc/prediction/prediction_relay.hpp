@@ -15,7 +15,9 @@ public:
     using prediction_model_t      = PredictionModel<sample_t>;
     using state_space_provider_t  = StateSpaceProvider<sample_t>;
     using state_space_t           = StateSpace<sample_t>;
-    using data_provider_t         = muse_smc::traits::DataProvider<sample_t>;
+    using data_provider_t         = typename muse_smc::traits::DataProvider<sample_t>::type;
+    using data_t                  = typename muse_smc::traits::Data<sample_t>::type;
+
 
     PredictionRelay(const typename smc_t::Ptr &smc) :
         smc_(smc)

@@ -9,7 +9,7 @@ namespace traits {
  */
 template<typename SampleType>
 struct Data {
-    static_assert(false, "Data type trait not defined!");
+    // type of Data has to be defined by using type = ...
 };
 
 /**
@@ -18,7 +18,7 @@ struct Data {
  */
 template<typename SampleType>
 struct DataProvider {
-    static_assert(false, "Data type trait not defined!");
+    // type of DataProvider has to be defined by using type = ...
 };
 
 /**
@@ -27,7 +27,7 @@ struct DataProvider {
  */
 template<typename SampleType>
 struct State {
-    static_assert(false, "State type trait not defined!");
+    // type of State has to be defined by using type = ...
 };
 
 /**
@@ -36,7 +36,7 @@ struct State {
  */
 template<typename SampleType>
 struct Transform {
-    static_assert(false, "Transform type trait not defined!");
+    // type of Transform has to be defined by using type = ...
 };
 
 /**
@@ -45,7 +45,7 @@ struct Transform {
  */
 template<typename SampleType>
 struct Covariance {
-    static_assert(false, "Covariance type trait not defined!");
+    // type of Covariance has to be defined by using type = ...
 };
 
 /**
@@ -54,7 +54,7 @@ struct Covariance {
  */
 template<typename SampleType>
 struct StateSpaceBoundary {
-    static_assert(false, "StateSpaceBoundary type trait not defined!");
+    // type of StateSpaceBoundary has to be defined by using type = ...
 };
 }
 }
