@@ -4,20 +4,19 @@
 #include <map>
 
 #include <muse_smc/state_space/state_space_provider.hpp>
-#include <muse_smc/update/update.hpp>
 #include <muse_smc/smc/smc.hpp>
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename smc_t>
 class UpdateRelay
 {
 public:
     using Ptr                    = std::shared_ptr<UpdateRelay>;
-    using smc_t                  = SMC<sample_t>;
-    using update_t               = Update<sample_t>;
-    using update_model_t         = UpdateModel<sample_t>;
-    using state_space_provider_t = StateSpaceProvider<sample_t>;
-    using state_space_t          = StateSpace<sample_t>;
+    using sample_t               = typename smc_t::sample_t;
+    using update_t               = typename smc_t::update_t;
+    using update_model_t         = typename smc_t::update_model_t;
+    using state_space_provider_t = typename smc_t::state_space_provider_t;
+    using state_space_t          = typename smc_t::state_space_t;
     using data_provider_t        = typename traits::DataProvider<sample_t>::type;
     using arguments_t            = std::pair<typename data_provider_t::Ptr,
                                              typename state_space_provider_t::Ptr>;

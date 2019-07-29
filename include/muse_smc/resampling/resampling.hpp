@@ -13,12 +13,13 @@
 #include <iostream>
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename smc_t>
 class Resampling
 {
 public:
     using Ptr                   = std::shared_ptr<Resampling>;
-    using sample_set_t          = SampleSet<sample_t>;
+    using sample_t              = typename smc_t::sample_t;
+    using sample_set_t          = typename smc_t::sample_set_t;
     using sample_uniform_t      = UniformSampling<sample_t>;
     using sample_normal_t       = NormalSampling<sample_t>;
 

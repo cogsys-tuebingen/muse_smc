@@ -2,19 +2,18 @@
 #define PREDICTION_HPP
 
 #include <muse_smc/samples/sample_set.hpp>
-#include <muse_smc/prediction/prediction_model.hpp>
 #include <muse_smc/state_space/state_space.hpp>
 
 #include <cslibs_time/time_frame.hpp>
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename prediction_model_t>
 class Prediction {
 public:
     using Ptr               = std::shared_ptr<Prediction>;
-    using predition_model_t = PredictionModel<sample_t>;
-    using sample_set_t      = SampleSet<sample_t>;
-    using state_space_t     = StateSpace<sample_t>;
+    using sample_t          = typename prediction_model_t::sample_t;
+    using sample_set_t      = typename prediction_model_t::sample_set_t;
+    using state_space_t     = typename prediction_model_t::state_space_t;
     using data_t            = typename muse_smc::traits::Data<sample_t>::type;
 
     struct Less {
@@ -50,7 +49,7 @@ public:
     };
 
     Prediction(const typename data_t::ConstPtr       &data,
-               const typename predition_model_t::Ptr &model) :
+               const typename prediction_model_t::Ptr &model) :
         data_(data),
         model_(model)
     {
@@ -58,7 +57,7 @@ public:
 
     Prediction(const typename data_t::ConstPtr        &data,
                const typename state_space_t::ConstPtr &state_space,
-               const typename predition_model_t::Ptr  &model) :
+               const typename prediction_model_t::Ptr  &model) :
         data_(data),
         state_space_(state_space),
         model_(model)
@@ -67,7 +66,7 @@ public:
 
     virtual ~Prediction() = default;
 
-    inline typename predition_model_t::Result operator ()
+    inline typename prediction_model_t::Result operator ()
         (const cslibs_time::Time &until, typename sample_set_t::state_iterator_t states)
     {
         return state_space_ ?
@@ -75,7 +74,7 @@ public:
                     model_->apply(data_, until, states);
     }
 
-    inline typename predition_model_t::Result::Ptr apply(const cslibs_time::Time  &until,
+    inline typename prediction_model_t::Result::Ptr apply(const cslibs_time::Time  &until,
                                                          typename sample_set_t::state_iterator_t states)
     {
         return state_space_ ?
@@ -103,7 +102,7 @@ public:
         return model_->getName();
     }
 
-    inline  typename predition_model_t::Ptr getModel() const
+    inline  typename prediction_model_t::Ptr getModel() const
     {
         return model_;
     }
@@ -111,7 +110,7 @@ public:
 private:
     typename data_t::ConstPtr        data_;
     typename state_space_t::ConstPtr state_space_;
-    typename predition_model_t::Ptr  model_;
+    typename prediction_model_t::Ptr  model_;
 };
 }
 

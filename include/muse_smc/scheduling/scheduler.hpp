@@ -8,15 +8,16 @@
 #include <memory>
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename smc_t>
 class Scheduler {
 public:
     using Ptr = std::shared_ptr<Scheduler>;
 
     using id_t         = std::size_t;
-    using update_t     = Update<sample_t>;
-    using resampling_t = Resampling<sample_t>;
-    using sample_set_t = SampleSet<sample_t>;
+    using sample_t     = typename smc_t::sample_t;
+    using update_t     = typename smc_t::update_t;
+    using resampling_t = typename smc_t::resampling_t;
+    using sample_set_t = typename smc_t::sample_set_t;
     using data_t       = typename traits::Data<sample_t>::type;
 
     virtual bool apply(typename update_t::Ptr     &u,

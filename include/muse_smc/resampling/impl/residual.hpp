@@ -9,11 +9,12 @@
 
 namespace muse_smc {
 namespace impl {
-template<typename sample_t>
+template<typename smc_t>
 class Residual
 {
 public:
-    using sample_set_t        = SampleSet<sample_t>;
+    using sample_t              = typename smc_t::sample_t;
+    using sample_set_t          = typename smc_t::sample_set_t;
     using uniform_sampling_t  = UniformSampling<sample_t>;
 
     inline static void apply(sample_set_t &sample_set)

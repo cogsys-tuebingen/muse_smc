@@ -3,16 +3,17 @@
 
 #include <memory>
 
-#include <muse_smc/state_space/state_space.hpp>
-#include <muse_smc/samples/sample_set.hpp>
+#include <muse_smc/update/update.hpp>
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename smc_t>
 class UpdateModel {
 public:
     using Ptr           = std::shared_ptr<UpdateModel>;
-    using sample_set_t  = SampleSet<sample_t>;
-    using state_space_t = StateSpace<sample_t>;
+    using sample_t      = typename smc_t::sample_t;
+    using sample_set_t  = typename smc_t::sample_set_t;
+    using state_space_t = typename smc_t::state_space_t;
+    using update_t      = Update<UpdateModel>;
 
     using data_t        = typename traits::Data<sample_t>::type;
     using covariance_t  = typename traits::Covariance<sample_t>::type;

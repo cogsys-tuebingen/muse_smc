@@ -1,18 +1,17 @@
 #ifndef UPDATE_HPP
 #define UPDATE_HPP
 
-#include <muse_smc/update/update_model.hpp>
 #include <muse_smc/samples/sample_set.hpp>
 #include <cslibs_time/time_frame.hpp>
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename update_model_t>
 class Update {
 public:
     using Ptr            = std::shared_ptr<Update>;
-    using update_model_t = UpdateModel<sample_t>;
-    using sample_set_t   = SampleSet<sample_t>;
-    using state_space_t  = StateSpace<sample_t>;
+    using sample_t       = typename update_model_t::sample_t;
+    using sample_set_t   = typename update_model_t::sample_set_t;
+    using state_space_t  = typename update_model_t::state_space_t;
     using data_t         = typename traits::Data<sample_t>::type;
 
     struct Less {

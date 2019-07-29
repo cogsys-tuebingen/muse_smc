@@ -4,7 +4,7 @@
 /// PROJECT
 #include <muse_smc/prediction/prediction_integrals.hpp>
 #include <muse_smc/prediction/prediction.hpp>
-#include <muse_smc/update/update.hpp>
+#include <muse_smc/update/update_model.hpp>
 #include <muse_smc/sampling/normal.hpp>
 #include <muse_smc/sampling/uniform.hpp>
 #include <muse_smc/samples/sample_set.hpp>
@@ -12,6 +12,8 @@
 #include <muse_smc/smc/smc_state.hpp>
 #include <muse_smc/scheduling/scheduler.hpp>
 #include <muse_smc/smc/smc_traits.hpp>
+
+#include <muse_smc/state_space/state_space_provider.hpp>
 
 /// CSLIBS
 #include <cslibs_time/rate.hpp>
@@ -33,7 +35,7 @@
  */
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename sample_type>
 class SMC
 {
 public:
@@ -46,19 +48,32 @@ public:
     using atomic_bool_t         = std::atomic_bool;
 
     /// filter specific type defs
+    using sample_t              = sample_type;
     using sample_set_t          = SampleSet<sample_t>;
+
+    using state_space_provider_t = StateSpaceProvider<sample_t>;
+    using state_space_t          = StateSpace<sample_t>;
+
+    using update_model_t        = UpdateModel<SMC>;
+    using update_t              = typename update_model_t::update_t;
+
+    using prediction_model_t    = PredictionModel<SMC>;
+    using prediction_result_t   = typename prediction_model_t::Result;
+    using prediction_t          = typename prediction_model_t::prediction_t;
+    using prediction_integral_t = PredictionIntegral<SMC>;
+    using prediction_integrals_t= PredictionIntegrals<SMC>;
+
+    using scheduler_t           = Scheduler<SMC>;
+    using resampling_t          = Resampling<SMC>;
+
     using time_t                = cslibs_time::Time;
     using state_t               = typename traits::State<sample_t>::type;
     using covariance_t          = typename traits::Covariance<sample_t>::type;
-    using update_t              = Update<sample_t>;
-    using prediction_t          = Prediction<sample_t>;
-    using prediction_result_t   = typename prediction_t::predition_model_t::Result;
-    using prediction_integral_t = PredictionIntegral<sample_t>;
-    using prediction_integrals_t= PredictionIntegrals<sample_t>;
+
     using normal_sampling_t     = NormalSampling<sample_t>;
     using uniform_sampling_t    = UniformSampling<sample_t>;
-    using resampling_t          = Resampling<sample_t>;
-    using scheduler_t           = Scheduler<sample_t>;
+
+
     using filter_state_t        = SMCState<sample_t>;
     using update_queue_t        = cslibs_utility::synchronized::priority_queue<typename update_t::Ptr, typename update_t::Greater>;
     using prediction_queue_t    = cslibs_utility::synchronized::priority_queue<typename prediction_t::Ptr, typename prediction_t::Greater>;
