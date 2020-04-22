@@ -35,8 +35,6 @@ before_script:
   - cd src
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:apps/muse_mcl_2d.git -b devel muse_mcl_2d
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_indexed_storage.git -b devel cslibs_indexed_storage
-  - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_boost_geometry.git -b devel cslibs_boost_geometry
-  - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_vectormaps.git -b devel cslibs_vectormaps
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_time.git -b devel cslibs_time
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_gridmaps.git -b devel cslibs_gridmaps
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_ndt.git -b devel cslibs_ndt
