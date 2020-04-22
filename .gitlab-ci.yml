@@ -3,9 +3,11 @@ before_script:
   # (change apt-get to yum if you use a CentOS-based image)
   - 'apt-get -qq update -y'
   - 'apt-get -qq install build-essential
-                 openssh-client libeigen3-dev
+                 openssh-client
+                 libeigen3-dev
                  libyaml-cpp-dev
                  libtbb-dev
+                 libtinyxml-dev
                  libopencv-dev
                  libgdal-dev
                  libpcl1-dev
