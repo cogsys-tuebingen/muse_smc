@@ -1,12 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(muse_smc)
 
-include(cmake/muse_smc_enable_c++11.cmake)
+include(cmake/muse_smc_enable_c++17.cmake)
 include(cmake/muse_smc_extras.cmake)
-include(cmake/muse_smc_openmp.cmake)
-include(cmake/muse_smc_show_headers.cmake)
-include(cmake/muse_smc_add_unit_test_gtest.cmake)
-include(cmake/muse_smc_add_unit_test_rostest.cmake)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -23,10 +19,7 @@ catkin_package(
     CATKIN_DEPENDS  cslibs_time cslibs_math cslibs_utility
     DEPENDS         TinyXML
     CFG_EXTRAS      muse_smc_extras.cmake
-                    muse_smc_enable_c++11.cmake
-                    muse_smc_add_unit_test_gtest.cmake
-                    muse_smc_show_headers.cmake
-                    muse_smc_openmp.cmake
+                    muse_smc_enable_c++17.cmake
 )
 
 # add_definitions("-DMUSE_SMC_USE_DOTTY")
