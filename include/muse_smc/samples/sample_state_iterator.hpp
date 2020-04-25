@@ -14,7 +14,6 @@ class StateIterator : public std::iterator<std::random_access_iterator_tag, type
 {
 public:
     using parent    = std::iterator<std::random_access_iterator_tag, typename traits::State<sample_t>::type>;
-    using iterator  = typename parent::iterator;
     using reference = typename parent::reference;
 
     inline explicit StateIterator(sample_t *begin) :
@@ -24,7 +23,7 @@ public:
 
     virtual ~StateIterator() = default;
 
-    inline iterator& operator++()
+    inline StateIterator& operator++()
     {
         ++data_;
         return *this;

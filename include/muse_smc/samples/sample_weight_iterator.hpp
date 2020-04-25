@@ -15,7 +15,6 @@ class WeightIterator : public std::iterator<std::random_access_iterator_tag, dou
 public:
     using state_t       = typename traits::State<sample_t>::type;
     using parent        = std::iterator<std::random_access_iterator_tag, double>;
-    using iterator      = typename parent::iterator;
     using reference     = typename parent::reference;
     using notify_update = cslibs_utility::common::delegate<void(const double &)>;
 
