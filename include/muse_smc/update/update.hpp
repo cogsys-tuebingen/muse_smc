@@ -91,7 +91,7 @@ public:
 
     inline std::size_t getModelId() const
     {
-        return model_->getId();
+        return model_->getModelId();
     }
 
 private:

@@ -39,18 +39,7 @@ public:
     /**
      * @brief SMC default constructor.
      */
-    inline SMC() :
-        request_init_state_(false),
-        request_init_uniform_(false),
-        enable_lag_correction_(false),
-        has_valid_state_(false),
-        reset_all_accumulators_after_update_(false),
-        reset_model_accumulators_after_resampling_(false),
-        worker_thread_active_(false),
-        worker_thread_exit_(false)
-    {
-    }
-
+    inline SMC() = default;
     /**
      * @brief ~SMC default destructor.
      */
@@ -224,8 +213,8 @@ protected:
     typename types_t::state_t               init_state_;
     typename types_t::covariance_t          init_state_covariance_;
     typename types_t::time_t                init_time_;
-    std::atomic_bool                        request_init_state_;
-    std::atomic_bool                        request_init_uniform_;
+    std::atomic_bool                        request_init_state_{false};
+    std::atomic_bool                        request_init_uniform_{false};
 
     /// processing queues
     update_queue_t                          update_queue_;
@@ -234,16 +223,16 @@ protected:
     duration_map_t                          lag_map_;
     typename types_t::duration_t            lag_;
     std::size_t                             lag_source_;
-    bool                                    enable_lag_correction_;
-    bool                                    has_valid_state_;
-    bool                                    reset_all_accumulators_after_update_;
-    bool                                    reset_model_accumulators_after_resampling_;
+    bool                                    enable_lag_correction_{false};
+    bool                                    has_valid_state_{false};
+    bool                                    reset_all_accumulators_after_update_{false};
+    bool                                    reset_model_accumulators_after_resampling_{false};
 
     /// background thread
     std::mutex                                 worker_thread_mutex_;
     std::thread                                worker_thread_;
-    std::atomic_bool                           worker_thread_active_;
-    std::atomic_bool                           worker_thread_exit_;
+    std::atomic_bool                           worker_thread_active_{false};
+    std::atomic_bool                           worker_thread_exit_{false};
     std::condition_variable                    notify_event_;
     mutable std::mutex                         notify_event_mutex_;
     std::condition_variable                    notify_prediction_;

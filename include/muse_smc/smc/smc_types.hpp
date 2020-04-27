@@ -11,7 +11,7 @@
 #include <muse_smc/resampling/resampling.hpp>
 #include <muse_smc/scheduling/scheduler.hpp>
 #include <muse_smc/smc/smc_state.hpp>
-#include <muse_smc/smc/smc_traits.hpp>
+#include <muse_smc/smc/traits.hpp>
 
 #include <muse_smc/state_space/state_space_provider.hpp>
 
@@ -32,8 +32,8 @@ struct Types {
     using prediction_model_t    = PredictionModel<type_t>;
     using prediction_result_t   = typename prediction_model_t::Result;
     using prediction_t          = typename prediction_model_t::prediction_t;
-    using prediction_integral_t = PredictionIntegral<type_t>;
-    using prediction_integrals_t= PredictionIntegrals<type_t>;
+    using prediction_integral_t = PredictionIntegral<prediction_result_t>;
+    using prediction_integrals_t= PredictionIntegrals<prediction_result_t>;
 
     using scheduler_t           = Scheduler<type_t>;
     using resampling_t          = Resampling<type_t>;

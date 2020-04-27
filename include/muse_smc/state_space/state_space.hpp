@@ -5,7 +5,7 @@
 #include <chrono>
 
 #include <cslibs_time/time.hpp>
-#include <muse_smc/smc/smc_traits.hpp>
+#include <muse_smc/smc/traits.hpp>
 
 namespace muse_smc {
 template<typename sample_t>
