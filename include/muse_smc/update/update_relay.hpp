@@ -12,11 +12,12 @@ class UpdateRelay
 {
 public:
     using Ptr                    = std::shared_ptr<UpdateRelay>;
-    using sample_t               = typename smc_t::sample_t;
-    using update_t               = typename smc_t::update_t;
-    using update_model_t         = typename smc_t::update_model_t;
-    using state_space_provider_t = typename smc_t::state_space_provider_t;
-    using state_space_t          = typename smc_t::state_space_t;
+    using types_t                = typename smc_t::types_t;
+    using sample_t               = typename types_t::sample_t;
+    using update_t               = typename types_t::update_t;
+    using update_model_t         = typename types_t::update_model_t;
+    using state_space_provider_t = typename types_t::state_space_provider_t;
+    using state_space_t          = typename types_t::state_space_t;
     using data_provider_t        = typename traits::DataProvider<sample_t>::type;
     using arguments_t            = std::pair<typename data_provider_t::Ptr,
                                              typename state_space_provider_t::Ptr>;

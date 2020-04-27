@@ -2,18 +2,7 @@
 #define MUSE_SMC_HPP
 
 /// PROJECT
-#include <muse_smc/prediction/prediction_integrals.hpp>
-#include <muse_smc/prediction/prediction.hpp>
-#include <muse_smc/update/update_model.hpp>
-#include <muse_smc/sampling/normal.hpp>
-#include <muse_smc/sampling/uniform.hpp>
-#include <muse_smc/samples/sample_set.hpp>
-#include <muse_smc/resampling/resampling.hpp>
-#include <muse_smc/smc/smc_state.hpp>
-#include <muse_smc/scheduling/scheduler.hpp>
-#include <muse_smc/smc/smc_traits.hpp>
-
-#include <muse_smc/state_space/state_space_provider.hpp>
+#include <muse_smc/smc/smc_types.hpp>
 
 /// CSLIBS
 #include <cslibs_time/rate.hpp>
@@ -35,49 +24,16 @@
  */
 
 namespace muse_smc {
-template<typename sample_type>
+template<typename Sample_T>
 class SMC
 {
 public:
     /// utility typedefs
-    using Ptr                   = std::shared_ptr<SMC>;
-    using mutex_t               = std::mutex;
-    using condition_variable_t  = std::condition_variable;
-    using lock_t                = std::unique_lock<mutex_t>;
-    using thread_t              = std::thread;
-    using atomic_bool_t         = std::atomic_bool;
+    using Ptr                   = std::shared_ptr<SMC<Sample_T>>;
+    using types_t               = Types<Sample_T>;
 
-    /// filter specific type defs
-    using sample_t              = sample_type;
-    using sample_set_t          = SampleSet<sample_t>;
-
-    using state_space_provider_t = StateSpaceProvider<sample_t>;
-    using state_space_t          = StateSpace<sample_t>;
-
-    using update_model_t        = UpdateModel<SMC>;
-    using update_t              = typename update_model_t::update_t;
-
-    using prediction_model_t    = PredictionModel<SMC>;
-    using prediction_result_t   = typename prediction_model_t::Result;
-    using prediction_t          = typename prediction_model_t::prediction_t;
-    using prediction_integral_t = PredictionIntegral<SMC>;
-    using prediction_integrals_t= PredictionIntegrals<SMC>;
-
-    using scheduler_t           = Scheduler<SMC>;
-    using resampling_t          = Resampling<SMC>;
-
-    using time_t                = cslibs_time::Time;
-    using state_t               = typename traits::State<sample_t>::type;
-    using covariance_t          = typename traits::Covariance<sample_t>::type;
-
-    using normal_sampling_t     = NormalSampling<sample_t>;
-    using uniform_sampling_t    = UniformSampling<sample_t>;
-
-
-    using filter_state_t        = SMCState<sample_t>;
-    using update_queue_t        = cslibs_utility::synchronized::priority_queue<typename update_t::Ptr, typename update_t::Greater>;
-    using prediction_queue_t    = cslibs_utility::synchronized::priority_queue<typename prediction_t::Ptr, typename prediction_t::Greater>;
-    using duration_t            = cslibs_time::Duration;
+    using update_queue_t        = cslibs_utility::synchronized::priority_queue<typename types_t::update_t::Ptr, typename types_t::update_t::Greater>;
+    using prediction_queue_t    = cslibs_utility::synchronized::priority_queue<typename types_t::prediction_t::Ptr, typename types_t::prediction_t::Greater>;
     using duration_map_t        = std::unordered_map<std::size_t, cslibs_time::statistics::DurationLowpass>;
 
     /**
@@ -116,16 +72,16 @@ public:
      * @param reset_model_accumulators_after_resampling - reset all model accumlators after resampling is carried out
      * @param enable_lag_correction                     - lag correction for delayed update inputs
      */
-    inline void setup(const typename sample_set_t::Ptr            &sample_set,
-                      const typename uniform_sampling_t::Ptr      &sample_uniform,
-                      const typename normal_sampling_t::Ptr       &sample_normal,
-                      const typename resampling_t::Ptr            &resampling,
-                      const typename filter_state_t::Ptr          &state_publisher,
-                      const typename prediction_integrals_t::Ptr  &prediction_integrals,
-                      const typename scheduler_t::Ptr             &scheduler,
-                      const bool                                   reset_all_model_accumulators_on_update,
-                      const bool                                   reset_model_accumulators_after_resampling,
-                      const bool                                   enable_lag_correction)
+    inline void setup(const typename types_t::sample_set_t::Ptr            &sample_set,
+                      const typename types_t::uniform_sampling_t::Ptr      &sample_uniform,
+                      const typename types_t::normal_sampling_t::Ptr       &sample_normal,
+                      const typename types_t::resampling_t::Ptr            &resampling,
+                      const typename types_t::filter_state_t::Ptr          &state_publisher,
+                      const typename types_t::prediction_integrals_t::Ptr  &prediction_integrals,
+                      const typename types_t::scheduler_t::Ptr             &scheduler,
+                      const bool                                            reset_all_model_accumulators_on_update,
+                      const bool                                            reset_model_accumulators_after_resampling,
+                      const bool                                            enable_lag_correction)
     {
         sample_set_                                 = sample_set;
         sample_uniform_                             = sample_uniform;
@@ -146,9 +102,9 @@ public:
     inline bool start()
     {
         if(!worker_thread_active_) {
-            lock_t l(worker_thread_mutex_);
+            std::unique_lock<std::mutex> l(worker_thread_mutex_);
             worker_thread_exit_ = false;
-            worker_thread_      = thread_t([this](){loop();});
+            worker_thread_      = std::thread([this](){loop();});
             return true;
         }
         return false;
@@ -177,7 +133,7 @@ public:
      * @brief Add a new prediction to the filter for sample propagation.
      * @param prediction - the prediction or control function applied to the samples
      */
-    inline void addPrediction(const typename prediction_t::Ptr &prediction)
+    inline void addPrediction(const typename types_t::prediction_t::Ptr &prediction)
     {
         prediction_queue_.emplace(prediction);
         notify_prediction_.notify_one();
@@ -187,14 +143,14 @@ public:
      * @brief Add an measurement update from some channel to the filter to weight the samples
      * @param update    - the update function applied to the sample set
      */
-    inline void addUpdate(const typename update_t::Ptr &update)
+    inline void addUpdate(const typename types_t::update_t::Ptr &update)
     {
         if (enable_lag_correction_) {
-            const std::size_t        id    = update->getModelId();
-            const cslibs_time::Time &stamp = update->getStamp();
+            const auto id = update->getModelId();
+            const auto &stamp = update->getStamp();
 
             cslibs_time::statistics::DurationLowpass &lag = lag_map_[id];
-            lag += cslibs_time::Duration(
+            lag += typename types_t::duration_t(
                         static_cast<int64_t>(std::max(0L, update->stampReceived().nanoseconds() - update->getStamp().nanoseconds())));
             if (lag.duration() >= lag_) {
                 lag_ = lag.duration();
@@ -218,23 +174,23 @@ public:
             notify_event_.notify_one();
         }
     }
-     
-    void triggerEvent() 
+
+    void triggerEvent()
     {
         notify_event_.notify_one();
     }
-    
+
     /**
      * @brief Request a state based initialization, meaning that normal sampling occurs around a prior estimate.
      * @param state         - the state / the sample around which sampling occurs
      * @param covariance    - the covariance used for sampling around a state
      * @param time          - the time at which sampling should be executed
      */
-    inline void requestStateInitialization(const state_t &state,
-                                           const covariance_t &covariance,
-                                           const time_t &time)
+    inline void requestStateInitialization(const typename types_t::state_t &state,
+                                           const typename types_t::covariance_t &covariance,
+                                           const typename types_t::time_t &time)
     {
-        lock_t l(init_state_mutex_);
+        std::unique_lock<std::mutex> l(init_state_mutex_);
         init_state_             = state;
         init_state_covariance_  = covariance;
         init_time_              = time;
@@ -245,7 +201,7 @@ public:
      * @brief Request a uniform initalization of the sample set.
      * @param time          - time at which the sampling should be executed
      */
-    void requestUniformInitialization(const time_t &time)
+    void requestUniformInitialization(const typename types_t::time_t &time)
     {
         request_init_uniform_   = true;
         init_time_ = time;
@@ -253,30 +209,30 @@ public:
 
 protected:
     /// functions to apply to the sample set
-    typename sample_set_t::Ptr              sample_set_;
-    typename uniform_sampling_t::Ptr        sample_uniform_;
-    typename normal_sampling_t::Ptr         sample_normal_;
-    typename resampling_t::Ptr              resampling_;
-    typename prediction_integrals_t::Ptr    prediction_integrals_;
-    typename scheduler_t::Ptr               scheduler_;
-    typename filter_state_t::Ptr            state_publisher_;
+    typename types_t::sample_set_t::Ptr              sample_set_{nullptr};
+    typename types_t::uniform_sampling_t::Ptr        sample_uniform_{nullptr};
+    typename types_t::normal_sampling_t::Ptr         sample_normal_{nullptr};
+    typename types_t::resampling_t::Ptr              resampling_{nullptr};
+    typename types_t::prediction_integrals_t::Ptr    prediction_integrals_{nullptr};
+    typename types_t::scheduler_t::Ptr               scheduler_{nullptr};
+    typename types_t::filter_state_t::Ptr            state_publisher_{nullptr};
 
     enum class Publication {None = 0, Intermediate = 1, Constant = 2, Resampling = 4};
 
     /// requests
     std::mutex                              init_state_mutex_;
-    state_t                                 init_state_;
-    covariance_t                            init_state_covariance_;
-    time_t                                  init_time_;
-    atomic_bool_t                           request_init_state_;
-    atomic_bool_t                           request_init_uniform_;
+    typename types_t::state_t               init_state_;
+    typename types_t::covariance_t          init_state_covariance_;
+    typename types_t::time_t                init_time_;
+    std::atomic_bool                        request_init_state_;
+    std::atomic_bool                        request_init_uniform_;
 
     /// processing queues
     update_queue_t                          update_queue_;
     update_queue_t                          delayed_update_queue_;
     prediction_queue_t                      prediction_queue_;
     duration_map_t                          lag_map_;
-    duration_t                              lag_;
+    typename types_t::duration_t            lag_;
     std::size_t                             lag_source_;
     bool                                    enable_lag_correction_;
     bool                                    has_valid_state_;
@@ -284,14 +240,14 @@ protected:
     bool                                    reset_model_accumulators_after_resampling_;
 
     /// background thread
-    mutex_t                                 worker_thread_mutex_;
-    thread_t                                worker_thread_;
-    atomic_bool_t                           worker_thread_active_;
-    atomic_bool_t                           worker_thread_exit_;
-    condition_variable_t                    notify_event_;
-    mutable mutex_t                         notify_event_mutex_;
-    condition_variable_t                    notify_prediction_;
-    mutable mutex_t                         notify_prediction_mutex_;
+    std::mutex                                 worker_thread_mutex_;
+    std::thread                                worker_thread_;
+    std::atomic_bool                           worker_thread_active_;
+    std::atomic_bool                           worker_thread_exit_;
+    std::condition_variable                    notify_event_;
+    mutable std::mutex                         notify_event_mutex_;
+    std::condition_variable                    notify_prediction_;
+    mutable std::mutex                         notify_prediction_mutex_;
 
     inline void requests()
     {
@@ -320,33 +276,33 @@ protected:
         }
     }
 
-    inline void predict(const cslibs_time::Time &until)
+    inline void predict(const typename types_t::time_t &until)
     {
         auto wait_for_prediction = [this] () {
-            lock_t l(notify_prediction_mutex_);
+            std::unique_lock<std::mutex> l(notify_prediction_mutex_);
             notify_prediction_.wait(l);
         };
 
-        const cslibs_time::Time &time_stamp = sample_set_->getStamp();
+        const auto &time_stamp = sample_set_->getStamp();
         while (until > time_stamp) {
             if (prediction_queue_.empty())
                 wait_for_prediction();
 
-            typename prediction_t::Ptr prediction = prediction_queue_.pop();
+            auto prediction = prediction_queue_.pop();
             if (prediction->getStamp() < time_stamp) {
                 /// drop odometry messages which are too old
                 continue;
             }
 
             /// mutate time stamp
-            typename prediction_result_t::Ptr prediction_result = prediction->apply(until, sample_set_->getStateIterator());
+            auto prediction_result = prediction->apply(until, sample_set_->getStateIterator());
             if (prediction_result->success()) {
                 prediction_integrals_->add(prediction_result);
                 sample_set_->setStamp(prediction_result->applied->timeFrame().end);
 
                 if (prediction_result->left_to_apply) {
-                    typename prediction_t::Ptr prediction_left_to_apply
-                            (new prediction_t(prediction_result->left_to_apply, prediction->getModel()));
+                    typename types_t::prediction_t::Ptr prediction_left_to_apply
+                            (new typename types_t::prediction_t(prediction_result->left_to_apply, prediction->getModel()));
                     prediction_queue_.emplace(prediction_left_to_apply);
                     break;
                 }
@@ -359,7 +315,7 @@ protected:
     inline void loop()
     {
         worker_thread_active_ = true;
-        lock_t notify_event_mutex_lock(notify_event_mutex_);
+        std::unique_lock<std::mutex> notify_event_mutex_lock(notify_event_mutex_);
 
         while (!worker_thread_exit_) {
             if(!update_queue_.hasElements())
@@ -376,9 +332,9 @@ protected:
 
                 requests();
 
-                typename update_t::Ptr   u = update_queue_.pop();
-                const cslibs_time::Time &t = u->getStamp();
-                const cslibs_time::Time &sample_set_stamp = sample_set_->getStamp();
+                auto u = update_queue_.pop();
+                const auto &t = u->getStamp();
+                const auto &sample_set_stamp = sample_set_->getStamp();
 
                 int8_t publication = has_valid_state_ ?  static_cast<int8_t>(Publication::Constant) : static_cast<int8_t>(Publication::None);
 

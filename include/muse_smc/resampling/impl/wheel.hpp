@@ -1,20 +1,19 @@
 #ifndef WHEEL_HPP
 #define WHEEL_HPP
 
-#include <muse_smc/samples/sample_set.hpp>
-#include <muse_smc/sampling/uniform.hpp>
+#include <muse_smc/smc/smc_types.hpp>
 #include <cslibs_math/random/random.hpp>
 
 #include <iostream>
 
 namespace muse_smc {
 namespace impl {
-template<typename smc_t>
+template<typename Types>
 class WheelOfFortune
 {
 public:
-    using sample_t              = typename smc_t::sample_t;
-    using sample_set_t          = typename smc_t::sample_set_t;
+    using sample_t              = typename Types::sample_t;
+    using sample_set_t          = typename Types::sample_set_t;
     using uniform_sampling_t  = UniformSampling<sample_t>;
 
     inline static void apply(sample_set_t &sample_set)

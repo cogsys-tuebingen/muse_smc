@@ -10,11 +10,12 @@ class PredictionRelay
 {
 public:
     using Ptr                     = std::shared_ptr<PredictionRelay>;
-    using sample_t                = typename smc_t::sample_t;
-    using prediction_t            = typename smc_t::prediction_t;
-    using prediction_model_t      = typename smc_t::prediction_model_t;
-    using state_space_provider_t  = typename smc_t::state_space_provider_t;
-    using state_space_t           = typename smc_t::state_space_t;
+    using types_t                 = typename smc_t::types_t;
+    using sample_t                = typename types_t::sample_t;
+    using prediction_t            = typename types_t::prediction_t;
+    using prediction_model_t      = typename types_t::prediction_model_t;
+    using state_space_provider_t  = typename types_t::state_space_provider_t;
+    using state_space_t           = typename types_t::state_space_t;
     using data_provider_t         = typename muse_smc::traits::DataProvider<sample_t>::type;
     using data_t                  = typename muse_smc::traits::Data<sample_t>::type;
 
