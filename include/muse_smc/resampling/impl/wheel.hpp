@@ -1,7 +1,7 @@
 #ifndef WHEEL_HPP
 #define WHEEL_HPP
 
-#include <muse_smc/smc/smc_types.hpp>
+#include <muse_smc/smc/types.hpp>
 #include <cslibs_math/random/random.hpp>
 
 #include <iostream>

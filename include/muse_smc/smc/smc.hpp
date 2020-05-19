@@ -2,7 +2,7 @@
 #define MUSE_SMC_HPP
 
 /// PROJECT
-#include <muse_smc/smc/smc_types.hpp>
+#include <muse_smc/smc/types.hpp>
 
 /// CSLIBS
 #include <cslibs_time/rate.hpp>
