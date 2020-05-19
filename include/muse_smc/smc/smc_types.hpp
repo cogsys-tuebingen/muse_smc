@@ -10,8 +10,10 @@
 #include <muse_smc/samples/sample_set.hpp>
 #include <muse_smc/resampling/resampling.hpp>
 #include <muse_smc/scheduling/scheduler.hpp>
-#include <muse_smc/smc/smc_state.hpp>
+#include <muse_smc/smc/state_publisher.hpp>
 #include <muse_smc/smc/traits.hpp>
+#include <muse_smc/smc/request_state_initilization.hpp>
+#include <muse_smc/smc/request_uniform_initilization.hpp>
 
 #include <muse_smc/state_space/state_space_provider.hpp>
 
@@ -42,6 +44,9 @@ struct Types {
     using duration_t            = cslibs_time::Duration;
     using state_t               = typename traits::State<sample_t>::type;
     using covariance_t          = typename traits::Covariance<sample_t>::type;
+
+    using request_state_initialization_t = RequestStateInitialization<time_t, state_t,covariance_t>;
+    using request_uniform_initialization_t = RequestUniformInitialization<time_t>;
 
     using normal_sampling_t     = NormalSampling<sample_t>;
     using uniform_sampling_t    = UniformSampling<sample_t>;
