@@ -66,7 +66,7 @@ class Prediction {
                         : model_->apply(data_, until, states);
   }
 
-  inline const cslibs_time::Time &getStamp() const {
+  inline auto const &getStamp() const {
     return data_->timeFrame().end;
   }
 
