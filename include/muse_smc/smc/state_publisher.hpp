@@ -16,9 +16,9 @@ namespace muse_smc {
  * to a given problem.
  */
 template <typename sample_t>
-class SMCState {
+class StatePublisher {
  public:
-  using Ptr = std::shared_ptr<SMCState>;
+  using Ptr = std::shared_ptr<StatePublisher>;
   using sample_set_t = SampleSet<sample_t>;
 
   /**

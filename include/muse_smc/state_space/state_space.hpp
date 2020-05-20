@@ -5,8 +5,7 @@
 #include <chrono>
 
 #include <cslibs_time/time.hpp>
-#include <muse_smc/smc/traits.hpp>
-
+#include <muse_smc/smc/traits/sample.hpp>
 namespace muse_smc {
 template<typename sample_t>
 class StateSpace {

@@ -11,7 +11,7 @@
 #include <muse_smc/resampling/resampling.hpp>
 #include <muse_smc/scheduling/scheduler.hpp>
 #include <muse_smc/smc/state_publisher.hpp>
-#include <muse_smc/smc/traits.hpp>
+#include <muse_smc/smc/traits/sample.hpp>
 #include <muse_smc/smc/request_state_initilization.hpp>
 #include <muse_smc/smc/request_uniform_initilization.hpp>
 
@@ -31,9 +31,9 @@ struct Types {
     using update_model_t        = UpdateModel<type_t>;
     using update_t              = typename update_model_t::update_t;
 
-    using prediction_model_t    = PredictionModel<type_t>;
+    using prediction_model_t    = PredictionModel<sample_set_t, typename traits::Data<Sample_T>::type, state_space_t>;
     using prediction_result_t   = typename prediction_model_t::Result;
-    using prediction_t          = typename prediction_model_t::prediction_t;
+    using prediction_t          = Prediction<prediction_model_t>;
     using prediction_integral_t = PredictionIntegral<prediction_result_t>;
     using prediction_integrals_t= PredictionIntegrals<prediction_result_t>;
 
@@ -51,7 +51,7 @@ struct Types {
     using normal_sampling_t     = NormalSampling<sample_t>;
     using uniform_sampling_t    = UniformSampling<sample_t>;
 
-    using filter_state_t        = SMCState<sample_t>;
+    using filter_state_t        = StatePublisher<sample_t>;
 
 };
 }
