@@ -17,7 +17,7 @@ class EIGEN_ALIGN16 SampleSet {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   using sample_t = Sample_T;
-  using sample_set_t = SampleSet<sample_t>;
+  using type = SampleSet<sample_t, Time_T>;
   using sample_vector_t =
       cslibs_utility::buffered::buffered_vector<sample_t,
                                                 typename sample_t::allocator_t>;
@@ -52,46 +52,44 @@ class EIGEN_ALIGN16 SampleSet {
    * @param reset_weights_to_one  after insertion weight is either set to 1 / N
    * or 1
    */
-  SampleSet(const std::string &frame_id, const Time_T &time_stamp,
-            const std::size_t sample_size,
-            const typename sample_density_t::Ptr &density,
-            const bool keep_weights_after_resampling = false)
-      : frame_id_(frame_id),
-        stamp_(time_stamp),
-        minimum_sample_size_(sample_size),
-        maximum_sample_size_(sample_size),
-        maximum_weight_(0.0),
-        weight_sum_(0.0),
-        p_t_1_(new sample_vector_t(0, maximum_sample_size_)),
-        p_t_1_density_(density),
-        p_t_(new sample_vector_t(0, maximum_sample_size_)),
-        keep_weights_after_insertion_(keep_weights_after_resampling) {}
+  inline explicit SampleSet(const std::string &frame_id,
+                            const Time_T &time_stamp,
+                            const std::size_t sample_size,
+                            const typename sample_density_t::Ptr &density,
+                            const bool keep_weights_after_insertion = false)
+      : frame_id_{frame_id},
+        stamp_{time_stamp},
+        minimum_sample_size_{sample_size},
+        maximum_sample_size_{sample_size},
+        p_t_1_{new sample_vector_t(0, maximum_sample_size_)},
+        p_t_1_density_{density},
+        p_t_{new sample_vector_t(0, maximum_sample_size_)},
+        keep_weights_after_insertion_{keep_weights_after_insertion} {}
 
   /**
    * @brief SampleSet constructor.
    * @param frame_id              frame id samples are defined in
    * @param time_stamp            time stamp at which samples are valid
    * @param sample_size_minimum   minimum sample size of the set
-   * @param sample_size_maxmimum  maximum sample size of the set
+   * @param sample_size_maximum  maximum sample size of the set
    * @param density               the density estimation function
    * @param reset_weights_to_one  after insertion weight is either set to 1 / N
    * or 1
    */
-  SampleSet(const std::string &frame_id, const Time_T &time_stamp,
-            const std::size_t sample_size_minimum,
-            const std::size_t sample_size_maxmimum,
-            const typename sample_density_t::Ptr &density,
-            const bool keep_weights_after_insertion = false)
-      : frame_id_(frame_id),
-        stamp_(time_stamp),
-        minimum_sample_size_(sample_size_minimum),
-        maximum_sample_size_(sample_size_maxmimum),
-        maximum_weight_(0.0),
-        weight_sum_(0.0),
-        p_t_1_(new sample_vector_t(0, maximum_sample_size_)),
-        p_t_1_density_(density),
-        p_t_(new sample_vector_t(0, maximum_sample_size_)),
-        keep_weights_after_insertion_(keep_weights_after_insertion) {}
+  inline explicit SampleSet(const std::string &frame_id,
+                            const Time_T &time_stamp,
+                            const std::size_t sample_size_minimum,
+                            const std::size_t sample_size_maximum,
+                            const typename sample_density_t::Ptr &density,
+                            const bool keep_weights_after_insertion = false)
+      : frame_id_{frame_id},
+        stamp_{time_stamp},
+        minimum_sample_size_{sample_size_minimum},
+        maximum_sample_size_{sample_size_maximum},
+        p_t_1_{new sample_vector_t(0, maximum_sample_size_)},
+        p_t_1_density_{density},
+        p_t_{new sample_vector_t(0, maximum_sample_size_)},
+        keep_weights_after_insertion_{keep_weights_after_insertion} {}
 
   /**
    * @brief Destructor.
@@ -105,14 +103,13 @@ class EIGEN_ALIGN16 SampleSet {
   inline SampleSet &operator=(SampleSet &&other) = default;
 
   inline weight_iterator_t getWeightIterator() {
-    return weight_iterator_t(
-        *p_t_1_,
-        weight_iterator_t::notify_touch::template from<
-            sample_set_t, &sample_set_t::weightStatisticReset>(this),
-        weight_iterator_t::notify_update::template from<
-            sample_set_t, &sample_set_t::weightUpdate>(this),
-        weight_iterator_t::notify_finished::template from<
-            sample_set_t, &sample_set_t::normalizeWeights>(this));
+    return weight_iterator_t(*p_t_1_,
+                             weight_iterator_t::notify_touch::template from<
+                                 type, &type::weightStatisticReset>(this),
+                             weight_iterator_t::notify_update::template from<
+                                 type, &type::weightUpdate>(this),
+                             weight_iterator_t::notify_finished::template from<
+                                 type, &type::normalizeWeights>(this));
   }
 
   inline state_iterator_t getStateIterator() {
@@ -123,17 +120,20 @@ class EIGEN_ALIGN16 SampleSet {
     weightStatisticReset();
     p_t_1_density_->clear();
     p_t_->clear();
-    return sample_insertion_t(
-        *p_t_,
-        sample_insertion_t::notify_update::template from<
-            sample_set_t, &sample_set_t::insertionUpdate>(this),
-        sample_insertion_t::notify_closed::template from<
-            sample_set_t, &sample_set_t::insertionClosedReset>(this));
+    return sample_insertion_t(*p_t_,
+                              sample_insertion_t::notify_update::template from<
+                                  type, &type::insertionUpdate>(this),
+                              sample_insertion_t::notify_closed::template from<
+                                  type, &type::insertionClosedReset>(this));
   }
 
   inline void normalizeWeights() {
-    if (p_t_1_->size() == 0) return;
-    if (weight_sum_ == 0.0) resetWeights();
+    if (p_t_1_->size() == 0) {
+      return;
+    }
+    if (weight_sum_ == 0.0) {
+      resetWeights();
+    }
 
     weight_distribution_.reset();
     for (auto &s : *p_t_1_) {
@@ -208,17 +208,17 @@ class EIGEN_ALIGN16 SampleSet {
  private:
   std::string frame_id_;
   Time_T stamp_;
-  std::size_t minimum_sample_size_;
-  std::size_t maximum_sample_size_;
+  std::size_t minimum_sample_size_{0};
+  std::size_t maximum_sample_size_{0};
 
-  double maximum_weight_;
-  double minimum_weight_;
+  double maximum_weight_{0.0};
+  double minimum_weight_{std::numeric_limits<double>::max()};
   weight_distribution_t weight_distribution_;
-  double weight_sum_;
+  double weight_sum_{0.0};
 
-  std::shared_ptr<sample_vector_t> p_t_1_;
-  mutable typename sample_density_t::Ptr p_t_1_density_;
-  std::shared_ptr<sample_vector_t> p_t_;
+  std::shared_ptr<sample_vector_t> p_t_1_{nullptr};
+  mutable typename sample_density_t::Ptr p_t_1_density_{nullptr};
+  std::shared_ptr<sample_vector_t> p_t_{nullptr};
 
   bool keep_weights_after_insertion_;
 

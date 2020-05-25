@@ -12,8 +12,8 @@ namespace traits {
  */
 template<typename Sample_T>
 struct SampleSet {
-    using time_t = traits::Time<Sample_T>::type;
-    using type = SampleSet<Sample_T, time_t>;
+    using time_t = typename traits::Time<Sample_T>::type;
+    using type = muse_smc::SampleSet<Sample_T, time_t>;
     /// put a template switch here ....
 };
 }

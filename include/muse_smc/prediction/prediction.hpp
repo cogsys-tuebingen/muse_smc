@@ -7,7 +7,7 @@ template <typename PredictionModel_T, typename Data_T, typename StateSpace_T,
 class Prediction {
  public:
   using Ptr = std::shared_ptr<Prediction>;
-  using ConstPtr = std::shared_ptr<Prediction const>
+  using ConstPtr = std::shared_ptr<Prediction const>;
 
       struct Less {
     inline bool operator()(const Prediction &lhs, const Prediction &rhs) const {
@@ -49,13 +49,13 @@ class Prediction {
   virtual ~Prediction() = default;
 
   inline auto operator()(const Time_T &until,
-                         typename sample_set_t::StateIterator_T states) {
+                         StateIterator_T states) {
     return state_space_ ? model_->apply(data_, state_space_, until, states)
                         : model_->apply(data_, until, states);
   }
 
   inline auto apply(const Time_T &until,
-                    typename sample_set_t::StateIterator_T states) {
+                    StateIterator_T states) {
     return state_space_ ? model_->apply(data_, state_space_, until, states)
                         : model_->apply(data_, until, states);
   }

@@ -31,9 +31,20 @@
 namespace muse_smc {
 template <typename Sample_T>
 class SMC {
- public:
-  /// utility typedefs
-  using Ptr = std::shared_ptr<SMC<Sample_T>>;
+ protected:
+  using time_t = typename traits::Time<Sample_T>::type;
+  using state_t = typename traits::State<Sample_T>::type;
+  using covariance_t = typename traits::Covariance<Sample_T>::type;
+  using prediction_t = typename traits::Prediction<Sample_T>::type;
+  using update_t = typename traits::Update<Sample_T>::type;
+  using sample_set_t = typename traits::SampleSet<Sample_T>::type;
+  using uniform_sampling_t = typename traits::UniformSampling<Sample_T>::type;
+  using normal_sampling_t = typename traits::NormalSampling<Sample_T>::type;
+  using resampling_t = typename traits::Resampling<Sample_T>::type;
+  using state_publisher_t = typename traits::StatePublisher<Sample_T>::type;
+  using prediction_integrals_t =
+      typename traits::PredictionIntegrals<Sample_T>::type;
+  using scheduler_t = typename traits::Scheduler<Sample_T>::type;
   using update_queue_t = cslibs_utility::synchronized::priority_queue<
       typename traits::Update<Sample_T>::type::Ptr,
       typename traits::Update<Sample_T>::type::Greater>;
@@ -42,6 +53,10 @@ class SMC {
       typename traits::Prediction<Sample_T>::type::Greater>;
   using duration_map_t =
       std::unordered_map<std::size_t, cslibs_time::statistics::DurationLowpass>;
+
+ public:
+  /// utility typedefs
+  using Ptr = std::shared_ptr<SMC<Sample_T>>;
 
   /**
    * @brief SMC default constructor.
@@ -74,16 +89,17 @@ class SMC {
    * @param enable_lag_correction                     - lag correction for
    * delayed update inputs
    */
-  inline void setup(const sample_set_t::Ptr &sample_set,
-                    const uniform_sampling_t::Ptr &sample_uniform,
-                    const normal_sampling_t::type::Ptr &sample_normal,
-                    const resampling_t::Ptr &resampling,
-                    const state_publisher_t::Ptr &state_publisher,
-                    const prediction_integrals_t::Ptr &prediction_integrals,
-                    const scheduler_t::Ptr &scheduler,
-                    const bool reset_all_model_accumulators_on_update,
-                    const bool reset_model_accumulators_after_resampling,
-                    const bool enable_lag_correction) {
+  inline void setup(
+      const typename sample_set_t::Ptr &sample_set,
+      const typename uniform_sampling_t::Ptr &sample_uniform,
+      const typename normal_sampling_t::type::Ptr &sample_normal,
+      const typename resampling_t::Ptr &resampling,
+      const typename state_publisher_t::Ptr &state_publisher,
+      const typename prediction_integrals_t::Ptr &prediction_integrals,
+      const typename scheduler_t::Ptr &scheduler,
+      const bool reset_all_model_accumulators_on_update,
+      const bool reset_model_accumulators_after_resampling,
+      const bool enable_lag_correction) {
     sample_set_ = sample_set;
     sample_uniform_ = sample_uniform;
     sample_normal_ = sample_normal;
@@ -184,8 +200,8 @@ class SMC {
                                          const covariance_t &covariance) {
     std::unique_lock<std::mutex> l(request_state_initialization_mutex_);
     request_state_initialization_.reset(
-        new typename traits::RequestStateInitialization::type{time, state,
-                                                              covariance});
+        new typename traits::RequestStateInitialization<Sample_T>::type{
+            time, state, covariance});
   }
 
   /**
@@ -195,24 +211,10 @@ class SMC {
   void requestUniformInitialization(const time_t &time) {
     std::unique_lock<std::mutex> l(request_uniform_initialization_mutex_);
     request_uniform_initialization_.reset(
-        new typename traits::RequestUniformInitialization::type{time});
+        new typename traits::RequestUniformInitialization<Sample_T>::type{time});
   }
 
  protected:
-  using time_t = typename traits::Time<Sample_T>::type;
-  using state_t = typename traits::State<Sample_T>::type;
-  using covariance_t = typename traits::Covariance<Sample_T>::type;
-  using prediction_t = typename traits::Prediction<Sample_T>::type;
-  using update_t = typename traits::Update<Sample_T>::type;
-  using sample_set_t = typename traits::SampleSet<Sample_T>::type;
-  using uniform_sampling_t = typename traits::UniformSampling<Sample_T>::type;
-  using normal_sampling_t = typename traits::NormalSampling<Sample_T>::type;
-  using resampling_t = typename traits::Resampling<Sample_T>::type;
-  using state_publisher_t = typename traits::StatePublisher<Sample_T>::type;
-  using prediction_integrals_t =
-      typename traits::PredictionIntegrals<Sample_T>::type;
-  using scheduler_t = typename traits::Scheduler<Sample_T>::type;
-
   /// functions to apply to the sample set
   typename sample_set_t::Ptr sample_set_{nullptr};
   typename uniform_sampling_t::Ptr sample_uniform_{nullptr};

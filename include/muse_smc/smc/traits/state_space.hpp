@@ -13,8 +13,8 @@ struct StateSpace {
   using state_space_boundary_t =
       typename traits::StateSpaceBoundary<Sample_T>::type;
   using time_t = typename traits::Time<Sample_T>::type;
-  using type = StateSpace<state_t, state_space_transform_t,
-                          state_space_boundary_t, time_t>;
+  using type = muse_smc::StateSpace<state_t, state_space_transform_t,
+                                    state_space_boundary_t, time_t>;
 };
 }  // namespace traits
 }  // namespace muse_smc

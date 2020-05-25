@@ -8,7 +8,7 @@ namespace muse_smc {
 namespace traits {
 template<typename Sample_T>
 struct StateSpaceProvider {
-    using type = StateSpaceProvider<typename traits::StateSpace<Sample_T>>;
+    using type = muse_smc::StateSpaceProvider<typename traits::StateSpace<Sample_T>::type>;
 };
 }
 }

@@ -9,7 +9,7 @@
 namespace muse_smc {
 namespace traits {
 template <typename Sample_T>
-struct UpdateModel {
+struct PredictionModel {
   using sample_set_t = typename traits::SampleSet<Sample_T>::type;
   using state_iterator_t = typename sample_set_t::state_iterator;
   using state_space_t = typename traits::StateSpace<Sample_T>::type;

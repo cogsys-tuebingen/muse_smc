@@ -12,9 +12,6 @@ find_package(catkin REQUIRED COMPONENTS
   cslibs_utility
 )
 
-# add_definitions("-DMUSE_SMC_USE_DOTTY")
-# add_definitions("-DMUSE_SMC_LOG_STATE")
-
 # Preferred compile flags:
 #   -Wall -Werror     -> enable all warnings to be errors
 #   -Ofast -ffastmath -> enables full performance and optimization
@@ -38,13 +35,24 @@ target_include_directories(${PROJECT_NAME}
     include/
     ${catkin_INCLUDE_DIRS}
     ${TinyXML_INCLUDE_DIRS}
+    ${Eigen3_INCLUDE_DIR}
+ )
+
+add_library(${PROJECT_NAME}_build
+  src/build.cpp
 )
 
-include_directories(
-  include
-  ${Eigen3_INCLUDE_DIR}
-  ${catkin_INCLUDE_DIRS}
+target_include_directories(${PROJECT_NAME}_build
+  PRIVATE
+    include/
+    ${catkin_INCLUDE_DIRS}
 )
+
+target_link_libraries(${PROJECT_NAME}_build
+  PRIVATE
+    ${catkin_LIBRARIES}
+)
+
 
 install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})

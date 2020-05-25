@@ -16,7 +16,7 @@ class Scheduler {
                      typename SampleSet_T::Ptr &s) = 0;
 
   virtual bool apply(typename Resampling_T::Ptr &r,
-                     typename sample_set_t::Ptr &s) = 0;
+                     typename SampleSet_T::Ptr &s) = 0;
 
  protected:
   Scheduler() = default;

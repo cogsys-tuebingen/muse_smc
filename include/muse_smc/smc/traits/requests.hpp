@@ -4,20 +4,23 @@
 #include <muse_smc/smc/traits/sample.hpp>
 #include <muse_smc/smc/traits/sample_set.hpp>
 
+#include <muse_smc/smc/request_state_initilization.hpp>
+#include <muse_smc/smc/request_uniform_initilization.hpp>
+
 namespace muse_smc {
 namespace traits {
 template <typename Sample_T>
 struct RequestStateInitialization {
-  using time_t = traits::Time<Sample_T>::type;
-  using state_t = traits::State<Sample_T>::type;
-  using covariance_t = traits::Covariance<Sample_t>::type;
-  using type = RequestStateInitialization<time_t, state_t, covariance_t>;
+  using time_t = typename traits::Time<Sample_T>::type;
+  using state_t = typename traits::State<Sample_T>::type;
+  using covariance_t = typename traits::Covariance<Sample_T>::type;
+  using type = muse_smc::RequestStateInitialization<time_t, state_t, covariance_t>;
 };
 
 template <typename Sample_T>
 struct RequestUniformInitialization {
-  using time_t = traits::Time<Sample_T>::type;
-  using type = RequestUniformInitialization<time_t>;
+  using time_t = typename traits::Time<Sample_T>::type;
+  using type = muse_smc::RequestUniformInitialization<time_t>;
 };
 }  // namespace traits
 }  // namespace muse_smc

@@ -6,6 +6,8 @@
 #include <muse_smc/smc/traits/state_space.hpp>
 #include <muse_smc/smc/traits/update_model.hpp>
 
+#include <muse_smc/update/update.hpp>
+
 namespace muse_smc {
 namespace traits {
 template <typename Sample_T>

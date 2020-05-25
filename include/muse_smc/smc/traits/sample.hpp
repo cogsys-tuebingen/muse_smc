@@ -49,7 +49,7 @@ struct Covariance {
 };
 
 /**
- * @brief Defines the state space bounary type the filter is working with.
+ * @brief Defines the state space boundary type the filter is working with.
  * @tparam Sample_T   sample type to set the trait for
  */
 template <typename Sample_T>

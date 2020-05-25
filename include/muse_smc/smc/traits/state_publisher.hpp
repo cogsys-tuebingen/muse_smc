@@ -4,6 +4,8 @@
 #include <muse_smc/smc/traits/sample.hpp>
 #include <muse_smc/smc/traits/sample_set.hpp>
 
+#include <muse_smc/smc/state_publisher.hpp>
+
 namespace muse_smc {
 namespace traits {
 template <typename Sample_T>

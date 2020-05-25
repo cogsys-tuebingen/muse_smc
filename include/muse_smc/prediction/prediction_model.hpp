@@ -8,7 +8,7 @@ template <typename Data_T, typename StateSpace_T, typename StateIterator_T, type
 class PredictionModel {
  public:
   using Ptr = std::shared_ptr<PredictionModel>;
-  using ConstPtr = std::shared_ptr<PredictionModel const>
+  using ConstPtr = std::shared_ptr<PredictionModel const>;
 
       struct Result {
     using Ptr = std::shared_ptr<Result>;
@@ -46,12 +46,12 @@ class PredictionModel {
 
   virtual typename Result::Ptr apply(
       const typename Data_T::ConstPtr &data, const Time_T &until,
-      typename sample_set_t::StateIterator_T states) = 0;
+      StateIterator_T states) = 0;
 
   virtual typename Result::Ptr apply(
       const typename Data_T::ConstPtr &data,
       const typename StateSpace_T::ConstPtr &state_space,
-      const Time_T &until, typename StateIterator_T states) {
+      const Time_T &until, StateIterator_T states) {
     return apply(data, until, states);
   }
 };
