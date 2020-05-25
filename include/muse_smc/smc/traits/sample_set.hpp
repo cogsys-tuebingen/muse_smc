@@ -1,6 +1,7 @@
 #ifndef MUSE_SMC_TRAITS_SAMPLE_SET_HPP
 #define MUSE_SMC_TRAITS_SAMPLE_SET_HPP
 
+#include <muse_smc/smc/traits/sample.hpp>
 #include <muse_smc/samples/sample_set.hpp>
 
 namespace muse_smc {
@@ -11,8 +12,8 @@ namespace traits {
  */
 template<typename Sample_T>
 struct SampleSet {
-    using type = SampleSet<Sample_T>;
-
+    using time_t = traits::Time<Sample_T>::type;
+    using type = SampleSet<Sample_T, time_t>;
     /// put a template switch here ....
 };
 }

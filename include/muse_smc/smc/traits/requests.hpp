@@ -8,7 +8,7 @@ namespace muse_smc {
 namespace traits {
 template <typename Sample_T>
 struct RequestStateInitialization {
-  using time_t = cslibs_time::Time;
+  using time_t = traits::Time<Sample_T>::type;
   using state_t = traits::State<Sample_T>::type;
   using covariance_t = traits::Covariance<Sample_t>::type;
   using type = RequestStateInitialization<time_t, state_t, covariance_t>;
@@ -16,7 +16,7 @@ struct RequestStateInitialization {
 
 template <typename Sample_T>
 struct RequestUniformInitialization {
-  using time_t = cslibs_time::Time;
+  using time_t = traits::Time<Sample_T>::type;
   using type = RequestUniformInitialization<time_t>;
 };
 }  // namespace traits

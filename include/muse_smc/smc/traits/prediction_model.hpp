@@ -14,7 +14,8 @@ struct UpdateModel {
   using state_iterator_t = typename sample_set_t::state_iterator;
   using state_space_t = typename traits::StateSpace<Sample_T>::type;
   using data_t = typename traits::Data<Sample_T>::type;
-  using type = muse_smc::PredictionModel<data_t, state_space_t, state_iterator_t>;
+  using time_t = typename traits::Time<Sample_T>::type;
+  using type = muse_smc::PredictionModel<data_t, state_space_t, state_iterator_t, time_t>;
 };
 }  // namespace traits
 }  // namespace muse_smc

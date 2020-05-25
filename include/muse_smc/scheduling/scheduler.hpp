@@ -1,7 +1,6 @@
 #ifndef MUSE_SMC_SCHEDULING_HPP
 #define MUSE_SMC_SCHEDULING_HPP
 
-#include <cslibs_time/rate.hpp>
 #include <memory>
 #include <muse_smc/resampling/resampling.hpp>
 #include <muse_smc/update/update.hpp>

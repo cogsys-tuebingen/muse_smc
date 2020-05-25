@@ -1,11 +1,9 @@
 #ifndef MUSE_SMC_PREDICTION_HPP
 #define MUSE_SMC_PREDICTION_HPP
 
-#include <cslibs_time/time.hpp>
-
 namespace muse_smc {
-template <typename prediction_model_t, typename data_t, typename state_space_t,
-          typename state_iterator_t>
+template <typename PredictionModel_T, typename Data_T, typename StateSpace_T,
+          typename StateIterator_T, typename Time_T>
 class Prediction {
  public:
   using Ptr = std::shared_ptr<Prediction>;
@@ -38,26 +36,26 @@ class Prediction {
     }
   };
 
-  inline explicit Prediction(const typename data_t::ConstPtr &data,
-                             const typename prediction_model_t::Ptr &model)
+  inline explicit Prediction(const typename Data_T::ConstPtr &data,
+                             const typename PredictionModel_T::Ptr &model)
       : data_{data}, model_{model} {}
 
   inline explicit Prediction(
-      const typename data_t::ConstPtr &data,
-      const typename state_space_t::ConstPtr &state_space,
-      const typename prediction_model_t::Ptr &model)
+      const typename Data_T::ConstPtr &data,
+      const typename StateSpace_T::ConstPtr &state_space,
+      const typename PredictionModel_T::Ptr &model)
       : data_{data}, state_space_{state_space}, model_{model} {}
 
   virtual ~Prediction() = default;
 
-  inline auto operator()(const cslibs_time::Time &until,
-                         typename sample_set_t::state_iterator_t states) {
+  inline auto operator()(const Time_T &until,
+                         typename sample_set_t::StateIterator_T states) {
     return state_space_ ? model_->apply(data_, state_space_, until, states)
                         : model_->apply(data_, until, states);
   }
 
-  inline auto apply(const cslibs_time::Time &until,
-                    typename sample_set_t::state_iterator_t states) {
+  inline auto apply(const Time_T &until,
+                    typename sample_set_t::StateIterator_T states) {
     return state_space_ ? model_->apply(data_, state_space_, until, states)
                         : model_->apply(data_, until, states);
   }
@@ -73,9 +71,9 @@ class Prediction {
   inline auto getModel() const { return model_; }
 
  private:
-  typename data_t::ConstPtr data_;
-  typename state_space_t::ConstPtr state_space_;
-  typename prediction_model_t::Ptr model_;
+  typename Data_T::ConstPtr data_;
+  typename StateSpace_T::ConstPtr state_space_;
+  typename PredictionModel_T::Ptr model_;
 };
 }  // namespace muse_smc
 

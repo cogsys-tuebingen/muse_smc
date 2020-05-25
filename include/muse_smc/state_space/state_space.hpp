@@ -7,7 +7,7 @@
 #include <muse_smc/smc/traits/sample.hpp>
 namespace muse_smc {
 template <typename State_T, typename StateSpaceTransform_T,
-          typename StateSpaceBoundary_T>
+          typename StateSpaceBoundary_T, typename Time_T>
 class StateSpace {
  public:
   using Ptr = std::shared_ptr<StateSpace>;
@@ -16,7 +16,7 @@ class StateSpace {
   inline explicit StateSpace(const std::string &frame) : frame_{frame} {}
 
   inline explicit StateSpace(const std::string &frame,
-                             const cslibs_time::Time &stamp)
+                             const Time_T &stamp)
       : frame_{frame}, stamp_{stamp} {}
 
   virtual ~StateSpace() = default;
@@ -28,7 +28,7 @@ class StateSpace {
 
   inline std::string const &getFrame() const { return frame_; }
 
-  inline cslibs_time::Time const &getStamp() const { return stamp_; }
+  inline Time_T const &getStamp() const { return stamp_; }
 
   template <typename T>
   inline bool isType() const {
@@ -45,7 +45,7 @@ class StateSpace {
   StateSpace() = delete;
 
   std::string frame_;
-  cslibs_time::Time stamp_{cslibs_time::Time::now()};
+  Time_T stamp_{Time_T::now()};
 };
 }  // namespace muse_smc
 

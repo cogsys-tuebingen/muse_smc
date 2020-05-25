@@ -14,6 +14,7 @@ struct UpdateModel {
   using weight_iterator_t = typename sample_set_t::weight_iterator_t;
   using state_space_t = typename traits::StateSpace<Sample_T>::type;
   using data_t = typename traits::Data<Sample_T>::type;
+  using time_t = typename traits::Time<Sample_T>::type;
   using type = muse_smc::UpdateModel<data_t, state_space_t, weight_iterator_t>;
 };
 }  // namespace traits

@@ -4,7 +4,7 @@
 #include <memory>
 
 namespace muse_smc {
-template <typename data_t, typename state_space_t, typename state_iterator_t>
+template <typename Data_T, typename StateSpace_T, typename StateIterator_T, typename Time_T>
 class PredictionModel {
  public:
   using Ptr = std::shared_ptr<PredictionModel>;
@@ -17,11 +17,11 @@ class PredictionModel {
     inline Result() = default;
     virtual ~Result() = default;
 
-    inline explicit Result(const typename data_t::ConstPtr &applied)
+    inline explicit Result(const typename Data_T::ConstPtr &applied)
         : applied{applied} {}
 
-    inline explicit Result(const typename data_t::ConstPtr &applied,
-                           const typename data_t::ConstPtr &left_to_apply)
+    inline explicit Result(const typename Data_T::ConstPtr &applied,
+                           const typename Data_T::ConstPtr &left_to_apply)
         : applied{applied}, left_to_apply{left_to_apply} {}
 
     inline bool success() const { return static_cast<bool>(applied); }
@@ -37,21 +37,21 @@ class PredictionModel {
       return dynamic_cast<const T &>(*this);
     }
 
-    const typename data_t::ConstPtr applied;
-    const typename data_t::ConstPtr left_to_apply;
+    const typename Data_T::ConstPtr applied;
+    const typename Data_T::ConstPtr left_to_apply;
   };
 
   inline PredictionModel() = default;
   virtual ~PredictionModel() = default;
 
   virtual typename Result::Ptr apply(
-      const typename data_t::ConstPtr &data, const cslibs_time::Time &until,
-      typename sample_set_t::state_iterator_t states) = 0;
+      const typename Data_T::ConstPtr &data, const Time_T &until,
+      typename sample_set_t::StateIterator_T states) = 0;
 
   virtual typename Result::Ptr apply(
-      const typename data_t::ConstPtr &data,
-      const typename state_space_t::ConstPtr &state_space,
-      const cslibs_time::Time &until, typename state_iterator_t states) {
+      const typename Data_T::ConstPtr &data,
+      const typename StateSpace_T::ConstPtr &state_space,
+      const Time_T &until, typename StateIterator_T states) {
     return apply(data, until, states);
   }
 };

@@ -1,11 +1,9 @@
 #ifndef MUSE_SMC_UPDATE_HPP
 #define MUSE_SMC_UPDATE_HPP
 
-#include <cslibs_time/time_frame.hpp>
-
 namespace muse_smc {
-template <typename update_model_t, typename data_t, typename state_space_t,
-          typename weight_iterator_t>
+template <typename UpdateModel_T, typename Data_T, typename StateSpace_T,
+          typename WeightIterator_T>
 class Update {
  public:
   using Ptr = std::shared_ptr<Update>;
@@ -36,39 +34,39 @@ class Update {
     }
   };
 
-  inline explicit Update(const typename data_t::ConstPtr &data,
-                         const typename state_space_t::ConstPtr &state_space,
-                         const typename update_model_t::Ptr &model)
+  inline explicit Update(const typename Data_T::ConstPtr &data,
+                         const typename StateSpace_T::ConstPtr &state_space,
+                         const typename UpdateModel_T::Ptr &model)
       : data_{data}, state_space_{state_space}, model_{model} {}
 
   virtual ~Update() = default;
 
-  inline void operator()(weight_iterator_t weights) {
+  inline void operator()(WeightIterator_T weights) {
     model_->update(data_, state_space_, weights);
   }
 
-  inline void apply(weight_iterator_t weights) {
+  inline void apply(WeightIterator_T weights) {
     model_->apply(data_, state_space_, weights);
   }
 
-  inline cslibs_time::Time const &getStamp() const {
+  inline auto const &getStamp() const {
     return data_->timeFrame().end;
   }
 
-  inline cslibs_time::Time const &stampReceived() const {
+  inline auto const &stampReceived() const {
     return data_->stampReceived();
   }
 
-  inline typename update_model_t::Ptr getModel() const { return model_; }
+  inline typename UpdateModel_T::Ptr getModel() const { return model_; }
 
   inline std::string const &getModelName() const { return model_->getName(); }
 
   inline std::size_t getModelId() const { return model_->getModelId(); }
 
  private:
-  const typename data_t::ConstPtr data_;
-  const typename state_space_t::ConstPtr state_space_;
-  typename update_model_t::Ptr model_;
+  const typename Data_T::ConstPtr data_;
+  const typename StateSpace_T::ConstPtr state_space_;
+  typename UpdateModel_T::Ptr model_;
 };
 }  // namespace muse_smc
 

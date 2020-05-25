@@ -3,20 +3,19 @@
 
 /// CSLIBS
 #include <cslibs_utility/buffered/buffered_vector.hpp>
-#include <cslibs_time/time.hpp>
 
 /// PROJECT
 #include <muse_smc/smc/traits/sample.hpp>
 
 namespace muse_smc {
-template<typename sample_t>
-class StateIterator : public std::iterator<std::random_access_iterator_tag, typename traits::State<sample_t>::type>
+template<typename Sample_T>
+class StateIterator : public std::iterator<std::random_access_iterator_tag, typename traits::State<Sample_T>::type>
 {
 public:
-    using parent    = std::iterator<std::random_access_iterator_tag, typename traits::State<sample_t>::type>;
+    using parent    = std::iterator<std::random_access_iterator_tag, typename traits::State<Sample_T>::type>;
     using reference = typename parent::reference;
 
-    inline explicit StateIterator(sample_t *begin) :
+    inline explicit StateIterator(Sample_T *begin) :
         data_(begin)
     {
     }
@@ -29,12 +28,12 @@ public:
         return *this;
     }
 
-    inline bool operator ==(const StateIterator<sample_t> &_other) const
+    inline bool operator ==(const StateIterator<Sample_T> &_other) const
     {
         return data_ == _other.data_;
     }
 
-    inline bool operator !=(const StateIterator<sample_t> &_other) const
+    inline bool operator !=(const StateIterator<Sample_T> &_other) const
     {
         return !(*this == _other);
     }
@@ -50,18 +49,17 @@ public:
     }
 
 private:
-    sample_t        *data_;
+    Sample_T        *data_;
 };
 
-template<typename sample_t>
+template<typename Sample_T, typename Time_T>
 class StateIteration
 {
 public:
-    using sample_vector_t   = cslibs_utility::buffered::buffered_vector<sample_t, typename sample_t::allocator_t>;
-    using iterator_t        = StateIterator<sample_t>;
-    using time_t            = cslibs_time::Time;
+    using sample_vector_t   = cslibs_utility::buffered::buffered_vector<Sample_T, typename Sample_T::allocator_t>;
+    using iterator_t        = StateIterator<Sample_T>;
 
-    inline StateIteration(const time_t &stamp,
+    inline StateIteration(const Time_T &stamp,
                           sample_vector_t &data) :
         stamp_(stamp),
         data_(data)
@@ -86,13 +84,13 @@ public:
         return data_;
     }
 
-    inline const time_t &getStamp() const
+    inline const Time_T &getStamp() const
     {
         return stamp_;
     }
 
 private:
-    const time_t     stamp_;
+    const Time_T     stamp_;
     sample_vector_t &data_;
 };
 }

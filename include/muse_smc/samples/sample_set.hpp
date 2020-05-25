@@ -2,7 +2,6 @@
 #define MUSE_SMC_SAMPLE_SET_HPP
 
 #include <cslibs_math/statistics/distribution.hpp>
-#include <cslibs_time/time.hpp>
 #include <cslibs_utility/buffered/buffered_vector.hpp>
 #include <limits>
 #include <muse_smc/samples/sample_density.hpp>
@@ -13,7 +12,7 @@
 #include <string>
 
 namespace muse_smc {
-template <typename Sample_T>
+template <typename Sample_T, typename Time_T>
 class EIGEN_ALIGN16 SampleSet {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -24,7 +23,7 @@ class EIGEN_ALIGN16 SampleSet {
                                                 typename sample_t::allocator_t>;
   using sample_density_t = SampleDensity<sample_t>;
   using sample_insertion_t = SampleInsertion<sample_t>;
-  using state_iterator_t = StateIteration<sample_t>;
+  using state_iterator_t = StateIteration<sample_t, Time_T>;
   using weight_iterator_t = WeightIteration<sample_t>;
   using weight_distribution_t =
       cslibs_math::statistics::Distribution<double, 1>;
@@ -53,7 +52,7 @@ class EIGEN_ALIGN16 SampleSet {
    * @param reset_weights_to_one  after insertion weight is either set to 1 / N
    * or 1
    */
-  SampleSet(const std::string &frame_id, const cslibs_time::Time &time_stamp,
+  SampleSet(const std::string &frame_id, const Time_T &time_stamp,
             const std::size_t sample_size,
             const typename sample_density_t::Ptr &density,
             const bool keep_weights_after_resampling = false)
@@ -78,7 +77,7 @@ class EIGEN_ALIGN16 SampleSet {
    * @param reset_weights_to_one  after insertion weight is either set to 1 / N
    * or 1
    */
-  SampleSet(const std::string &frame_id, const cslibs_time::Time &time_stamp,
+  SampleSet(const std::string &frame_id, const Time_T &time_stamp,
             const std::size_t sample_size_minimum,
             const std::size_t sample_size_maxmimum,
             const typename sample_density_t::Ptr &density,
@@ -170,9 +169,9 @@ class EIGEN_ALIGN16 SampleSet {
 
   inline std::string const &getFrame() const { return frame_id_; }
 
-  inline cslibs_time::Time const &getStamp() const { return stamp_; }
+  inline Time_T const &getStamp() const { return stamp_; }
 
-  inline void setStamp(const cslibs_time::Time &time) { stamp_ = time; }
+  inline void setStamp(const Time_T &time) { stamp_ = time; }
 
   inline double getMinimumWeight() const { return minimum_weight_; }
 
@@ -208,7 +207,7 @@ class EIGEN_ALIGN16 SampleSet {
 
  private:
   std::string frame_id_;
-  cslibs_time::Time stamp_;
+  Time_T stamp_;
   std::size_t minimum_sample_size_;
   std::size_t maximum_sample_size_;
 

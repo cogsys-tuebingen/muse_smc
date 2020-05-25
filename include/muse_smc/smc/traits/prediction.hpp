@@ -15,8 +15,9 @@ struct Prediction {
   using state_space_t = typename traits::StateSpace<Sample_T>::type;
   using data_t = typename traits::Data<Sample_T>::type;
   using prediction_model_t = typename traits::PredictionModel<Sample_T>::type;
+  using time_t = traits::Time<Sample_T>::type;
   using type = muse_smc::Prediction<prediction_model_t, data_t,
-                                         state_space_t, state_iterator_t>;
+                                         state_space_t, state_iterator_t, time_t>;
 };
 }  // namespace traits
 }  // namespace muse_smc
