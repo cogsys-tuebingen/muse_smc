@@ -12,6 +12,8 @@ namespace traits {
 template<typename Sample_T>
 struct SampleSet {
     using type = SampleSet<Sample_T>;
+
+    /// put a template switch here ....
 };
 }
 }

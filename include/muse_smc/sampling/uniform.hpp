@@ -1,25 +1,22 @@
-#ifndef UNIFORM_HPP
-#define UNIFORM_HPP
+#ifndef MUSE_SMC_UNIFORM_SAMPLING_HPP
+#define MUSE_SMC_UNIFORM_SAMPLING_HPP
 
 #include <memory>
-#include <vector>
-
-#include <muse_smc/samples/sample_set.hpp>
 
 namespace muse_smc {
-template<typename sample_t>
+template<typename Sample_T, typename SampleSet_T>
 class UniformSampling {
 public:
     using Ptr          = std::shared_ptr<UniformSampling>;
-    using sample_set_t = SampleSet<sample_t>;
+    using ConstPtr      = std::shared_ptr<UniformSampling const>;
 
     inline UniformSampling() = default;
     virtual ~UniformSampling() = default;
 
-    virtual bool apply(sample_set_t &sample_set) = 0;
-    virtual void apply(sample_t &sample) = 0;
+    virtual bool apply(SampleSet_T &sample_set) = 0;
+    virtual void apply(Sample_T &sample) = 0;
     virtual bool update(const std::string &frame) = 0;
 };
 }
 
-#endif // UNIFORM_HPP
+#endif // MUSE_SMC_UNIFORM_SAMPLING_HPP

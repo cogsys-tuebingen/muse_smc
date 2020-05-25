@@ -1,12 +1,6 @@
 #ifndef MUSE_SMC_STATE_PUBLISHER_HPP
 #define MUSE_SMC_STATE_PUBLISHER_HPP
 
-/// CSLIBS
-#include <cslibs_time/time.hpp>
-
-/// PROJECT
-#include <muse_smc/samples/sample_set.hpp>
-
 namespace muse_smc {
 /**
  * @brief The SMCState class is used to communicate the filter state to the
@@ -15,11 +9,10 @@ namespace muse_smc {
  * @brief state_space_description_t     - the state space description applying
  * to a given problem.
  */
-template <typename sample_t>
+template <typename sample_set_t>
 class StatePublisher {
  public:
   using Ptr = std::shared_ptr<StatePublisher>;
-  using sample_set_t = SampleSet<sample_t>;
 
   /**
    * @brief Publish a valid belief state, after resampling.

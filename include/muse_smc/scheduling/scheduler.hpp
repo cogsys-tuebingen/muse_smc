@@ -1,35 +1,28 @@
 #ifndef MUSE_SMC_SCHEDULING_HPP
 #define MUSE_SMC_SCHEDULING_HPP
 
+#include <cslibs_time/rate.hpp>
+#include <memory>
 #include <muse_smc/resampling/resampling.hpp>
 #include <muse_smc/update/update.hpp>
-#include <cslibs_time/rate.hpp>
-
-#include <memory>
 
 namespace muse_smc {
-template<typename smc_t>
+template <typename SampleSet_T, typename Update_T, typename Resampling_T>
 class Scheduler {
-public:
-    using Ptr = std::shared_ptr<Scheduler>;
+ public:
+  using Ptr = std::shared_ptr<Scheduler>;
+  using ConstPtr = std::shared_ptr<Scheduler const>;
 
-    using id_t         = std::size_t;
-    using sample_t     = typename smc_t::sample_t;
-    using update_t     = typename smc_t::update_t;
-    using resampling_t = typename smc_t::resampling_t;
-    using sample_set_t = typename smc_t::sample_set_t;
-    using data_t       = typename traits::Data<sample_t>::type;
+  virtual bool apply(typename Update_T::Ptr &u,
+                     typename SampleSet_T::Ptr &s) = 0;
 
-    virtual bool apply(typename update_t::Ptr     &u,
-                       typename sample_set_t::Ptr &s) = 0;
+  virtual bool apply(typename Resampling_T::Ptr &r,
+                     typename sample_set_t::Ptr &s) = 0;
 
-    virtual bool apply(typename resampling_t::Ptr &r,
-                       typename sample_set_t::Ptr &s) = 0;
-
-protected:
-    Scheduler() = default;
-    virtual ~Scheduler() = default;
+ protected:
+  Scheduler() = default;
+  virtual ~Scheduler() = default;
 };
-}
+}  // namespace muse_smc
 
-#endif // MUSE_SMC_SCHEDULING_HPP
+#endif  // MUSE_SMC_SCHEDULING_HPP

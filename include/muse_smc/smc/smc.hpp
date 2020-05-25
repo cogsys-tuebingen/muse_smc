@@ -2,10 +2,15 @@
 #define MUSE_SMC_HPP
 
 /// PROJECT
-#include <muse_smc/smc/types.hpp>
+#include <muse_smc/smc/traits/prediction.hpp>
+#include <muse_smc/smc/traits/prediction_integrals.hpp>
+#include <muse_smc/smc/traits/requests.hpp>
+#include <muse_smc/smc/traits/resampling.hpp>
+#include <muse_smc/smc/traits/scheduler.hpp>
+#include <muse_smc/smc/traits/state_publisher.hpp>
+#include <muse_smc/smc/traits/update.hpp>
 
 /// CSLIBS
-#include <cslibs_time/rate.hpp>
 #include <cslibs_time/statistics/duration_lowpass.hpp>
 #include <cslibs_utility/synchronized/synchronized_priority_queue.hpp>
 
@@ -29,13 +34,12 @@ class SMC {
  public:
   /// utility typedefs
   using Ptr = std::shared_ptr<SMC<Sample_T>>;
-  using types_t = Types<Sample_T>;
-
   using update_queue_t = cslibs_utility::synchronized::priority_queue<
-      typename types_t::update_t::Ptr, typename types_t::update_t::Greater>;
+      typename traits::Update<Sample_T>::type::Ptr,
+      typename traits::Update<Sample_T>::type::Greater>;
   using prediction_queue_t = cslibs_utility::synchronized::priority_queue<
-      typename types_t::prediction_t::Ptr,
-      typename types_t::prediction_t::Greater>;
+      typename traits::Prediction<Sample_T>::type::Ptr,
+      typename traits::Prediction<Sample_T>::type::Greater>;
   using duration_map_t =
       std::unordered_map<std::size_t, cslibs_time::statistics::DurationLowpass>;
 
@@ -70,17 +74,16 @@ class SMC {
    * @param enable_lag_correction                     - lag correction for
    * delayed update inputs
    */
-  inline void setup(
-      const typename types_t::sample_set_t::Ptr &sample_set,
-      const typename types_t::uniform_sampling_t::Ptr &sample_uniform,
-      const typename types_t::normal_sampling_t::Ptr &sample_normal,
-      const typename types_t::resampling_t::Ptr &resampling,
-      const typename types_t::filter_state_t::Ptr &state_publisher,
-      const typename types_t::prediction_integrals_t::Ptr &prediction_integrals,
-      const typename types_t::scheduler_t::Ptr &scheduler,
-      const bool reset_all_model_accumulators_on_update,
-      const bool reset_model_accumulators_after_resampling,
-      const bool enable_lag_correction) {
+  inline void setup(const sample_set_t::Ptr &sample_set,
+                    const uniform_sampling_t::Ptr &sample_uniform,
+                    const normal_sampling_t::type::Ptr &sample_normal,
+                    const resampling_t::Ptr &resampling,
+                    const state_publisher_t::Ptr &state_publisher,
+                    const prediction_integrals_t::Ptr &prediction_integrals,
+                    const scheduler_t::Ptr &scheduler,
+                    const bool reset_all_model_accumulators_on_update,
+                    const bool reset_model_accumulators_after_resampling,
+                    const bool enable_lag_correction) {
     sample_set_ = sample_set;
     sample_uniform_ = sample_uniform;
     sample_normal_ = sample_normal;
@@ -129,8 +132,7 @@ class SMC {
    * @param prediction - the prediction or control function applied to the
    * samples
    */
-  inline void addPrediction(
-      const typename types_t::prediction_t::Ptr &prediction) {
+  inline void addPrediction(const typename prediction_t::Ptr &prediction) {
     prediction_queue_.emplace(prediction);
     notify_prediction_.notify_one();
   }
@@ -140,15 +142,15 @@ class SMC {
    * the samples
    * @param update    - the update function applied to the sample set
    */
-  inline void addUpdate(const typename types_t::update_t::Ptr &update) {
+  inline void addUpdate(const typename update_t::Ptr &update) {
     if (enable_lag_correction_) {
       const auto id = update->getModelId();
       const auto &stamp = update->getStamp();
 
       cslibs_time::statistics::DurationLowpass &lag = lag_map_[id];
-      lag += typename types_t::duration_t(static_cast<int64_t>(
+      lag += typename traits::Duration<Sample_T>::type{static_cast<int64_t>(
           std::max(0L, update->stampReceived().nanoseconds() -
-                           update->getStamp().nanoseconds())));
+                           update->getStamp().nanoseconds()))};
       if (lag.duration() >= lag_) {
         lag_ = lag.duration();
         lag_source_ = id;
@@ -177,35 +179,48 @@ class SMC {
    * @brief Request a state based initialization, meaning that normal sampling
    * occurs around a prior estimate.
    */
-  inline void requestStateInitialization(
-      const typename types_t::time_t &time,
-      const typename types_t::state_t &state,
-      const typename types_t::covariance_t &covariance) {
+  inline void requestStateInitialization(const time_t &time,
+                                         const state_t &state,
+                                         const covariance_t &covariance) {
     std::unique_lock<std::mutex> l(request_state_initialization_mutex_);
     request_state_initialization_.reset(
-        new typename types_t::request_state_initialization_t{time, state,
-                                                           covariance});
+        new typename traits::RequestStateInitialization::type{time, state,
+                                                              covariance});
   }
 
   /**
    * @brief Request a uniform initialization of the sample set.
    * @param time          - time at which the sampling should be executed
    */
-  void requestUniformInitialization(const typename types_t::time_t &time) {
+  void requestUniformInitialization(const time_t &time) {
     std::unique_lock<std::mutex> l(request_uniform_initialization_mutex_);
     request_uniform_initialization_.reset(
-        new typename types_t::request_uniform_initialization_t{time});
+        new typename traits::RequestUniformInitialization::type{time});
   }
 
  protected:
+  using time_t = typename traits::Time<Sample_T>::type;
+  using state_t = typename traits::State<Sample_T>::type;
+  using covariance_t = typename traits::Covariance<Sample_T>::type;
+  using prediction_t = typename traits::Prediction<Sample_T>::type;
+  using update_t = typename traits::Update<Sample_T>::type;
+  using sample_set_t = typename traits::SampleSet<Sample_T>::type;
+  using uniform_sampling_t = typename traits::UniformSampling<Sample_T>::type;
+  using normal_sampling_t = typename traits::NormalSampling<Sample_T>::type;
+  using resampling_t = typename traits::Resampling<Sample_T>::type;
+  using state_publisher_t = typename traits::StatePublisher<Sample_T>::type;
+  using prediction_integrals_t =
+      typename traits::PredictionIntegrals<Sample_T>::type;
+  using scheduler_t = typename traits::Scheduler<Sample_T>::type;
+
   /// functions to apply to the sample set
-  typename types_t::sample_set_t::Ptr sample_set_{nullptr};
-  typename types_t::uniform_sampling_t::Ptr sample_uniform_{nullptr};
-  typename types_t::normal_sampling_t::Ptr sample_normal_{nullptr};
-  typename types_t::resampling_t::Ptr resampling_{nullptr};
-  typename types_t::prediction_integrals_t::Ptr prediction_integrals_{nullptr};
-  typename types_t::scheduler_t::Ptr scheduler_{nullptr};
-  typename types_t::filter_state_t::Ptr state_publisher_{nullptr};
+  typename sample_set_t::Ptr sample_set_{nullptr};
+  typename uniform_sampling_t::Ptr sample_uniform_{nullptr};
+  typename normal_sampling_t::Ptr sample_normal_{nullptr};
+  typename resampling_t::Ptr resampling_{nullptr};
+  typename prediction_integrals_t::Ptr prediction_integrals_{nullptr};
+  typename scheduler_t::Ptr scheduler_{nullptr};
+  typename state_publisher_t::Ptr state_publisher_{nullptr};
 
   enum class Publication {
     None = 0,
@@ -216,10 +231,10 @@ class SMC {
 
   /// requests
   std::mutex request_state_initialization_mutex_;
-  typename types_t::request_state_initialization_t::Ptr
+  typename traits::RequestStateInitialization<Sample_T>::type::Ptr
       request_state_initialization_;
   std::mutex request_uniform_initialization_mutex_;
-  typename types_t::request_uniform_initialization_t::Ptr
+  typename traits::RequestUniformInitialization<Sample_T>::type::Ptr
       request_uniform_initialization_;
 
   /// processing queues
@@ -227,7 +242,7 @@ class SMC {
   update_queue_t delayed_update_queue_;
   prediction_queue_t prediction_queue_;
   duration_map_t lag_map_;
-  typename types_t::duration_t lag_;
+  typename traits::Duration<Sample_T>::type lag_;
   std::size_t lag_source_;
   bool enable_lag_correction_{false};
   bool has_valid_state_{false};
@@ -271,7 +286,7 @@ class SMC {
     }
   }
 
-  inline void predict(const typename types_t::time_t &until) {
+  inline void predict(const time_t &until) {
     auto wait_for_prediction = [this]() {
       std::unique_lock<std::mutex> l(notify_prediction_mutex_);
       notify_prediction_.wait(l);
@@ -297,9 +312,8 @@ class SMC {
         sample_set_->setStamp(prediction_result->applied->timeFrame().end);
 
         if (prediction_result->left_to_apply) {
-          typename types_t::prediction_t::Ptr prediction_left_to_apply(
-              new typename types_t::prediction_t(
-                  prediction_result->left_to_apply, prediction->getModel()));
+          typename prediction_t::Ptr prediction_left_to_apply(new prediction_t(
+              prediction_result->left_to_apply, prediction->getModel()));
           prediction_queue_.emplace(prediction_left_to_apply);
           break;
         }

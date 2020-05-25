@@ -2,11 +2,9 @@
 #define MUSE_SMC_UPDATE_RELAY_HPP
 
 #include <map>
-#include <muse_smc/smc/smc.hpp>
-#include <muse_smc/state_space/state_space_provider.hpp>
 
 namespace muse_smc {
-template <typename UpdateModel_T, typename Update_T, typename DataProvider_T,
+template <typename SMC_T, typename UpdateModel_T, typename Update_T, typename DataProvider_T,
           typename Data_T, typename StateSpaceProvider_T>
 class UpdateRelay {
  public:
@@ -17,7 +15,7 @@ class UpdateRelay {
   using map_t = std::map<typename UpdateModel_T::Ptr, arguments_t>;
   using Data_T = typename muse_smc::traits::Data<sample_t>::type;
 
-  inline explicit UpdateRelay(const typename smc_t::Ptr &smc) : smc_{smc} {}
+  inline explicit UpdateRelay(const typename SMC_T::Ptr &smc) : smc_{smc} {}
 
   inline void relay(const map_t &mapping) {
     for (const auto &e : mapping) {
@@ -44,7 +42,7 @@ class UpdateRelay {
   }
 
  private:
-  typename smc_t::Ptr smc_;
+  typename SMC_T::Ptr smc_;
   std::vector<typename DataProvider_T::connection_t::Ptr> handles_;
 };
 }  // namespace muse_smc

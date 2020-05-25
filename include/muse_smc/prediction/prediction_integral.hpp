@@ -1,5 +1,5 @@
-#ifndef PREDICTION_INTEGRAL_HPP
-#define PREDICTION_INTEGRAL_HPP
+#ifndef MUSE_SMC_PREDICTION_INTEGRAL_HPP
+#define MUSE_SMC_PREDICTION_INTEGRAL_HPP
 
 #include <muse_smc/prediction/prediction_model.hpp>
 
@@ -11,7 +11,7 @@ class PredictionIntegral {
   using ConstPtr = std::shared_ptr<PredictionIntegral<Result_T> const>;
   using Result = Result_T;
 
-  PredictionIntegral() = default;
+  inline PredictionIntegral() = default;
   virtual ~PredictionIntegral() = default;
 
   virtual void add(const typename Result::ConstPtr &step) = 0;
@@ -22,4 +22,4 @@ class PredictionIntegral {
 };
 }  // namespace muse_smc
 
-#endif  // PREDICTION_INTEGRAL_HPP
+#endif  // MUSE_SMC_PREDICTION_INTEGRAL_HPP

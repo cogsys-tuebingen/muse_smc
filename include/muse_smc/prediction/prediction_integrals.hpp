@@ -1,5 +1,5 @@
-#ifndef PREDICTION_INTEGRALS_HPP
-#define PREDICTION_INTEGRALS_HPP
+#ifndef MUSE_SMC_PREDICTION_INTEGRALS_HPP
+#define MUSE_SMC_PREDICTION_INTEGRALS_HPP
 
 #include <muse_smc/prediction/prediction_integral.hpp>
 #include <unordered_map>
@@ -23,7 +23,8 @@ class PredictionIntegrals {
     accumulators_[id] = accumulator;
   }
 
-  inline typename prediction_integral_t::ConstPtr get(const std::size_t id) const {
+  inline typename prediction_integral_t::ConstPtr get(
+      const std::size_t id) const {
     return accumulators_[id];
   }
 
@@ -68,8 +69,9 @@ class PredictionIntegrals {
 
  protected:
   typename prediction_integral_t::Ptr global_accumulator_;
-  std::unordered_map<std::size_t, typename prediction_integral_t::Ptr> accumulators_;
+  std::unordered_map<std::size_t, typename prediction_integral_t::Ptr>
+      accumulators_;
 };
 }  // namespace muse_smc
 
-#endif  // PREDICTION_INTEGRALS_HPP
+#endif  // MUSE_SMC_PREDICTION_INTEGRALS_HPP

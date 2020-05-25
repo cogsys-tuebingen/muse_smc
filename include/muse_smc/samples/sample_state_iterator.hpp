@@ -1,5 +1,5 @@
-#ifndef SAMPLE_STATE_ITERATOR_HPP
-#define SAMPLE_STATE_ITERATOR_HPP
+#ifndef MUSE_SMC_SAMPLE_STATE_ITERATOR_HPP
+#define MUSE_SMC_SAMPLE_STATE_ITERATOR_HPP
 
 /// CSLIBS
 #include <cslibs_utility/buffered/buffered_vector.hpp>
@@ -97,4 +97,4 @@ private:
 };
 }
 
-#endif // SAMPLE_STATE_ITERATOR_HPP
+#endif // MUSE_SMC_SAMPLE_STATE_ITERATOR_HPP

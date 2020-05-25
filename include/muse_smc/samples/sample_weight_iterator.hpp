@@ -1,5 +1,5 @@
-#ifndef SAMPLE_WEIGHT_ITERATOR_HPP
-#define SAMPLE_WEIGHT_ITERATOR_HPP
+#ifndef MUSE_SMC_SAMPLE_WEIGHT_ITERATOR_HPP
+#define MUSE_SMC_SAMPLE_WEIGHT_ITERATOR_HPP
 
 /// CSLIBS
 #include <cslibs_utility/buffered/buffered_vector.hpp>
@@ -9,127 +9,93 @@
 #include <muse_smc/smc/traits/sample.hpp>
 
 namespace muse_smc {
-template<typename sample_t>
-class WeightIterator : public std::iterator<std::random_access_iterator_tag, double>
-{
-public:
-    using state_t       = typename traits::State<sample_t>::type;
-    using parent        = std::iterator<std::random_access_iterator_tag, double>;
-    using reference     = typename parent::reference;
-    using notify_update = cslibs_utility::common::delegate<void(const double &)>;
+template <typename sample_t>
+class WeightIterator
+    : public std::iterator<std::random_access_iterator_tag, double> {
+ public:
+  using state_t = typename traits::State<sample_t>::type;
+  using parent = std::iterator<std::random_access_iterator_tag, double>;
+  using reference = typename parent::reference;
+  using notify_update = cslibs_utility::common::delegate<void(const double &)>;
 
-    inline explicit WeightIterator(sample_t      *begin,
-                                   notify_update  update) :
-        data_(begin),
-        update_(update)
-    {
-    }
+  inline explicit WeightIterator(sample_t *begin, notify_update update)
+      : data_(begin), update_(update) {}
 
-    virtual ~WeightIterator() = default;
+  virtual ~WeightIterator() = default;
 
-    inline iterator& operator++()
-    {
-        update_(data_->weight);
-        ++data_;
-        return *this;
-    }
+  inline iterator &operator++() {
+    update_(data_->weight);
+    ++data_;
+    return *this;
+  }
 
-    inline bool operator ==(const WeightIterator &_other) const
-    {
-        return data_ == _other.data_;
-    }
+  inline bool operator==(const WeightIterator &_other) const {
+    return data_ == _other.data_;
+  }
 
-    inline bool operator !=(const WeightIterator &_other) const
-    {
-        return !(*this == _other);
-    }
+  inline bool operator!=(const WeightIterator &_other) const {
+    return !(*this == _other);
+  }
 
+  inline reference operator*() const { return data_->weight; }
 
-    inline reference operator *() const
-    {
-        return data_->weight;
-    }
+  inline const state_t &state() const { return data_->state; }
 
-    inline const state_t& state() const
-    {
-        return data_->state;
-    }
-
-private:
-    sample_t        *data_;
-    notify_update    update_;
+ private:
+  sample_t *data_;
+  notify_update update_;
 };
 
-template<typename sample_t>
-class WeightIteration
-{
-public:
-    using sample_vector_t   = cslibs_utility::buffered::buffered_vector<sample_t, typename sample_t::allocator_t>;
-    using notify_update     = cslibs_utility::common::delegate<void(const double)>;
-    using notify_touch      = cslibs_utility::common::delegate<void()>;
-    using notify_finished   = cslibs_utility::common::delegate<void()>;
-    using iterator_t        = WeightIterator<sample_t>;
-    using const_iterator_t  = typename sample_vector_t::const_iterator;
+template <typename sample_t>
+class WeightIteration {
+ public:
+  using sample_vector_t =
+      cslibs_utility::buffered::buffered_vector<sample_t,
+                                                typename sample_t::allocator_t>;
+  using notify_update = cslibs_utility::common::delegate<void(const double)>;
+  using notify_touch = cslibs_utility::common::delegate<void()>;
+  using notify_finished = cslibs_utility::common::delegate<void()>;
+  using iterator_t = WeightIterator<sample_t>;
+  using const_iterator_t = typename sample_vector_t::const_iterator;
 
-    inline WeightIteration(sample_vector_t &data,
-                           notify_touch     touch,
-                           notify_update    update,
-                           notify_finished  finish) :
-        data_(data),
+  inline WeightIteration(sample_vector_t &data, notify_touch touch,
+                         notify_update update, notify_finished finish)
+      : data_(data),
         touch_(touch),
         update_(update),
         finish_(finish),
-        untouched_(true)
-    {
+        untouched_(true) {}
+
+  virtual ~WeightIteration() {
+    if (!untouched_) finish_();
+  }
+
+  inline const_iterator_t const_begin() const { return data_.begin(); }
+
+  inline const_iterator_t const_end() const { return data_.end(); }
+
+  inline iterator_t begin() {
+    if (untouched_) {
+      untouched_ = false;
+      touch_();
     }
 
-    virtual ~WeightIteration()
-    {
-        if(!untouched_)
-            finish_();
-    }
+    return iterator_t(&(*data_.begin()), update_);
+  }
 
-    inline const_iterator_t const_begin() const
-    {
-        return data_.begin();
-    }
+  inline iterator_t end() { return iterator_t(&(*data_.end()), update_); }
 
-    inline const_iterator_t const_end() const
-    {
-        return data_.end();
-    }
+  inline std::size_t size() const { return data_.size(); }
 
-    inline iterator_t begin()
-    {
-        if(untouched_) {
-            untouched_ = false;
-            touch_();
-        }
+  inline std::size_t capacity() const { return data_.capacity(); }
 
-        return iterator_t(&(*data_.begin()), update_);
-    }
-
-    inline iterator_t end() {
-        return iterator_t(&(*data_.end()), update_);
-    }
-
-    inline std::size_t size() const
-    {
-        return data_.size();
-    }
-
-    inline std::size_t capacity() const
-    {
-        return data_.capacity();
-    }
-
-private:
-    sample_vector_t &data_;
-    notify_touch     touch_;
-    notify_update    update_;
-    notify_finished  finish_;
-    bool             untouched_;
+ private:
+  sample_vector_t &data_;
+  notify_touch touch_;
+  notify_update update_;
+  notify_finished finish_;
+  bool untouched_;
 };
-}
+}  // namespace muse_smc
 
-#endif // SAMPLE_WEIGHT_ITERATOR_HPP
+#endif  // MUSE_SMC_SAMPLE_WEIGHT_ITERATOR_HPP

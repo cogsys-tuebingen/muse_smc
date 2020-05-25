@@ -1,36 +1,35 @@
-#ifndef PREDICTION_HPP
-#define PREDICTION_HPP
+#ifndef MUSE_SMC_PREDICTION_HPP
+#define MUSE_SMC_PREDICTION_HPP
 
 #include <cslibs_time/time.hpp>
 
 namespace muse_smc {
-template <typename prediction_model_t>
+template <typename prediction_model_t, typename data_t, typename state_space_t,
+          typename state_iterator_t>
 class Prediction {
  public:
   using Ptr = std::shared_ptr<Prediction>;
-  using sample_set_t = typename prediction_model_t::sample_set_t;
-  using state_space_t = typename prediction_model_t::state_space_t;
-  using data_t = typename prediction_model_t::data_t;
+  using ConstPtr = std::shared_ptr<Prediction const>
 
-  struct Less {
-    bool operator()(const Prediction &lhs, const Prediction &rhs) const {
+      struct Less {
+    inline bool operator()(const Prediction &lhs, const Prediction &rhs) const {
       return lhs.getStamp() < rhs.getStamp();
     }
-    bool operator()(const Prediction::Ptr &lhs,
-                    const Prediction::Ptr &rhs) const {
+    inline bool operator()(const Prediction::Ptr &lhs,
+                           const Prediction::Ptr &rhs) const {
       return lhs->getStamp() < rhs->getStamp();
     }
   };
 
   struct Greater {
-    bool operator()(const Prediction &lhs, const Prediction &rhs) const {
+    inline bool operator()(const Prediction &lhs, const Prediction &rhs) const {
       const auto &lhs_stamp = lhs.getStamp();
       const auto &rhs_stamp = rhs.getStamp();
       return lhs_stamp == rhs_stamp ? lhs.stampReceived() > rhs.stampReceived()
                                     : lhs_stamp > rhs_stamp;
     }
-    bool operator()(const Prediction::Ptr &lhs,
-                    const Prediction::Ptr &rhs) const {
+    inline bool operator()(const Prediction::Ptr &lhs,
+                           const Prediction::Ptr &rhs) const {
       const auto &lhs_stamp = lhs->getStamp();
       const auto &rhs_stamp = rhs->getStamp();
       return lhs_stamp == rhs_stamp
@@ -80,4 +79,4 @@ class Prediction {
 };
 }  // namespace muse_smc
 
-#endif  // PREDICTION_HPP
+#endif  // MUSE_SMC_PREDICTION_HPP
