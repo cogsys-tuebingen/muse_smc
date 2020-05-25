@@ -13,7 +13,6 @@ class UpdateRelay {
   using arguments_t = std::pair<typename DataProvider_T::Ptr,
                                 typename StateSpaceProvider_T::Ptr>;
   using map_t = std::map<typename UpdateModel_T::Ptr, arguments_t>;
-  using Data_T = typename muse_smc::traits::Data<sample_t>::type;
 
   inline explicit UpdateRelay(const typename SMC_T::Ptr &smc) : smc_{smc} {}
 

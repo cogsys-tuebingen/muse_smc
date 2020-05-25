@@ -13,7 +13,7 @@ namespace traits {
 template <typename Sample_T>
 struct Prediction {
   using sample_set_t = typename traits::SampleSet<Sample_T>::type;
-  using state_iterator_t = typename sample_set_t::state_iterator;
+  using state_iterator_t = typename sample_set_t::state_iterator_t;
   using state_space_t = typename traits::StateSpace<Sample_T>::type;
   using data_t = typename traits::Data<Sample_T>::type;
   using prediction_model_t = typename traits::PredictionModel<Sample_T>::type;

@@ -92,7 +92,7 @@ class SMC {
   inline void setup(
       const typename sample_set_t::Ptr &sample_set,
       const typename uniform_sampling_t::Ptr &sample_uniform,
-      const typename normal_sampling_t::type::Ptr &sample_normal,
+      const typename normal_sampling_t::Ptr &sample_normal,
       const typename resampling_t::Ptr &resampling,
       const typename state_publisher_t::Ptr &state_publisher,
       const typename prediction_integrals_t::Ptr &prediction_integrals,

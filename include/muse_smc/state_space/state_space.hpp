@@ -12,6 +12,10 @@ class StateSpace {
  public:
   using Ptr = std::shared_ptr<StateSpace>;
   using ConstPtr = std::shared_ptr<StateSpace const>;
+  using state_space_boundary_t = StateSpaceBoundary_T;
+  using state_space_transform_t = StateSpaceTransform_T;
+  using state_t = State_T;
+  using time_t = Time_T;
 
   inline explicit StateSpace(const std::string &frame) : frame_{frame} {}
 
@@ -22,13 +26,13 @@ class StateSpace {
   virtual ~StateSpace() = default;
 
   virtual bool validate(const State_T &) const = 0;
-  virtual StateSpaceBoundary_T getMin() const = 0;
-  virtual StateSpaceBoundary_T getMax() const = 0;
-  virtual StateSpaceTransform_T getOrigin() const = 0;
+  virtual state_space_boundary_t getMin() const = 0;
+  virtual state_space_boundary_t getMax() const = 0;
+  virtual state_space_transform_t getOrigin() const = 0;
 
   inline std::string const &getFrame() const { return frame_; }
 
-  inline Time_T const &getStamp() const { return stamp_; }
+  inline time_t const &getStamp() const { return stamp_; }
 
   template <typename T>
   inline bool isType() const {
@@ -45,7 +49,7 @@ class StateSpace {
   StateSpace() = delete;
 
   std::string frame_;
-  Time_T stamp_{Time_T::now()};
+  time_t stamp_{time_t::now()};
 };
 }  // namespace muse_smc
 
