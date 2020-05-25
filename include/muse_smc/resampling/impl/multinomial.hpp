@@ -17,7 +17,7 @@ class Multinomial {
     auto i_p_t = sample_set.getInsertion();
 
     /// prepare ordered sequence of random numbers
-    cslibs_math::random::Uniform<1> rng(0.0, 1.0);
+    cslibs_math::random::Uniform<double, 1> rng(0.0, 1.0);
     std::vector<double> u(size,
                           std::pow(rng.get(), 1.0 / static_cast<double>(size)));
     {
@@ -30,7 +30,7 @@ class Multinomial {
     {
       auto p_t_1_it = p_t_1.begin();
       double cumsum_last = 0.0;
-      double cumsum = p_t_1_it->weight_;
+      double cumsum = p_t_1_it->weight;
 
       auto in_range = [&cumsum, &cumsum_last](double u) {
         return u >= cumsum_last && u < cumsum;
@@ -40,7 +40,7 @@ class Multinomial {
         while (!in_range(u_r)) {
           ++p_t_1_it;
           cumsum_last = cumsum;
-          cumsum += p_t_1_it->weight_;
+          cumsum += p_t_1_it->weight;
         }
         i_p_t.insert(*p_t_1_it);
       }
@@ -63,7 +63,7 @@ class Multinomial {
 
     /// prepare ordered sequence of random numbers
     const std::size_t size = p_t_1.size();
-    cslibs_math::random::Uniform<1> rng(0.0, 1.0);
+    cslibs_math::random::Uniform<double, 1> rng(0.0, 1.0);
     std::vector<double> u(size,
                           std::pow(rng.get(), 1.0 / static_cast<double>(size)));
     {
@@ -74,10 +74,10 @@ class Multinomial {
     }
     /// draw samples
     {
-      cslibs_math::random::Uniform<1> rng_recovery(0.0, 1.0);
+      cslibs_math::random::Uniform<double, 1> rng_recovery(0.0, 1.0);
       auto p_t_1_it = p_t_1.begin();
       double cumsum_last = 0.0;
-      double cumsum = p_t_1_it->weight_;
+      double cumsum = p_t_1_it->weight;
 
       auto in_range = [&cumsum, &cumsum_last](double u) {
         return u >= cumsum_last && u < cumsum;
@@ -88,14 +88,14 @@ class Multinomial {
         while (!in_range(u_r)) {
           ++p_t_1_it;
           cumsum_last = cumsum;
-          cumsum += p_t_1_it->weight_;
+          cumsum += p_t_1_it->weight;
         }
         const double recovery_probability = rng_recovery.get();
         if (recovery_probability < recovery_random_pose_probability) {
           uniform_pose_sampler->apply(sample);
-          sample.weight_ = recovery_probability;
+          sample.weight = recovery_probability;
         } else {
-          sample.pose_ = p_t_1_it->pose_;
+          sample.state = p_t_1_it->state;
         }
         i_p_t.insert(sample);
       }

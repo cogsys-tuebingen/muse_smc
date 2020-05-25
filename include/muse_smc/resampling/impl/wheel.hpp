@@ -9,7 +9,7 @@ namespace impl {
 template <typename SampleSet_T, typename UniformSampling_T>
 class WheelOfFortune {
  public:
-  inline static void apply(SampleSet_T &sample_set) {
+  static void apply(SampleSet_T &sample_set) {
     const auto &p_t_1 = sample_set.getSamples();
     const std::size_t size = p_t_1.size();
     assert(size != 0);
@@ -31,8 +31,8 @@ class WheelOfFortune {
     }
   }
 
-  inline static void applyRecovery(
-      typename uniform_sampling_t::Ptr uniform_pose_sampler,
+  static void applyRecovery(
+      typename UniformSampling_T::Ptr uniform_pose_sampler,
       const double recovery_random_pose_probability, SampleSet_T &sample_set) {
     if (!uniform_pose_sampler->update(sample_set.getFrame())) {
       std::cerr << "[WheelOfFortune]: Updating uniform sampler didn't work, "
