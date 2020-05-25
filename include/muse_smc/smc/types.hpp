@@ -25,9 +25,6 @@ struct Types {
     using type_t                = Types<sample_t>;
     using sample_set_t          = SampleSet<sample_t>;
 
-    using state_space_provider_t = StateSpaceProvider<sample_t>;
-    using state_space_t          = StateSpace<sample_t>;
-
     using update_model_t        = UpdateModel<type_t>;
     using update_t              = typename update_model_t::update_t;
 

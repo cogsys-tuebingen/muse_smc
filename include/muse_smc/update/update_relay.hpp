@@ -1,61 +1,52 @@
-#ifndef UPDATE_RELAY_HPP
-#define UPDATE_RELAY_HPP
+#ifndef MUSE_SMC_UPDATE_RELAY_HPP
+#define MUSE_SMC_UPDATE_RELAY_HPP
 
 #include <map>
-
-#include <muse_smc/state_space/state_space_provider.hpp>
 #include <muse_smc/smc/smc.hpp>
+#include <muse_smc/state_space/state_space_provider.hpp>
 
 namespace muse_smc {
-template<typename smc_t>
-class UpdateRelay
-{
-public:
-    using Ptr                    = std::shared_ptr<UpdateRelay>;
-    using types_t                = typename smc_t::types_t;
-    using sample_t               = typename types_t::sample_t;
-    using update_t               = typename types_t::update_t;
-    using update_model_t         = typename types_t::update_model_t;
-    using state_space_provider_t = typename types_t::state_space_provider_t;
-    using state_space_t          = typename types_t::state_space_t;
-    using data_provider_t        = typename traits::DataProvider<sample_t>::type;
-    using arguments_t            = std::pair<typename data_provider_t::Ptr,
-                                             typename state_space_provider_t::Ptr>;
-    using map_t                  = std::map<typename update_model_t::Ptr,
-                                            arguments_t>;
-    using data_t                 = typename muse_smc::traits::Data<sample_t>::type;
+template <typename UpdateModel_T, typename Update_T, typename DataProvider_T,
+          typename Data_T, typename StateSpaceProvider_T>
+class UpdateRelay {
+ public:
+  using Ptr = std::shared_ptr<UpdateRelay>;
 
-    inline UpdateRelay(const typename smc_t::Ptr &smc) :
-        smc_(smc)
-    {
-    }
+  using arguments_t = std::pair<typename DataProvider_T::Ptr,
+                                typename StateSpaceProvider_T::Ptr>;
+  using map_t = std::map<typename UpdateModel_T::Ptr, arguments_t>;
+  using Data_T = typename muse_smc::traits::Data<sample_t>::type;
 
-    inline void relay(const map_t &mapping)
-    {
-        for(const auto &e : mapping) {
-            const auto &u = e.first;
-            const auto &d = e.second.first;
-            const auto &s = e.second.second;
+  inline explicit UpdateRelay(const typename smc_t::Ptr &smc) : smc_{smc} {}
 
-            /// By design, we do not allow updates to be bound with empty maps.
-            auto callback = [this, u, s](const typename data_t::ConstPtr &data) {
-                typename state_space_t::ConstPtr ss = s->getStateSpace();
-                if (ss) {
-                    typename update_t::Ptr up(new update_t(data, ss, u));
-                    smc_->addUpdate(up);
-                } else {
-                    std::cerr << "[UpdateRelay]: " << s->getName() << " supplied state space which was zero!" << "\n";
-                    std::cerr << "[UpdateRelay]: Dropped update!" << "\n";
-                }
-            };
-            handles_.emplace_back(d->connect(callback));
+  inline void relay(const map_t &mapping) {
+    for (const auto &e : mapping) {
+      const auto &u = e.first;
+      const auto &d = e.second.first;
+      const auto &s = e.second.second;
+
+      /// By design, we do not allow updates to be bound with empty maps.
+      auto callback = [this, u, s](const typename Data_T::ConstPtr &data) {
+        auto ss = s->getStateSpace();
+        if (ss) {
+          typename Update_T::Ptr up(new Update_T(data, ss, u));
+          smc_->addUpdate(up);
+        } else {
+          std::cerr << "[UpdateRelay]: " << s->getName()
+                    << " supplied state space which was zero!"
+                    << "\n";
+          std::cerr << "[UpdateRelay]: Dropped update!"
+                    << "\n";
         }
+      };
+      handles_.emplace_back(d->connect(callback));
     }
+  }
 
-private:
-    typename smc_t::Ptr                                      smc_;
-    std::vector<typename data_provider_t::connection_t::Ptr> handles_;
+ private:
+  typename smc_t::Ptr smc_;
+  std::vector<typename DataProvider_T::connection_t::Ptr> handles_;
 };
-}
+}  // namespace muse_smc
 
-#endif // UPDATE_RELAY_HPP
+#endif  // MUSE_SMC_UPDATE_RELAY_HPP

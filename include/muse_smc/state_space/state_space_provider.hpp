@@ -1,25 +1,24 @@
-#ifndef STATE_SPACE_PROVIDER_HPP
-#define STATE_SPACE_PROVIDER_HPP
-
-#include <muse_smc/state_space/state_space.hpp>
+#ifndef MUSE_SMC_STATE_SPACE_PROVIDER_HPP
+#define MUSE_SMC_STATE_SPACE_PROVIDER_HPP
 
 namespace muse_smc {
-template<typename sample_t>
-class StateSpaceProvider
-{
-public:
-    using Ptr           = std::shared_ptr<StateSpaceProvider>;
-    using state_space_t = StateSpace<sample_t>;
+template <typename StateSpace_T>
+class StateSpaceProvider {
+ public:
+  using Ptr = std::shared_ptr<StateSpaceProvider>;
+  using ConstPtr = std::shared_ptr<const StateSpaceProvider>;
 
-    virtual const std::string getName() const = 0;
-    virtual typename state_space_t::ConstPtr getStateSpace() const = 0;     /// can return a state space
-    virtual void waitForStateSpace() const {}                              /// wait for state space to be avaliable
+  virtual std::string const& getName() const = 0;
+  virtual typename StateSpace_T::ConstPtr getStateSpace()
+      const = 0;  /// can return a state space
+  virtual void waitForStateSpace() const {
+  }  /// wait for state space to be avaliable
 
-protected:
-    StateSpaceProvider() = default;
-    virtual ~StateSpaceProvider() = default;
-
+ protected:
+  StateSpaceProvider() = default;
+  virtual ~StateSpaceProvider() = default;
 };
-}
+}  // namespace muse_smc
 
-#endif // STATE_SPACE_PROVIDER_HPP
+
+#endif  // MUSE_SMC_STATE_SPACE_PROVIDER_HPP

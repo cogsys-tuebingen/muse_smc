@@ -1,29 +1,21 @@
-#ifndef UPDATE_MODEL_HPP
-#define UPDATE_MODEL_HPP
+#ifndef MUSE_SMC_UPDATE_MODEL_HPP
+#define MUSE_SMC_UPDATE_MODEL_HPP
 
 #include <memory>
 
-#include <muse_smc/update/update.hpp>
-
 namespace muse_smc {
-template<typename smc_t>
+template <typename Data_T, typename StateSpace_T, typename WeightIterator_T>
 class UpdateModel {
-public:
-    using Ptr           = std::shared_ptr<UpdateModel>;
-    using sample_t      = typename smc_t::sample_t;
-    using sample_set_t  = typename smc_t::sample_set_t;
-    using state_space_t = typename smc_t::state_space_t;
-    using update_t      = Update<UpdateModel>;
+ public:
+  using Ptr = std::shared_ptr<UpdateModel>;
+  using ConstPtr = std::shared_ptr<const UpdateModel>;
 
-    using data_t        = typename traits::Data<sample_t>::type;
-    using covariance_t  = typename traits::Covariance<sample_t>::type;
-
-    virtual std::size_t getModelId() const = 0;
-    virtual const std::string getName() const = 0;
-    virtual void apply(const typename data_t::ConstPtr          &data,
-                       const typename state_space_t::ConstPtr   &state_space,
-                       typename sample_set_t::weight_iterator_t  weights) = 0;
+  virtual std::size_t getModelId() const = 0;
+  virtual std::string const &getName() const = 0;
+  virtual void apply(const typename Data_T::ConstPtr &data,
+                     const typename StateSpace_T::ConstPtr &state_space,
+                     WeightIterator_T weights) = 0;
 };
-}
+}  // namespace muse_smc
 
-#endif // UPDATE_MODEL_HPP
+#endif  // MUSE_SMC_UPDATE_MODEL_HPP
