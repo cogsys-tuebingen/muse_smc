@@ -62,6 +62,10 @@ struct Time {
   // type
 };
 template <typename Sample_T>
+struct TimeFrame {
+  // type
+};
+template <typename Sample_T>
 struct Duration {
   // type
 };

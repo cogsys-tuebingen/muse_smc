@@ -17,8 +17,9 @@ struct Update {
   using state_space_t = typename traits::StateSpace<Sample_T>::type;
   using data_t = typename traits::Data<Sample_T>::type;
   using update_model_t = typename traits::UpdateModel<Sample_T>::type;
+  using time_t = typename traits::Time<Sample_T>::type;
 
-  using type = muse_smc::Update<update_model_t, data_t, state_space_t, weight_iterator_t>;
+  using type = muse_smc::Update<update_model_t, data_t, state_space_t, weight_iterator_t, time_t>;
 };
 }  // namespace traits
 }  // namespace muse_smc

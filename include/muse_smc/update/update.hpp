@@ -3,7 +3,7 @@
 
 namespace muse_smc {
 template <typename UpdateModel_T, typename Data_T, typename StateSpace_T,
-          typename WeightIterator_T>
+          typename WeightIterator_T, typename Time_T>
 class Update {
  public:
   using Ptr = std::shared_ptr<Update>;
@@ -49,11 +49,11 @@ class Update {
     model_->apply(data_, state_space_, weights);
   }
 
-  inline auto const &getStamp() const {
+  inline Time_T const &getStamp() const {
     return data_->timeFrame().end;
   }
 
-  inline auto const &stampReceived() const {
+  inline Time_T const &stampReceived() const {
     return data_->stampReceived();
   }
 

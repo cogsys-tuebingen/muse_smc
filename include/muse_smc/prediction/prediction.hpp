@@ -1,9 +1,11 @@
 #ifndef MUSE_SMC_PREDICTION_HPP
 #define MUSE_SMC_PREDICTION_HPP
 
+#include <string>
+
 namespace muse_smc {
 template <typename PredictionModel_T, typename Data_T, typename StateSpace_T,
-          typename StateIterator_T, typename Time_T>
+          typename StateIterator_T, typename Time_T, typename TimeFrame_T>
 class Prediction {
  public:
   using Ptr = std::shared_ptr<Prediction>;
@@ -60,13 +62,13 @@ class Prediction {
                         : model_->apply(data_, until, states);
   }
 
-  inline auto const &getStamp() const { return data_->timeFrame().end; }
+  inline Time_T const &getStamp() const { return data_->timeFrame().end; }
 
-  inline auto const &timeFrame() const { return data_->timeFrame(); }
+  inline TimeFrame_T const &timeFrame() const { return data_->timeFrame(); }
 
-  inline auto const &stampReceived() const { return data_->stampReceived(); }
+  inline Time_T const &stampReceived() const { return data_->stampReceived(); }
 
-  inline auto const &getModelName() const { return model_->getName(); }
+  inline std::string const &getModelName() const { return model_->getName(); }
 
   inline auto getModel() const { return model_; }
 
