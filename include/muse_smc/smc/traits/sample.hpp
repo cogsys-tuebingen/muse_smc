@@ -1,6 +1,8 @@
 #ifndef MUSE_SMC_TRAITS_HPP
 #define MUSE_SMC_TRAITS_HPP
 
+#include <type_traits>
+
 namespace muse_smc {
 namespace traits {
 /**
@@ -9,7 +11,8 @@ namespace traits {
  */
 template <typename Sample_T>
 struct Data {
-  // type of Data has to be defined by using type = ...
+  static_assert(!std::is_same<Sample_T, Sample_T>::value,
+                "Trait not overriden for sample type. Please define field type.");
 };
 
 /**
@@ -18,7 +21,8 @@ struct Data {
  */
 template <typename Sample_T>
 struct DataProvider {
-  // type of DataProvider has to be defined by using type = ...
+  static_assert(!std::is_same<Sample_T, Sample_T>::value,
+                "Trait not overriden for sample type. Please define field type.");
 };
 
 /**
@@ -27,7 +31,8 @@ struct DataProvider {
  */
 template <typename Sample_T>
 struct State {
-  // type of State has to be defined by using type = ...
+  static_assert(!std::is_same<Sample_T, Sample_T>::value,
+                "Trait not overriden for sample type. Please define field type.");
 };
 
 /**
@@ -36,7 +41,8 @@ struct State {
  */
 template <typename Sample_T>
 struct Transform {
-  // type of Transform has to be defined by using type = ...
+  static_assert(!std::is_same<Sample_T, Sample_T>::value,
+                "Trait not overriden for sample type. Please define field type.");
 };
 
 /**
@@ -45,7 +51,8 @@ struct Transform {
  */
 template <typename Sample_T>
 struct Covariance {
-  // type of Covariance has to be defined by using type = ...
+  static_assert(!std::is_same<Sample_T, Sample_T>::value,
+                "Trait not overriden for sample type. Please define field type.");
 };
 
 /**
@@ -54,25 +61,30 @@ struct Covariance {
  */
 template <typename Sample_T>
 struct StateSpaceBoundary {
-  // type of StateSpaceBoundary has to be defined by using type = ...
+  static_assert(!std::is_same<Sample_T, Sample_T>::value,
+                "Trait not overriden for sample type. Please define field type.");
 };
 
 template <typename Sample_T>
 struct Time {
-  // type
+  static_assert(!std::is_same<Sample_T, Sample_T>::value,
+                "Trait not overriden for sample type. Please define field type.");
 };
 template <typename Sample_T>
 struct TimeFrame {
-  // type
+  static_assert(!std::is_same<Sample_T, Sample_T>::value,
+                "Trait not overriden for sample type. Please define field type.");
 };
 template <typename Sample_T>
 struct Duration {
-  // type
+  static_assert(!std::is_same<Sample_T, Sample_T>::value,
+                "Trait not overriden for sample type. Please define field type.");
 };
 
-template<typename Rate_T>
+template <typename Sample_T>
 struct Rate {
-    // type
+  static_assert(!std::is_same<Sample_T, Sample_T>::value,
+                "Trait not overriden for sample type. Please define field type.");
 };
 }  // namespace traits
 }  // namespace muse_smc
