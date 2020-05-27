@@ -67,7 +67,7 @@ class Prediction {
 
   inline std::string const &getModelName() const { return model_->getName(); }
 
-  inline auto getModel() const { return model_; }
+  inline typename PredictionModel_T::Ptr getModel() const { return model_; }
 
  private:
   typename Data_T::ConstPtr data_;
