@@ -11,7 +11,7 @@ class Prediction {
   using Ptr = std::shared_ptr<Prediction>;
   using ConstPtr = std::shared_ptr<Prediction const>;
 
-      struct Less {
+  struct Less {
     inline bool operator()(const Prediction &lhs, const Prediction &rhs) const {
       return lhs.getStamp() < rhs.getStamp();
     }
@@ -42,22 +42,19 @@ class Prediction {
                              const typename PredictionModel_T::Ptr &model)
       : data_{data}, model_{model} {}
 
-  inline explicit Prediction(
-      const typename Data_T::ConstPtr &data,
-      const typename StateSpace_T::ConstPtr &state_space,
-      const typename PredictionModel_T::Ptr &model)
+  inline explicit Prediction(const typename Data_T::ConstPtr &data,
+                             const typename StateSpace_T::ConstPtr &state_space,
+                             const typename PredictionModel_T::Ptr &model)
       : data_{data}, state_space_{state_space}, model_{model} {}
 
   virtual ~Prediction() = default;
 
-  inline auto operator()(const Time_T &until,
-                         StateIterator_T states) {
+  inline typename PredictionModel_T::Result::Ptr operator()(const Time_T &until, StateIterator_T states) {
     return state_space_ ? model_->apply(data_, state_space_, until, states)
                         : model_->apply(data_, until, states);
   }
 
-  inline auto apply(const Time_T &until,
-                    StateIterator_T states) {
+  inline typename PredictionModel_T::Result::Ptr apply(const Time_T &until, StateIterator_T states) {
     return state_space_ ? model_->apply(data_, state_space_, until, states)
                         : model_->apply(data_, until, states);
   }
