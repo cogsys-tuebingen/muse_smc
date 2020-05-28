@@ -8,13 +8,11 @@ template <typename SMC_T, typename UpdateModel_T, typename Update_T, typename Da
           typename Data_T, typename StateSpaceProvider_T>
 class UpdateRelay {
  public:
-  using Ptr = std::shared_ptr<UpdateRelay>;
+  using arguments_t = std::pair<std::shared_ptr<DataProvider_T>,
+                                std::shared_ptr<StateSpaceProvider_T>>;
+  using map_t = std::map<std::shared_ptr<UpdateModel_T>, arguments_t>;
 
-  using arguments_t = std::pair<typename DataProvider_T::Ptr,
-                                typename StateSpaceProvider_T::Ptr>;
-  using map_t = std::map<typename UpdateModel_T::Ptr, arguments_t>;
-
-  inline explicit UpdateRelay(const typename SMC_T::Ptr &smc) : smc_{smc} {}
+  inline explicit UpdateRelay(const std::shared_ptr<SMC_T> &smc) : smc_{smc} {}
 
   inline void relay(const map_t &mapping) {
     for (const auto &e : mapping) {
@@ -23,10 +21,10 @@ class UpdateRelay {
       const auto &s = e.second.second;
 
       /// By design, we do not allow updates to be bound with empty maps.
-      auto callback = [this, u, s](const typename Data_T::ConstPtr &data) {
+      auto callback = [this, u, s](const std::shared_ptr<Data_T const> &data) {
         auto ss = s->getStateSpace();
         if (ss) {
-          typename Update_T::Ptr up(new Update_T(data, ss, u));
+          std::shared_ptr<Update_T> up(new Update_T(data, ss, u));
           smc_->addUpdate(up);
         } else {
           std::cerr << "[UpdateRelay]: " << s->getName()
@@ -41,8 +39,8 @@ class UpdateRelay {
   }
 
  private:
-  typename SMC_T::Ptr smc_;
-  std::vector<typename DataProvider_T::connection_t::Ptr> handles_;
+  std::shared_ptr<SMC_T> smc_;
+  std::vector<std::shared_ptr<typename DataProvider_T::connection_t>> handles_;
 };
 }  // namespace muse_smc
 

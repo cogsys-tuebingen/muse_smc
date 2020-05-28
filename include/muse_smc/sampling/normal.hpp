@@ -7,9 +7,6 @@ namespace muse_smc {
 template <typename SampleSet_T, typename State_T, typename Covariance_T>
 class NormalSampling {
  public:
-  using Ptr = std::shared_ptr<NormalSampling>;
-  using ConstPtr = std::shared_ptr<NormalSampling const>;
-
   inline NormalSampling() = default;
   virtual ~NormalSampling() = default;
 

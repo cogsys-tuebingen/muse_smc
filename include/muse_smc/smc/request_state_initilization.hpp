@@ -9,8 +9,6 @@ class EIGEN_ALIGN16 RequestStateInitialization {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  using Ptr = std::unique_ptr<RequestStateInitialization>;
-
   using allocator_t = Eigen::aligned_allocator<RequestStateInitialization>;
 
   inline explicit RequestStateInitialization(const Time_T &time,

@@ -12,26 +12,27 @@ namespace muse_smc {
 template <typename sample_set_t>
 class StatePublisher {
  public:
-  using Ptr = std::shared_ptr<StatePublisher>;
+
+  virtual ~StatePublisher() = default;
 
   /**
    * @brief Publish a valid belief state, after resampling.
    * @param sample_set
    */
-  virtual void publish(const typename sample_set_t::ConstPtr &sample_set) = 0;
+  virtual void publish(const std::shared_ptr<sample_set_t const> &sample_set) = 0;
   /**
    * @brief Publish an intermediate state of the filter, when resampling was not
    * applied for getting a valid belief state.
    * @param sample_set
    */
   virtual void publishIntermediate(
-      const typename sample_set_t::ConstPtr &sample_set) = 0;
+      const std::shared_ptr<sample_set_t const> &sample_set) = 0;
   /**
    * @brief publishConstant
    * @param sample_set
    */
   virtual void publishConstant(
-      const typename sample_set_t::ConstPtr &sample_set) = 0;
+      const std::shared_ptr<sample_set_t const> &sample_set) = 0;
 };
 }  // namespace muse_smc
 

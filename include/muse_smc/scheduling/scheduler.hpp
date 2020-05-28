@@ -9,14 +9,11 @@ namespace muse_smc {
 template <typename SampleSet_T, typename Update_T, typename Resampling_T>
 class Scheduler {
  public:
-  using Ptr = std::shared_ptr<Scheduler>;
-  using ConstPtr = std::shared_ptr<Scheduler const>;
+  virtual bool apply(std::shared_ptr<Update_T> &u,
+                     std::shared_ptr<SampleSet_T> &s) = 0;
 
-  virtual bool apply(typename Update_T::Ptr &u,
-                     typename SampleSet_T::Ptr &s) = 0;
-
-  virtual bool apply(typename Resampling_T::Ptr &r,
-                     typename SampleSet_T::Ptr &s) = 0;
+  virtual bool apply(std::shared_ptr<Resampling_T> &r,
+                     std::shared_ptr<SampleSet_T> &s) = 0;
 
  protected:
   Scheduler() = default;

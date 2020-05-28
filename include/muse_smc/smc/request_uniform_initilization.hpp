@@ -5,8 +5,6 @@ namespace muse_smc {
 template <typename Time_T>
 class RequestUniformInitialization {
  public:
-  using Ptr = std::unique_ptr<RequestUniformInitialization>;
-
   inline explicit RequestUniformInitialization(const Time_T &time) : time_{time} {}
 
   const Time_T &time() const { return time_; }

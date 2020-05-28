@@ -8,27 +8,25 @@ namespace muse_smc {
 template <typename Result_T>
 class PredictionIntegrals {
  public:
-  using Ptr = std::shared_ptr<PredictionIntegrals<Result_T>>;
-  using ConstPtr = std::shared_ptr<PredictionIntegrals<Result_T> const>;
   using prediction_integral_t = PredictionIntegral<Result_T>;
 
   PredictionIntegrals(
-      const typename prediction_integral_t::Ptr &global_integral)
+      const std::shared_ptr<prediction_integral_t> &global_integral)
       : global_accumulator_(global_integral) {}
 
   virtual ~PredictionIntegrals() = default;
 
-  inline void set(const typename prediction_integral_t::Ptr &accumulator,
+  inline void set(const std::shared_ptr<prediction_integral_t> &accumulator,
                   const std::size_t id) {
     accumulators_[id] = accumulator;
   }
 
-  inline typename prediction_integral_t::ConstPtr get(
+  inline std::shared_ptr<prediction_integral_t const> get(
       const std::size_t id) const {
     return accumulators_[id];
   }
 
-  inline typename prediction_integral_t::ConstPtr get() const {
+  inline std::shared_ptr<prediction_integral_t const> get() const {
     return global_accumulator_;
   }
 
@@ -60,7 +58,7 @@ class PredictionIntegrals {
     }
   }
 
-  inline void add(const typename Result_T::ConstPtr &step) {
+  inline void add(const std::shared_ptr<Result_T const> &step) {
     for (auto &a : accumulators_) {
       a.second->add(step);
     }
@@ -68,8 +66,8 @@ class PredictionIntegrals {
   }
 
  protected:
-  typename prediction_integral_t::Ptr global_accumulator_;
-  std::unordered_map<std::size_t, typename prediction_integral_t::Ptr>
+  std::shared_ptr<prediction_integral_t> global_accumulator_;
+  std::unordered_map<std::size_t, std::shared_ptr<prediction_integral_t>>
       accumulators_;
 };
 }  // namespace muse_smc

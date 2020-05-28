@@ -48,7 +48,7 @@ class Multinomial {
   }
 
   inline static void applyRecovery(
-      typename UniformSampling_T::Ptr uniform_pose_sampler,
+      std::shared_ptr<UniformSampling_T> uniform_pose_sampler,
       const double recovery_random_pose_probability, SampleSet_T &sample_set) {
     if (!uniform_pose_sampler->update(sample_set.getFrame())) {
       std::cerr << "[Multinomial]: Updating uniform sampler didn't work, "

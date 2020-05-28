@@ -7,13 +7,10 @@ namespace muse_smc {
 template <typename Data_T, typename StateSpace_T, typename WeightIterator_T>
 class UpdateModel {
  public:
-  using Ptr = std::shared_ptr<UpdateModel>;
-  using ConstPtr = std::shared_ptr<const UpdateModel>;
-
   virtual std::size_t getModelId() const = 0;
   virtual std::string const &getName() const = 0;
-  virtual void apply(const typename Data_T::ConstPtr &data,
-                     const typename StateSpace_T::ConstPtr &state_space,
+  virtual void apply(const std::shared_ptr<Data_T const> &data,
+                     const std::shared_ptr<StateSpace_T const> &state_space,
                      WeightIterator_T weights) = 0;
 };
 }  // namespace muse_smc

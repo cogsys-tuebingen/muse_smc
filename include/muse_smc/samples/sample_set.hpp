@@ -28,9 +28,6 @@ class EIGEN_ALIGN16 SampleSet {
   using weight_distribution_t =
       cslibs_math::statistics::Distribution<double, 1>;
 
-  using Ptr = std::shared_ptr<SampleSet>;
-  using ConstPtr = std::shared_ptr<SampleSet const>;
-
   /**
    * @brief SampleSet deleted - non-copyable
    * @param other
@@ -55,7 +52,7 @@ class EIGEN_ALIGN16 SampleSet {
   inline explicit SampleSet(const std::string &frame_id,
                             const Time_T &time_stamp,
                             const std::size_t sample_size,
-                            const typename sample_density_t::Ptr &density,
+                            const std::shared_ptr<sample_density_t> &density,
                             const bool keep_weights_after_insertion = false)
       : frame_id_{frame_id},
         stamp_{time_stamp},
@@ -80,7 +77,7 @@ class EIGEN_ALIGN16 SampleSet {
                             const Time_T &time_stamp,
                             const std::size_t sample_size_minimum,
                             const std::size_t sample_size_maximum,
-                            const typename sample_density_t::Ptr &density,
+                            const std::shared_ptr<sample_density_t> &density,
                             const bool keep_weights_after_insertion = false)
       : frame_id_{frame_id},
         stamp_{time_stamp},
@@ -195,7 +192,7 @@ class EIGEN_ALIGN16 SampleSet {
 
   inline sample_vector_t const &getSamples() const { return *p_t_1_; }
 
-  inline typename sample_density_t::ConstPtr getDensity() const {
+  inline std::shared_ptr<sample_density_t const> getDensity() const {
     return p_t_1_density_;
   }
 
@@ -217,7 +214,7 @@ class EIGEN_ALIGN16 SampleSet {
   double weight_sum_{0.0};
 
   std::shared_ptr<sample_vector_t> p_t_1_{nullptr};
-  mutable typename sample_density_t::Ptr p_t_1_density_{nullptr};
+  mutable std::shared_ptr<sample_density_t> p_t_1_density_{nullptr};
   std::shared_ptr<sample_vector_t> p_t_{nullptr};
 
   bool keep_weights_after_insertion_;

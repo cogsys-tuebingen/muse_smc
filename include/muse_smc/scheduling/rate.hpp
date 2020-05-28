@@ -12,7 +12,6 @@ template<typename sample_t>
 class Rate : public muse_smc::Scheduler<sample_t>
 {
 public:
-    using Ptr                 = std::shared_ptr<Rate>;
     using rate_t              = cslibs_time::Rate;
     using update_t            = muse_smc::Update<sample_t>;
     using queue_t             = __gnu_pbds::priority_queue<Entry, typename Entry::Greater, __gnu_pbds::rc_binomial_heap_tag>;
@@ -35,8 +34,8 @@ public:
         resampling_period_ = duration_t(rate.expectedCycleTime().seconds());
     }
 
-    virtual bool apply(typename update_t::Ptr     &u,
-                       typename sample_set_t::Ptr &s) override
+    virtual bool apply(std::shared_ptr<update_t>     &u,
+                       std::shared_ptr<sample_set_t> &s) override
     {
         auto now = []()
         {
@@ -54,8 +53,8 @@ public:
     }
 
 
-    virtual bool apply(typename resampling_t::Ptr &r,
-                       typename sample_set_t::Ptr &s) override
+    virtual bool apply(std::shared_ptr<resampling_t> &r,
+                       std::shared_ptr<sample_set_t> &s) override
     {
         const cslibs_time::Time &stamp = s->getStamp();
 

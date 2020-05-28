@@ -9,14 +9,12 @@ template <typename SampleSet_T, typename UniformSampling_T,
           typename NormalSampling_T>
 class Resampling {
  public:
-  using Ptr = std::shared_ptr<Resampling>;
-
   inline Resampling() = default;
   virtual ~Resampling() = default;
 
   virtual void setup(
-      const typename UniformSampling_T::Ptr &uniform_pose_sampler,
-      const typename NormalSampling_T::Ptr &normal_pose_sampler,
+      const std::shared_ptr<UniformSampling_T> &uniform_pose_sampler,
+      const std::shared_ptr<NormalSampling_T> &normal_pose_sampler,
       const double recovery_alpha_fast = 0.0,
       const double recovery_alpha_slow = 0.0,
       const double variance_threshold = 0.0) {
@@ -81,8 +79,8 @@ class Resampling {
   double recovery_slow_{0.0};
   double recovery_random_pose_probability_{0.0};
   double variance_treshold_{0.0};
-  typename UniformSampling_T::Ptr uniform_pose_sampler_;
-  typename NormalSampling_T::Ptr normal_pose_sampler_;
+  std::shared_ptr<UniformSampling_T> uniform_pose_sampler_;
+  std::shared_ptr<NormalSampling_T> normal_pose_sampler_;
 
   virtual void doApply(SampleSet_T &sample_set) = 0;
   virtual void doApplyRecovery(SampleSet_T &sample_set) = 0;

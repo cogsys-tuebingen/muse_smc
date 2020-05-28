@@ -5,11 +5,8 @@ namespace muse_smc {
 template <typename StateSpace_T>
 class StateSpaceProvider {
  public:
-  using Ptr = std::shared_ptr<StateSpaceProvider>;
-  using ConstPtr = std::shared_ptr<const StateSpaceProvider>;
-
   virtual std::string const& getName() const = 0;
-  virtual typename StateSpace_T::ConstPtr getStateSpace()
+  virtual std::shared_ptr<StateSpace_T const> getStateSpace()
       const = 0;  /// can return a state space
   virtual void waitForStateSpace() const {
   }  /// wait for state space to be avaliable

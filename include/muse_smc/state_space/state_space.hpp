@@ -10,8 +10,6 @@ template <typename State_T, typename StateSpaceTransform_T,
           typename StateSpaceBoundary_T, typename Time_T>
 class StateSpace {
  public:
-  using Ptr = std::shared_ptr<StateSpace>;
-  using ConstPtr = std::shared_ptr<StateSpace const>;
   using state_space_boundary_t = StateSpaceBoundary_T;
   using state_space_transform_t = StateSpaceTransform_T;
   using state_t = State_T;

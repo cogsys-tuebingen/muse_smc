@@ -38,7 +38,8 @@ class SMC {
   using prediction_t = typename traits::Prediction<Hypothesis_T>::type;
   using update_t = typename traits::Update<Hypothesis_T>::type;
   using sample_set_t = typename traits::SampleSet<Hypothesis_T>::type;
-  using uniform_sampling_t = typename traits::UniformSampling<Hypothesis_T>::type;
+  using uniform_sampling_t =
+      typename traits::UniformSampling<Hypothesis_T>::type;
   using normal_sampling_t = typename traits::NormalSampling<Hypothesis_T>::type;
   using resampling_t = typename traits::Resampling<Hypothesis_T>::type;
   using state_publisher_t = typename traits::StatePublisher<Hypothesis_T>::type;
@@ -46,18 +47,15 @@ class SMC {
       typename traits::PredictionIntegrals<Hypothesis_T>::type;
   using scheduler_t = typename traits::Scheduler<Hypothesis_T>::type;
   using update_queue_t = cslibs_utility::synchronized::priority_queue<
-      typename traits::Update<Hypothesis_T>::type::Ptr,
+      std::shared_ptr<typename traits::Update<Hypothesis_T>::type>,
       typename traits::Update<Hypothesis_T>::type::Greater>;
   using prediction_queue_t = cslibs_utility::synchronized::priority_queue<
-      typename traits::Prediction<Hypothesis_T>::type::Ptr,
+      std::shared_ptr<typename traits::Prediction<Hypothesis_T>::type>,
       typename traits::Prediction<Hypothesis_T>::type::Greater>;
   using duration_map_t =
       std::unordered_map<std::size_t, cslibs_time::statistics::DurationLowpass>;
 
  public:
-  /// utility typedefs
-  using Ptr = std::shared_ptr<SMC<Hypothesis_T>>;
-
   /**
    * @brief SMC default constructor.
    */
@@ -90,13 +88,13 @@ class SMC {
    * delayed update inputs
    */
   inline void setup(
-      const typename sample_set_t::Ptr &sample_set,
-      const typename uniform_sampling_t::Ptr &sample_uniform,
-      const typename normal_sampling_t::Ptr &sample_normal,
-      const typename resampling_t::Ptr &resampling,
-      const typename state_publisher_t::Ptr &state_publisher,
-      const typename prediction_integrals_t::Ptr &prediction_integrals,
-      const typename scheduler_t::Ptr &scheduler,
+      const std::shared_ptr<sample_set_t> &sample_set,
+      const std::shared_ptr<uniform_sampling_t> &sample_uniform,
+      const std::shared_ptr<normal_sampling_t> &sample_normal,
+      const std::shared_ptr<resampling_t> &resampling,
+      const std::shared_ptr<state_publisher_t> &state_publisher,
+      const std::shared_ptr<prediction_integrals_t> &prediction_integrals,
+      const std::shared_ptr<scheduler_t> &scheduler,
       const bool reset_all_model_accumulators_on_update,
       const bool reset_model_accumulators_after_resampling,
       const bool enable_lag_correction) {
@@ -148,7 +146,7 @@ class SMC {
    * @param prediction - the prediction or control function applied to the
    * samples
    */
-  inline void addPrediction(const typename prediction_t::Ptr &prediction) {
+  inline void addPrediction(const std::shared_ptr<prediction_t> &prediction) {
     prediction_queue_.emplace(prediction);
     notify_prediction_.notify_one();
   }
@@ -158,7 +156,7 @@ class SMC {
    * the samples
    * @param update    - the update function applied to the sample set
    */
-  inline void addUpdate(const typename update_t::Ptr &update) {
+  inline void addUpdate(const std::shared_ptr<update_t> &update) {
     if (enable_lag_correction_) {
       const auto id = update->getModelId();
       const auto &stamp = update->getStamp();
@@ -211,18 +209,19 @@ class SMC {
   void requestUniformInitialization(const time_t &time) {
     std::unique_lock<std::mutex> l(request_uniform_initialization_mutex_);
     request_uniform_initialization_.reset(
-        new typename traits::RequestUniformInitialization<Hypothesis_T>::type{time});
+        new typename traits::RequestUniformInitialization<Hypothesis_T>::type{
+            time});
   }
 
  protected:
   /// functions to apply to the sample set
-  typename sample_set_t::Ptr sample_set_{nullptr};
-  typename uniform_sampling_t::Ptr sample_uniform_{nullptr};
-  typename normal_sampling_t::Ptr sample_normal_{nullptr};
-  typename resampling_t::Ptr resampling_{nullptr};
-  typename prediction_integrals_t::Ptr prediction_integrals_{nullptr};
-  typename scheduler_t::Ptr scheduler_{nullptr};
-  typename state_publisher_t::Ptr state_publisher_{nullptr};
+  std::shared_ptr<sample_set_t> sample_set_{nullptr};
+  std::shared_ptr<uniform_sampling_t> sample_uniform_{nullptr};
+  std::shared_ptr<normal_sampling_t> sample_normal_{nullptr};
+  std::shared_ptr<resampling_t> resampling_{nullptr};
+  std::shared_ptr<prediction_integrals_t> prediction_integrals_{nullptr};
+  std::shared_ptr<scheduler_t> scheduler_{nullptr};
+  std::shared_ptr<state_publisher_t> state_publisher_{nullptr};
 
   enum class Publication {
     None = 0,
@@ -233,10 +232,10 @@ class SMC {
 
   /// requests
   std::mutex request_state_initialization_mutex_;
-  typename traits::RequestStateInitialization<Hypothesis_T>::type::Ptr
+  std::shared_ptr<typename traits::RequestStateInitialization<Hypothesis_T>::type>
       request_state_initialization_;
   std::mutex request_uniform_initialization_mutex_;
-  typename traits::RequestUniformInitialization<Hypothesis_T>::type::Ptr
+  std::shared_ptr<typename traits::RequestUniformInitialization<Hypothesis_T>::type>
       request_uniform_initialization_;
 
   /// processing queues
@@ -314,7 +313,7 @@ class SMC {
         sample_set_->setStamp(prediction_result->applied->timeFrame().end);
 
         if (prediction_result->left_to_apply) {
-          typename prediction_t::Ptr prediction_left_to_apply(new prediction_t(
+          std::shared_ptr<prediction_t> prediction_left_to_apply(new prediction_t(
               prediction_result->left_to_apply, prediction->getModel()));
           prediction_queue_.emplace(prediction_left_to_apply);
           break;

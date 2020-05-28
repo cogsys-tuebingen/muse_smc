@@ -8,15 +8,12 @@ template <typename PredictionModel_T, typename Data_T, typename StateSpace_T,
           typename StateIterator_T, typename Time_T, typename TimeFrame_T>
 class Prediction {
  public:
-  using Ptr = std::shared_ptr<Prediction>;
-  using ConstPtr = std::shared_ptr<Prediction const>;
-
   struct Less {
     inline bool operator()(const Prediction &lhs, const Prediction &rhs) const {
       return lhs.getStamp() < rhs.getStamp();
     }
-    inline bool operator()(const Prediction::Ptr &lhs,
-                           const Prediction::Ptr &rhs) const {
+    inline bool operator()(const std::shared_ptr<Prediction> &lhs,
+                           const std::shared_ptr<Prediction> &rhs) const {
       return lhs->getStamp() < rhs->getStamp();
     }
   };
@@ -28,8 +25,8 @@ class Prediction {
       return lhs_stamp == rhs_stamp ? lhs.stampReceived() > rhs.stampReceived()
                                     : lhs_stamp > rhs_stamp;
     }
-    inline bool operator()(const Prediction::Ptr &lhs,
-                           const Prediction::Ptr &rhs) const {
+    inline bool operator()(const std::shared_ptr<Prediction> &lhs,
+                           const std::shared_ptr<Prediction> &rhs) const {
       const auto &lhs_stamp = lhs->getStamp();
       const auto &rhs_stamp = rhs->getStamp();
       return lhs_stamp == rhs_stamp
@@ -38,23 +35,23 @@ class Prediction {
     }
   };
 
-  inline explicit Prediction(const typename Data_T::ConstPtr &data,
-                             const typename PredictionModel_T::Ptr &model)
+  inline explicit Prediction(const std::shared_ptr<Data_T const> &data,
+                             const std::shared_ptr<PredictionModel_T> &model)
       : data_{data}, model_{model} {}
 
-  inline explicit Prediction(const typename Data_T::ConstPtr &data,
-                             const typename StateSpace_T::ConstPtr &state_space,
-                             const typename PredictionModel_T::Ptr &model)
+  inline explicit Prediction(const std::shared_ptr<Data_T const> &data,
+                             const std::shared_ptr<StateSpace_T const> &state_space,
+                             const std::shared_ptr<PredictionModel_T> &model)
       : data_{data}, state_space_{state_space}, model_{model} {}
 
   virtual ~Prediction() = default;
 
-  inline typename PredictionModel_T::Result::Ptr operator()(const Time_T &until, StateIterator_T states) {
+  inline std::shared_ptr<typename PredictionModel_T::Result> operator()(const Time_T &until, StateIterator_T states) {
     return state_space_ ? model_->apply(data_, state_space_, until, states)
                         : model_->apply(data_, until, states);
   }
 
-  inline typename PredictionModel_T::Result::Ptr apply(const Time_T &until, StateIterator_T states) {
+  inline std::shared_ptr<typename PredictionModel_T::Result> apply(const Time_T &until, StateIterator_T states) {
     return state_space_ ? model_->apply(data_, state_space_, until, states)
                         : model_->apply(data_, until, states);
   }
@@ -67,12 +64,12 @@ class Prediction {
 
   inline std::string const &getModelName() const { return model_->getName(); }
 
-  inline typename PredictionModel_T::Ptr getModel() const { return model_; }
+  inline std::shared_ptr<PredictionModel_T> getModel() const { return model_; }
 
  private:
-  typename Data_T::ConstPtr data_;
-  typename StateSpace_T::ConstPtr state_space_;
-  typename PredictionModel_T::Ptr model_;
+  std::shared_ptr<Data_T const> data_;
+  std::shared_ptr<StateSpace_T const> state_space_;
+  std::shared_ptr<PredictionModel_T> model_;
 };
 }  // namespace muse_smc
 

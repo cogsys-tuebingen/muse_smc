@@ -7,29 +7,27 @@ template <typename SMC_T, typename prediction_model_t, typename prediction_t,
           typename state_space_provider_t>
 class PredictionRelay {
  public:
-  using Ptr = std::shared_ptr<PredictionRelay>;
-  using ConstPtr = std::shared_ptr<PredictionRelay const>;
-
-  inline explicit PredictionRelay(const typename SMC_T::Ptr &smc) : smc_{smc} {}
+  inline explicit PredictionRelay(const std::shared_ptr<SMC_T> &smc)
+      : smc_{smc} {}
 
   virtual ~PredictionRelay() = default;
 
-  inline void relay(const typename prediction_model_t::Ptr &p,
-                    const typename data_provider_t::Ptr &d) {
-    auto callback = [this, p](const typename data_t::ConstPtr &data) {
-      typename prediction_t::Ptr prediction(new prediction_t(data, p));
+  inline void relay(const std::shared_ptr<prediction_model_t> &p,
+                    const std::shared_ptr<data_provider_t> &d) {
+    auto callback = [this, p](const std::shared_ptr<data_t const> &data) {
+      std::shared_ptr<prediction_t> prediction(new prediction_t(data, p));
       smc_->addPrediction(prediction);
     };
     handle_ = d->connect(callback);
   }
 
-  inline void relay(const typename prediction_model_t::Ptr &p,
-                    const typename data_provider_t::Ptr &d,
-                    const typename state_space_provider_t::Ptr &s) {
-    auto callback = [this, p, s](const typename data_t::ConstPtr &data) {
+  inline void relay(const std::shared_ptr<prediction_model_t> &p,
+                    const std::shared_ptr<data_provider_t> &d,
+                    const std::shared_ptr<state_space_provider_t> &s) {
+    auto callback = [this, p, s](const std::shared_ptr<data_t const> &data) {
       const auto ss = s->getStateSpace();
       if (ss) {
-        typename prediction_t::Ptr prediction(new prediction_t(data, ss, p));
+        std::shared_ptr<prediction_t> prediction(new prediction_t(data, ss, p));
         smc_->addPrediction(prediction);
       } else {
         std::cerr << "[PredictionRelay]: " << s->getName()
@@ -43,8 +41,8 @@ class PredictionRelay {
   }
 
  private:
-  typename SMC_T::Ptr smc_;
-  typename data_provider_t::connection_t::Ptr handle_;
+  std::shared_ptr<SMC_T> smc_;
+  std::shared_ptr<typename data_provider_t::connection_t> handle_;
 };
 }  // namespace muse_smc
 
