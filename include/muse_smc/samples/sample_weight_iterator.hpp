@@ -9,22 +9,22 @@
 #include <muse_smc/smc/traits/sample.hpp>
 
 namespace muse_smc {
-template <typename sample_t>
+template <typename Sample_T, typename State_T, typename Weight_T>
 class WeightIterator
-    : public std::iterator<std::random_access_iterator_tag, double> {
+    : public std::iterator<std::random_access_iterator_tag, Weight_T> {
  public:
-  using state_t = typename traits::State<sample_t>::type;
-  using parent = std::iterator<std::random_access_iterator_tag, double>;
+  using parent = std::iterator<std::random_access_iterator_tag, Weight_T>;
   using reference = typename parent::reference;
-  using notify_update = cslibs_utility::common::delegate<void(const double &)>;
+  using notify_update =
+      cslibs_utility::common::delegate<void(const Weight_T &)>;
 
-  inline explicit WeightIterator(sample_t *begin, notify_update update)
+  inline explicit WeightIterator(Sample_T *begin, notify_update update)
       : data_(begin), update_(update) {}
 
   virtual ~WeightIterator() = default;
 
-  inline iterator &operator++() {
-    update_(data_->weight);
+  inline WeightIterator &operator++() {
+    update_(data_->weight());
     ++data_;
     return *this;
   }
@@ -37,25 +37,25 @@ class WeightIterator
     return !(*this == _other);
   }
 
-  inline reference operator*() const { return data_->weight; }
+  inline reference operator*() const { return data_->weight(); }
 
-  inline const state_t &state() const { return data_->state; }
+  inline State_T const &state() const { return data_->state(); }
 
  private:
-  sample_t *data_;
+  Sample_T *data_{nullptr};
   notify_update update_;
 };
 
-template <typename sample_t>
+template <typename Sample_T, typename State_T, typename Weight_T>
 class WeightIteration {
  public:
   using sample_vector_t =
-      cslibs_utility::buffered::buffered_vector<sample_t,
-                                                typename sample_t::allocator_t>;
+      cslibs_utility::buffered::buffered_vector<Sample_T,
+                                                typename Sample_T::allocator_t>;
   using notify_update = cslibs_utility::common::delegate<void(const double)>;
   using notify_touch = cslibs_utility::common::delegate<void()>;
   using notify_finished = cslibs_utility::common::delegate<void()>;
-  using iterator_t = WeightIterator<sample_t>;
+  using iterator_t = WeightIterator<Sample_T, State_T, Weight_T>;
   using const_iterator_t = typename sample_vector_t::const_iterator;
 
   inline WeightIteration(sample_vector_t &data, notify_touch touch,

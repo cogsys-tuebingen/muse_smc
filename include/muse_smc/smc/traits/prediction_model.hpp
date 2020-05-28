@@ -8,13 +8,13 @@
 
 namespace muse_smc {
 namespace traits {
-template <typename Sample_T>
+template <typename Hypothesis_T>
 struct PredictionModel {
-  using sample_set_t = typename traits::SampleSet<Sample_T>::type;
+  using sample_set_t = typename traits::SampleSet<Hypothesis_T>::type;
   using state_iterator_t = typename sample_set_t::state_iterator_t;
-  using state_space_t = typename traits::StateSpace<Sample_T>::type;
-  using data_t = typename traits::Data<Sample_T>::type;
-  using time_t = typename traits::Time<Sample_T>::type;
+  using state_space_t = typename traits::StateSpace<Hypothesis_T>::type;
+  using data_t = typename traits::Data<Hypothesis_T>::type;
+  using time_t = typename traits::Time<Hypothesis_T>::type;
   using type = muse_smc::PredictionModel<data_t, state_space_t, state_iterator_t, time_t>;
 };
 }  // namespace traits

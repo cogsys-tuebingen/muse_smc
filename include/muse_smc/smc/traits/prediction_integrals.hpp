@@ -6,9 +6,9 @@
 
 namespace muse_smc {
 namespace traits {
-template <typename Sample_T>
+template <typename Hypothesis_T>
 struct PredictionIntegrals {
-  using prediction_model_t = typename traits::PredictionModel<Sample_T>::type;
+  using prediction_model_t = typename traits::PredictionModel<Hypothesis_T>::type;
   using prediction_result_t = typename prediction_model_t::Result;
   using type = muse_smc::PredictionIntegrals<prediction_result_t>;
 };

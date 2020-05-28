@@ -27,9 +27,9 @@ class Residual {
       for (std::size_t i = 0; i < size; ++i) {
         const auto &sample = p_t_1[i];
         u[i] = (i + u_static) / size;
-        std::size_t copies = std::floor(sample.weight * size);
+        std::size_t copies = std::floor(sample.weight() * size);
 
-        w_residual[i] = size * sample.weight - copies;
+        w_residual[i] = size * sample.weight() - copies;
         n_w_residual += w_residual[i];
 
         for (std::size_t i = 0; i < copies && i_p_t_size < size;
@@ -89,9 +89,9 @@ class Residual {
       for (std::size_t i = 0; i < size; ++i) {
         const auto &sample_p_t_1 = p_t_1[i];
         u[i] = (i + u_static) / size;
-        std::size_t copies = std::floor(sample_p_t_1.weight * size);
+        std::size_t copies = std::floor(sample_p_t_1.weight() * size);
 
-        w_residual[i] = size * sample_p_t_1.weight - copies;
+        w_residual[i] = size * sample_p_t_1.weight() - copies;
         n_w_residual += w_residual[i];
 
         typename SampleSet_T::sample_t sample;
@@ -100,7 +100,7 @@ class Residual {
           const double recovery_probability = rng_recovery.get();
           if (recovery_probability < recovery_random_pose_probability) {
             uniform_pose_sampler->apply(sample);
-            sample.weight = recovery_probability;
+            sample.weight() = recovery_probability;
             i_p_t.insert(sample);
           } else {
             i_p_t.insert(sample);
@@ -131,7 +131,7 @@ class Residual {
         const double recovery_probability = rng_recovery.get();
         if (recovery_probability < recovery_random_pose_probability) {
           uniform_pose_sampler->apply(sample);
-          sample.weight = recovery_probability;
+          sample.weight() = recovery_probability;
           i_p_t.insert(sample);
         } else {
           i_p_t.insert(*p_t_1_it);

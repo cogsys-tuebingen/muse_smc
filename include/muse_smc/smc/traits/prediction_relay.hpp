@@ -8,15 +8,15 @@
 
 namespace muse_smc {
 namespace traits {
-template <typename Sample_T>
+template <typename Hypothesis_T>
 struct PredictionRelay {
-  using prediction_model_t = typename traits::PredictionModel<Sample_T>::type;
-  using prediction_t = typename traits::Prediction<Sample_T>::type;
-  using data_provider_t = typename traits::DataProvider<Sample_T>::type;
-  using data_t = typename traits::Data<Sample_T>::type;
+  using prediction_model_t = typename traits::PredictionModel<Hypothesis_T>::type;
+  using prediction_t = typename traits::Prediction<Hypothesis_T>::type;
+  using data_provider_t = typename traits::DataProvider<Hypothesis_T>::type;
+  using data_t = typename traits::Data<Hypothesis_T>::type;
   using state_space_provider_t =
-      typename traits::StateSpaceProvider<Sample_T>::type;
-  using smc_t = muse_smc::SMC<Sample_T>;
+      typename traits::StateSpaceProvider<Hypothesis_T>::type;
+  using smc_t = muse_smc::SMC<Hypothesis_T>;
 
   using type = muse_smc::PredictionRelay<smc_t, prediction_model_t,
                                          prediction_t, data_provider_t, data_t,

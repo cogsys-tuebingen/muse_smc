@@ -10,14 +10,14 @@
 
 namespace muse_smc {
 namespace traits {
-template <typename Sample_T>
+template <typename Hypothesis_T>
 struct Update {
-  using sample_set_t = typename traits::SampleSet<Sample_T>::type;
+  using sample_set_t = typename traits::SampleSet<Hypothesis_T>::type;
   using weight_iterator_t = typename sample_set_t::weight_iterator_t;
-  using state_space_t = typename traits::StateSpace<Sample_T>::type;
-  using data_t = typename traits::Data<Sample_T>::type;
-  using update_model_t = typename traits::UpdateModel<Sample_T>::type;
-  using time_t = typename traits::Time<Sample_T>::type;
+  using state_space_t = typename traits::StateSpace<Hypothesis_T>::type;
+  using data_t = typename traits::Data<Hypothesis_T>::type;
+  using update_model_t = typename traits::UpdateModel<Hypothesis_T>::type;
+  using time_t = typename traits::Time<Hypothesis_T>::type;
 
   using type = muse_smc::Update<update_model_t, data_t, state_space_t, weight_iterator_t, time_t>;
 };

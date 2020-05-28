@@ -12,19 +12,19 @@
 #include <string>
 
 namespace muse_smc {
-template <typename Sample_T, typename Time_T>
+template <typename Sample_T, typename State_T, typename Weight_T, typename Time_T>
 class EIGEN_ALIGN16 SampleSet {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   using sample_t = Sample_T;
-  using type = SampleSet<sample_t, Time_T>;
+  using type = SampleSet<Sample_T, State_T, Weight_T, Time_T>;
   using sample_vector_t =
-      cslibs_utility::buffered::buffered_vector<sample_t,
-                                                typename sample_t::allocator_t>;
-  using sample_density_t = SampleDensity<sample_t>;
-  using sample_insertion_t = SampleInsertion<sample_t>;
-  using state_iterator_t = StateIteration<sample_t, Time_T>;
-  using weight_iterator_t = WeightIteration<sample_t>;
+      cslibs_utility::buffered::buffered_vector<Sample_T,
+                                                typename Sample_T::allocator_t>;
+  using sample_density_t = SampleDensity<Sample_T>;
+  using sample_insertion_t = SampleInsertion<Sample_T>;
+  using state_iterator_t = StateIteration<Sample_T, State_T, Weight_T, Time_T>;
+  using weight_iterator_t = WeightIteration<Sample_T, State_T, Weight_T>;
   using weight_distribution_t =
       cslibs_math::statistics::Distribution<double, 1>;
 
@@ -137,8 +137,8 @@ class EIGEN_ALIGN16 SampleSet {
 
     weight_distribution_.reset();
     for (auto &s : *p_t_1_) {
-      s.weight /= weight_sum_;
-      weight_distribution_.add(s.weight);
+      s.weight() /= weight_sum_;
+      weight_distribution_.add(s.weight());
     }
     maximum_weight_ /= weight_sum_;
     weight_sum_ = 1.0;
@@ -149,7 +149,7 @@ class EIGEN_ALIGN16 SampleSet {
 
     weight_distribution_.reset();
     for (auto &s : *p_t_1_) {
-      s.weight = 1.0;
+      s.weight() = 1.0;
       weight_distribution_.add(1.0);
     }
 
@@ -238,7 +238,7 @@ class EIGEN_ALIGN16 SampleSet {
   }
 
   inline void insertionUpdate(const sample_t &sample) {
-    weightUpdate(sample.weight);
+    weightUpdate(sample.weight());
     p_t_1_density_->insert(sample);
   }
 

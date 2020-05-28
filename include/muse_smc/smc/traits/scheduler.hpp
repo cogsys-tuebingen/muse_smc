@@ -9,11 +9,11 @@
 
 namespace muse_smc {
 namespace traits {
-template <typename Sample_T>
+template <typename Hypothesis_T>
 struct Scheduler {
-  using sample_set_t = typename traits::SampleSet<Sample_T>::type;
-  using update_t = typename traits::Update<Sample_T>::type;
-  using resampling_t = typename traits::Resampling<Sample_T>::type;
+  using sample_set_t = typename traits::SampleSet<Hypothesis_T>::type;
+  using update_t = typename traits::Update<Hypothesis_T>::type;
+  using resampling_t = typename traits::Resampling<Hypothesis_T>::type;
   using type = muse_smc::Scheduler<sample_set_t, update_t, resampling_t>;
 };
 }  // namespace traits

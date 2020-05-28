@@ -44,7 +44,7 @@ class SampleInsertion {
 
     sample_t &inserted = data_.back();
     /// after insertion each particle is equally likely
-    inserted.weight = keep_weights_ ? inserted.weight : 1.0;
+    inserted.weight() = keep_weights_ ? inserted.weight() : 1.0;
     update_(inserted);
   }
 
@@ -57,7 +57,7 @@ class SampleInsertion {
 
     sample_t &inserted = data_.back();
     /// after insertion each particle is equally likely
-    inserted.weight = keep_weights_ ? inserted.weight : 1.0;
+    inserted.weight() = keep_weights_ ? inserted.weight() : 1.0;
     update_(inserted);
   }
 

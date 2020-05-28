@@ -10,6 +10,12 @@ template <typename Hypothesis_T, typename State_T, typename StateAccess_T, typen
           typename Time_T>
 class EIGEN_ALIGN16 Sample {
  public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+  using allocator_t = Eigen::aligned_allocator<Sample>;
+  using state_t = State_T;
+  using weight_t = Weight_T;
+
   inline Sample() = default;
   inline Sample(const Hypothesis_T &hypothesis, const Weight_T weight)
       : hypothesis_{hypothesis}, weight_{weight} {}

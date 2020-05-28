@@ -8,9 +8,9 @@
 
 namespace muse_smc {
 namespace traits {
-template <typename Sample_T>
+template <typename Hypothesis_T>
 struct StatePublisher {
-  using sample_set_t = typename traits::SampleSet<Sample_T>::type;
+  using sample_set_t = typename traits::SampleSet<Hypothesis_T>::type;
   using type = muse_smc::StatePublisher<sample_set_t>;
 };
 }  // namespace traits

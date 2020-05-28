@@ -7,10 +7,11 @@
 
 namespace muse_smc {
 namespace traits {
-template <typename Sample_T>
+template <typename Hypothesis_T>
 struct UniformSampling {
-  using sample_set_t = typename traits::SampleSet<Sample_T>::type;
-  using type = muse_smc::UniformSampling<Sample_T, sample_set_t>;
+  using sample_set_t = typename traits::SampleSet<Hypothesis_T>::type;
+  using sample_t = typename traits::Sample<Hypothesis_T>::type;
+  using type = muse_smc::UniformSampling<sample_t, sample_set_t>;
 };
 }  // namespace traits
 }  // namespace muse_smc

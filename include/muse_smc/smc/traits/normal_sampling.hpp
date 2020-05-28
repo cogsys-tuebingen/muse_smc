@@ -7,11 +7,11 @@
 
 namespace muse_smc {
 namespace traits {
-template <typename Sample_T>
+template <typename Hypothesis_T>
 struct NormalSampling {
-  using sample_set_t = typename traits::SampleSet<Sample_T>::type;
-  using state_t = typename traits::State<Sample_T>::type;
-  using covariance_t = typename traits::Covariance<Sample_T>::type;
+  using sample_set_t = typename traits::SampleSet<Hypothesis_T>::type;
+  using state_t = typename traits::State<Hypothesis_T>::type;
+  using covariance_t = typename traits::Covariance<Hypothesis_T>::type;
   using type = muse_smc::NormalSampling<sample_set_t, state_t, covariance_t>;
 };
 }  // namespace traits

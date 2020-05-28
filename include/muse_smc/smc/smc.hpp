@@ -29,34 +29,34 @@
  */
 
 namespace muse_smc {
-template <typename Sample_T>
+template <typename Hypothesis_T>
 class SMC {
  protected:
-  using time_t = typename traits::Time<Sample_T>::type;
-  using state_t = typename traits::State<Sample_T>::type;
-  using covariance_t = typename traits::Covariance<Sample_T>::type;
-  using prediction_t = typename traits::Prediction<Sample_T>::type;
-  using update_t = typename traits::Update<Sample_T>::type;
-  using sample_set_t = typename traits::SampleSet<Sample_T>::type;
-  using uniform_sampling_t = typename traits::UniformSampling<Sample_T>::type;
-  using normal_sampling_t = typename traits::NormalSampling<Sample_T>::type;
-  using resampling_t = typename traits::Resampling<Sample_T>::type;
-  using state_publisher_t = typename traits::StatePublisher<Sample_T>::type;
+  using time_t = typename traits::Time<Hypothesis_T>::type;
+  using state_t = typename traits::State<Hypothesis_T>::type;
+  using covariance_t = typename traits::Covariance<Hypothesis_T>::type;
+  using prediction_t = typename traits::Prediction<Hypothesis_T>::type;
+  using update_t = typename traits::Update<Hypothesis_T>::type;
+  using sample_set_t = typename traits::SampleSet<Hypothesis_T>::type;
+  using uniform_sampling_t = typename traits::UniformSampling<Hypothesis_T>::type;
+  using normal_sampling_t = typename traits::NormalSampling<Hypothesis_T>::type;
+  using resampling_t = typename traits::Resampling<Hypothesis_T>::type;
+  using state_publisher_t = typename traits::StatePublisher<Hypothesis_T>::type;
   using prediction_integrals_t =
-      typename traits::PredictionIntegrals<Sample_T>::type;
-  using scheduler_t = typename traits::Scheduler<Sample_T>::type;
+      typename traits::PredictionIntegrals<Hypothesis_T>::type;
+  using scheduler_t = typename traits::Scheduler<Hypothesis_T>::type;
   using update_queue_t = cslibs_utility::synchronized::priority_queue<
-      typename traits::Update<Sample_T>::type::Ptr,
-      typename traits::Update<Sample_T>::type::Greater>;
+      typename traits::Update<Hypothesis_T>::type::Ptr,
+      typename traits::Update<Hypothesis_T>::type::Greater>;
   using prediction_queue_t = cslibs_utility::synchronized::priority_queue<
-      typename traits::Prediction<Sample_T>::type::Ptr,
-      typename traits::Prediction<Sample_T>::type::Greater>;
+      typename traits::Prediction<Hypothesis_T>::type::Ptr,
+      typename traits::Prediction<Hypothesis_T>::type::Greater>;
   using duration_map_t =
       std::unordered_map<std::size_t, cslibs_time::statistics::DurationLowpass>;
 
  public:
   /// utility typedefs
-  using Ptr = std::shared_ptr<SMC<Sample_T>>;
+  using Ptr = std::shared_ptr<SMC<Hypothesis_T>>;
 
   /**
    * @brief SMC default constructor.
@@ -164,7 +164,7 @@ class SMC {
       const auto &stamp = update->getStamp();
 
       cslibs_time::statistics::DurationLowpass &lag = lag_map_[id];
-      lag += typename traits::Duration<Sample_T>::type{static_cast<int64_t>(
+      lag += typename traits::Duration<Hypothesis_T>::type{static_cast<int64_t>(
           std::max(0L, update->stampReceived().nanoseconds() -
                            update->getStamp().nanoseconds()))};
       if (lag.duration() >= lag_) {
@@ -200,7 +200,7 @@ class SMC {
                                          const covariance_t &covariance) {
     std::unique_lock<std::mutex> l(request_state_initialization_mutex_);
     request_state_initialization_.reset(
-        new typename traits::RequestStateInitialization<Sample_T>::type{
+        new typename traits::RequestStateInitialization<Hypothesis_T>::type{
             time, state, covariance});
   }
 
@@ -211,7 +211,7 @@ class SMC {
   void requestUniformInitialization(const time_t &time) {
     std::unique_lock<std::mutex> l(request_uniform_initialization_mutex_);
     request_uniform_initialization_.reset(
-        new typename traits::RequestUniformInitialization<Sample_T>::type{time});
+        new typename traits::RequestUniformInitialization<Hypothesis_T>::type{time});
   }
 
  protected:
@@ -233,10 +233,10 @@ class SMC {
 
   /// requests
   std::mutex request_state_initialization_mutex_;
-  typename traits::RequestStateInitialization<Sample_T>::type::Ptr
+  typename traits::RequestStateInitialization<Hypothesis_T>::type::Ptr
       request_state_initialization_;
   std::mutex request_uniform_initialization_mutex_;
-  typename traits::RequestUniformInitialization<Sample_T>::type::Ptr
+  typename traits::RequestUniformInitialization<Hypothesis_T>::type::Ptr
       request_uniform_initialization_;
 
   /// processing queues
@@ -244,7 +244,7 @@ class SMC {
   update_queue_t delayed_update_queue_;
   prediction_queue_t prediction_queue_;
   duration_map_t lag_map_;
-  typename traits::Duration<Sample_T>::type lag_;
+  typename traits::Duration<Hypothesis_T>::type lag_;
   std::size_t lag_source_;
   bool enable_lag_correction_{false};
   bool has_valid_state_{false};

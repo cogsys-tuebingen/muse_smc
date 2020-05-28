@@ -23,8 +23,8 @@ class WheelOfFortune {
 
     for (std::size_t i = 0; i < size; ++i) {
       beta += 2 * w_max * rng.get();
-      while (beta > p_t_1[index].weight) {
-        beta -= p_t_1[index].weight;
+      while (beta > p_t_1[index].weight()) {
+        beta -= p_t_1[index].weight();
         index = (index + 1) % size;
       }
       i_p_t.insert(p_t_1[index]);
@@ -55,15 +55,15 @@ class WheelOfFortune {
 
     for (std::size_t i = 0; i < size; ++i) {
       beta += 2 * w_max * rng.get();
-      while (beta > p_t_1[index].weight) {
-        beta -= p_t_1[index].weight;
+      while (beta > p_t_1[index].weight()) {
+        beta -= p_t_1[index].weight();
         index = (index + 1) % size;
       }
 
       const double recovery_propability = rng_recovery.get();
       if (recovery_propability < recovery_random_pose_probability) {
         uniform_pose_sampler->apply(sample);
-        sample.weight = recovery_propability;
+        sample.weight() = recovery_propability;
       } else {
         i_p_t.insert(p_t_1[index]);
       }

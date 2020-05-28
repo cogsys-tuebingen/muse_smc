@@ -29,7 +29,7 @@ class Stratified {
     {
       auto p_t_1_it = p_t_1.begin();
       double cumsum_last = 0.0;
-      double cumsum = p_t_1_it->weight;
+      double cumsum = p_t_1_it->weight();
 
       auto in_range = [&cumsum, &cumsum_last](double u) {
         return u >= cumsum_last && u < cumsum;
@@ -39,7 +39,7 @@ class Stratified {
         while (!in_range(u_r)) {
           ++p_t_1_it;
           cumsum_last = cumsum;
-          cumsum += p_t_1_it->weight;
+          cumsum += p_t_1_it->weight();
         }
         i_p_t.insert(*p_t_1_it);
       }
@@ -75,7 +75,7 @@ class Stratified {
       cslibs_math::random::Uniform<double, 1> rng_recovery(0.0, 1.0);
       auto p_t_1_it = p_t_1.begin();
       double cumsum_last = 0.0;
-      double cumsum = p_t_1_it->weight;
+      double cumsum = p_t_1_it->weight();
 
       auto in_range = [&cumsum, &cumsum_last](double u) {
         return u >= cumsum_last && u < cumsum;
@@ -87,12 +87,12 @@ class Stratified {
         while (!in_range(u_r)) {
           ++p_t_1_it;
           cumsum_last = cumsum;
-          cumsum += p_t_1_it->weight;
+          cumsum += p_t_1_it->weight();
         }
         const double recovery_probability = rng_recovery.get();
         if (recovery_probability < recovery_random_pose_probability) {
           uniform_pose_sampler->apply(sample);
-          sample.weight = recovery_probability;
+          sample.weight() = recovery_probability;
           i_p_t.insert(sample);
         } else {
           i_p_t.insert(*p_t_1_it);

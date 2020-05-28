@@ -9,11 +9,11 @@
 
 namespace muse_smc {
 namespace traits {
-template <typename Sample_T>
+template <typename Hypothesis_T>
 struct Resampling {
-  using sample_set_t = typename traits::SampleSet<Sample_T>::type;
-  using uniform_sampling_t = typename traits::UniformSampling<Sample_T>::type;
-  using normal_sampling_t = typename traits::NormalSampling<Sample_T>::type;
+  using sample_set_t = typename traits::SampleSet<Hypothesis_T>::type;
+  using uniform_sampling_t = typename traits::UniformSampling<Hypothesis_T>::type;
+  using normal_sampling_t = typename traits::NormalSampling<Hypothesis_T>::type;
   using type = muse_smc::Resampling<sample_set_t, uniform_sampling_t, normal_sampling_t>;
 };
 }  // namespace traits

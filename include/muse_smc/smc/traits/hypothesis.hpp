@@ -39,8 +39,8 @@ template <typename Hypothesis_T>
 struct StateAccess {
   static_assert(!std::is_same<Hypothesis_T, Hypothesis_T>::value,
                 "Trait not overriden for sample type. Please define field type.");
-  // inline State<Hypothesis_T>::type & get(Hypothesis_T &h);
-  // inline State<Hypothesis_T>::type const & get(const Hypothesis_T &h);
+  // static inline State<Hypothesis_T>::type & get(Hypothesis_T &h);
+  // static inline State<Hypothesis_T>::type const & get(const Hypothesis_T &h);
 };
 
 /**
