@@ -26,7 +26,7 @@ class EIGEN_ALIGN16 SampleSet {
   using state_iterator_t = StateIteration<Sample_T, State_T, Weight_T, Time_T>;
   using weight_iterator_t = WeightIteration<Sample_T, State_T, Weight_T>;
   using weight_distribution_t =
-      cslibs_math::statistics::Distribution<double, 1>;
+      cslibs_math::statistics::Distribution<Weight_T, 1>;
 
   /**
    * @brief SampleSet deleted - non-copyable
@@ -151,7 +151,7 @@ class EIGEN_ALIGN16 SampleSet {
     }
 
     maximum_weight_ = 1.0;
-    weight_sum_ = static_cast<double>(p_t_1_->size());
+    weight_sum_ = static_cast<Weight_T>(p_t_1_->size());
   }
 
   inline std::size_t getMinimumSampleSize() const {
@@ -170,11 +170,11 @@ class EIGEN_ALIGN16 SampleSet {
 
   inline void setStamp(const Time_T &time) { stamp_ = time; }
 
-  inline double getMinimumWeight() const { return minimum_weight_; }
+  inline Weight_T getMinimumWeight() const { return minimum_weight_; }
 
-  inline double getMaximumWeight() const { return maximum_weight_; }
+  inline Weight_T getMaximumWeight() const { return maximum_weight_; }
 
-  inline double getAverageWeight() const {
+  inline Weight_T getAverageWeight() const {
     return weight_distribution_.getMean();
   }
 
@@ -182,9 +182,9 @@ class EIGEN_ALIGN16 SampleSet {
     return weight_distribution_;
   }
 
-  inline double getWeightSum() const { return weight_sum_; }
+  inline Weight_T getWeightSum() const { return weight_sum_; }
 
-  inline double getWeightVariance() const {
+  inline Weight_T getWeightVariance() const {
     return weight_distribution_.getVariance();
   }
 
@@ -208,10 +208,10 @@ class EIGEN_ALIGN16 SampleSet {
   std::size_t minimum_sample_size_{0};
   std::size_t maximum_sample_size_{0};
 
-  double maximum_weight_{0.0};
-  double minimum_weight_{std::numeric_limits<double>::max()};
+  Weight_T maximum_weight_{0.0};
+  Weight_T minimum_weight_{std::numeric_limits<Weight_T>::max()};
   weight_distribution_t weight_distribution_;
-  double weight_sum_{0.0};
+  Weight_T weight_sum_{0.0};
 
   std::shared_ptr<sample_vector_t> p_t_1_{nullptr};
   mutable std::shared_ptr<sample_density_t> p_t_1_density_{nullptr};
@@ -222,13 +222,13 @@ class EIGEN_ALIGN16 SampleSet {
   inline void weightStatisticReset() {
     maximum_weight_ = 0.0;
     minimum_weight_ =
-        std::numeric_limits<double>::max();  /// for update functions that yield
+        std::numeric_limits<Weight_T>::max();  /// for update functions that yield
                                              /// values higher than 1.0
     weight_distribution_.reset();
     weight_sum_ = 0.0;
   }
 
-  inline void weightUpdate(const double weight) {
+  inline void weightUpdate(const Weight_T weight) {
     weight_sum_ += weight;
     maximum_weight_ = weight > maximum_weight_ ? weight : maximum_weight_;
     minimum_weight_ = weight < minimum_weight_ ? weight : minimum_weight_;
