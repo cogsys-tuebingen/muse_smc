@@ -9,7 +9,7 @@ template<typename Hypothesis_T>
 struct Sample {
   using state_t = typename State<Hypothesis_T>::type;
   using state_access_t = StateAccess<Hypothesis_T>;
-  using weight_t = double;
+  using weight_t = typename Weight<Hypothesis_T>::type;
   using time_t = typename Time<Hypothesis_T>::type;
   using type = muse_smc::Sample<Hypothesis_T, state_t, state_access_t, weight_t, time_t>;
 };

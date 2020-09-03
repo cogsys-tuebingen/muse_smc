@@ -94,6 +94,12 @@ struct Rate {
   static_assert(!std::is_same<Hypothesis_T, Hypothesis_T>::value,
                 "Trait not overriden for sample type. Please define field type.");
 };
+
+template <typename Hypothesis_T>
+struct Weight {
+  static_assert(!std::is_same<Hypothesis_T, Hypothesis_T>::value,
+                "Trait not overriden for sample type. Please define field type.");
+};
 }  // namespace traits
 }  // namespace muse_smc
 
