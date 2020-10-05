@@ -6,7 +6,7 @@
 
 namespace muse_smc {
 template <typename SampleSet_T, typename UniformSampling_T,
-          typename NormalSampling_T>
+          typename NormalSampling_T, typename Weight_T>
 class Resampling {
  public:
   inline Resampling() = default;
@@ -15,9 +15,9 @@ class Resampling {
   virtual void setup(
       const std::shared_ptr<UniformSampling_T> &uniform_pose_sampler,
       const std::shared_ptr<NormalSampling_T> &normal_pose_sampler,
-      const double recovery_alpha_fast = 0.0,
-      const double recovery_alpha_slow = 0.0,
-      const double variance_threshold = 0.0) {
+      const Weight_T recovery_alpha_fast = Weight_T{0.0} ,
+      const Weight_T recovery_alpha_slow = Weight_T{0.0} ,
+      const Weight_T variance_threshold = Weight_T{0.0}) {
     uniform_pose_sampler_ = uniform_pose_sampler;
     normal_pose_sampler_ = normal_pose_sampler;
     recovery_alpha_fast_ = recovery_alpha_fast;
@@ -26,7 +26,7 @@ class Resampling {
   }
 
   inline void apply(SampleSet_T &sample_set) {
-    if (sample_set.getWeightSum() == 0.0) {
+    if (sample_set.getWeightSum() == Weight_T{0.0}) {
       std::cerr << "[MuseSMC]: All particle weights are zero. \n";
       return;
     }
@@ -42,43 +42,43 @@ class Resampling {
       resetRecovery();
     };
 
-    recovery_random_pose_probability_ == 0.0 ? do_apply() : do_apply_recovery();
+    recovery_random_pose_probability_ == Weight_T{0.0} ? do_apply() : do_apply_recovery();
   }
 
   inline void resetRecovery() {
-    recovery_fast_ = 0.0;
-    recovery_slow_ = 0.0;
+    recovery_fast_ = Weight_T{0.0} ;
+    recovery_slow_ = Weight_T{0.0} ;
   }
 
   inline void updateRecovery(SampleSet_T &particle_set) {
-    const double weight_average = particle_set.getAverageWeight();
-    if (recovery_slow_ == 0.0) {
+    const Weight_T weight_average = particle_set.getAverageWeight();
+    if (recovery_slow_ == Weight_T{0.0}) {
       recovery_slow_ = weight_average;
     } else {
       recovery_slow_ +=
           recovery_alpha_slow_ * (weight_average - recovery_slow_);
     }
 
-    if (recovery_fast_ == 0.0) {
+    if (recovery_fast_ == Weight_T{0.0}) {
       recovery_fast_ = weight_average;
     } else {
       recovery_fast_ +=
           recovery_alpha_fast_ * (weight_average - recovery_fast_);
     }
 
-    if (recovery_slow_ != 0.0) {
+    if (recovery_slow_ != Weight_T{0.0}) {
       recovery_random_pose_probability_ =
-          std::max(0.0, 1.0 - recovery_fast_ / recovery_slow_);
+          std::max(Weight_T{0.0} , Weight_T{1.0}  - recovery_fast_ / recovery_slow_);
     }
   }
 
  protected:
-  double recovery_alpha_fast_{0.0};
-  double recovery_alpha_slow_{0.0};
-  double recovery_fast_{0.0};
-  double recovery_slow_{0.0};
-  double recovery_random_pose_probability_{0.0};
-  double variance_treshold_{0.0};
+  Weight_T recovery_alpha_fast_{0.0};
+  Weight_T recovery_alpha_slow_{0.0};
+  Weight_T recovery_fast_{0.0};
+  Weight_T recovery_slow_{0.0};
+  Weight_T recovery_random_pose_probability_{0.0};
+  Weight_T variance_treshold_{0.0};
   std::shared_ptr<UniformSampling_T> uniform_pose_sampler_;
   std::shared_ptr<NormalSampling_T> normal_pose_sampler_;
 

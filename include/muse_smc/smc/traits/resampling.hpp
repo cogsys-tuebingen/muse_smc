@@ -14,7 +14,8 @@ struct Resampling {
   using sample_set_t = typename traits::SampleSet<Hypothesis_T>::type;
   using uniform_sampling_t = typename traits::UniformSampling<Hypothesis_T>::type;
   using normal_sampling_t = typename traits::NormalSampling<Hypothesis_T>::type;
-  using type = muse_smc::Resampling<sample_set_t, uniform_sampling_t, normal_sampling_t>;
+  using weight_t = typename traits::Weight<Hypothesis_T>::type;
+  using type = muse_smc::Resampling<sample_set_t, uniform_sampling_t, normal_sampling_t, weight_t>;
 };
 }  // namespace traits
 }  // namespace muse_smc

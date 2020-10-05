@@ -14,7 +14,7 @@ template<typename Hypothesis_T>
 struct SampleSet {
     using sample_t = typename traits::Sample<Hypothesis_T>::type;
     using state_t = typename traits::State<Hypothesis_T>::type;
-    using weight_t = double;
+    using weight_t = typename traits::Weight<Hypothesis_T>::type;
     using time_t = typename traits::Time<Hypothesis_T>::type;
     using type = muse_smc::SampleSet<sample_t, state_t, weight_t, time_t>;
     /// put a template switch here ....

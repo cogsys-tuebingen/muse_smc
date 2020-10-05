@@ -52,7 +52,7 @@ class WeightIteration {
   using sample_vector_t =
       cslibs_utility::buffered::buffered_vector<Sample_T,
                                                 typename Sample_T::allocator_t>;
-  using notify_update = cslibs_utility::common::delegate<void(const double)>;
+  using notify_update = cslibs_utility::common::delegate<void(const Weight_T)>;
   using notify_touch = cslibs_utility::common::delegate<void()>;
   using notify_finished = cslibs_utility::common::delegate<void()>;
   using iterator_t = WeightIterator<Sample_T, State_T, Weight_T>;

@@ -128,7 +128,7 @@ class EIGEN_ALIGN16 SampleSet {
     if (p_t_1_->size() == 0) {
       return;
     }
-    if (weight_sum_ == 0.0) {
+    if (weight_sum_ == Weight_T{0.0}) {
       resetWeights();
     }
 
@@ -138,7 +138,7 @@ class EIGEN_ALIGN16 SampleSet {
       weight_distribution_.add(s.weight());
     }
     maximum_weight_ /= weight_sum_;
-    weight_sum_ = 1.0;
+    weight_sum_ = Weight_T{1.0} ;
   }
 
   inline void resetWeights() {
@@ -146,11 +146,11 @@ class EIGEN_ALIGN16 SampleSet {
 
     weight_distribution_.reset();
     for (auto &s : *p_t_1_) {
-      s.weight() = 1.0;
-      weight_distribution_.add(1.0);
+      s.weight() = Weight_T{1.0} ;
+      weight_distribution_.add(Weight_T{1.0});
     }
 
-    maximum_weight_ = 1.0;
+    maximum_weight_ = Weight_T{1.0};
     weight_sum_ = static_cast<Weight_T>(p_t_1_->size());
   }
 
@@ -188,7 +188,7 @@ class EIGEN_ALIGN16 SampleSet {
     return weight_distribution_.getVariance();
   }
 
-  inline bool isNormalized() const { return weight_sum_ == 1.0; }
+  inline bool isNormalized() const { return weight_sum_ == Weight_T{1.0}; }
 
   inline sample_vector_t const &getSamples() const { return *p_t_1_; }
 
@@ -220,12 +220,12 @@ class EIGEN_ALIGN16 SampleSet {
   bool keep_weights_after_insertion_;
 
   inline void weightStatisticReset() {
-    maximum_weight_ = 0.0;
+    maximum_weight_ = Weight_T{0.0};
     minimum_weight_ =
         std::numeric_limits<Weight_T>::max();  /// for update functions that yield
                                              /// values higher than 1.0
     weight_distribution_.reset();
-    weight_sum_ = 0.0;
+    weight_sum_ = Weight_T{0.0} ;
   }
 
   inline void weightUpdate(const Weight_T weight) {
